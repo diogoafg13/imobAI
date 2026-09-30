@@ -503,6 +503,15 @@ function renderRankingSummary() {
   el.textContent = txt;
 }
 
+function initTopNav() {
+  const links = [...document.querySelectorAll('#topnav a')];
+  const byId = new Map(links.map((a) => [a.getAttribute('href').slice(1), a]));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { const a = byId.get(e.target.id); if (a) a.classList.toggle('active', e.isIntersecting); });
+  }, { rootMargin: '-56px 0px -70% 0px' });
+  byId.forEach((_, id) => { const el = document.getElementById(id); if (el) obs.observe(el); });
+}
+
 async function main() {
   try {
     [MUNIS, NAT, META] = await Promise.all([j('data/municipalities.json'), j('data/national.json'), j('data/meta.json')]);
@@ -535,6 +544,7 @@ async function main() {
   safe('painel nacional', renderNational);
   safe('ranking', () => { renderTable(); renderRankingSummary(); });
   safe('backtest', renderBacktest);
+  safe('navegação', initTopNav);
   const mapErr = safe('mapa', initMap);
   if (mapErr) {
     $('#map').innerHTML = '<p class="muted" style="padding:16px">Não foi possível iniciar o mapa neste browser (WebGL?). O resto do painel funciona.</p>';
