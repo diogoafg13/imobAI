@@ -22,6 +22,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     <a href="#national">Visão nacional</a>
     <a href="#mapsec">Mapa</a>
     <a href="#ranking">Ranking</a>
+    <a href="#outlook">Perspetivas</a>
     <a href="#backtest">Backtest</a>
   </div>
 </nav>
@@ -96,6 +97,8 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <option value="price">Preço €/m²</option>
         <option value="yield">Rendibilidade bruta</option>
         <option value="g1y">Variação preço 12 meses</option>
+        <option value="fc">Previsão próximos 12 meses</option>
+        <option value="fv">Preço face ao valor justo</option>
       </select>
     </div>
     <div id="map"></div>
@@ -112,6 +115,11 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     <ul id="d-read" class="read"></ul>
     <div id="chart-detail" class="chart tall"></div>
     <p class="muted">Preço: mediana de vendas dos últimos 12 meses, trimestral (eixo esquerdo). Renda: mediana de novos contratos, anual (eixo direito, pontos).</p>
+    <div id="d-fc-wrap" hidden>
+      <div class="chart-cap"><span>Previsão do preço de venda <button type="button" class="info" data-k="fc_chart" aria-label="Sobre a previsão">ⓘ</button></span></div>
+      <div id="chart-fc" class="chart tall"></div>
+      <p id="d-fc-note" class="muted"></p>
+    </div>
   </section>
 
   <section id="compare" class="card" hidden>
@@ -131,6 +139,14 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     </div>
     <p id="ranking-summary" class="muted"></p>
     <div class="table-wrap"><table id="table"></table></div>
+  </section>
+
+  <section id="outlook" class="card">
+    <div class="row">
+      <h2>Perspetivas: previsões e padrões <button type="button" class="info" data-k="outlook" aria-label="Sobre as perspetivas">ⓘ</button></h2>
+      <span id="ol-generated" class="muted"></span>
+    </div>
+    <div id="outlook-body"><p class="muted">A carregar…</p></div>
   </section>
 
   <section id="backtest" class="card">

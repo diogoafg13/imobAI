@@ -2,10 +2,13 @@
 from __future__ import annotations
 
 import json
+import math
 import re
 import unicodedata
 from typing import Any
 
+import numpy as np
+import pandas as pd
 import requests
 
 
@@ -78,3 +81,76 @@ def slim_geojson(geojson: dict, keep_props: dict[str, dict], tolerance: float = 
 def dump(obj: Any, path: str) -> None:
     with open(path, "w", encoding="utf-8") as fh:
         json.dump(obj, fh, ensure_ascii=False, separators=(",", ":"))
+
+
+def haversine_km(lon1, lat1, lon2, lat2):
+    lon1, lat1, lon2, lat2 = (np.radians(np.asarray(v, dtype=float)) for v in (lon1, lat1, lon2, lat2))
+    a = np.sin((lat2 - lat1) / 2) ** 2 + np.cos(lat1) * np.cos(lat2) * np.sin((lon2 - lon1) / 2) ** 2
+    return 6371.0 * 2 * np.arcsin(np.sqrt(a))
+
+
+def spatial_index(geojson: dict | None, touch_deg: float = 0.01) -> tuple[pd.DataFrame, dict[str, list[str]]]:
+    """Centróide (lon, lat), área (km²), extensão de costa e vizinhos de cada concelho.
+
+    Vizinhos = polígonos a menos de `touch_deg` graus (~1 km): as geometrias publicadas são
+    simplificadas, por isso fronteiras comuns nem sempre coincidem exatamente. Costa = fronteira sem
+    concelho vizinho do lado do mar (inclui estuários e a Ria de Aveiro); litoral se >= 1 km.
+    """
+    empty = pd.DataFrame(columns=["dico", "lon", "lat", "area_km2", "coast_km", "coastal"])
+    if not geojson or not geojson.get("features"):
+        return empty, {}
+    from shapely.geometry import shape
+    from shapely.ops import transform, unary_union
+    from shapely.strtree import STRtree
+
+    parts: dict[str, list] = {}
+    for f in geojson["features"]:
+        d = (f.get("properties") or {}).get("dico")
+        if not d or not f.get("geometry"):
+            continue
+        g = shape(f["geometry"])
+        if not g.is_valid:
+            g = g.buffer(0)
+        g = g.simplify(0.002, preserve_topology=True)  # igual às geometrias publicadas (e rápido)
+        if not g.is_empty:
+            parts.setdefault(str(d), []).append(g)
+    if not parts:
+        return empty, {}
+    dicos = sorted(parts)
+    geoms = [unary_union(parts[d]) for d in dicos]
+    tree = STRtree(geoms)
+    pos = {d: i for i, d in enumerate(dicos)}
+    nbrs = {d: [dicos[j] for j in tree.query(g.buffer(touch_deg), predicate="intersects") if dicos[j] != d]
+            for d, g in zip(dicos, geoms)}
+    rows = []
+    for d, g in zip(dicos, geoms):
+        c = g.centroid
+        kx, ky = 111.32 * math.cos(math.radians(c.y)), 110.57
+        area = transform(lambda x, y, z=None: (np.asarray(x) * kx, np.asarray(y) * ky), g).area
+        others = [geoms[pos[n]].buffer(touch_deg) for n in nbrs[d]]
+        exposed = g.boundary.difference(unary_union(others)) if others else g.boundary
+        rows.append({"dico": d, "lon": c.x, "lat": c.y, "area_km2": area, "coast_km": _sea_length_km(exposed)})
+    df = pd.DataFrame(rows)
+    df["coastal"] = df["coast_km"] >= 1.0
+    return df, nbrs
+
+
+def _is_sea(lon: np.ndarray, lat: np.ndarray) -> np.ndarray:
+    """Fronteira exposta (sem concelho vizinho) do lado do mar: ilhas, costa oeste (a sul da foz do
+    Minho) e costa sul do Algarve. O resto da fronteira exposta é a raia com Espanha."""
+    return (lon < -15) | ((lon < -8.55) & (lat < 41.87)) | ((lat < 37.25) & (lon < -7.42))
+
+
+def _sea_length_km(geom) -> float:
+    lines = getattr(geom, "geoms", [geom])
+    total = 0.0
+    for ln in lines:
+        if ln.is_empty or ln.geom_type not in ("LineString", "LinearRing"):
+            continue
+        xy = np.asarray(ln.coords)
+        if len(xy) < 2:
+            continue
+        mid = (xy[1:] + xy[:-1]) / 2
+        seg = haversine_km(xy[:-1, 0], xy[:-1, 1], xy[1:, 0], xy[1:, 1])
+        total += float(seg[_is_sea(mid[:, 0], mid[:, 1])].sum())
+    return total

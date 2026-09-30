@@ -14,6 +14,7 @@ Pipeline Python (INE, BCE, Eurostat, BIS → Parquet/DuckDB → scores) + site e
 | 3d. Rendimento por concelho (preço/rendimento) | Implementado (`varcd 0012653`, INE/MTSSS, `dim_3=T` confirmado) |
 | 3e. Contexto demográfico (densidade, envelhecimento, saldo migratório) | Ligado ao pipeline (`varcd`s 0013189/0012909/0013179); `dims` não confirmado ao vivo, mas os títulos do catálogo do INE não sugerem dimensão extra além da geográfica |
 | 4. Backtest do score nacional | Implementado, multi-país (ver secção "Backtest do score nacional" abaixo). Cenários/alertas: não implementado. |
+| 5. Perspetivas: previsões e padrões | Implementado (ver secção "Perspetivas" abaixo): nowcast e previsão do preço de venda por concelho, renda a 1 ano, regimes, tipologias, propagação, valor justo, cenários de juros. Corre no build semanal; não altera nenhum score. |
 
 ## O que NÃO foi verificado
 
@@ -71,6 +72,7 @@ Alternativa: um runner self-hosted (por exemplo no Raspberry Pi) executa o mesmo
 - **Score nacional**: z-scores históricos do crescimento do HPI, desvio face à tendência, variação da Euribor e desvio crédito/PIB, convertidos por função logística.
 - **HPI real**: HPI nominal ÷ IHPC (Eurostat, base 2015), recentrado a 2015 = 100; termina no último trimestre completo com IHPC. Só é usado para leitura, não entra no score.
 - **Score municipal**: continua sem validação por backtest. **Score nacional**: tem agora um backtest multi-país (ver secção seguinte) — os pesos e a lógica em produção não foram alterados por causa dele. Nada disto é aconselhamento financeiro.
+- **Previsões** (secção "Perspetivas"): modelo linear regularizado comum a todos os concelhos, validado sem look-ahead contra regras ingénuas; intervalos calibrados no backtest. Só leitura.
 
 ## Backtest do score nacional
 
@@ -151,6 +153,92 @@ deploy — mesmo sem a flag `backtest` — restaura essa cópia para `site/data/
 de publicar, servindo o **último resultado real conhecido** até alguém voltar a ligar a flag e
 gerar um novo. Antes da primeira vez que alguém corre o backtest, não há cache: a secção mostra
 "ainda não gerado" (não é um erro).
+
+## Perspetivas: previsões e padrões
+
+Código em `imopt/forecast.py` (previsões) e `imopt/outlook.py` (padrões e orquestração). Corre dentro
+do `python -m imopt build` (uns 10 s, sem pedidos extra à rede: usa o que o pipeline já descarrega,
+incluindo a avaliação bancária mensal `0012248`, que antes não era usada no site). Escreve
+`site/data/outlook.json` e acrescenta campos por concelho a `municipalities.json` (`fc`,
+`nowcast_price`, `fc_growth_12m`, `rent_fc`, `fv_gap`, `typology_name`, …). Cada parte é não-fatal.
+Não usa bibliotecas novas (numpy/pandas/shapely).
+
+### Preço de venda: estimativa para hoje ("nowcast") e 12 meses
+
+- **Alvo**: o preço mediano de venda do INE por concelho (mediana móvel de 12 meses, trimestral,
+  desde 2019T4), h = 1…6 trimestres depois do último publicado. Com dados até 2026T1 e hoje em
+  2026T3, h = 1–2 são estimativas do presente e h = 6 é "daqui a 12 meses".
+- **Modelo**: previsão direta por horizonte; ridge com mínimos quadrados ponderados pela volatilidade
+  de cada concelho, comum a todos ("pooled"). Sinais: inércia (último trimestre e último ano),
+  avaliação bancária do concelho e do país desde o fim da janela das vendas (sai ~5 meses antes do
+  preço de venda — é o que dá o nowcast), média dos concelhos vizinhos, nível face à mediana,
+  variação da Euribor. Nenhuma variável é extrapolada para fora do intervalo visto no treino.
+- **Intervalos**: o erro é separado em choque comum a todos os concelhos (a "surpresa nacional"
+  de cada trimestre) e erro próprio de cada concelho; os dois combinados dão as faixas de 50% e 80%,
+  calibradas com as 8 origens mais recentes do backtest.
+- **Backtest sem look-ahead**: para cada trimestre de origem, treino só com pares cujo alvo já era
+  conhecido, avaliação bancária cortada com o mesmo avanço que existe hoje
+  (`test_forecast.py::test_sales_backtest_has_no_lookahead`). Comparado com «fica igual» e
+  «continua o ritmo do último ano».
+
+Resultados com os dados em cache (vendas até 2026T1, avaliação bancária até 2026-08, 302 concelhos):
+
+| h | Origens | Erro médio modelo (p.p.) | «Fica igual» | «Continua o ritmo» | Concelho típico (modelo / ingénua) | Menos erro | Cobertura 80% |
+|---|---|---|---|---|---|---|---|
+| 1 | 2021T2–2025T4 (19) | 4,6 | 5,5 | 5,8 | 2,6 / 3,8 | 16% | 83% |
+| 2 (hoje) | 2021T3–2025T3 (17) | 6,6 | 8,9 | 9,7 | 4,2 / 7,0 | 26% | 83% |
+| 4 | 2022T1–2025T1 (13) | 10,2 | 14,9 | 17,4 | 7,1 / 12,7 | 32% | 82% |
+| 6 (12 meses) | 2022T3–2024T3 (9) | 12,0 | 19,1 | 22,5 | 9,2 / 17,0 | 37% | 75% |
+
+Previsão mediana entre concelhos para os próximos 12 meses: +12% (metade entre +9% e +14%).
+
+### Rendas a 1 ano
+
+Mesma abordagem, anual: inércia da renda, variação do preço de venda, rendibilidade face à mediana,
+avaliação bancária recente. Só há 6 anos por concelho (2020–2025): backtest com 3 origens
+(2022–2024), erro médio 5,8 p.p. contra 8,1 p.p. de «continua o ritmo» (28% menos), cobertura de
+80% em 92% dos casos (intervalos conservadores). Confiança baixa — está escrito no site.
+
+### Padrões
+
+- **Regimes** (HPI nacional, regressão por troços, BIC): −6,3%/ano em 2010T2–2012T4, +3,6% em
+  2013–2015, +9,5% em 2016–2021, +8,5% em 2022–2023 (+2,6% real) e +17,3%/ano desde 2024T1
+  (+14,4% real).
+- **Tipologias** (k-means; k = 4 pela silhueta, 0,38): «mais caros, subida a acelerar» (152),
+  «mais baratos, arranque tardio» (43: parados até 2022T2, a subir depois), «mais baratos, subida
+  estável e fraca» (72), «mais baratos, boom até 2022T2, agora a abrandar» (19).
+- **Propagação**: não se deteta atraso mensal face a Lisboa/Porto (desfasamento ótimo de 0–1
+  meses em todas as faixas); a ligação enfraquece com a distância e a subida é mais forte perto das
+  metrópoles.
+- **Valor justo**: os fundamentos explicam 84% das diferenças de preço entre concelhos (validação
+  cruzada). +10% de rendimento → +5,0% no preço; litoral → +41%; +10% de envelhecimento → −4,5%.
+- **Juros**: +1 p.p. na Euribor sobe a prestação ~12,5% e reduz ~11% o que se pode pedir com a
+  mesma prestação (aritmética, crédito a 30 anos, Euribor + 1 p.p.). O efeito histórico nos preços
+  (−1,6% por p.p.) não é estatisticamente claro (intervalo de 90% inclui zero), por isso não é
+  usado como cenário.
+
+### O que mudou depois de ver os resultados (transparência)
+
+- **Sem extrapolação**: a primeira versão tinha, em 2022, erros comuns de −30% a −43% a 12 meses —
+  modelos treinados só com 2020–21 (Euribor parada) extrapolavam o salto de +3 p.p. dos juros. A
+  correção (limitar cada variável ao intervalo visto no treino) é uma regra geral, não uma afinação;
+  foi ela que tornou o modelo melhor do que «fica igual» a 12 meses.
+- **Intervalos**: a primeira versão tratava os erros dos concelhos como independentes e dava
+  cobertura de 17–68% nos horizontes longos; agora inclui o choque comum e usa só as 8 origens
+  mais recentes para calibrar.
+- **Litoral**: sem esta variável, a lista de "mais caros do que os fundamentos" era dominada pela
+  costa. Derivada da geometria (fronteira sem concelho vizinho do lado do mar); falha alguns casos
+  (ex.: a costa de Alcácer do Sal não aparece nas fronteiras simplificadas).
+- **Tipologias**: a proposta inicial era agrupar trajetórias de 15 anos da avaliação bancária, mas
+  só ~56 concelhos têm dados desde 2011. Usa-se a série de vendas (286 concelhos); a história longa
+  aparece como contexto quando existe.
+
+### Limites
+
+Os mesmos que aparecem no site (`outlook.LIMITS`): pontos de viragem são difíceis de prever; o preço
+do INE é uma mediana móvel (parte da inércia é mecânica); a avaliação bancária não é preço de
+transação; o backtest cobre poucos anos e um só ciclo de juros; séries revistas (não temos os valores
+tal como publicados na altura); valor justo não é prova de bolha.
 
 ## Anúncios (opcional)
 

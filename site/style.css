@@ -1,7 +1,7 @@
 :root{--bg:#f6f7f9;--card:#fff;--fg:#1c2430;--muted:#66707d;--line:#e2e6ea;--accent:#1f6f8b;
---green:#2e9e6b;--amber:#e0a02b;--red:#d1493f;--none:#c9ced4}
+--green:#2e9e6b;--amber:#e0a02b;--red:#d1493f;--none:#c9ced4;--s1:#2a78d6;--s2:#eb6834}
 @media (prefers-color-scheme:dark){:root{--bg:#12161b;--card:#1a2027;--fg:#e6eaee;--muted:#8d97a3;--line:#2a323b;--accent:#5bb3d0;
---green:#43b985;--amber:#e8b64c;--red:#e5665c;--none:#3a434d}}
+--green:#43b985;--amber:#e8b64c;--red:#e5665c;--none:#3a434d;--s1:#3987e5;--s2:#d95926}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 header,main,footer{max-width:1100px;margin:0 auto;padding:0 16px}
@@ -60,3 +60,16 @@ th .hint{cursor:help}
 .verdict{background:var(--bg);border-left:4px solid var(--accent);border-radius:8px;padding:10px 12px;margin:0 0 12px}
 #bt-table th,#bt-table td{text-align:right}
 #bt-table th:first-child,#bt-table td:first-child{text-align:left}
+h3{font-size:.95rem;margin:18px 0 8px}
+#outlook h3{border-top:1px solid var(--line);padding-top:14px}
+.ol-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.ol-list{list-style:none;padding:0;margin:0}.ol-list li{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--line);font-size:.88rem}
+.ol-list .v{text-align:right;white-space:nowrap}
+a.lnk{color:var(--fg);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}a.lnk:hover{text-decoration-color:var(--accent)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.tcard{background:var(--bg);border-radius:8px;padding:10px 12px;font-size:.86rem}.tcard b{display:block;margin-bottom:4px;font-size:.92rem}
+.tcard .muted{font-size:.8rem}
+.ol-table th,.ol-table td{text-align:right}.ol-table th:first-child,.ol-table td:first-child{text-align:left}
+.ol-table th{cursor:default;white-space:normal;vertical-align:bottom;font-size:.84rem}.ol-table tbody tr{cursor:default}
+#c-table th,#c-table tbody tr{cursor:default}
+@media (max-width:700px){.ol-cols{grid-template-columns:1fr}}

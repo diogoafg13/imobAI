@@ -20,27 +20,57 @@ def _quarters(start: str, end: str) -> list[Period]:
     return out
 
 
+DEMO_REGIONS = ["11", "11", "19", "19", "1A", "15"]   # NUTS II por linha da grelha (ver outlook.NUTS2)
+
+
+def _row(d, name, geocod, period, kind, sort_key, value, level="municipality"):
+    return dict(varcd="DEMO", period=period, period_kind=kind, sort_key=sort_key, geocod=geocod, geoname=name,
+                value=value, level=level, dico=d)
+
+
 def demo_frames(seed: int = 7):
     rng = np.random.default_rng(seed)
     dicos = [f"{i + 1:04d}" for i in range(GRID_W * GRID_H)]
     names = {d: f"Concelho Demo {d}" for d in dicos}
     qs = _quarters("2019Q4", "2026Q2")
+    months = pd.period_range("2011-01", "2026-08", freq="M")
+    # ciclo nacional (log, por mês): crise até 2013, retoma, boom, abrandamento com juros, nova subida
+    rate = np.select([months.year < 2013, months.year < 2016, months.year < 2022, months.year < 2024],
+                     [-0.05, 0.03, 0.08, 0.04], 0.12) / 12
+    cycle = np.cumsum(rate)
 
-    sales_rows, rent_rows = [], []
+    rows = {k: [] for k in ("sales", "rent", "val", "income", "density", "ageing", "migration")}
     for i, d in enumerate(dicos):
+        geocod = f"{DEMO_REGIONS[i // GRID_W]}X{d}"
         base = rng.uniform(600, 3800)
         drift = rng.uniform(0.005, 0.03)
         v = base
         for p in qs:
             v *= 1 + drift + rng.normal(0, 0.008)
-            sales_rows.append(dict(varcd="DEMO", period=p.label, period_kind="quarter", sort_key=p.sort_key,
-                                   geocod=f"170{d}", geoname=names[d], value=v, level="municipality", dico=d))
+            rows["sales"].append(_row(d, names[d], geocod, p.label, "quarter", p.sort_key, v))
         rent = base * rng.uniform(0.0035, 0.0065)
-        for y in range(2022, 2027):
+        for y in range(2020, 2027):
             rent *= 1 + rng.uniform(0.02, 0.12)
-            rent_rows.append(dict(varcd="DEMO", period=str(y), period_kind="year", sort_key=y * 100,
-                                  geocod=f"170{d}", geoname=names[d], value=rent, level="municipality", dico=d))
-    frames = {"sales_price_12m": pd.DataFrame(sales_rows), "rent_new_contracts": pd.DataFrame(rent_rows)}
+            rows["rent"].append(_row(d, names[d], geocod, str(y), "year", y * 100, rent))
+        beta = rng.uniform(0.6, 1.4)
+        val = base * 0.55 * np.exp(beta * cycle + rng.normal(0, 0.03, len(months)))
+        for m, x in zip(months, val):
+            rows["val"].append(_row(d, names[d], geocod, str(m), "month", m.year * 100 + m.month, x))
+        inc = 700 + base * rng.uniform(0.18, 0.25)
+        dens = float(np.exp(rng.uniform(2.5, 7.5)))
+        for y in range(2021, 2025):
+            rows["income"].append(_row(d, names[d], geocod, str(y), "year", y * 100, inc * 1.04 ** (y - 2021)))
+        for y in range(2021, 2026):
+            rows["density"].append(_row(d, names[d], geocod, str(y), "year", y * 100, dens))
+            rows["ageing"].append(_row(d, names[d], geocod, str(y), "year", y * 100, rng.uniform(90, 350)))
+            rows["migration"].append(_row(d, names[d], geocod, str(y), "year", y * 100, rng.normal(50, 150)))
+    nat = np.exp(cycle) * 1100
+    rows["val"] += [_row("PT", "Portugal", "PT", str(m), "month", m.year * 100 + m.month, x, "national")
+                    for m, x in zip(months, nat)]
+    frames = {"sales_price_12m": pd.DataFrame(rows["sales"]), "rent_new_contracts": pd.DataFrame(rows["rent"]),
+              "bank_valuation": pd.DataFrame(rows["val"]), "income": pd.DataFrame(rows["income"]),
+              "population_density": pd.DataFrame(rows["density"]), "ageing_index": pd.DataFrame(rows["ageing"]),
+              "migration_balance": pd.DataFrame(rows["migration"])}
 
     hq = _quarters("2009Q1", "2026Q2")
     h, hv = 90.0, []

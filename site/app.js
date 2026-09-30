@@ -8,7 +8,9 @@ const fmt = {
   eur: (v) => (v == null ? '—' : Math.round(v).toLocaleString('pt-PT') + ' €'),
   eur2: (v) => (v == null ? '—' : v.toFixed(2).replace('.', ',') + ' €'),
   n: (v, d = 0) => (v == null ? '—' : v.toFixed(d).replace('.', ',')),
+  spct: (v, d = 1) => (v == null ? '—' : (v >= 0 ? '+' : '−') + (Math.abs(v) * 100).toFixed(d).replace('.', ',') + '%'),
 };
+const qpt = (p) => String(p ?? '').replace('Q', 'T');
 const BAND_LABEL = { green: 'Baixo', amber: 'Moderado', red: 'Elevado' };
 const pill = (band, txt) => `<span class="pill ${band || 'none'}">${esc(txt ?? BAND_LABEL[band] ?? 'n/d')}</span>`;
 
@@ -29,6 +31,17 @@ const GLOSS = {
   p2r: ['Preço/renda (anos)', 'Anos de renda bruta necessários para "pagar" o imóvel (preço ÷ renda anual). Regra de bolso: acima de ~20–25 anos é caro face às rendas.'],
   p2i: ['Preço/rendimento (meses)', 'Meses de ganho médio mensal (por trabalhador, INE/MTSSS) necessários para pagar 1 m². É um indicador simplificado — não é o clássico "anos de salário para comprar casa", que precisaria do preço total do imóvel e do rendimento do agregado familiar, não do ganho médio individual por m². Quanto mais alto, mais esticado o preço face aos salários locais. É sobre COMPRA, não arrendamento.'],
   r2i: ['Renda/rendimento', 'Fração do ganho médio mensal (por trabalhador) necessária para arrendar 1 m². Ao contrário do "Preço/rendimento" (que é sobre comprar), este é sobre ARRENDAR — quanto mais alto, mais pesa a renda no salário local. Só aparece quando o concelho tem renda e rendimento publicados.'],
+  outlook: ['Perspetivas', 'Previsões e padrões calculados a partir dos mesmos dados oficiais (INE, BCE, Eurostat). Cada previsão foi testada no passado recente sem ver o futuro (backtest) e comparada com regras ingénuas — os resultados, bons ou maus, estão aqui. Nada disto altera os scores do painel, nem é aconselhamento financeiro.'],
+  nowcast: ['Estimativa para hoje', 'O INE publica o preço de venda com meses de atraso. A avaliação bancária (também do INE) sai mais cedo: o modelo usa-a para estimar onde está o preço agora, antes de ser publicado.'],
+  fc12: ['Previsão a 12 meses', 'Preço mediano de venda previsto daqui a um ano, com um intervalo onde o valor real caiu cerca de 80% das vezes no backtest. O intervalo é o mais importante: o valor central é só o mais provável.'],
+  fc_chart: ['Leque da previsão', 'Linha cheia: preço publicado pelo INE. Tracejado: estimativa para os trimestres ainda não publicados e previsão. Faixa escura: 50% de probabilidade; faixa clara: 80%. Quanto mais longe, mais larga, porque a incerteza cresce.'],
+  rent_fc: ['Renda prevista', 'Renda mediana de novos contratos (€/m²) prevista para o próximo ano, com intervalo de 80%. Confiança mais baixa do que a do preço: só há 6 anos de dados por concelho.'],
+  fv: ['Valor justo', 'Preço que os fundamentos observáveis explicam: rendimento, densidade, envelhecimento, migração, litoral, distância a Lisboa/Porto e região. Acima = mais caro do que concelhos parecidos. Pode ser sobrevalorização OU algo que o modelo não vê (praia, turismo, universidade, qualidade das casas).'],
+  typology: ['Tipologia de mercado', 'Grupo de concelhos com trajetórias parecidas, encontrado automaticamente (k-means) a partir do nível do preço e do ritmo de subida antes e depois de o BCE começar a subir juros (2022T2).'],
+  regimes: ['Regimes do mercado', 'O índice de preços nacional (HPI) dividido em fases com ritmo constante. Os pontos de quebra são escolhidos pelos dados (regressão por troços, critério BIC), não à mão.'],
+  ripple: ['Distância a Lisboa e Porto', 'Testa se as subidas se propagam das metrópoles para fora: compara o ritmo de subida por distância e procura o desfasamento (em meses) que melhor liga cada concelho à metrópole mais próxima.'],
+  rates: ['Cenários de juros', 'Prestação e capacidade de endividamento são aritmética pura (crédito a 30 anos, Euribor + 1 p.p.). O efeito nos preços só é mostrado se a relação histórica for estatisticamente clara.'],
+  ol_backtest: ['Como se saiu no passado', 'Para cada trimestre desde 2021, o modelo foi treinado só com o que se sabia nessa data e previu os trimestres seguintes. Erro médio em pontos percentuais (p.p.) de variação do preço, comparado com «fica igual» e «continua o ritmo do último ano». Cobertura: % das vezes em que o valor real caiu dentro do intervalo de 80%.'],
   migration: ['Saldo migratório', 'Diferença entre quem chegou e quem saiu do concelho num ano (INE). Positivo = mais gente a chegar do que a sair. Só contexto demográfico — não entra em nenhum score.'],
   score_valuation: ['Score de valorização', 'Percentil entre concelhos: mistura crescimento do preço a 12 meses e a 3 anos com rendibilidade baixa. 0 = menos esticado, 100 = mais. É relativo, não uma probabilidade de bolha.'],
   score_overall: ['Score global', 'Igual ao de valorização enquanto não houver dados de oferta (licenças, conclusões). Concelhos voláteis (⚠) são atenuados para o meio (50).'],
@@ -60,7 +73,7 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTip(); });
 
-let MUNIS = [], BY = {}, NAT = null, META = null, GEO = null, MAP = null, BT = null;
+let MUNIS = [], BY = {}, NAT = null, META = null, GEO = null, MAP = null, BT = null, OL = null;
 let sortKey = 'score_overall', sortDir = -1, selected = null;
 const compare = [];
 const charts = {};
@@ -83,13 +96,20 @@ const METRICS = {
     help: 'Renda anual ÷ preço, antes de custos. Mais escuro = a renda paga mais do preço; claro = preço alto face à renda. Cinzento = INE não publica renda para o concelho.' },
   g1y: { prop: 'g1y', pal: SEQ, f: (v) => fmt.pct(v), label: 'Var. 12m',
     help: 'Variação nominal do preço face ao mesmo trimestre do ano anterior (não desconta a inflação). Mais escuro = subiu mais.' },
+  fc: { prop: 'fc', pal: SEQ, f: (v) => fmt.spct(v), label: 'Previsão 12 meses',
+    help: 'Variação prevista do preço mediano de venda nos próximos 12 meses (valor central; cada concelho tem um intervalo no detalhe). Ver a secção "Perspetivas" para saber como a previsão se saiu no passado. Cinzento = sem previsão.' },
+  fv: { prop: 'fv', pal: ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'], diverge: true, f: (v) => fmt.spct(v, 0), label: 'Face ao valor justo',
+    help: 'Laranja = preço acima do que rendimento, demografia, litoral, distância e região explicam; azul = abaixo; cinzento claro = em linha. Não é prova de bolha: pode ser praia, turismo ou qualidade das casas, que o modelo não vê. Cinzento escuro = sem dados.' },
 };
+const METRIC_VAL = { score: (x) => x.score_overall, price: (x) => x.price, yield: (x) => x.gross_yield, g1y: (x) => x.price_growth_1y,
+  fc: (x) => x.fc_growth_12m, fv: (x) => x.fv_gap };
 function quantile(sorted, q) { const i = (sorted.length - 1) * q, lo = Math.floor(i), hi = Math.ceil(i); return sorted[lo] + (sorted[hi] - sorted[lo]) * (i - lo); }
 function domain(m) {
   if (m.fixed) return m.fixed;
-  const v = MUNIS.map((x) => ({ price: x.price, yield: x.gross_yield, g1y: x.price_growth_1y })[m.prop]).filter((x) => x != null).sort((a, b) => a - b);
+  const v = MUNIS.map(METRIC_VAL[m.prop]).filter((x) => x != null).sort((a, b) => a - b);
   if (v.length < 2) return [0, 1];
   const lo = quantile(v, 0.05), hi = quantile(v, 0.95);
+  if (m.diverge) { const a = Math.max(Math.abs(lo), Math.abs(hi)) || 1; return [-a, a]; }
   return lo === hi ? [lo, lo + 1] : [lo, hi];
 }
 function stops(m) {
@@ -245,7 +265,7 @@ function initMap() {
     MAP.on('mousemove', 'fill', (e) => {
       const f = e.features[0]; if (!f) return;
       const p = f.properties, k = $('#metric').value;
-      const val = { score: fmt.n(nz(p.score)), price: fmt.eur(nz(p.price)), yield: fmt.pct(nz(p.yield), 2), g1y: fmt.pct(nz(p.g1y)) }[k];
+      const val = METRICS[k].f(nz(p[METRICS[k].prop]));
       pop.setLngLat(e.lngLat).setHTML(`<b>${esc(p.name)}</b><br>${esc(METRICS[k].label)}: ${esc(val)}<br><span style="color:#555">clica para o detalhe</span>`).addTo(MAP);
     });
     MAP.on('mouseleave', 'fill', () => pop.remove());
@@ -295,8 +315,72 @@ function readList(m) {
     const thin = m.density != null && m.density < 50;
     li.push(`Contexto demográfico: ${demoBits.join(', ')}.${thin ? ' Densidade baixa costuma significar poucas transações por trimestre — um salto grande em percentagem pode ser só uma ou duas vendas, não uma tendência de mercado.' : ''}`);
   }
+  if (m.fc_price != null) {
+    const now = m.nowcast_price != null ? `Estimativa para hoje (${qpt(m.nowcast_period)}): ${fmt.eur(m.nowcast_price)}/m², ${fmt.spct(m.nowcast_price / m.price - 1)} face ao último valor publicado. ` : '';
+    const band = m.fc_lo80 != null ? ` — com 80% de probabilidade entre ${fmt.eur(m.fc_lo80)} e ${fmt.eur(m.fc_hi80)}` : '';
+    const err = m.fc_mae != null ? ` No passado recente, a previsão para este concelho errou em média ${fmt.n(m.fc_mae * 100, 1)} p.p.` : '';
+    li.push(`${now}Previsão para ${qpt(m.fc_period)}: ${fmt.eur(m.fc_price)}/m² (${fmt.spct(m.fc_growth_12m)} em 12 meses)${band}.${err}`);
+  }
+  if (m.rent_fc != null) li.push(`Renda de novos contratos prevista para ${m.rent_fc_year}: ${fmt.eur2(m.rent_fc)}/m² (${fmt.spct(m.rent_fc_growth)}), intervalo de 80% entre ${fmt.eur2(m.rent_fc_lo80)} e ${fmt.eur2(m.rent_fc_hi80)} — confiança baixa (só 6 anos de dados).`);
+  if (m.fv_gap != null) {
+    const g = m.fv_gap;
+    li.push(`Face ao valor justo (${fmt.eur(m.fv_price)}/m²): ${Math.abs(g) <= 0.15 ? 'em linha com concelhos de fundamentos parecidos' : `${fmt.spct(g, 0)} — ${g > 0 ? 'mais caro' : 'mais barato'} do que rendimento, demografia, litoral e região explicam`}.${g > 0.15 ? ' Pode ser sobrevalorização ou algo que o modelo não vê (praia, turismo, universidade, qualidade das casas).' : ''}`);
+  }
+  if (m.typology_name) li.push(`Tipologia: «${m.typology_name}» (ver "Perspetivas").`);
   if (m.volatile) li.push('⚠ Poucos negócios: o preço é muito volátil e o score foi atenuado. Lê estes números com cautela.');
   return li.map((t) => `<li>${esc(t)}</li>`).join('');
+}
+
+// Leque: preço publicado + estimativa/previsão com faixas de 50% e 80% (um só eixo).
+function fanChart(id, m) {
+  const el = document.getElementById(id);
+  const prev = echarts.getInstanceByDom(el);
+  if (prev) prev.dispose();
+  delete charts[id];
+  el.innerHTML = '';
+  const hist = (m.series.price || []).slice(-12), f = m.fc;
+  if (!f || !f.mid.length || !hist.length) { el.innerHTML = '<p class="muted">Sem previsão para este concelho.</p>'; return; }
+  const [p0, v0] = hist[hist.length - 1];
+  const periods = [...hist.map((h) => h[0]), ...f.periods];
+  const at = (arr) => [[p0, v0], ...f.periods.map((p, i) => [p, arr[i]])];
+  const hasBand = f.lo80.every((x) => x != null);
+  const s1 = css('--s1'), txt = css('--muted'), line = css('--line');
+  const rgba = (hex, a) => `rgba(${[1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)).join(',')},${a})`;
+  const band = (lo, hi, name, op) => [
+    { name, type: 'line', stack: name, data: at(lo), lineStyle: { opacity: 0 }, itemStyle: { color: rgba(s1, op) }, symbol: 'none', silent: true },
+    { name, type: 'line', stack: name, data: at(hi).map(([p, v], i) => [p, v - at(lo)[i][1]]), lineStyle: { opacity: 0 }, symbol: 'none',
+      itemStyle: { color: rgba(s1, op) }, areaStyle: { color: rgba(s1, op) }, silent: true },
+  ];
+  const nowIdx = f.kind.lastIndexOf('nowcast');
+  charts[id] = echarts.init(el);
+  charts[id].setOption({
+    animation: false,
+    grid: { left: 56, right: 16, top: 34, bottom: 24 },
+    legend: { top: 0, right: 0, textStyle: { color: txt },
+      data: ['Publicado (INE)', 'Estimativa e previsão', ...(hasBand ? [{ name: '80%', icon: 'rect' }, { name: '50%', icon: 'rect' }] : [])] },
+    tooltip: {
+      trigger: 'axis', confine: true,
+      formatter: (ps) => {
+        const p = (Array.isArray(ps) ? ps : [ps])[0].axisValue;
+        const hi = hist.find((h) => h[0] === p), i = f.periods.indexOf(p);
+        if (hi) return `<b>${esc(qpt(p))}</b><br>Publicado: <b>${fmt.eur(hi[1])}/m²</b>`;
+        if (i < 0) return '';
+        const kind = f.kind[i] === 'nowcast' ? 'Estimativa (ainda não publicado)' : 'Previsão';
+        return `<b>${esc(qpt(p))}</b> · ${kind}<br>Central: <b>${fmt.eur(f.mid[i])}/m²</b>` +
+          (f.lo80[i] != null ? `<br>50%: ${fmt.eur(f.lo50[i])} – ${fmt.eur(f.hi50[i])}<br>80%: ${fmt.eur(f.lo80[i])} – ${fmt.eur(f.hi80[i])}` : '');
+      },
+    },
+    xAxis: { type: 'category', data: periods, axisLabel: { color: txt, formatter: qpt }, axisLine: { lineStyle: { color: line } } },
+    yAxis: { type: 'value', scale: true, axisLabel: { color: txt, formatter: (v) => Math.round(v).toLocaleString('pt-PT') }, splitLine: { lineStyle: { color: line } } },
+    series: [
+      ...(hasBand ? [...band(f.lo80, f.hi80, '80%', 0.12), ...band(f.lo50, f.hi50, '50%', 0.22)] : []),
+      { name: 'Publicado (INE)', type: 'line', data: hist, symbol: 'none', lineStyle: { width: 2, color: s1 }, itemStyle: { color: s1 } },
+      { name: 'Estimativa e previsão', type: 'line', data: at(f.mid), symbol: 'circle', symbolSize: 8, showSymbol: true,
+        lineStyle: { width: 2, type: 'dashed', color: s1 }, itemStyle: { color: s1 },
+        markLine: nowIdx >= 0 ? { silent: true, symbol: 'none', lineStyle: { type: 'solid', color: txt, width: 1 },
+          label: { formatter: 'hoje', color: txt, fontSize: 10 }, data: [{ xAxis: f.periods[nowIdx] }] } : undefined },
+    ],
+  }, true);
 }
 function select(dico, scroll = true) {
   const m = BY[dico]; if (!m) return;
@@ -320,12 +404,25 @@ function select(dico, scroll = true) {
     tile('r2i', 'Renda/rendimento', fmt.pct(m.rent_to_income, 1), ctx((x) => x.rent_to_income, m.rent_to_income, (v) => fmt.pct(v, 1))),
     tile('score_valuation', 'Score valorização', fmt.n(m.score_valuation)),
     tile('score_overall', 'Score global', fmt.n(m.score_overall)),
+    ...(m.nowcast_price != null ? [tile('nowcast', `Estimativa hoje (${qpt(m.nowcast_period)})`, fmt.eur(m.nowcast_price) + '/m²',
+      `<span class="ctx">${fmt.spct(m.nowcast_price / m.price - 1)} face ao último publicado</span>`)] : []),
+    ...(m.fc_price != null ? [tile('fc12', `Previsão ${qpt(m.fc_period)}`, fmt.eur(m.fc_price) + '/m²',
+      `<span class="ctx">${fmt.spct(m.fc_growth_12m)} em 12 meses${m.fc_lo80 != null ? ` · 80%: ${fmt.eur(m.fc_lo80)}–${fmt.eur(m.fc_hi80)}` : ''}</span>`)] : []),
+    ...(m.rent_fc != null ? [tile('rent_fc', `Renda prevista ${m.rent_fc_year}`, fmt.eur2(m.rent_fc) + '/m²',
+      `<span class="ctx">${fmt.spct(m.rent_fc_growth)} · 80%: ${fmt.eur2(m.rent_fc_lo80)}–${fmt.eur2(m.rent_fc_hi80)}</span>`)] : []),
+    ...(m.fv_gap != null ? [tile('fv', 'Face ao valor justo', fmt.spct(m.fv_gap, 0),
+      `<span class="ctx">valor justo ${fmt.eur(m.fv_price)}/m²</span>`)] : []),
   ].join('');
   $('#d-read').innerHTML = readList(m);
   const s = [{ name: 'Preço', data: m.series.price, fmt: (v) => fmt.eur(v) + '/m²' }];
   const q4 = (p) => (p.length === 4 ? p + 'Q4' : p);
   if (m.series.rent.length) s.push({ name: 'Renda', data: m.series.rent.map(([p, v]) => [q4(p), v]), axis: 1, dots: true, fmt: (v) => fmt.eur2(v) + '/m²/mês' });
-  lineChart('chart-detail', 'Evolução', s, { dual: s.length > 1, names: s.length > 1 ? ['Preço (€/m²)', 'Renda (€/m²/mês)'] : ['Preço (€/m²)'], notitle: true });
+  $('#d-fc-wrap').hidden = !m.fc;
+  $('#d-fc-note').textContent = m.fc ? `Estimativa e previsão calculadas em ${OL && OL.build_date ? OL.build_date : '—'} com dados do INE até ${qpt(OL && OL.sales ? OL.sales.origin : '')} (vendas) e ${OL && OL.sales && OL.sales.last_valuation ? OL.sales.last_valuation : '—'} (avaliação bancária). Ver "Perspetivas" para o erro no passado.` : '';
+  try {
+    lineChart('chart-detail', 'Evolução', s, { dual: s.length > 1, names: s.length > 1 ? ['Preço (€/m²)', 'Renda (€/m²/mês)'] : ['Preço (€/m²)'], notitle: true });
+  } catch (e) { console.error('Falha no gráfico do detalhe:', e); }
+  if (m.fc) try { fanChart('chart-fc', m); } catch (e) { console.error('Falha no gráfico da previsão:', e); }
   $('#d-compare').textContent = compare.includes(dico) ? 'Remover da comparação' : 'Comparar';
   if (scroll) $('#detail').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
@@ -340,6 +437,11 @@ const COMPARE_ROWS = [
   ['r2i', 'Renda/rendimento', (m) => (m.rent_to_income == null ? '—' : fmt.pct(m.rent_to_income, 1))],
   ['migration', 'Saldo migratório', (m) => (m.migration_balance == null ? '—' : (m.migration_balance >= 0 ? '+' : '') + fmt.n(m.migration_balance, 0))],
   ['score_overall', 'Score global', (m) => fmt.n(m.score_overall)],
+  ['nowcast', 'Estimativa hoje', (m) => (m.nowcast_price == null ? '—' : fmt.eur(m.nowcast_price) + '/m²')],
+  ['fc12', 'Previsão 12 meses', (m) => (m.fc_growth_12m == null ? '—' : `${fmt.spct(m.fc_growth_12m)} (${fmt.eur(m.fc_price)})`)],
+  ['rent_fc', 'Renda prevista', (m) => (m.rent_fc == null ? '—' : `${fmt.eur2(m.rent_fc)}/m² (${fmt.spct(m.rent_fc_growth)})`)],
+  ['fv', 'Face ao valor justo', (m) => fmt.spct(m.fv_gap, 0)],
+  ['typology', 'Tipologia', (m) => esc(m.typology_name || '—')],
 ];
 let compareMetric = 'price';
 function renderCompare() {
@@ -447,9 +549,194 @@ function renderBacktestRobustness() {
   $('#bt-robust').textContent = parts.join(' ');
 }
 
+// ---------- perspetivas
+function freshChart(id) {
+  const el = document.getElementById(id);
+  const prev = echarts.getInstanceByDom(el);
+  if (prev) prev.dispose();
+  el.innerHTML = '';
+  charts[id] = echarts.init(el);
+  return charts[id];
+}
+function barChart(id, cats, series, f, titles) {
+  const txt = css('--muted'), line = css('--line');
+  freshChart(id).setOption({
+    animation: false,
+    grid: { left: 8, right: 12, top: 34, bottom: 8, containLabel: true },
+    legend: { top: 0, right: 0, textStyle: { color: txt } },
+    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, confine: true,
+      formatter: (ps) => `<b>${esc((titles || {})[ps[0].axisValue] || ps[0].axisValue)}</b><br>` +
+        ps.map((p) => `${p.marker} ${esc(p.seriesName)}: <b>${esc(f(p.value))}</b>`).join('<br>') },
+    xAxis: { type: 'category', data: cats, axisLabel: { color: txt, interval: 0, fontSize: 11 }, axisLine: { lineStyle: { color: line } } },
+    yAxis: { type: 'value', axisLabel: { color: txt, formatter: (v) => f(v) }, splitLine: { lineStyle: { color: line } } },
+    series: series.map((s) => ({ name: s.name, type: 'bar', barMaxWidth: 24, barGap: '15%', itemStyle: { color: s.color },
+      data: s.data.map((v) => ({ value: v, itemStyle: { borderRadius: v < 0 ? [0, 0, 4, 4] : [4, 4, 0, 0] } })) })),
+  }, true);
+}
+function regimesChart(id, R) {
+  const txt = css('--muted'), line = css('--line'), s1 = css('--s1'), s2 = css('--s2');
+  const segs = R.segments.map((sg, i) => {
+    const pts = R.fit.filter((x) => x[2] === i).map((x) => [x[0], x[1]]);
+    const mid = pts[Math.floor(pts.length / 2)];
+    return { name: 'Tendência por fase', type: 'line', data: pts, symbol: 'none', lineStyle: { width: 2, type: 'dashed', color: s2 }, itemStyle: { color: s2 },
+      markPoint: { symbol: 'circle', symbolSize: 1, itemStyle: { color: 'transparent' },
+        label: { show: true, position: 'top', offset: [-14, -12], color: txt, fontSize: 11, formatter: `${fmt.spct(sg.growth_ann, 1)}/ano` }, data: [{ coord: mid }] } };
+  });
+  freshChart(id).setOption({
+    animation: false,
+    grid: { left: 46, right: 12, top: 34, bottom: 24 },
+    legend: { top: 0, right: 0, textStyle: { color: txt }, data: ['HPI nominal', 'Tendência por fase'] },
+    tooltip: { trigger: 'axis', confine: true, formatter: (ps) => {
+      const p = ps[0].axisValue, v = R.series.find((x) => x[0] === p);
+      const sg = R.segments.find((s) => s.start <= p && p <= s.end);
+      return `<b>${esc(qpt(p))}</b><br>HPI: <b>${v ? fmt.n(v[1], 1) : '—'}</b>` + (sg ? `<br>Fase ${esc(qpt(sg.start))}–${esc(qpt(sg.end))}: ${fmt.spct(sg.growth_ann)}/ano` : '');
+    } },
+    xAxis: { type: 'category', data: R.series.map((x) => x[0]), axisLabel: { color: txt, formatter: qpt }, axisLine: { lineStyle: { color: line } } },
+    yAxis: { type: 'value', scale: true, axisLabel: { color: txt }, splitLine: { lineStyle: { color: line } } },
+    series: [{ name: 'HPI nominal', type: 'line', data: R.series, symbol: 'none', lineStyle: { width: 2, color: s1 }, itemStyle: { color: s1 } }, ...segs],
+  }, true);
+}
+const lnk = (d, name) => `<a href="#" class="lnk" data-d="${esc(d)}">${esc(name)}</a>`;
+const pp = (v) => (v == null ? '—' : fmt.n(v * 100, 1) + ' p.p.');
+function olSales(S) {
+  const nowG = median(col((x) => (x.nowcast_price != null && x.price ? x.nowcast_price / x.price - 1 : null)));
+  const intro = [];
+  if (S.nowcast_period && nowG != null) {
+    intro.push(`<b>Hoje (${qpt(S.nowcast_period)}):</b> no concelho típico, o preço estimado está ${fmt.spct(nowG)} acima do último valor publicado pelo INE (${qpt(S.origin)}) — estimativa feita com a avaliação bancária até ${esc(S.last_valuation)}.`);
+  }
+  if (S.median_growth_12m != null) {
+    intro.push(`<b>Próximos 12 meses (até ${qpt(S.target_period)}):</b> previsão central mediana de ${fmt.spct(S.median_growth_12m)}; metade dos concelhos entre ${fmt.spct(S.p25_growth_12m)} e ${fmt.spct(S.p75_growth_12m)}; ${Math.round(S.share_up * 100)}% com subida prevista.`);
+  }
+  const regions = (S.by_region || []).map((r) => `<tr><td>${esc(r.name)}</td><td>${r.n}</td><td>${fmt.spct(r.median)}</td><td>${fmt.spct(r.p25)} a ${fmt.spct(r.p75)}</td></tr>`).join('');
+  const ok = MUNIS.filter((m) => m.fc_growth_12m != null && !m.volatile);
+  const item = (m) => `<li><span>${lnk(m.dico, m.name)}</span><span class="v">${fmt.spct(m.fc_growth_12m)} <span class="muted">${m.fc_lo80 != null ? `(${fmt.eur(m.fc_lo80)}–${fmt.eur(m.fc_hi80)})` : ''}</span></span></li>`;
+  const top = ok.slice().sort((a, b) => b.fc_growth_12m - a.fc_growth_12m).slice(0, 8).map(item).join('');
+  const bottom = ok.slice().sort((a, b) => a.fc_growth_12m - b.fc_growth_12m).slice(0, 8).map(item).join('');
+  const bt = S.backtest || {};
+  const rows = (S.horizons || []).filter((h) => bt[String(h.h)]).map((h) => {
+    const m = bt[String(h.h)], nv = m.best_naive;
+    const tag = h.h === S.h_now ? ' · <b>hoje</b>' : String(h.period) === String(S.target_period) ? ' · <b>12 meses</b>' : '';
+    const cov = m.coverage80 == null ? '—' : fmt.pct(m.coverage80, 0);
+    return `<tr><td>${qpt(h.period)} (${h.h} trim.)${tag}</td><td><b>${pp(m.mae_model)}</b></td><td>${pp(m.mae_rw)}</td><td>${pp(m.mae_drift)}</td>` +
+      `<td>${pp(m.mdae_model)} / ${pp(m['mdae_' + nv])}</td><td>${m.skill == null ? '—' : fmt.spct(m.skill, 0)}</td><td>${cov}</td></tr>`;
+  }).join('');
+  const coefs = (S.coefficients || []).slice(0, 4).map((c) => `${esc(c.label)} (${c.coef_std >= 0 ? 'quanto maior, mais subida' : 'quanto maior, menos subida'})`);
+  return `<p class="verdict">${intro.join('<br>')}</p>
+    <h3>Preço de venda: estimativa para hoje e próximos 12 meses ${info('fc12')}</h3>
+    <div class="table-wrap"><table class="ol-table"><thead><tr><th>Região</th><th>Concelhos</th><th>Previsão mediana 12m</th><th>Metade dos concelhos entre</th></tr></thead><tbody>${regions}</tbody></table></div>
+    <div class="ol-cols">
+      <div><p class="muted"><b>Maior subida prevista</b> (intervalo de 80% em €/m²)</p><ul class="ol-list">${top}</ul></div>
+      <div><p class="muted"><b>Menor subida prevista</b> (intervalo de 80% em €/m²)</p><ul class="ol-list">${bottom}</ul></div>
+    </div>
+    <p class="muted">Excluídos das listas os concelhos com dados voláteis (⚠). Clica num concelho para ver o leque da previsão.${coefs.length ? ` O que mais pesa na previsão, mantendo o resto igual: ${coefs.join('; ')}.` : ''}</p>
+    <h3>Como se saiu no passado ${info('ol_backtest')}</h3>
+    <div class="table-wrap"><table class="ol-table"><thead><tr><th>Alvo</th><th>Erro médio: modelo</th><th>«Fica igual»</th><th>«Continua o ritmo»</th><th>Concelho típico: modelo / ingénua</th><th>Menos erro</th><th>Cobertura 80%</th></tr></thead><tbody>${rows}</tbody></table></div>
+    ${S.verdict_nowcast_pt ? `<p>${esc(S.verdict_nowcast_pt)}</p>` : ''}<p>${esc(S.verdict_pt)}</p>`;
+}
+function olRent(R) {
+  const m = R.backtest;
+  const ok = MUNIS.filter((x) => x.rent_fc_growth != null);
+  const first = Math.min(...MUNIS.map((x) => (x.series.rent.length ? Number(x.series.rent[0][0]) : Infinity)));
+  return `<h3>Rendas: próximo ano ${info('rent_fc')}</h3>
+    <p>Renda de novos contratos prevista para ${esc(R.target_year)}${R.target_in_progress ? ' (ano em curso)' : ''}, em ${ok.length} concelhos: variação mediana de <b>${fmt.spct(R.median_growth)}</b> face a ${esc(R.origin_year)}; metade dos concelhos entre ${fmt.spct(R.p25_growth)} e ${fmt.spct(R.p75_growth)}. Os valores e intervalos de cada concelho estão no detalhe e na comparação.</p>
+    ${m ? `<p>${esc(R.verdict_pt)}</p>` : ''}
+    <p class="muted">Confiança baixa: só há renda anual por concelho desde ${Number.isFinite(first) ? first : '—'} — o backtest tem ${m ? m.n_origins : 0} anos.</p>`;
+}
+function olTypologies(T) {
+  const split = qpt(T.split);
+  const cards = T.clusters.map((c) => `<div class="tcard"><b>${c.id}. ${esc(c.name)}</b>${c.n} concelhos · preço mediano ${fmt.eur(c.price_median)}/m² (${fmt.spct(c.level_vs_median, 0)} face à mediana)<br>
+    Subida anual: ${fmt.spct(c.growth_before)} até ${split} → ${fmt.spct(c.growth_after)} desde então.
+    ${c.valuation_2011_2013 != null ? `<br>Na crise (2011–2013), a avaliação bancária variou ${fmt.spct(c.valuation_2011_2013)} (${c.valuation_2011_2013_n} concelhos com dados).` : ''}
+    <br><span class="muted">Mais típicos: ${c.examples.map((e) => lnk(e.dico, e.name)).join(', ')}</span></div>`).join('');
+  const q = T.silhouette >= 0.5 ? 'clara' : T.silhouette >= 0.25 ? 'moderada' : 'fraca';
+  return `<h3>Tipologias de mercado ${info('typology')}</h3>
+    <p>${T.n} concelhos agrupados em ${T.k} tipos pelo nível do preço e pelo ritmo de subida antes e depois de ${split} (início da subida dos juros do BCE). Separação entre grupos ${q} (silhueta ${fmt.n(T.silhouette, 2)}; 0 = sem estrutura, 1 = grupos perfeitos).</p>
+    <div id="ol-typo" class="chart"></div><div class="cards">${cards}</div>`;
+}
+function olRipple(R) {
+  const bands = R.bands.filter((b) => b.growth_after != null);
+  const lagB = R.bands.filter((b) => b.best_lag_months != null);
+  let lagTxt = '';
+  if (lagB.length >= 2) {
+    const maxLag = Math.max(...lagB.map((b) => b.best_lag_months));
+    const corr = lagB.map((b) => `${esc(b.band)}: ${fmt.n(b.peak_corr, 2)}${b.n_lag < 10 ? ` (só ${b.n_lag} concelhos)` : ''}`).join('; ');
+    lagTxt = maxLag <= 2
+      ? `Sem atraso detetável: a variação anual da avaliação bancária de cada concelho acompanha a da metrópole mais próxima no mesmo mês (desfasamento ótimo de 0 a ${maxLag} meses em todas as faixas). O que muda com a distância é a força da ligação (correlação): ${corr}.`
+      : `Desfasamento que melhor liga cada faixa à metrópole mais próxima: ${lagB.map((b) => `${esc(b.band)}: ${b.best_lag_months} meses`).join('; ')}. Correlação: ${corr}.`;
+  }
+  const g = bands.length >= 2 ? `Subida anual mediana desde ${qpt(R.split)}, por distância a Lisboa/Porto: ${bands.map((b) =>
+    `${esc(b.band)} ${fmt.spct(b.growth_after)}${b.n_growth < 10 ? ` (só ${b.n_growth} concelhos)` : ''}`).join('; ')}.` : '';
+  return `<h3>Distância a Lisboa e Porto: há efeito de propagação? ${info('ripple')}</h3>
+    <p>${g} ${lagTxt}</p>${bands.length ? '<div id="ol-ripple" class="chart"></div>' : ''}<p class="muted">Ilhas excluídas. Cada concelho é comparado com a metrópole mais próxima (Lisboa ou Porto).</p>`;
+}
+function olFair(F) {
+  const eff = F.effects.map((e) => e.kind === 'elasticity'
+    ? `+10% de ${esc(e.label)} → ${fmt.spct(e.effect_10pct)} no preço`
+    : e.feature === 'coastal' ? `estar no litoral → ${fmt.spct(e.effect_unit, 0)} no preço` : `${esc(e.label)} → ${fmt.spct(e.effect_unit, 2)} no preço`);
+  const item = (x) => `<li><span>${lnk(x.dico, x.name)}${x.volatile ? ' ⚠' : ''}${x.coastal ? ' <span class="muted">(litoral)</span>' : ''}</span><span class="v">${fmt.spct(x.gap, 0)} <span class="muted">${fmt.eur(x.price)} vs ${fmt.eur(x.fv_price)}</span></span></li>`;
+  return `<h3>Valor justo: o que os fundamentos explicam ${info('fv')}</h3>
+    <p>Rendimento, densidade, envelhecimento, migração, litoral, distância a Lisboa/Porto e região explicam <b>${fmt.pct(F.r2_cv, 0)}</b> das diferenças de preço entre ${F.n} concelhos (validação cruzada: medido em concelhos que o modelo não viu). ${Math.round(F.share_within_20pct * 100)}% dos concelhos estão a menos de 20% do seu valor justo. Mantendo o resto igual: ${eff.join('; ')}.</p>
+    <div class="ol-cols">
+      <div><p class="muted"><b>Mais acima do valor justo</b> (preço vs valor justo, €/m²)</p><ul class="ol-list">${F.top_above.map(item).join('')}</ul></div>
+      <div><p class="muted"><b>Mais abaixo do valor justo</b></p><ul class="ol-list">${F.top_below.map(item).join('')}</ul></div>
+    </div>
+    <p class="muted">Um desvio grande não é prova de bolha: pode ser praia, turismo, universidade ou qualidade das casas, que o modelo não vê. A deteção do litoral a partir das fronteiras simplificadas falha alguns casos (ex.: a costa de Alcácer do Sal). O mapa tem este indicador ("Preço face ao valor justo").</p>`;
+}
+function olRates(R) {
+  const rows = R.shocks.map((s) => `<tr><td>Euribor ${s.shock > 0 ? '+' : '−'}${fmt.n(Math.abs(s.shock), 0)} p.p.</td><td>${fmt.spct(s.payment_change)}</td><td>${fmt.spct(s.capacity_change)}</td>` +
+    `<td>${s.price_effect_12m != null ? `${fmt.spct(s.price_effect_12m)} <span class="muted">(${fmt.spct(s.price_effect_12m_ci90[0])} a ${fmt.spct(s.price_effect_12m_ci90[1])})</span>` : '<span class="muted">não identificável</span>'}</td></tr>`).join('');
+  let hist = '';
+  if (R.beta != null) {
+    const e = Math.exp(R.beta) - 1, lo = Math.exp(R.beta_ci90[0]) - 1, hi = Math.exp(R.beta_ci90[1]) - 1;
+    hist = R.credible
+      ? `Historicamente (HPI ${qpt(R.hpi_start)}–${qpt(R.hpi_end)}), cada +1 p.p. da Euribor num ano associou-se a ${fmt.spct(e)} no preço nesse ano (intervalo de 90%: ${fmt.spct(lo)} a ${fmt.spct(hi)}).`
+      : `A relação histórica entre Euribor e preços (HPI ${qpt(R.hpi_start)}–${qpt(R.hpi_end)}) aponta para ${fmt.spct(e)} por cada +1 p.p., mas o intervalo de 90% (${fmt.spct(lo)} a ${fmt.spct(hi)}) inclui zero: em Portugal, a subida de 2022 coincidiu com inflação alta e procura externa forte, e os dados não isolam o efeito. Por isso não mostramos um efeito nos preços — só a aritmética, que é certa.`;
+  }
+  return `<h3>Juros: e se a Euribor mudar 1 p.p.? ${info('rates')}</h3>
+    <p>Hoje: Euribor 12M de ${fmt.n(R.euribor_now, 2)}% (${esc(R.euribor_month)}); taxa típica de ${fmt.n(R.rate_now, 2)}% (Euribor + ${fmt.n(R.spread, 1)} p.p.), crédito a ${R.years} anos.</p>
+    <div class="table-wrap"><table class="ol-table"><thead><tr><th>Cenário</th><th>Prestação (mesmo empréstimo)</th><th>Quanto se pode pedir (mesma prestação)</th><th>Efeito histórico no preço (12m)</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p>${hist}</p>`;
+}
+function renderOutlook() {
+  const body = $('#outlook-body');
+  if (!OL || !(OL.sales || OL.rent || OL.regimes)) {
+    body.innerHTML = '<p class="muted">Perspetivas ainda não geradas nesta build (corre <code>python -m imopt build</code>).</p>';
+    return;
+  }
+  $('#ol-generated').textContent = `Calculado ${OL.build_date || ''}${OL.demo ? ' · dados sintéticos de demonstração' : ''}`;
+  const parts = [];
+  const add = (name, fn) => { try { parts.push(fn()); } catch (e) { console.error(`Falha em perspetivas/${name}:`, e); } };
+  if (OL.sales) add('vendas', () => olSales(OL.sales));
+  if (OL.rent) add('rendas', () => olRent(OL.rent));
+  if (OL.regimes) add('regimes', () => `<h3>Regimes do mercado (HPI nacional) ${info('regimes')}</h3><div id="ol-regimes" class="chart tall"></div><ul class="read">${OL.regimes.segments.map((s, i) =>
+    `<li>${qpt(s.start)} a ${qpt(s.end)}: ${fmt.spct(s.growth_ann)}/ano${s.growth_ann_real != null ? ` (${fmt.spct(s.growth_ann_real)} descontada a inflação)` : ''}${i === OL.regimes.segments.length - 1 ? ' — <b>fase atual</b>' : ''}</li>`).join('')}</ul>`);
+  if (OL.typologies) add('tipologias', () => olTypologies(OL.typologies));
+  if (OL.ripple) add('propagação', () => olRipple(OL.ripple));
+  if (OL.fair_value) add('valor justo', () => olFair(OL.fair_value));
+  if (OL.rates) add('juros', () => olRates(OL.rates));
+  parts.push(`<h3>Limites</h3><ul class="read">${(OL.limits || []).map((l) => `<li>${esc(l)}</li>`).join('')}</ul>`);
+  body.innerHTML = parts.join('');
+  const chart = (name, fn) => { try { fn(); } catch (e) { console.error(`Falha no gráfico ${name}:`, e); } };
+  if ($('#ol-regimes')) chart('regimes', () => regimesChart('ol-regimes', OL.regimes));
+  if ($('#ol-typo')) chart('tipologias', () => {
+    const T = OL.typologies, sp = qpt(T.split);
+    barChart('ol-typo', T.clusters.map((c) => `Grupo ${c.id}`), [
+      { name: `Até ${sp}`, data: T.clusters.map((c) => c.growth_before), color: css('--s1') },
+      { name: `Desde ${sp}`, data: T.clusters.map((c) => c.growth_after), color: css('--s2') },
+    ], (v) => fmt.spct(v), Object.fromEntries(T.clusters.map((c) => [`Grupo ${c.id}`, `${c.id}. ${c.name}`])));
+  });
+  if ($('#ol-ripple')) chart('propagação', () => {
+    const R = OL.ripple, b = R.bands.filter((x) => x.growth_after != null), sp = qpt(R.split);
+    barChart('ol-ripple', b.map((x) => x.band), [
+      { name: `Até ${sp}`, data: b.map((x) => x.growth_before), color: css('--s1') },
+      { name: `Desde ${sp}`, data: b.map((x) => x.growth_after), color: css('--s2') },
+    ], (v) => fmt.spct(v));
+  });
+}
+
 // ---------- ranking
 const COL_HELP = { price: 'price', price_growth_1y: 'g1y', rent: 'rent', gross_yield: 'yield', price_to_income_months: 'p2i',
-  rent_to_income: 'r2i', migration_balance: 'migration', score_overall: 'score_overall', band: 'band' };
+  rent_to_income: 'r2i', migration_balance: 'migration', fc_growth_12m: 'fc12', score_overall: 'score_overall', band: 'band' };
 const COLS = [
   ['name', 'Concelho', (m) => esc(m.name) + (m.volatile ? ' <span title="Preços muito voláteis (poucas transações): score atenuado">⚠</span>' : '')], ['price', '€/m²', (m) => fmt.eur(m.price)],
   ['price_growth_1y', 'Var. 12m', (m) => fmt.pct(m.price_growth_1y)], ['rent', 'Renda €/m²', (m) => (m.rent == null ? '—' : fmt.eur2(m.rent))],
@@ -457,6 +744,7 @@ const COLS = [
   ['price_to_income_months', 'Preço/rend. (m)', (m) => fmt.n(m.price_to_income_months, 1)],
   ['rent_to_income', 'Renda/rend.', (m) => (m.rent_to_income == null ? '—' : fmt.pct(m.rent_to_income, 1))],
   ['migration_balance', 'Saldo migrat.', (m) => (m.migration_balance == null ? '—' : (m.migration_balance >= 0 ? '+' : '') + fmt.n(m.migration_balance, 0))],
+  ['fc_growth_12m', 'Prev. 12m', (m) => fmt.spct(m.fc_growth_12m)],
   ['score_overall', 'Score', (m) => fmt.n(m.score_overall)],
   ['band', 'Nível', (m) => pill(m.band)],
 ];
@@ -521,6 +809,7 @@ async function main() {
   }
   try { GEO = await j('data/concelhos.geojson'); } catch { GEO = null; }
   try { BT = await j('data/backtest.json'); } catch { BT = null; }
+  try { OL = await j('data/outlook.json'); } catch { OL = null; }
   MUNIS.forEach((m) => (BY[m.dico] = m));
   $('#stamp').textContent = `Atualizado ${META.built_at.slice(0, 10)} · último período de preços: ${META.latest_price_period} · ${META.n_municipalities} concelhos`;
   $('#demo-banner').hidden = !META.demo;
@@ -544,6 +833,11 @@ async function main() {
   safe('painel nacional', renderNational);
   safe('ranking', () => { renderTable(); renderRankingSummary(); });
   safe('backtest', renderBacktest);
+  safe('perspetivas', renderOutlook);
+  $('#outlook-body').addEventListener('click', (e) => {
+    const a = e.target.closest('a[data-d]');
+    if (a) { e.preventDefault(); select(a.dataset.d); }
+  });
   safe('navegação', initTopNav);
   const mapErr = safe('mapa', initMap);
   if (mapErr) {

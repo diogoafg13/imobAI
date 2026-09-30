@@ -11,7 +11,7 @@ import duckdb
 import pandas as pd
 import yaml
 
-from . import geo, ine, macro, scoring
+from . import geo, ine, macro, outlook, scoring
 
 log = logging.getLogger("imopt")
 ROOT = Path(__file__).resolve().parents[2]
@@ -177,10 +177,17 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
             "permits", "permits_growth",
             "completed", "completed_growth", "score_valuation", "score_supply", "score_overall", "band",
             "volatility", "volatile"]
+    # Perspetivas (previsões e padrões): só leitura, não mexe nos scores; falha de forma não-fatal.
+    try:
+        outlook_data, per = outlook.build(frames, macro_frames, feats, geojson, hpi, hpi_real, demo=demo)
+    except Exception as e:  # noqa: BLE001
+        log.warning("perspetivas falharam: %s", e)
+        outlook_data, per = {"demo": demo, "errors": {"build": str(e)[:200]}}, {}
     munis = []
     for r in feats.to_dict("records"):
         item = {"dico": r["dico"], "name": r["name"]}
         item.update({c: _clean(r.get(c)) for c in cols if c in r})
+        item.update(per.get(str(r["dico"]), {}))
         item["series"] = {"price": price_series.get(r["dico"], []), "rent": rent_series.get(r["dico"], [])}
         munis.append(item)
 
@@ -200,9 +207,11 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     geo.dump(munis, str(out_dir / "municipalities.json"))
     geo.dump(national, str(out_dir / "national.json"))
     geo.dump(meta, str(out_dir / "meta.json"))
+    geo.dump(outlook_data, str(out_dir / "outlook.json"))
     if geojson is not None:
         keep = {m["dico"]: {"name": m["name"], "band": m["band"], "score": m["score_overall"], "price": m["price"],
-                            "yield": m["gross_yield"], "g1y": m["price_growth_1y"]} for m in munis}
+                            "yield": m["gross_yield"], "g1y": m["price_growth_1y"], "fc": m.get("fc_growth_12m"),
+                            "fv": m.get("fv_gap")} for m in munis}
         geo.dump(geo.slim_geojson(geojson, keep), str(out_dir / "concelhos.geojson"))
     return meta
 
