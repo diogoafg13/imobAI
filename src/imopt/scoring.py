@@ -110,6 +110,10 @@ def municipal_features(sales: pd.DataFrame, rent: pd.DataFrame | None,
         for c in ("income", "income_year", "price_to_income_months"):
             s[c] = np.nan
 
+    # Esforço de arrendamento: fração do salário médio mensal necessária para 1 m² de renda
+    # (só calculável quando há renda E rendimento — o NaN propaga-se sozinho quando falta um dos dois).
+    s["rent_to_income"] = s["rent"] / s["income"]
+
     # Sub-score de valorização: crescimento recente + rendibilidade baixa.
     parts = [pct_rank(s["price_growth_1y"]), pct_rank(s["price_growth_3y"]), 100 - pct_rank(s["gross_yield"])]
     s["score_valuation"] = pd.concat(parts, axis=1).mean(axis=1, skipna=True)

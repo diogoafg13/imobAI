@@ -170,7 +170,7 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
 
     cols = ["price", "latest_key", "price_growth_1y", "price_growth_3y", "price_growth_5y", "rent",
             "rent_year", "rent_growth_1y", "gross_yield", "price_to_rent_years", "income", "income_year",
-            "price_to_income_months", "permits", "permits_growth",
+            "price_to_income_months", "rent_to_income", "permits", "permits_growth",
             "completed", "completed_growth", "score_valuation", "score_supply", "score_overall", "band",
             "volatility", "volatile"]
     munis = []

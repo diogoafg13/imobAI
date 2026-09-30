@@ -88,6 +88,21 @@ def test_municipal_features_income_ratio_and_graceful_absence():
     f2 = scoring.municipal_features(sales, None).set_index("dico")
     assert pd.isna(f2.loc["0001", "price_to_income_months"])
     assert pd.isna(f.loc["0001", "gross_yield"])
+    assert pd.isna(f.loc["0001", "rent_to_income"])  # sem renda, esforço de arrendamento não é calculável
+
+
+def test_rent_to_income_needs_both_rent_and_income():
+    qs = [202501, 202502, 202503, 202504, 202601]
+    sales = pd.concat([_muni("0001", "A", [1000] * 5, qs), _muni("0002", "B", [1000] * 5, qs)])
+    rent = pd.concat([_muni("0001", "A", [0.4, 5.0], [202500, 202600]),
+                      _muni("0002", "B", [0.6, 10.0], [202500, 202600])])
+    income = pd.concat([_muni("0001", "A", [1000.0], [202600]), _muni("0002", "B", [1000.0], [202600])])
+    f = scoring.municipal_features(sales, rent, income=income).set_index("dico")
+    assert f.loc["0001", "rent_to_income"] == pytest.approx(5.0 / 1000)
+    assert f.loc["0002", "rent_to_income"] == pytest.approx(10.0 / 1000)
+    # só renda, sem rendimento: continua a degradar sem crashar
+    f2 = scoring.municipal_features(sales, rent).set_index("dico")
+    assert pd.isna(f2.loc["0001", "rent_to_income"])
 
 
 def test_national_scores_direction():
