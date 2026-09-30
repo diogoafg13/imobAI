@@ -1,0 +1,61 @@
+name: build-and-deploy
+
+on:
+  schedule:
+    - cron: "17 6 * * 1"   # segundas, 06:17 UTC
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+
+permissions:
+  contents: write     # para guardar snapshots no branch `data`
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
+      - name: Construir dados (INE, BCE, Eurostat, BIS)
+        run: python -m imopt build
+      - name: Guardar snapshots no branch data
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          tmp=$(mktemp -d)
+          cp -r data "$tmp/data"
+          git fetch origin data || true
+          if git rev-parse --verify origin/data >/dev/null 2>&1; then
+            git checkout -B data origin/data
+          else
+            git checkout --orphan data && git rm -rf . >/dev/null
+          fi
+          rm -rf data && cp -r "$tmp/data" data
+          git add -f data
+          git commit -m "snapshot $(date -u +%F)" || echo "sem alterações"
+          git push origin data
+          git checkout -f "$GITHUB_SHA"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
