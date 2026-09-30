@@ -106,10 +106,13 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
   </section>
 
   <section id="compare" class="card" hidden>
-    <div class="row"><h2>Comparação (preço, base 100) <button type="button" class="info" data-k="compare" aria-label="Sobre a comparação">ⓘ</button></h2><button id="c-clear" class="btn">Limpar</button></div>
+    <div class="row"><h2>Comparação <button type="button" class="info" data-k="compare" aria-label="Sobre a comparação">ⓘ</button></h2><button id="c-clear" class="btn">Limpar</button></div>
     <div id="c-chips" class="chips"></div>
     <p id="c-hint" class="muted"></p>
+    <label class="muted">Série no gráfico: <select id="c-metric"><option value="price">Preço</option><option value="rent">Renda</option></select></label>
     <div id="chart-compare" class="chart tall"></div>
+    <h3>Indicadores atuais</h3>
+    <div class="table-wrap"><table id="c-table"></table></div>
   </section>
 
   <section id="ranking" class="card">

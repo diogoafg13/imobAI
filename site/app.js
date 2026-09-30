@@ -34,7 +34,7 @@ const GLOSS = {
   score_overall: ['Score global', 'Igual ao de valorização enquanto não houver dados de oferta (licenças, conclusões). Concelhos voláteis (⚠) são atenuados para o meio (50).'],
   band: ['Faixa de risco', 'Baixo: abaixo de 40 · Moderado: 40 a 69 · Elevado: 70 ou mais. Posição relativa entre concelhos, não uma previsão.'],
   volatile: ['Dados voláteis', 'Poucas transações: o preço salta de trimestre para trimestre, por isso o score foi atenuado para o meio (50).'],
-  compare: ['Comparação', 'Cada linha é o preço do concelho a dividir pelo preço no primeiro trimestre em que todos têm dados, ×100. 120 = +20% desde a base. Mostra ritmo relativo, não o nível de preços. Concelhos com séries curtas encurtam o período comparado.'],
+  compare: ['Comparação', 'Gráfico: cada linha é o preço (ou renda) do concelho a dividir pelo valor no primeiro período em que todos têm dados, ×100. 120 = +20% desde a base. Mostra ritmo relativo, não o nível. Concelhos com séries curtas encurtam o período comparado. Tabela abaixo: valores atuais de todos os indicadores, lado a lado, sem normalização.'],
   ranking: ['Ranking', 'Clica no cabeçalho para ordenar e num concelho para ver o detalhe. Score alto = mais esticado face aos outros concelhos, não previsão de queda.'],
   backtest_intro: ['Backtest do score nacional', 'Testa se o score nacional, calculado à data (sem ver dados futuros), teria sinalizado antes de quedas grandes do preço real da habitação — em vários países da UE, não só Portugal, que sozinho só tem um episódio de queda (2008–2013). Ver a lista de limites abaixo: a amostra é pequena e os episódios não são independentes (crise financeira global de 2008).'],
   backtest_chart: ['Score vs. HPI real', 'O score nacional (linha esquerda, 0–100) tal como teria sido calculado nesse trimestre, sem ver dados futuros, contra o índice de preços real do país (linha direita, 2015 = 100). A linha pontilhada nos 70 é o limiar de alerta usado no painel.'],
@@ -329,6 +329,19 @@ function select(dico, scroll = true) {
   $('#d-compare').textContent = compare.includes(dico) ? 'Remover da comparação' : 'Comparar';
   if (scroll) $('#detail').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
+const COMPARE_ROWS = [
+  ['price', 'Preço mediano', (m) => fmt.eur(m.price) + '/m²'],
+  ['g1y', 'Variação 12 meses', (m) => fmt.pct(m.price_growth_1y)],
+  ['g3y', 'Variação 3 anos', (m) => fmt.pct(m.price_growth_3y)],
+  ['rent', 'Renda (novos contratos)', (m) => (m.rent == null ? '—' : fmt.eur2(m.rent) + '/m²')],
+  ['yield', 'Rendibilidade bruta', (m) => fmt.pct(m.gross_yield, 2)],
+  ['p2r', 'Preço/renda (anos)', (m) => fmt.n(m.price_to_rent_years, 1)],
+  ['p2i', 'Preço/rendimento (meses)', (m) => fmt.n(m.price_to_income_months, 1)],
+  ['r2i', 'Renda/rendimento', (m) => (m.rent_to_income == null ? '—' : fmt.pct(m.rent_to_income, 1))],
+  ['migration', 'Saldo migratório', (m) => (m.migration_balance == null ? '—' : (m.migration_balance >= 0 ? '+' : '') + fmt.n(m.migration_balance, 0))],
+  ['score_overall', 'Score global', (m) => fmt.n(m.score_overall)],
+];
+let compareMetric = 'price';
 function renderCompare() {
   $('#compare').hidden = compare.length === 0;
   if (!compare.length) return;
@@ -336,17 +349,23 @@ function renderCompare() {
   $('#c-hint').textContent = compare.length < 2
     ? 'Escolhe outro concelho (no mapa ou no ranking) e clica em "Comparar" para o juntar. Máximo 4.'
     : compare.length >= 4 ? 'Máximo de 4 concelhos atingido. Clica num concelho acima para o remover.' : 'Podes juntar mais concelhos (máximo 4).';
-  const has = (d) => new Map(BY[d].series.price);
+  const label = compareMetric === 'rent' ? 'Renda' : 'Preço';
+  const has = (d) => new Map(BY[d].series[compareMetric]);
   const maps = compare.map((d) => [d, has(d)]);
-  const periods = [...new Set(compare.flatMap((d) => BY[d].series.price.map((p) => p[0])))].sort();
+  const periods = [...new Set(compare.flatMap((d) => BY[d].series[compareMetric].map((p) => p[0])))].sort();
   const base = periods.find((p) => maps.every(([, m]) => m.has(p)));   // 1.º período com dados em todos
   const series = maps.map(([d, m]) => ({
     name: BY[d].name,
     data: periods.filter((p) => base && p >= base).map((p) => [p, m.has(p) ? +((m.get(p) / m.get(base)) * 100).toFixed(2) : null]),
   }));
-  const fC = (v) => `${fmt.n(v, 0)} (${v >= 100 ? '+' : '−'}${fmt.n(Math.abs(v - 100), 1)}% desde a base)`;
-  lineChart('chart-compare', 'Preço', series.map((x) => ({ ...x, fmt: fC })), { names: [base ? `Preço, base 100 em ${base}` : 'Preço'], refs: [{ y: 100, label: 'base' }], notitle: true });
-  if (!base) $('#chart-compare').innerHTML = '<p class="muted">Estes concelhos não têm nenhum período de preços em comum.</p>';
+  $('#c-table').innerHTML = `<thead><tr><th style="text-align:left">Indicador</th>${compare.map((d) => `<th>${esc(BY[d].name)}</th>`).join('')}</tr></thead>` +
+    `<tbody>${COMPARE_ROWS.map(([k, rlabel, f]) => `<tr><td style="text-align:left">${rlabel} ${info(k)}</td>${compare.map((d) => `<td>${f(BY[d])}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  // Isolado do resto: uma falha no gráfico (ex. biblioteca de gráficos bloqueada) não deve esconder a tabela acima.
+  try {
+    const fC = (v) => `${fmt.n(v, 0)} (${v >= 100 ? '+' : '−'}${fmt.n(Math.abs(v - 100), 1)}% desde a base)`;
+    lineChart('chart-compare', label, series.map((x) => ({ ...x, fmt: fC })), { names: [base ? `${label}, base 100 em ${base}` : label], refs: [{ y: 100, label: 'base' }], notitle: true });
+    if (!base) $('#chart-compare').innerHTML = `<p class="muted">Estes concelhos não têm nenhum período de ${label.toLowerCase()} em comum.</p>`;
+  } catch (e) { console.error('Falha no gráfico de comparação:', e); }
 }
 function toggleCompare(d) {
   const i = compare.indexOf(d);
@@ -510,6 +529,7 @@ async function main() {
   $('#d-compare').addEventListener('click', () => selected && toggleCompare(selected));
   $('#c-clear').addEventListener('click', () => { compare.length = 0; renderCompare(); });
   $('#c-chips').addEventListener('click', (e) => { const c = e.target.closest('.chip'); if (c) toggleCompare(c.dataset.d); });
+  $('#c-metric').addEventListener('change', (e) => { compareMetric = e.target.value; renderCompare(); });
   // Cada parte é isolada: uma falha (por exemplo o mapa/WebGL no Safari) não impede as restantes.
   const safe = (name, fn) => { try { fn(); } catch (e) { console.error(`Falha em ${name}:`, e); return e; } };
   safe('painel nacional', renderNational);
