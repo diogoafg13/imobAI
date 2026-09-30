@@ -147,7 +147,14 @@ def apply_dim_filters(df: pd.DataFrame, filters: dict[str, str] | None, varcd: s
     dup = df.duplicated(["geocod", "period"], keep=False)
     if dup.any():
         dim_cols = [c for c in df.columns if re.fullmatch(r"dim_\d+", c)]
-        options = {c: sorted(df[c].dropna().astype(str).unique().tolist())[:8] for c in dim_cols}
+        options = {}
+        for c in dim_cols:
+            t = c + "_t"
+            if t in df.columns:
+                pairs = df[[c, t]].drop_duplicates().head(12)
+                options[c] = {str(a): str(b) for a, b in pairs.itertuples(index=False)}
+            else:
+                options[c] = sorted(df[c].dropna().astype(str).unique().tolist())[:12]
         raise AmbiguousDimensionError(
             f"{varcd}: {int(dup.sum())} linhas repetidas por (local, período). "
             f"Define 'dims' em config/sources.yml. Opções por dimensão: {options}"
@@ -182,3 +189,16 @@ def fetch_meta(varcd: str, lang: str = "PT") -> Any:
     r = requests.get(url, params={"varcd": varcd, "lang": lang}, timeout=60)
     r.raise_for_status()
     return r.json()
+
+
+def dim_labels(df: pd.DataFrame, filters: dict[str, str] | None) -> str:
+    """Descrição legível das dimensões escolhidas (código 'nome'), para o log/meta.json."""
+    out = []
+    for col, code in (filters or {}).items():
+        t = col + "_t"
+        lab = None
+        if t in df.columns:
+            m = df.loc[df[col].astype(str) == str(code), t].dropna()
+            lab = m.iloc[0] if len(m) else None
+        out.append(f"{col}={code}" + (f" '{lab}'" if lab else ""))
+    return ", ".join(out)

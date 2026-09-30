@@ -13,7 +13,9 @@ ine:
       varcd: "0012234"          # Valor mediano das vendas, últimos 12 meses (Metod. 2022), trimestral
       description: Preço mediano de venda (€/m²), 12 meses, trimestral
       level: municipality       # município (com detalhe até freguesia no INE)
-      dims: {}                  # ex.: {Dim2: "T"} para filtrar categorias
+      # dim_3 tem H1, H11, H12. ASSUNÇÃO (não verificada): H1 = total, H11/H12 = apartamento/moradia.
+      # Confirma o nome real em site/data/meta.json (sources.ine.sales_price_12m) após o build.
+      dims: {dim_3: "H1"}
       period_kind: quarter
     sales_price_annual:
       varcd: "0013042"          # Vendas de alojamentos familiares (€/m²), quartis, anual

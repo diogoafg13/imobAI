@@ -43,11 +43,13 @@ def ingest_ine(cfg: dict, data_dir: Path, today: str) -> tuple[dict[str, pd.Data
             if raw.empty:
                 raise ValueError("resposta vazia")
             _write_parquet(raw, data_dir / "raw" / "ine" / varcd / f"{today}.parquet")
-            df = ine.apply_dim_filters(raw, {k: v for k, v in (spec.get("dims") or {}).items()
-                                             if not k.startswith("api_")}, varcd)
+            filt = {k: v for k, v in (spec.get("dims") or {}).items() if not k.startswith("api_")}
+            df = ine.apply_dim_filters(raw, filt, varcd)
             _write_parquet(df, data_dir / "clean" / f"ine_{key}.parquet")
             frames[key] = df
-            status[key] = f"ok ({len(df)} linhas, {df['period'].max()})"
+            chosen = ine.dim_labels(raw, filt)
+            status[key] = f"ok ({len(df)} linhas, {df['period'].max()})" + (f" [{chosen}]" if chosen else "")
+            log.info("%s: %s", key, status[key])
         except Exception as e:  # noqa: BLE001
             status[key] = f"ERRO: {e}"
             log.warning("indicador %s (%s) falhou: %s", key, varcd, e)

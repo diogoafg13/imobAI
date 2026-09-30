@@ -97,3 +97,13 @@ def test_geo_attach_and_slim():
     assert unmatched == ["Desconhecido"]
     slim = geo.slim_geojson(out, {"1106": {"band": "red"}})
     assert len(slim["features"]) == 2 and slim["features"][0]["properties"]["band"] == "red"
+
+
+def test_ambiguity_error_lists_labels_and_dim_labels():
+    payload = [{"Dados": {"2024": [
+        {"geocod": "1701106", "valor": "1", "dim_3": "H1", "dim_3_t": "Total"},
+        {"geocod": "1701106", "valor": "2", "dim_3": "H11", "dim_3_t": "Apartamento"}]}}]
+    df = ine.parse_response(payload, "X")
+    with pytest.raises(ine.AmbiguousDimensionError, match="Apartamento"):
+        ine.apply_dim_filters(df, None, "X")
+    assert ine.dim_labels(df, {"dim_3": "H11"}) == "dim_3=H11 'Apartamento'"
