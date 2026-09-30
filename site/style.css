@@ -50,3 +50,6 @@ footer{padding-bottom:30px}
 details#howto summary{cursor:pointer}
 #detail{border-left:4px solid var(--none)}
 th .hint{cursor:help}
+.verdict{background:var(--bg);border-left:4px solid var(--accent);border-radius:8px;padding:10px 12px;margin:0 0 12px}
+#bt-table th,#bt-table td{text-align:right}
+#bt-table th:first-child,#bt-table td:first-child{text-align:left}

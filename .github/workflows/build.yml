@@ -3,7 +3,12 @@ name: build-and-deploy
 on:
   schedule:
     - cron: "17 6 * * 1"   # segundas, 06:17 UTC
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      backtest:
+        description: "Também correr o backtest multi-país (site/data/backtest.json)"
+        type: boolean
+        default: false
   push:
     branches: [main]
 
@@ -50,6 +55,12 @@ jobs:
         env:
           IMOPT_INE_MODE: auto   # o INE pode não aceitar ligações dos runners: usa data/clean
         run: python -m imopt build
+      - name: Backtest multi-país do score nacional (opcional, só quando pedido manualmente)
+        # Não corre nas execuções automáticas (agendada/push): ~40 pedidos extra a Eurostat/BIS
+        # tornariam o workflow semanal mais lento e frágil. Ver README, secção "Backtest".
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.backtest == 'true'
+        continue-on-error: true
+        run: python -m imopt backtest
       - name: Guardar snapshots no branch data
         run: |
           # Trabalha num worktree separado: não mexe no checkout do build (que tem data/ alterado).
