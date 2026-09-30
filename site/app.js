@@ -12,6 +12,48 @@ const fmt = {
 const BAND_LABEL = { green: 'Baixo', amber: 'Moderado', red: 'Elevado' };
 const pill = (band, txt) => `<span class="pill ${band || 'none'}">${esc(txt ?? BAND_LABEL[band] ?? 'n/d')}</span>`;
 
+// ---------- glossário (popover ⓘ)
+const GLOSS = {
+  nat_score: ['Score macro (0–100)', 'Resume 4 sinais nacionais, cada um comparado com a própria história. Mais alto = mais sinais típicos de sobreaquecimento. Não prevê quando, nem se, haverá correção.'],
+  hpi_yoy: ['Crescimento anual do HPI', 'Variação do Índice de Preços da Habitação face ao mesmo trimestre do ano anterior (nominal). A pontuação compara este ritmo com o histórico da série: quanto mais raro, mais alto o score.'],
+  hpi_trend_dev: ['Desvio face à tendência', 'Quantos desvios-padrão o índice está acima (+) ou abaixo (−) da sua tendência de longo prazo. Perto de 0 = em linha; 1,8 = bastante acima do que a tendência sugeria.'],
+  euribor_change_12m: ['Variação da Euribor 12M', 'Quanto a Euribor 12M subiu (+) ou desceu (−), em pontos percentuais, nos últimos 12 meses. Subidas encarecem o crédito indexado e tendem a arrefecer a procura.'],
+  credit_gap: ['Desvio crédito/PIB (BIS)', 'Crédito ao setor privado em % do PIB menos a sua tendência de longo prazo. Acima de +10 p.p. é alerta de crise bancária; muito negativo = desalavancagem (o crédito não está a alimentar os preços). O filtro de tendência exagera os valores negativos depois de longas desalavancagens.'],
+  hpi: ['HPI (2015 = 100)', 'Índice de preços da habitação, base 2015 = 100 (150 = 50% acima de 2015). Nominal: valores correntes. Real: descontado o IHPC (inflação), termina no último trimestre com IHPC publicado.'],
+  euribor: ['Euribor', 'Taxa interbancária do euro a 3, 6 ou 12 meses (BCE). Grande parte do crédito à habitação em Portugal é indexada a ela. Só a variação da 12M entra no score.'],
+  price: ['Preço mediano', 'Mediana dos preços de venda dos últimos 12 meses, em €/m² (INE): metade das vendas acima, metade abaixo. Abaixo de cada valor mostra-se a mediana dos concelhos.'],
+  g1y: ['Variação a 12 meses', 'Variação nominal do preço mediano face ao mesmo trimestre do ano anterior (não desconta a inflação).'],
+  g3y: ['Variação a 3 anos', 'Variação nominal do preço mediano face a 3 anos antes (não desconta a inflação).'],
+  rent: ['Renda de novos contratos', 'Mediana (2.º quartil) das rendas de contratos novos, em €/m² por mês (INE, anual). Contratos antigos costumam ter rendas mais baixas. Sem valor = INE não publica (poucos contratos).'],
+  yield: ['Rendibilidade bruta', 'Renda anual ÷ preço. É "bruta": sem IMI, condomínio, vazio ou obras. Mais baixa = preço mais alto face ao que o imóvel rende.'],
+  p2r: ['Preço/renda (anos)', 'Anos de renda bruta necessários para "pagar" o imóvel (preço ÷ renda anual). Regra de bolso: acima de ~20–25 anos é caro face às rendas.'],
+  score_valuation: ['Score de valorização', 'Percentil entre concelhos: mistura crescimento do preço a 12 meses e a 3 anos com rendibilidade baixa. 0 = menos esticado, 100 = mais. É relativo, não uma probabilidade de bolha.'],
+  score_overall: ['Score global', 'Igual ao de valorização enquanto não houver dados de oferta (licenças, conclusões). Concelhos voláteis (⚠) são atenuados para o meio (50).'],
+  band: ['Faixa de risco', 'Baixo: abaixo de 40 · Moderado: 40 a 69 · Elevado: 70 ou mais. Posição relativa entre concelhos, não uma previsão.'],
+  volatile: ['Dados voláteis', 'Poucas transações: o preço salta de trimestre para trimestre, por isso o score foi atenuado para o meio (50).'],
+  compare: ['Comparação', 'Cada linha é o preço do concelho a dividir pelo preço no primeiro trimestre em que todos têm dados, ×100. 120 = +20% desde a base. Mostra ritmo relativo, não o nível de preços. Concelhos com séries curtas encurtam o período comparado.'],
+  ranking: ['Ranking', 'Clica no cabeçalho para ordenar e num concelho para ver o detalhe. Score alto = mais esticado face aos outros concelhos, não previsão de queda.'],
+};
+const info = (k) => (GLOSS[k] ? `<button type="button" class="info" data-k="${k}" aria-label="O que é: ${esc(GLOSS[k][0])}">ⓘ</button>` : '');
+let tipBtn = null;
+function hideTip() { const t = document.getElementById('tip'); if (t) t.hidden = true; tipBtn = null; }
+function showTip(btn) {
+  const g = GLOSS[btn.dataset.k], t = document.getElementById('tip'); if (!g || !t) return;
+  t.innerHTML = `<b>${esc(g[0])}</b>${esc(g[1])}`;
+  t.hidden = false;
+  const r = btn.getBoundingClientRect(), w = Math.min(320, innerWidth - 24);
+  t.style.width = w + 'px';
+  t.style.left = Math.max(12, Math.min(r.left + r.width / 2 - w / 2, innerWidth - w - 12)) + scrollX + 'px';
+  t.style.top = r.bottom + 8 + scrollY + 'px';
+  tipBtn = btn;
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('.info');
+  if (b) { e.preventDefault(); tipBtn === b ? hideTip() : showTip(b); }
+  else if (!e.target.closest('#tip')) hideTip();
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTip(); });
+
 let MUNIS = [], BY = {}, NAT = null, META = null, GEO = null, MAP = null;
 let sortKey = 'score_overall', sortDir = -1, selected = null;
 const compare = [];
@@ -27,10 +69,14 @@ async function j(path) {
 const PAL = ['#2e9e6b', '#8bc16a', '#e0c34b', '#e08a3b', '#d1493f'];
 const SEQ = ['#d7ecf3', '#9fd0e0', '#5bb3d0', '#2b86a8', '#155a78'];
 const METRICS = {
-  score: { prop: 'score', pal: PAL, fixed: [0, 100], f: (v) => fmt.n(v), label: 'Score' },
-  price: { prop: 'price', pal: SEQ, f: fmt.eur, label: '€/m²' },
-  yield: { prop: 'yield', pal: SEQ, f: (v) => fmt.pct(v, 2), label: 'Rendibilidade bruta' },
-  g1y: { prop: 'g1y', pal: SEQ, f: (v) => fmt.pct(v), label: 'Var. 12m' },
+  score: { prop: 'score', pal: PAL, fixed: [0, 100], f: (v) => fmt.n(v), label: 'Score',
+    help: 'Quão "esticado" está cada concelho face aos outros: preço a subir depressa e rendibilidade baixa = mais vermelho. Verde < 40 (baixo), amarelo/laranja 40–69 (moderado), vermelho ≥ 70 (elevado). É relativo, não uma probabilidade de bolha. Cinzento = sem dados.' },
+  price: { prop: 'price', pal: SEQ, f: fmt.eur, label: '€/m²',
+    help: 'Preço mediano de venda (INE, últimos 12 meses). Mais escuro = mais caro. A escala vai do 5.º ao 95.º percentil para os extremos não achatarem o resto do mapa.' },
+  yield: { prop: 'yield', pal: SEQ, f: (v) => fmt.pct(v, 2), label: 'Rendibilidade bruta',
+    help: 'Renda anual ÷ preço, antes de custos. Mais escuro = a renda paga mais do preço; claro = preço alto face à renda. Cinzento = INE não publica renda para o concelho.' },
+  g1y: { prop: 'g1y', pal: SEQ, f: (v) => fmt.pct(v), label: 'Var. 12m',
+    help: 'Variação nominal do preço face ao mesmo trimestre do ano anterior (não desconta a inflação). Mais escuro = subiu mais.' },
 };
 function quantile(sorted, q) { const i = (sorted.length - 1) * q, lo = Math.floor(i), hi = Math.ceil(i); return sorted[lo] + (sorted[hi] - sorted[lo]) * (i - lo); }
 function domain(m) {
@@ -50,15 +96,21 @@ function renderNational() {
   const n = NAT, ov = n.overall;
   $('#nat-score').innerHTML = ov == null
     ? '<div class="muted">Sem dados macro suficientes</div>'
-    : `<div class="num">${Math.round(ov)}</div><div>${pill(n.band)}</div><div class="muted">score macro (0–100)</div>`;
-  const li = Object.values(n.components).map((c) => {
+    : `<div class="num">${Math.round(ov)}</div><div>${pill(n.band)}</div><div class="muted">score macro (0–100) ${info('nat_score')}</div>`;
+  const li = Object.entries(n.components).map(([key, c]) => {
     const isPct = /anual|Crescimento/.test(c.label);
     const val = c.value == null ? '—' : isPct ? fmt.pct(c.value) : fmt.n(c.value, 2);
     const band = c.score == null ? null : c.score < 40 ? 'green' : c.score < 70 ? 'amber' : 'red';
-    return `<li><span>${esc(c.label)}</span><span>${val} ${pill(band, c.score == null ? 'n/d' : Math.round(c.score))}</span></li>`;
+    return `<li><span>${esc(c.label)} ${info(key)}</span><span>${val} ${pill(band, c.score == null ? 'n/d' : Math.round(c.score))}</span></li>`;
   });
   $('#nat-components').innerHTML = li.join('') || '<li class="muted">Sem componentes disponíveis</li>';
-  lineChart('chart-hpi', 'Índice de preços da habitação', [{ name: 'HPI', data: n.series.hpi }]);
+  const fHpi = (v) => fmt.n(v, 1) + ' (2015 = 100)';
+  lineChart('chart-hpi', 'HPI', [
+    { name: 'Nominal', data: n.series.hpi, fmt: fHpi },
+    ...(n.series.hpi_real && n.series.hpi_real.length ? [{ name: 'Real (sem inflação)', data: n.series.hpi_real, fmt: fHpi, dashed: true }] : []),
+  ], { notitle: true, refs: [{ y: 100, label: '2015' }] });
+  lineChart('chart-credit', 'Crédito/PIB', [{ name: 'Desvio crédito/PIB', data: n.series.credit_gap || [], fmt: (v) => fmt.n(v, 1) + ' p.p.' }],
+    { notitle: true, refs: [{ y: 0, label: 'tendência' }, { y: 10, label: 'alerta (+10)' }] });
   renderEuribor();
 }
 
@@ -67,24 +119,50 @@ function renderEuribor() {
   const all = [['3M', S.euribor_3m], ['6M', S.euribor_6m], ['12M', S.euribor_12m]];
   const pick = sel === 'all' ? all : all.filter(([n]) => n.toLowerCase() === sel);
   const series = pick.map(([name, data]) => ({ name, data: data || [] })).filter((x) => x.data.length);
-  lineChart('chart-euribor', sel === 'all' ? 'Euribor (%)' : `Euribor ${sel.toUpperCase()} (%)`, series);
+  const fE = (v) => fmt.n(v, 2) + ' %';
+  lineChart('chart-euribor', 'Euribor', series.map((x) => ({ ...x, fmt: fE })), { notitle: true, refs: [{ y: 0, label: '0 %' }] });
 }
 
 function lineChart(id, title, series, opts = {}) {
   const el = document.getElementById(id);
-  if (charts[id]) { charts[id].dispose(); delete charts[id]; }
+  // Liberta SEMPRE a instância anterior (mesmo que já não esteja em `charts`): o ECharts prende-se ao
+  // elemento, e limpar o innerHTML sem dispose deixava o gráfico seguinte em branco.
+  const prev = echarts.getInstanceByDom(el);
+  if (prev) prev.dispose();
+  delete charts[id];
   el.innerHTML = '';
   if (!series.some((s) => s.data && s.data.length)) { el.innerHTML = `<p class="muted">${esc(title)}: sem dados</p>`; return; }
-  charts[id] ||= echarts.init(el);
+  charts[id] = echarts.init(el);
   const txt = css('--muted'), line = css('--line');
+  const crowded = !!opts.names || series.length > 1;
+  const refs = (opts.refs || []).map((r) => ({ yAxis: r.y, label: { show: true, formatter: r.label, color: txt, fontSize: 10, position: 'insideEndTop' } }));
+  const yAxis = [0, 1].slice(0, opts.dual ? 2 : 1).map((i) => ({
+    type: 'value', scale: true, name: opts.names && opts.names[i], nameTextStyle: { color: txt, fontSize: 11, align: i ? 'right' : 'left' },
+    axisLabel: { color: txt }, splitLine: { show: !i, lineStyle: { color: line } },
+  }));
   charts[id].setOption({
     animation: false, color: [css('--accent'), '#e08a3b', '#8bc16a', '#b07cc6'],
-    title: { text: title, textStyle: { fontSize: 12, color: txt, fontWeight: 500 } },
-    grid: { left: 46, right: opts.dual ? 46 : 12, top: 34, bottom: 24 },
-    tooltip: { trigger: 'axis' }, legend: series.length > 1 ? { top: 0, right: 0, textStyle: { color: txt } } : undefined,
+    title: opts.notitle ? undefined : { text: title, textStyle: { fontSize: 12, color: txt, fontWeight: 500 } },
+    grid: { left: 46, right: opts.dual ? 50 : 12, top: crowded ? (opts.notitle ? 34 : 50) : (opts.notitle ? 12 : 34), bottom: 24 },
+    tooltip: {
+      trigger: 'axis', confine: true,
+      formatter: (ps) => {
+        const a = (Array.isArray(ps) ? ps : [ps]).filter((p) => p.value && p.value[1] != null);
+        if (!a.length) return '';
+        return `<b>${esc(a[0].axisValueLabel || a[0].value[0])}</b><br>` + a.map((p) => {
+          const f = (series[p.seriesIndex] && series[p.seriesIndex].fmt) || ((v) => String(v));
+          return `${p.marker} ${esc(p.seriesName)}: <b>${esc(f(p.value[1]))}</b>`;
+        }).join('<br>');
+      },
+    },
+    legend: series.length > 1 ? { top: 0, right: 0, textStyle: { color: txt } } : undefined,
     xAxis: { type: 'category', data: [...new Set(series.flatMap((s) => s.data.map((d) => d[0])))].sort(), axisLabel: { color: txt }, axisLine: { lineStyle: { color: line } } },
-    yAxis: [{ type: 'value', scale: true, axisLabel: { color: txt }, splitLine: { lineStyle: { color: line } } }].concat(opts.dual ? [{ type: 'value', scale: true, axisLabel: { color: txt }, splitLine: { show: false } }] : []),
-    series: series.map((s, i) => ({ name: s.name, type: 'line', showSymbol: false, smooth: false, yAxisIndex: s.axis || 0, connectNulls: true, data: s.data })),
+    yAxis,
+    series: series.map((s, i) => ({
+      name: s.name, type: 'line', showSymbol: !!s.dots, symbolSize: 6, smooth: false, yAxisIndex: s.axis || 0, connectNulls: true, data: s.data,
+      lineStyle: s.dashed ? { type: 'dashed', width: 2 } : { width: 2 },
+      ...(i === 0 && refs.length ? { markLine: { silent: true, symbol: 'none', lineStyle: { type: 'dotted', color: txt, width: 1 }, data: refs } } : {}),
+    })),
   }, true);
 }
 
@@ -95,6 +173,18 @@ function metricExpr(m) {
 function renderLegend(m) {
   const [lo, hi] = domain(m);
   $('#legend').innerHTML = `<span>${m.f(lo)}</span><span class="bar" style="background:linear-gradient(90deg,${m.pal.join(',')})"></span><span>${m.f(hi)}</span><span>· ${esc(m.label)}</span>`;
+  $('#map-help').textContent = m.help || '';
+}
+const BOUNDS = { pt: [[-9.7, 36.85], [-6.1, 42.2]], az: [[-31.4, 36.8], [-24.9, 39.8]], ma: [[-17.4, 32.55], [-16.15, 33.15]] };
+function fitTo(k) {
+  if (!MAP) return;
+  if (k === 'pt' && META.demo) {
+    const b = new maplibregl.LngLatBounds();
+    const ext = (c) => (typeof c[0] === 'number' ? b.extend(c) : c.forEach(ext));
+    GEO.features.forEach((f) => ext(f.geometry.coordinates));
+    MAP.fitBounds(b, { padding: 12, animate: false }); return;
+  }
+  MAP.fitBounds(BOUNDS[k], { padding: 12, duration: k === 'pt' ? 0 : 500 });
 }
 function initMap() {
   if (!GEO) { $('#mapsec').insertAdjacentHTML('beforeend', '<p class="muted">Geometrias indisponíveis nesta build; veja o ranking abaixo.</p>'); $('#map').hidden = true; return; }
@@ -105,10 +195,16 @@ function initMap() {
     MAP.addSource('c', { type: 'geojson', data: GEO, promoteId: 'dico' });
     MAP.addLayer({ id: 'fill', type: 'fill', source: 'c', paint: { 'fill-color': metricExpr(m), 'fill-opacity': 0.9 } });
     MAP.addLayer({ id: 'line', type: 'line', source: 'c', paint: { 'line-color': css('--card'), 'line-width': ['case', ['boolean', ['feature-state', 'sel'], false], 2.5, 0.5] } });
-    const b = new maplibregl.LngLatBounds();
-    const ext = (c) => (typeof c[0] === 'number' ? b.extend(c) : c.forEach(ext));
-    GEO.features.forEach((f) => ext(f.geometry.coordinates));
-    MAP.fitBounds(b, { padding: 12, animate: false });
+    fitTo('pt');
+    const pop = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 8 });
+    const nz = (x) => (x == null || x === 'null' || x === '' ? null : Number(x));
+    MAP.on('mousemove', 'fill', (e) => {
+      const f = e.features[0]; if (!f) return;
+      const p = f.properties, k = $('#metric').value;
+      const val = { score: fmt.n(nz(p.score)), price: fmt.eur(nz(p.price)), yield: fmt.pct(nz(p.yield), 2), g1y: fmt.pct(nz(p.g1y)) }[k];
+      pop.setLngLat(e.lngLat).setHTML(`<b>${esc(p.name)}</b><br>${esc(METRICS[k].label)}: ${esc(val)}<br><span style="color:#555">clica para o detalhe</span>`).addTo(MAP);
+    });
+    MAP.on('mouseleave', 'fill', () => pop.remove());
     MAP.on('click', 'fill', (e) => e.features[0] && select(e.features[0].properties.dico));
     MAP.on('mouseenter', 'fill', () => (MAP.getCanvas().style.cursor = 'pointer'));
     MAP.on('mouseleave', 'fill', () => (MAP.getCanvas().style.cursor = ''));
@@ -122,6 +218,31 @@ function updateMetric() {
 }
 
 // ---------- detalhe / comparação
+// contexto: mediana e posição do concelho entre todos
+const col = (g) => MUNIS.map(g).filter((x) => x != null && !Number.isNaN(x));
+const median = (arr) => (arr.length ? quantile([...arr].sort((x, y) => x - y), 0.5) : null);
+const ctx = (g, v, f) => {
+  if (v == null) return '';
+  const all = col(g); if (all.length < 5) return '';
+  const above = Math.round((all.filter((x) => x < v).length / all.length) * 100);
+  return `<span class="ctx">mediana dos concelhos ${f(median(all))} · acima de ${above}%</span>`;
+};
+const rel = (x) => `${Math.round(Math.abs(x) * 100)}% ${x >= 0 ? 'acima' : 'abaixo'}`;
+function readList(m) {
+  const li = [];
+  const mp = median(col((x) => x.price));
+  if (m.price != null && mp) li.push(`Preço de ${fmt.eur(m.price)}/m²: ${m.price / mp >= 2 ? fmt.n(m.price / mp, 1) + '× a' : rel(m.price / mp - 1) + ' da'} mediana dos concelhos (${fmt.eur(mp)}).`);
+  const mg = median(col((x) => x.price_growth_1y));
+  if (m.price_growth_1y != null) li.push(`Subiu ${fmt.pct(m.price_growth_1y)} em 12 meses (mediana dos concelhos: ${fmt.pct(mg)}) e ${fmt.pct(m.price_growth_3y)} em 3 anos, sem descontar inflação.`);
+  const my = median(col((x) => x.gross_yield));
+  if (m.gross_yield != null && my != null) {
+    li.push(`Rendibilidade bruta de ${fmt.pct(m.gross_yield, 2)} (mediana ${fmt.pct(my, 2)}): ${m.gross_yield < my ? 'o preço está esticado face à renda, pois cada € investido rende menos do que no concelho típico' : 'a renda paga melhor o preço do que no concelho típico'}.`);
+  } else li.push('Sem renda publicada pelo INE para este concelho (poucos contratos): não há rendibilidade nem preço/renda, e o score assenta só no ritmo de subida dos preços.');
+  const sc = m.score_overall;
+  if (sc != null) li.push(`Score ${fmt.n(sc)}: ${sc >= 70 ? 'entre os concelhos mais "esticados"' : sc >= 40 ? 'a meio do pelotão de concelhos' : 'entre os concelhos menos "esticados"'}. É uma posição relativa, não uma previsão de queda.`);
+  if (m.volatile) li.push('⚠ Poucos negócios: o preço é muito volátil e o score foi atenuado. Lê estes números com cautela.');
+  return li.map((t) => `<li>${esc(t)}</li>`).join('');
+}
 function select(dico, scroll = true) {
   const m = BY[dico]; if (!m) return;
   if (MAP && MAP.getSource('c')) {
@@ -130,18 +251,24 @@ function select(dico, scroll = true) {
   }
   selected = dico;
   $('#detail').hidden = false;
-  $('#d-title').innerHTML = `${esc(m.name)} ${pill(m.band)}${m.volatile ? ' ' + pill(null, '⚠ dados voláteis') : ''}`;
-  const st = [
-    ['Preço mediano', fmt.eur(m.price) + '/m²'], ['Var. 12m', fmt.pct(m.price_growth_1y)], ['Var. 3 anos', fmt.pct(m.price_growth_3y)],
-    ['Renda (novos contratos)', m.rent == null ? '—' : fmt.eur2(m.rent) + '/m²'], ['Rendibilidade bruta', fmt.pct(m.gross_yield, 2)],
-    ['Preço/renda (anos)', fmt.n(m.price_to_rent_years, 1)], ['Score valorização', fmt.n(m.score_valuation)], ['Score global', fmt.n(m.score_overall)],
-  ];
-  $('#d-stats').innerHTML = st.map(([k, v]) => `<div class="stat"><span class="muted">${k}</span><b>${v}</b></div>`).join('');
-  const s = [{ name: 'Preço €/m²', data: m.series.price }];
+  $('#detail').style.borderLeftColor = `var(--${m.band || 'none'})`;
+  $('#d-title').innerHTML = `${esc(m.name)} ${pill(m.band)} ${info('band')}${m.volatile ? ' ' + pill(null, '⚠ dados voláteis') + ' ' + info('volatile') : ''}`;
+  const tile = (k, label, val, c = '') => `<div class="stat"><span class="muted">${label} ${info(k)}</span><b>${val}</b>${c}</div>`;
+  $('#d-stats').innerHTML = [
+    tile('price', 'Preço mediano', fmt.eur(m.price) + '/m²', ctx((x) => x.price, m.price, fmt.eur)),
+    tile('g1y', 'Var. 12m', fmt.pct(m.price_growth_1y), ctx((x) => x.price_growth_1y, m.price_growth_1y, (v) => fmt.pct(v))),
+    tile('g3y', 'Var. 3 anos', fmt.pct(m.price_growth_3y), ctx((x) => x.price_growth_3y, m.price_growth_3y, (v) => fmt.pct(v))),
+    tile('rent', 'Renda (novos contratos)', m.rent == null ? '—' : fmt.eur2(m.rent) + '/m²', ctx((x) => x.rent, m.rent, fmt.eur2)),
+    tile('yield', 'Rendibilidade bruta', fmt.pct(m.gross_yield, 2), ctx((x) => x.gross_yield, m.gross_yield, (v) => fmt.pct(v, 2))),
+    tile('p2r', 'Preço/renda (anos)', fmt.n(m.price_to_rent_years, 1), ctx((x) => x.price_to_rent_years, m.price_to_rent_years, (v) => fmt.n(v, 1))),
+    tile('score_valuation', 'Score valorização', fmt.n(m.score_valuation)),
+    tile('score_overall', 'Score global', fmt.n(m.score_overall)),
+  ].join('');
+  $('#d-read').innerHTML = readList(m);
+  const s = [{ name: 'Preço', data: m.series.price, fmt: (v) => fmt.eur(v) + '/m²' }];
   const q4 = (p) => (p.length === 4 ? p + 'Q4' : p);
-  if (m.series.rent.length) s.push({ name: 'Renda €/m²', data: m.series.rent.map(([p, v]) => [q4(p), v]), axis: 1 });
-  $('#chart-detail').innerHTML = ''; delete charts['chart-detail'];
-  lineChart('chart-detail', 'Evolução', s, { dual: s.length > 1 });
+  if (m.series.rent.length) s.push({ name: 'Renda', data: m.series.rent.map(([p, v]) => [q4(p), v]), axis: 1, dots: true, fmt: (v) => fmt.eur2(v) + '/m²/mês' });
+  lineChart('chart-detail', 'Evolução', s, { dual: s.length > 1, names: s.length > 1 ? ['Preço (€/m²)', 'Renda (€/m²/mês)'] : ['Preço (€/m²)'], notitle: true });
   $('#d-compare').textContent = compare.includes(dico) ? 'Remover da comparação' : 'Comparar';
   if (scroll) $('#detail').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
@@ -160,8 +287,8 @@ function renderCompare() {
     name: BY[d].name,
     data: periods.filter((p) => base && p >= base).map((p) => [p, m.has(p) ? +((m.get(p) / m.get(base)) * 100).toFixed(2) : null]),
   }));
-  $('#chart-compare').innerHTML = ''; delete charts['chart-compare'];
-  lineChart('chart-compare', base ? `Preço (base 100 em ${base})` : 'Preço', series);
+  const fC = (v) => `${fmt.n(v, 0)} (${v >= 100 ? '+' : '−'}${fmt.n(Math.abs(v - 100), 1)}% desde a base)`;
+  lineChart('chart-compare', 'Preço', series.map((x) => ({ ...x, fmt: fC })), { names: [base ? `Preço, base 100 em ${base}` : 'Preço'], refs: [{ y: 100, label: 'base' }], notitle: true });
   if (!base) $('#chart-compare').innerHTML = '<p class="muted">Estes concelhos não têm nenhum período de preços em comum.</p>';
 }
 function toggleCompare(d) {
@@ -173,6 +300,7 @@ function toggleCompare(d) {
 }
 
 // ---------- ranking
+const COL_HELP = { price: 'price', price_growth_1y: 'g1y', rent: 'rent', gross_yield: 'yield', score_overall: 'score_overall', band: 'band' };
 const COLS = [
   ['name', 'Concelho', (m) => esc(m.name) + (m.volatile ? ' <span title="Preços muito voláteis (poucas transações): score atenuado">⚠</span>' : '')], ['price', '€/m²', (m) => fmt.eur(m.price)],
   ['price_growth_1y', 'Var. 12m', (m) => fmt.pct(m.price_growth_1y)], ['rent', 'Renda €/m²', (m) => (m.rent == null ? '—' : fmt.eur2(m.rent))],
@@ -187,7 +315,7 @@ function renderTable() {
       if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1;
       return (typeof x === 'string' ? x.localeCompare(y, 'pt') : x - y) * sortDir;
     });
-  $('#table').innerHTML = `<thead><tr>${COLS.map(([k, l]) => `<th data-k="${k}">${l}${k === sortKey ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('')}</tr></thead>` +
+  $('#table').innerHTML = `<thead><tr>${COLS.map(([k, l]) => `<th data-k="${k}"${COL_HELP[k] ? ` title="${esc(GLOSS[COL_HELP[k]][1])}"` : ''}>${l}${k === sortKey ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('')}</tr></thead>` +
     `<tbody>${rows.map((m) => `<tr data-d="${esc(m.dico)}">${COLS.map(([, , f]) => `<td>${f(m)}</td>`).join('')}</tr>`).join('')}</tbody>`;
 }
 
@@ -204,9 +332,11 @@ async function main() {
   $('#demo-banner').hidden = !META.demo;
   $('#disclaimer').textContent = META.disclaimer;
   $('#metric').addEventListener('change', updateMetric);
+  document.querySelector('.mapnav').addEventListener('click', (e) => { const b = e.target.closest('[data-b]'); if (b) fitTo(b.dataset.b); });
   $('#euribor-sel').addEventListener('change', renderEuribor);
   $('#search').addEventListener('input', renderTable);
   $('#table').addEventListener('click', (e) => {
+    if (e.target.closest('.info')) return;
     const th = e.target.closest('th'), tr = e.target.closest('tbody tr');
     if (th) { const k = th.dataset.k; sortDir = k === sortKey ? -sortDir : (k === 'name' ? 1 : -1); sortKey = k; renderTable(); }
     else if (tr) select(tr.dataset.d);

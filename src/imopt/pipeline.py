@@ -123,6 +123,20 @@ def _clean(v: Any) -> Any:
     return round(v, 4) if isinstance(v, float) else v
 
 
+def real_index(nominal: pd.DataFrame | None, hicp: pd.DataFrame | None) -> pd.DataFrame | None:
+    """HPI real = HPI nominal / IHPC, recentrado para média de 2015 = 100 (ambos são base 2015)."""
+    if nominal is None or hicp is None or nominal.empty or hicp.empty:
+        return None
+    df = nominal[["period", "value"]].merge(hicp[["period", "value"]], on="period", suffixes=("", "_p"))
+    if df.empty:
+        return None
+    df["value"] = df["value"] / df["value_p"] * 100
+    ref = df[df["period"].str.startswith("2015")]["value"]
+    if len(ref) == 4:
+        df["value"] = df["value"] * 100 / ref.mean()
+    return df[["period", "value"]].sort_values("period").reset_index(drop=True)
+
+
 def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.DataFrame],
                   ine_status: dict, macro_status: dict, out_dir: Path,
                   geojson: dict | None, demo: bool = False, geo_unmatched: list[str] | None = None) -> dict:
@@ -143,8 +157,10 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
         h = h[h["level"].isin(["national", "nuts1"])].sort_values("sort_key")
         hpi = h[["period", "value"]].drop_duplicates("period") if not h.empty else None
     national = scoring.national_scores(hpi, macro_frames.get("euribor_12m"), macro_frames.get("bis_credit_gap"))
+    hpi_real = real_index(hpi, macro_frames.get("eurostat_hicp"))
     national["series"] = {
         "hpi": [[r.period, _clean(r.value)] for r in hpi.itertuples()] if hpi is not None else [],
+        "hpi_real": [[r.period, _clean(r.value)] for r in hpi_real.itertuples()] if hpi_real is not None else [],
         **{k: [[r.period, _clean(r.value)] for r in macro_frames[k].itertuples()] if k in macro_frames else []
            for k in ("euribor_3m", "euribor_6m", "euribor_12m")},
         "credit_gap": [[r.period, _clean(r.value)] for r in macro_frames["bis_credit_gap"].itertuples()]

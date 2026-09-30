@@ -190,3 +190,31 @@ def test_build_outputs_exports_all_euribor_series(tmp_path):
         assert len(nat["series"][k]) > 100, k
     # o score nacional continua a usar só a variação da 12M
     assert "euribor_change_12m" in nat["components"]
+
+
+def test_monthly_to_quarterly_only_complete_quarters():
+    from imopt import macro
+    df = pd.DataFrame({"period": ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05"],
+                       "value": [100.0, 101.0, 102.0, 110.0, 111.0]})
+    q = macro.monthly_to_quarterly(df)
+    assert list(q["period"]) == ["2024Q1"] and q["value"].iloc[0] == pytest.approx(101.0)
+
+
+def test_real_index_deflates_and_rebases_2015():
+    from imopt import pipeline
+    per = [f"{y}Q{q}" for y in (2015, 2016) for q in range(1, 5)]
+    nominal = pd.DataFrame({"period": per, "value": [100.0] * 4 + [110.0] * 4})
+    hicp = pd.DataFrame({"period": per, "value": [100.0] * 4 + [105.0] * 4})
+    real = pipeline.real_index(nominal, hicp).set_index("period")["value"]
+    assert real["2015Q3"] == pytest.approx(100.0)
+    assert real["2016Q1"] == pytest.approx(110 / 105 * 100)
+    assert pipeline.real_index(nominal, None) is None
+
+
+def test_build_outputs_exports_real_hpi(tmp_path):
+    import json
+    from imopt import demo, pipeline
+    frames, macro_frames = demo.demo_frames()
+    pipeline.build_outputs(frames, macro_frames, {}, {}, tmp_path, None, demo=True)
+    nat = json.loads((tmp_path / "national.json").read_text(encoding="utf-8"))
+    assert len(nat["series"]["hpi_real"]) > 50

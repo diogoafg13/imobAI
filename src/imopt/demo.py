@@ -56,6 +56,8 @@ def demo_frames(seed: int = 7):
         "euribor_3m": pd.DataFrame({"period": months, "value": np.clip(e - 0.35, -0.7, None)}),
         "euribor_6m": pd.DataFrame({"period": months, "value": np.clip(e - 0.15, -0.7, None)}),
         "euribor_12m": pd.DataFrame({"period": months, "value": e}),
+        "eurostat_hicp": pd.DataFrame({"period": [p.label for p in hq],
+                                       "value": [100 * 1.005 ** (i - 24) for i in range(len(hq))]}),
         "bis_credit_gap": pd.DataFrame({"period": [p.label for p in hq], "value": rng.normal(-5, 6, len(hq))}),
     }
     return frames, macro_frames

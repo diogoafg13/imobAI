@@ -1,4 +1,4 @@
-"""Séries macro: Euribor 12M (BCE), HPI (Eurostat), desvio crédito/PIB (BIS).
+"""Séries macro: Euribor 3/6/12M (BCE), HPI e IHPC (Eurostat), desvio crédito/PIB (BIS).
 
 Cada função devolve um DataFrame [period, value] ordenado, ou levanta erro; o
 pipeline decide se a falha é fatal (nunca é, para macro: degrada com aviso).
@@ -55,6 +55,20 @@ def fetch_eurostat_hpi(cfg: dict) -> pd.DataFrame:
     return parse_jsonstat_time_series(r.json())
 
 
+def monthly_to_quarterly(df: pd.DataFrame) -> pd.DataFrame:
+    """Série mensal ('2024-01') -> média trimestral ('2024Q1'), só trimestres completos (3 meses)."""
+    q = pd.PeriodIndex(df["period"], freq="M").asfreq("Q").astype(str)
+    g = df.assign(q=q).groupby("q")["value"].agg(["mean", "count"])
+    g = g[g["count"] == 3]
+    return pd.DataFrame({"period": g.index, "value": g["mean"].values}).reset_index(drop=True)
+
+
+def fetch_eurostat_hicp(cfg: dict) -> pd.DataFrame:
+    """IHPC de Portugal (2015=100), mensal no Eurostat, devolvido em médias trimestrais."""
+    r = _get(cfg["url"], cfg.get("params", {}))
+    return monthly_to_quarterly(parse_jsonstat_time_series(r.json()))
+
+
 def fetch_bis_credit_gap(cfg: dict) -> pd.DataFrame:
     r = _get(cfg["url"], cfg.get("params", {}))
     df = pd.read_csv(io.StringIO(r.text))
@@ -69,5 +83,6 @@ FETCHERS = {
     "euribor_6m": fetch_euribor,
     "euribor_12m": fetch_euribor,
     "eurostat_hpi": fetch_eurostat_hpi,
+    "eurostat_hicp": fetch_eurostat_hicp,
     "bis_credit_gap": fetch_bis_credit_gap,
 }
