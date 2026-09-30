@@ -1,4 +1,5 @@
 data/raw/
+data/clean/forecast_log.parquet
 __pycache__/
 *.pyc
 .venv/

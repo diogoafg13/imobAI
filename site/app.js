@@ -41,6 +41,7 @@ const GLOSS = {
   regimes: ['Regimes do mercado', 'O índice de preços nacional (HPI) dividido em fases com ritmo constante. Os pontos de quebra são escolhidos pelos dados (regressão por troços, critério BIC), não à mão.'],
   ripple: ['Distância a Lisboa e Porto', 'Testa se as subidas se propagam das metrópoles para fora: compara o ritmo de subida por distância e procura o desfasamento (em meses) que melhor liga cada concelho à metrópole mais próxima.'],
   rates: ['Cenários de juros', 'Prestação e capacidade de endividamento são aritmética pura (crédito a 30 anos, Euribor + 1 p.p.). O efeito nos preços só é mostrado se a relação histórica for estatisticamente clara.'],
+  tracking: ['Previsões anteriores vs realidade', 'Cada build guarda as previsões que publicou. Quando o INE publica o valor real de um trimestre (ou ano, nas rendas) previsto, o erro é medido aqui — com os dados tal como saíram, sem revisões nem o benefício da retrospetiva. É a avaliação mais honesta, mas precisa de tempo: a 12 meses, os primeiros resultados só aparecem um ano depois do arranque do arquivo.'],
   ol_backtest: ['Como se saiu no passado', 'Para cada trimestre desde 2021, o modelo foi treinado só com o que se sabia nessa data e previu os trimestres seguintes. Erro médio em pontos percentuais (p.p.) de variação do preço, comparado com «fica igual» e «continua o ritmo do último ano». Cobertura: % das vezes em que o valor real caiu dentro do intervalo de 80%.'],
   migration: ['Saldo migratório', 'Diferença entre quem chegou e quem saiu do concelho num ano (INE). Positivo = mais gente a chegar do que a sair. Só contexto demográfico — não entra em nenhum score.'],
   score_valuation: ['Score de valorização', 'Percentil entre concelhos: mistura crescimento do preço a 12 meses e a 3 anos com rendibilidade baixa. 0 = menos esticado, 100 = mais. É relativo, não uma probabilidade de bolha.'],
@@ -352,18 +353,26 @@ function fanChart(id, m) {
       itemStyle: { color: rgba(s1, op) }, areaStyle: { color: rgba(s1, op) }, silent: true },
   ];
   const nowIdx = f.kind.lastIndexOf('nowcast');
+  const past = (m.fc_past || []).filter((x) => hist.some((h) => h[0] === x.target));
+  const pastBy = Object.fromEntries(past.map((x) => [x.target, x]));
+  const s2 = css('--s2');
   charts[id] = echarts.init(el);
   charts[id].setOption({
     animation: false,
     grid: { left: 56, right: 16, top: 34, bottom: 24 },
     legend: { top: 0, right: 0, textStyle: { color: txt },
-      data: ['Publicado (INE)', 'Estimativa e previsão', ...(hasBand ? [{ name: '80%', icon: 'rect' }, { name: '50%', icon: 'rect' }] : [])] },
+      data: ['Publicado (INE)', 'Estimativa e previsão', ...(past.length ? ['Previsto antes'] : []),
+        ...(hasBand ? [{ name: '80%', icon: 'rect' }, { name: '50%', icon: 'rect' }] : [])] },
     tooltip: {
       trigger: 'axis', confine: true,
       formatter: (ps) => {
         const p = (Array.isArray(ps) ? ps : [ps])[0].axisValue;
         const hi = hist.find((h) => h[0] === p), i = f.periods.indexOf(p);
-        if (hi) return `<b>${esc(qpt(p))}</b><br>Publicado: <b>${fmt.eur(hi[1])}/m²</b>`;
+        const pb = pastBy[p];
+        if (hi) return `<b>${esc(qpt(p))}</b><br>Publicado: <b>${fmt.eur(hi[1])}/m²</b>` + (pb
+          ? `<br>Previsto a ${esc(pb.issued.split('-').reverse().join('/'))} (${pb.h} trim. antes): ${fmt.eur(pb.mid)}` +
+            (pb.lo80 != null ? `<br>80%: ${fmt.eur(pb.lo80)} – ${fmt.eur(pb.hi80)} · ${hi[1] >= pb.lo80 && hi[1] <= pb.hi80 ? 'acertou no intervalo' : 'fora do intervalo'}` : '')
+          : '');
         if (i < 0) return '';
         const kind = f.kind[i] === 'nowcast' ? 'Estimativa (ainda não publicado)' : 'Previsão';
         return `<b>${esc(qpt(p))}</b> · ${kind}<br>Central: <b>${fmt.eur(f.mid[i])}/m²</b>` +
@@ -375,6 +384,8 @@ function fanChart(id, m) {
     series: [
       ...(hasBand ? [...band(f.lo80, f.hi80, '80%', 0.12), ...band(f.lo50, f.hi50, '50%', 0.22)] : []),
       { name: 'Publicado (INE)', type: 'line', data: hist, symbol: 'none', lineStyle: { width: 2, color: s1 }, itemStyle: { color: s1 } },
+      ...(past.length ? [{ name: 'Previsto antes', type: 'scatter', data: past.map((x) => [x.target, x.mid]), symbolSize: 9,
+        itemStyle: { color: s2, borderColor: css('--card'), borderWidth: 2 } }] : []),
       { name: 'Estimativa e previsão', type: 'line', data: at(f.mid), symbol: 'circle', symbolSize: 8, showSymbol: true,
         lineStyle: { width: 2, type: 'dashed', color: s1 }, itemStyle: { color: s1 },
         markLine: nowIdx >= 0 ? { silent: true, symbol: 'none', lineStyle: { type: 'solid', color: txt, width: 1 },
@@ -633,6 +644,25 @@ function olSales(S) {
     <div class="table-wrap"><table class="ol-table"><thead><tr><th>Alvo</th><th>Erro médio: modelo</th><th>«Fica igual»</th><th>«Continua o ritmo»</th><th>Concelho típico: modelo / ingénua</th><th>Menos erro</th><th>Cobertura 80%</th></tr></thead><tbody>${rows}</tbody></table></div>
     ${S.verdict_nowcast_pt ? `<p>${esc(S.verdict_nowcast_pt)}</p>` : ''}<p>${esc(S.verdict_pt)}</p>`;
 }
+function olTracking(T) {
+  const d = (s) => (s ? s.split('-').reverse().join('/') : '—');
+  const head = `<h3>Previsões anteriores vs realidade ${info('tracking')}</h3>`;
+  if (!T.n_evaluated) {
+    const next = (T.next_targets || []).map(qpt).join(' e ');
+    return `${head}<p>Arquivo iniciado a ${d(T.first_issued)}: ${T.n_archived} previsões guardadas (${T.n_vintages} ${T.n_vintages === 1 ? 'conjunto' : 'conjuntos'} de dados), à espera dos valores reais.${next ? ` A primeira avaliação aparece quando o INE publicar ${next}.` : ''}</p>`;
+  }
+  const row = (label, m) => `<tr><td>${label}</td><td>${m.n_vintages}</td><td>${m.n}</td><td><b>${pp(m.mae_model)}</b></td><td>${pp(m.mae_naive)}</td>` +
+    `<td>${m.skill == null ? '—' : fmt.spct(m.skill, 0)}</td><td>${fmt.pct(m.coverage80, 0)}</td><td>${fmt.spct(m.bias)}</td></tr>`;
+  const rows = (T.sales || []).map((m) => row(`Venda, ${m.h} trim. à frente <span class="muted">(${m.targets.map(qpt).join(', ')})</span>`, m)).join('') +
+    (T.rent ? row(`Renda, 1 ano <span class="muted">(${T.rent.targets.join(', ')})</span>`, T.rent) : '');
+  const all = (T.sales || []);
+  const n = all.reduce((a, m) => a + m.n, 0);
+  const cov = n ? all.reduce((a, m) => a + m.coverage80 * m.n, 0) / n : null;
+  const small = all.reduce((a, m) => Math.max(a, m.n_vintages), 0) < 4;
+  return `${head}<p>${n} previsões de preço já confrontadas com o valor publicado pelo INE; o intervalo de 80% conteve o valor real em ${fmt.pct(cov, 0)} dos casos (o esperado é ~80%). ${T.n_pending} previsões ainda à espera de dados.${small ? ' <b>Amostra ainda pequena</b>: poucos conjuntos de dados, todos sob a mesma conjuntura nacional — não tire conclusões fortes.' : ''}</p>
+    <div class="table-wrap"><table class="ol-table"><thead><tr><th>Previsão</th><th>Conjuntos de dados</th><th>Casos</th><th>Erro médio: modelo</th><th>«Fica igual»</th><th>Menos erro</th><th>Cobertura 80%</th><th>Enviesamento</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="muted">Enviesamento positivo = previsões acima do valor real. No detalhe de cada concelho, o leque mostra as previsões passadas (pontos laranja) ao lado do valor publicado.</p>`;
+}
 function olRent(R) {
   const m = R.backtest;
   const ok = MUNIS.filter((x) => x.rent_fc_growth != null);
@@ -707,6 +737,7 @@ function renderOutlook() {
   const parts = [];
   const add = (name, fn) => { try { parts.push(fn()); } catch (e) { console.error(`Falha em perspetivas/${name}:`, e); } };
   if (OL.sales) add('vendas', () => olSales(OL.sales));
+  if (OL.tracking) add('arquivo', () => olTracking(OL.tracking));
   if (OL.rent) add('rendas', () => olRent(OL.rent));
   if (OL.regimes) add('regimes', () => `<h3>Regimes do mercado (HPI nacional) ${info('regimes')}</h3><div id="ol-regimes" class="chart tall"></div><ul class="read">${OL.regimes.segments.map((s, i) =>
     `<li>${qpt(s.start)} a ${qpt(s.end)}: ${fmt.spct(s.growth_ann)}/ano${s.growth_ann_real != null ? ` (${fmt.spct(s.growth_ann_real)} descontada a inflação)` : ''}${i === OL.regimes.segments.length - 1 ? ' — <b>fase atual</b>' : ''}</li>`).join('')}</ul>`);

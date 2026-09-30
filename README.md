@@ -192,6 +192,22 @@ Resultados com os dados em cache (vendas até 2026T1, avaliação bancária até
 
 Previsão mediana entre concelhos para os próximos 12 meses: +12% (metade entre +9% e +14%).
 
+### Arquivo de previsões e avaliação contra a realidade
+
+`imopt/tracking.py`. Cada build real (não o demo) guarda as previsões publicadas em
+`data/clean/forecast_log.parquet`: preço central, intervalos de 50%/80% e o último valor publicado
+na altura, por concelho e horizonte, mais a renda prevista. Só uma vez por conjunto de dados novo
+(último trimestre de vendas + último mês de avaliação bancária): builds semanais sem dados novos
+não criam duplicados. O ficheiro vive no branch `data` (o workflow repõe-no sempre a partir de lá,
+e está no `.gitignore` para não ir parar a `main` por um build local).
+
+Quando o INE publica um trimestre (ou ano de rendas) que tinha sido previsto, o build mede o erro,
+se o valor caiu nos intervalos e o erro de «fica igual», por horizonte. Aparece em "Perspetivas" →
+"Previsões anteriores vs realidade" e, por concelho, como pontos no leque da previsão. Ao contrário
+do backtest, usa os dados tal como saíram — é a avaliação mais honesta, mas demora: o primeiro
+trimestre avaliável é 2026T2 (quando o INE o publicar) e a 12 meses só há resultados um ano depois
+do arranque. Com poucos conjuntos de dados, o site avisa que a amostra é pequena.
+
 ### Rendas a 1 ano
 
 Mesma abordagem, anual: inércia da renda, variação do preço de venda, rendibilidade face à mediana,

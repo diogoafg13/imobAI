@@ -51,6 +51,17 @@ jobs:
           else
             echo "fallback: sem branch data, a usar data/clean de main (se existir)"
           fi
+      - name: Restaurar arquivo de previsões (branch data)
+        # O arquivo só cresce no branch `data`. O passo anterior pode escolher o data/clean de main
+        # (se for mais recente) e perder o histórico: por isso é sempre reposto a partir do branch data.
+        run: |
+          if git cat-file -e origin/data:data/clean/forecast_log.parquet 2>/dev/null; then
+            mkdir -p data/clean
+            git show origin/data:data/clean/forecast_log.parquet > data/clean/forecast_log.parquet
+            echo "forecast_log.parquet restaurado do branch data"
+          else
+            echo "ainda sem arquivo de previsões (é criado neste build)"
+          fi
       - name: Construir dados (INE, BCE, Eurostat, BIS)
         env:
           IMOPT_INE_MODE: auto   # o INE pode não aceitar ligações dos runners: usa data/clean

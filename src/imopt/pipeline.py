@@ -11,7 +11,7 @@ import duckdb
 import pandas as pd
 import yaml
 
-from . import geo, ine, macro, outlook, scoring
+from . import geo, ine, macro, outlook, scoring, tracking
 
 log = logging.getLogger("imopt")
 ROOT = Path(__file__).resolve().parents[2]
@@ -139,7 +139,8 @@ def real_index(nominal: pd.DataFrame | None, hicp: pd.DataFrame | None) -> pd.Da
 
 def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.DataFrame],
                   ine_status: dict, macro_status: dict, out_dir: Path,
-                  geojson: dict | None, demo: bool = False, geo_unmatched: list[str] | None = None) -> dict:
+                  geojson: dict | None, demo: bool = False, geo_unmatched: list[str] | None = None,
+                  forecast_log: Path | None = None) -> dict:
     sales = municipal(frames.get("sales_price_12m"))
     if sales is None or sales.empty:
         raise RuntimeError("sem dados de preços por concelho: nada para calcular")
@@ -183,6 +184,18 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     except Exception as e:  # noqa: BLE001
         log.warning("perspetivas falharam: %s", e)
         outlook_data, per = {"demo": demo, "errors": {"build": str(e)[:200]}}, {}
+    # Arquivo de previsões (só em builds reais): guarda as deste build e avalia as antigas contra o publicado.
+    if forecast_log is not None:
+        try:
+            archive = tracking.record(tracking.load(forecast_log), outlook_data, per, feats)
+            tracking.save(archive, forecast_log)
+            outlook_data["tracking"], past = tracking.evaluate(archive, sales, rent)
+            for d, v in past.items():
+                per.setdefault(d, {}).update(v)
+            outlook_data, per = outlook.sanitize(outlook_data), outlook.sanitize(per)
+        except Exception as e:  # noqa: BLE001
+            log.warning("arquivo de previsões falhou: %s", e)
+            outlook_data.setdefault("errors", {})["tracking"] = str(e)[:200]
     munis = []
     for r in feats.to_dict("records"):
         item = {"dico": r["dico"], "name": r["name"]}
@@ -249,4 +262,5 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
             else:
                 log.warning("geometrias indisponíveis: %s", e)
                 ine_status["geo"] = f"ERRO: {e}"
-    return build_outputs(frames, macro_frames, ine_status, macro_status, out_dir, geojson, geo_unmatched=unmatched)
+    return build_outputs(frames, macro_frames, ine_status, macro_status, out_dir, geojson, geo_unmatched=unmatched,
+                         forecast_log=data_dir / "clean" / "forecast_log.parquet")
