@@ -31,11 +31,16 @@ jobs:
       - run: pytest -q
       - name: Restaurar último snapshot (fallback se o INE falhar)
         run: |
-          git fetch origin data || true
-          if git rev-parse --verify origin/data >/dev/null 2>&1; then
-            git archive origin/data data | tar -x || true
+          # data/clean pode já vir versionado no main; senão vai buscar o branch data.
+          if [ ! -d data/clean ]; then
+            git fetch origin data || true
+            if git rev-parse --verify origin/data >/dev/null 2>&1; then
+              git archive origin/data data | tar -x || true
+            fi
           fi
       - name: Construir dados (INE, BCE, Eurostat, BIS)
+        env:
+          IMOPT_INE_MODE: auto   # o INE pode não aceitar ligações dos runners: usa data/clean
         run: python -m imopt build
       - name: Guardar snapshots no branch data
         run: |

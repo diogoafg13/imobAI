@@ -126,3 +126,27 @@ def test_ingest_falls_back_to_cached_snapshot(tmp_path, monkeypatch):
     (clean / "ine_sales_price_12m.parquet").unlink()
     with pytest.raises(RuntimeError):
         pipeline.ingest_ine(cfg, tmp_path, "20260930")
+
+
+def test_ine_auto_mode_stops_after_first_failure(tmp_path, monkeypatch):
+    from imopt import pipeline
+    clean = tmp_path / "clean"
+    clean.mkdir()
+    for k in ("a", "b"):
+        pd.DataFrame({"dico": ["1"], "value": [1.0]}).to_parquet(clean / f"ine_{k}.parquet")
+    cfg = {"ine": {"base_url": "http://x", "indicators": {
+        "a": {"varcd": "1", "optional": True}, "b": {"varcd": "2", "optional": True}}}}
+    calls = []
+
+    def boom(*args, **kw):
+        calls.append(kw)
+        raise RuntimeError("connect timeout")
+    monkeypatch.setattr(pipeline.ine, "fetch", boom)
+    monkeypatch.setenv("IMOPT_INE_MODE", "auto")
+    frames, status = pipeline.ingest_ine(cfg, tmp_path, "d")
+    assert len(calls) == 1 and calls[0]["retries"] == 1      # só tenta uma vez, rápido
+    assert status["a"].startswith("CACHE") and status["b"].startswith("CACHE")
+    calls.clear()
+    monkeypatch.setenv("IMOPT_INE_MODE", "cache")
+    pipeline.ingest_ine(cfg, tmp_path, "d")
+    assert calls == []                                        # nunca toca na rede

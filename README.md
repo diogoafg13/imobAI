@@ -41,6 +41,18 @@ python -m imopt build                 # dados reais
 
 **Primeira execução:** vê o log e o `meta.json` publicado; se algum indicador vier com `ERRO`, ajusta `config/sources.yml`.
 
+## Se o INE não responde ao GitHub (timeouts de ligação)
+
+O INE pode não aceitar ligações dos runners do GitHub. O workflow corre com `IMOPT_INE_MODE=auto`: tenta o INE uma vez e, se falhar, usa `data/clean` (marcado como `CACHE` no `meta.json`). Para alimentar essa cache, corre o build **no teu computador** (IP normal) e faz commit dos dados limpos:
+
+```bash
+python -m imopt build
+git add data/clean && git commit -m "Atualiza dados INE" && git push
+```
+
+Modos: `IMOPT_INE_MODE=live` (defeito, 5 tentativas), `auto` (1 tentativa, depois cache), `cache` (nunca usa a rede).
+Alternativa: um runner self-hosted (por exemplo no Raspberry Pi) executa o mesmo workflow a partir de um IP residencial.
+
 ## Dados e IA
 
 - `data/raw/` snapshots imutáveis com data; `data/clean/` tabelas limpas em Parquet.

@@ -32,13 +32,25 @@ def ingest_ine(cfg: dict, data_dir: Path, today: str) -> tuple[dict[str, pd.Data
     frames: dict[str, pd.DataFrame] = {}
     status: dict[str, str] = {}
     base, lang = cfg["ine"]["base_url"], cfg["ine"].get("lang", "PT")
+    # IMOPT_INE_MODE: live (defeito: 5 tentativas), auto (1 tentativa rápida; se o INE não
+    # responder, usa data/clean e não insiste nos restantes), cache (nunca usa a rede).
+    mode = os.environ.get("IMOPT_INE_MODE", "live").lower()
+    ine_down = mode == "cache"
     for key, spec in cfg["ine"]["indicators"].items():
         varcd = spec.get("varcd")
         if not varcd:
             status[key] = "sem código (config)"
             continue
         try:
-            payload = ine.fetch(base, varcd, lang, spec.get("dims"))
+            if ine_down:
+                raise ConnectionError("INE não contactado (modo cache ou já indisponível nesta execução)")
+            fetch_kw = {"retries": 1, "timeout": (10, 180)} if mode == "auto" else {}
+            try:
+                payload = ine.fetch(base, varcd, lang, spec.get("dims"), **fetch_kw)
+            except RuntimeError:
+                if mode == "auto":
+                    ine_down = True
+                raise
             raw = ine.parse_response(payload, varcd)
             if raw.empty:
                 raise ValueError("resposta vazia")
