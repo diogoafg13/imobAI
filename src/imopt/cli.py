@@ -7,7 +7,7 @@ import logging
 import sys
 from pathlib import Path
 
-from . import demo, ine, pipeline
+from . import backtest, demo, geo, ine, pipeline
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -19,6 +19,11 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument("--out", default=None)
     i = sub.add_parser("inspect", help="mostra dimensões e primeiras linhas de um indicador INE")
     i.add_argument("varcd")
+    t = sub.add_parser("backtest", help="backtest multi-país do score nacional (ver README)")
+    t.add_argument("--countries", default=None, help="códigos ISO2 separados por vírgula (default: todos)")
+    t.add_argument("--out", default=None, help="default: site/data/backtest.json")
+    t.add_argument("--demo", action="store_true", help="dados sintéticos (offline)")
+    t.add_argument("--min-history", type=int, default=backtest.DEFAULT_MIN_HISTORY)
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 
@@ -30,6 +35,16 @@ def main(argv: list[str] | None = None) -> int:
         for c in dims:
             print(c, sorted(df[c].dropna().astype(str).unique())[:15])
         print(df.head(10).to_string())
+        return 0
+
+    if args.cmd == "backtest":
+        codes = [c.strip() for c in args.countries.split(",")] if args.countries else None
+        out = Path(args.out) if args.out else pipeline.ROOT / "site" / "data" / "backtest.json"
+        results = backtest.run(countries=codes, demo=args.demo, min_history=args.min_history)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        geo.dump(results, str(out))
+        print(json.dumps({"generated_at": results["generated_at"], "demo": results["demo"],
+                          "countries": len(results["countries"])}, ensure_ascii=False))
         return 0
 
     out = Path(args.out) if args.out else pipeline.ROOT / "site" / "data"

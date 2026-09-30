@@ -5,8 +5,12 @@ Convenção: scores em 0-100, onde MAIS ALTO = mais esticado/arriscado.
 IMPORTANTE (honestidade metodológica):
 - Os scores municipais são RELATIVOS (percentis entre concelhos no último período).
   Dizem "este concelho está mais esticado do que os outros", não "vai corrigir".
+  Não foram validados por backtest.
 - O score nacional compara com a própria história (z-scores) e é o único com leitura
-  temporal. Nenhum dos dois foi validado por backtest: ver docs/methodology.md.
+  temporal. Tem agora um backtest multi-país (ver imopt/backtest.py e a secção
+  "Backtest" no site e no README) — os resultados e limites estão lá, não aqui:
+  esta função continua a ser a mesma usada em produção e no backtest, sem alterações
+  de pesos ou lógica.
 """
 from __future__ import annotations
 

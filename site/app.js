@@ -14,7 +14,7 @@ const pill = (band, txt) => `<span class="pill ${band || 'none'}">${esc(txt ?? B
 
 // ---------- glossário (popover ⓘ)
 const GLOSS = {
-  nat_score: ['Score macro (0–100)', 'Resume 4 sinais nacionais, cada um comparado com a própria história. Mais alto = mais sinais típicos de sobreaquecimento. Não prevê quando, nem se, haverá correção.'],
+  nat_score: ['Score macro (0–100)', 'Resume 4 sinais nacionais, cada um comparado com a própria história. Mais alto = mais sinais típicos de sobreaquecimento. Não prevê quando, nem se, haverá correção. Ver a secção "Backtest" mais abaixo para saber como este score se saiu no passado, em vários países.'],
   hpi_yoy: ['Crescimento anual do HPI', 'Variação do Índice de Preços da Habitação face ao mesmo trimestre do ano anterior (nominal). A pontuação compara este ritmo com o histórico da série: quanto mais raro, mais alto o score.'],
   hpi_trend_dev: ['Desvio face à tendência', 'Quantos desvios-padrão o índice está acima (+) ou abaixo (−) da sua tendência de longo prazo. Perto de 0 = em linha; 1,8 = bastante acima do que a tendência sugeria.'],
   euribor_change_12m: ['Variação da Euribor 12M', 'Quanto a Euribor 12M subiu (+) ou desceu (−), em pontos percentuais, nos últimos 12 meses. Subidas encarecem o crédito indexado e tendem a arrefecer a procura.'],
@@ -33,6 +33,9 @@ const GLOSS = {
   volatile: ['Dados voláteis', 'Poucas transações: o preço salta de trimestre para trimestre, por isso o score foi atenuado para o meio (50).'],
   compare: ['Comparação', 'Cada linha é o preço do concelho a dividir pelo preço no primeiro trimestre em que todos têm dados, ×100. 120 = +20% desde a base. Mostra ritmo relativo, não o nível de preços. Concelhos com séries curtas encurtam o período comparado.'],
   ranking: ['Ranking', 'Clica no cabeçalho para ordenar e num concelho para ver o detalhe. Score alto = mais esticado face aos outros concelhos, não previsão de queda.'],
+  backtest_intro: ['Backtest do score nacional', 'Testa se o score nacional, calculado à data (sem ver dados futuros), teria sinalizado antes de quedas grandes do preço real da habitação — em vários países da UE, não só Portugal, que sozinho só tem um episódio de queda (2008–2013). Ver a lista de limites abaixo: a amostra é pequena e os episódios não são independentes (crise financeira global de 2008).'],
+  backtest_chart: ['Score vs. HPI real', 'O score nacional (linha esquerda, 0–100) tal como teria sido calculado nesse trimestre, sem ver dados futuros, contra o índice de preços real do país (linha direita, 2015 = 100). A linha pontilhada nos 70 é o limiar de alerta usado no painel.'],
+  backtest_metrics: ['Métricas do backtest', 'Spearman: correlação entre o score e a variação real do preço nos trimestres seguintes (negativa = score alto antecipa queda, o que é desejável). AUC: capacidade de distinguir trimestres que antecedem uma queda real ≥10% nos 3 anos seguintes — 1 é perfeito, 0,5 é aleatório, 0 é sempre errado na direção oposta. Acerto/Falso alarme: com o limiar do painel (normalmente 70), por trimestre avaliado, comparado com duas regras simples (só o crescimento do HPI; só o desvio crédito/PIB).'],
 };
 const info = (k) => (GLOSS[k] ? `<button type="button" class="info" data-k="${k}" aria-label="O que é: ${esc(GLOSS[k][0])}">ⓘ</button>` : '');
 let tipBtn = null;
@@ -54,7 +57,7 @@ document.addEventListener('click', (e) => {
 });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTip(); });
 
-let MUNIS = [], BY = {}, NAT = null, META = null, GEO = null, MAP = null;
+let MUNIS = [], BY = {}, NAT = null, META = null, GEO = null, MAP = null, BT = null;
 let sortKey = 'score_overall', sortDir = -1, selected = null;
 const compare = [];
 const charts = {};
@@ -299,6 +302,78 @@ function toggleCompare(d) {
   if (compare.length) $('#compare').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
+// ---------- backtest
+const BT_MODELS = [
+  ['score', 'Score nacional (painel)'], ['baseline_hpi_yoy', 'Só crescimento do HPI'], ['baseline_credit_gap', 'Só desvio crédito/PIB'],
+];
+function renderBacktest() {
+  const body = $('#backtest-body');
+  if (!BT) {
+    body.innerHTML = '<p class="muted">Backtest ainda não gerado nesta build. Corre <code>python -m imopt backtest</code> (ver README).</p>';
+    return;
+  }
+  $('#bt-generated').textContent = 'Gerado ' + BT.generated_at.slice(0, 10) + (BT.demo ? ' · dados sintéticos de demonstração' : '');
+  const countryOpts = BT.countries.map((c) => `<option value="${esc(c.code)}">${esc(c.name)}${c.group === 'control' ? ' (controlo)' : ''}</option>`).join('');
+  body.innerHTML = `
+    <p id="bt-verdict" class="verdict"></p>
+    <div class="row">
+      <label>País <select id="bt-country" aria-label="País do backtest">${countryOpts}</select></label>
+    </div>
+    <div class="chart-cap"><span>Score vs. HPI real ${info('backtest_chart')}</span></div>
+    <div id="chart-backtest" class="chart tall"></div>
+    <div class="table-wrap"><table id="bt-table"></table></div>
+    <p id="bt-robust" class="muted"></p>
+    <p class="muted"><b>Limites deste backtest</b> ${info('backtest_intro')}</p>
+    <ul id="bt-limits" class="read"></ul>`;
+  $('#bt-verdict').textContent = BT.summary.verdict_pt;
+  $('#bt-limits').innerHTML = BT.limits.map((l) => `<li>${esc(l)}</li>`).join('');
+  const sel = $('#bt-country');
+  if (BT.countries.some((c) => c.code === 'PT')) sel.value = 'PT';
+  const drawChart = () => {
+    try { renderBacktestChart(); } catch (e) {
+      console.error('Falha no gráfico do backtest:', e);
+      $('#chart-backtest').innerHTML = '<p class="muted">Não foi possível desenhar este gráfico.</p>';
+    }
+  };
+  sel.addEventListener('change', drawChart);
+  drawChart();          // isolado: uma falha no gráfico não deve esconder a tabela e os limites abaixo
+  renderBacktestTable();
+  renderBacktestRobustness();
+}
+function renderBacktestChart() {
+  const cc = $('#bt-country').value, s = BT.series[cc];
+  if (!s) return;
+  const scoreSeries = { name: 'Score', data: s.period.map((p, i) => [p, s.score[i]]), fmt: (v) => fmt.n(v) };
+  const hpiSeries = { name: 'HPI real', data: s.period.map((p, i) => [p, s.hpi_real[i]]), axis: 1, fmt: (v) => fmt.n(v, 1) };
+  lineChart('chart-backtest', 'Backtest', [scoreSeries, hpiSeries],
+    { dual: true, names: ['Score (0–100)', 'HPI real (2015 = 100)'], notitle: true, refs: [{ y: 70, label: 'limiar 70' }] });
+}
+function renderBacktestTable() {
+  const m = BT.metrics.pooled;
+  const panelThr = BT.params.thresholds.includes(70) ? 70 : BT.params.thresholds[0];
+  const rows = BT_MODELS.map(([k, label]) => {
+    const mm = m[k];
+    if (!mm) return `<tr><td>${esc(label)}</td><td colspan="6" class="muted">sem dados</td></tr>`;
+    const t = mm.thresholds[String(panelThr)];
+    return `<tr><td>${esc(label)}</td><td>${fmt.n(mm.spearman_real_4q, 2)}</td><td>${fmt.n(mm.spearman_real_8q, 2)}</td>` +
+      `<td>${fmt.n(mm.spearman_real_12q, 2)}</td><td>${fmt.n(mm.auc_drawdown, 2)}</td>` +
+      `<td>${t && t.hit_rate != null ? fmt.pct(t.hit_rate) : '—'}</td><td>${t && t.false_alarm_rate != null ? fmt.pct(t.false_alarm_rate) : '—'}</td></tr>`;
+  }).join('');
+  $('#bt-table').innerHTML = '<thead><tr><th style="text-align:left">Modelo</th><th>Spearman 4T</th><th>Spearman 8T</th>' +
+    `<th>Spearman 12T</th><th>AUC queda ${info('backtest_metrics')}</th><th>Acerto @${panelThr}</th><th>Falso alarme @${panelThr}</th></tr></thead><tbody>${rows}</tbody>`;
+}
+function renderBacktestRobustness() {
+  const loo = Object.values(BT.metrics.leave_one_out).map((v) => v.auc_drawdown).filter((v) => v != null);
+  const mh = BT.metrics.min_history_sensitivity || {};
+  const mhVals = Object.values(mh).map((v) => v.auc_drawdown).filter((v) => v != null);
+  const pt = BT.metrics.portugal_only && BT.metrics.portugal_only.score;
+  const parts = [];
+  if (loo.length > 1) parts.push(`Excluindo um país de cada vez, o AUC do score varia entre ${fmt.n(Math.min(...loo), 2)} e ${fmt.n(Math.max(...loo), 2)}.`);
+  if (mhVals.length) parts.push(`Com um histórico mínimo diferente (${Object.keys(mh).join(' ou ')} trimestres, em vez de ${BT.params.min_history_quarters}), o AUC vai de ${fmt.n(Math.min(...mhVals), 2)} a ${fmt.n(Math.max(...mhVals), 2)}.`);
+  if (pt) parts.push(`Só Portugal: Spearman a 12 trimestres (real) de ${fmt.n(pt.spearman_real_12q, 2)}, AUC de ${fmt.n(pt.auc_drawdown, 2)} — amostra pequena, um único episódio independente.`);
+  $('#bt-robust').textContent = parts.join(' ');
+}
+
 // ---------- ranking
 const COL_HELP = { price: 'price', price_growth_1y: 'g1y', rent: 'rent', gross_yield: 'yield', score_overall: 'score_overall', band: 'band' };
 const COLS = [
@@ -327,6 +402,7 @@ async function main() {
     return;
   }
   try { GEO = await j('data/concelhos.geojson'); } catch { GEO = null; }
+  try { BT = await j('data/backtest.json'); } catch { BT = null; }
   MUNIS.forEach((m) => (BY[m.dico] = m));
   $('#stamp').textContent = `Atualizado ${META.built_at.slice(0, 10)} · último período de preços: ${META.latest_price_period} · ${META.n_municipalities} concelhos`;
   $('#demo-banner').hidden = !META.demo;
@@ -348,6 +424,7 @@ async function main() {
   const safe = (name, fn) => { try { fn(); } catch (e) { console.error(`Falha em ${name}:`, e); return e; } };
   safe('painel nacional', renderNational);
   safe('ranking', renderTable);
+  safe('backtest', renderBacktest);
   const mapErr = safe('mapa', initMap);
   if (mapErr) {
     $('#map').innerHTML = '<p class="muted" style="padding:16px">Não foi possível iniciar o mapa neste browser (WebGL?). O resto do painel funciona.</p>';
