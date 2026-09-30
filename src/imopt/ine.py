@@ -163,7 +163,8 @@ def apply_dim_filters(df: pd.DataFrame, filters: dict[str, str] | None, varcd: s
 
 
 def fetch(base_url: str, varcd: str, lang: str = "PT", dims: dict[str, str] | None = None,
-          session: requests.Session | None = None, retries: int = 3, timeout: int = 60) -> Any:
+          session: requests.Session | None = None, retries: int = 5,
+          timeout: tuple[int, int] = (20, 180)) -> Any:
     s = session or requests.Session()
     params = {"op": 2, "varcd": varcd, "lang": lang}
     # Dim1 = período; "T" = todos. Restantes dimensões só se pedidas explicitamente na API.
@@ -180,7 +181,8 @@ def fetch(base_url: str, varcd: str, lang: str = "PT", dims: dict[str, str] | No
             return r.json()
         except Exception as e:  # noqa: BLE001
             last = e
-            time.sleep(2 * (i + 1))
+            if i < retries - 1:
+                time.sleep(min(10 * 3 ** i, 120))  # 10s, 30s, 90s, 120s
     raise RuntimeError(f"falha a obter {varcd} do INE: {last}")
 
 

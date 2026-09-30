@@ -40,7 +40,7 @@ def main(argv: list[str] | None = None) -> int:
     else:
         meta = pipeline.run(out_dir=out, skip_geo=args.skip_geo)
     print(json.dumps({k: meta[k] for k in ("built_at", "demo", "latest_price_period", "n_municipalities")}, ensure_ascii=False))
-    bad = [k for k, v in {**meta["sources"]["ine"], **meta["sources"]["macro"]}.items() if str(v).startswith("ERRO")]
+    bad = [k for k, v in {**meta["sources"]["ine"], **meta["sources"]["macro"]}.items() if str(v).startswith(("ERRO", "CACHE"))]
     if bad:
         print("AVISO: fontes com erro:", ", ".join(bad), file=sys.stderr)
     return 0

@@ -51,6 +51,12 @@ def ingest_ine(cfg: dict, data_dir: Path, today: str) -> tuple[dict[str, pd.Data
             status[key] = f"ok ({len(df)} linhas, {df['period'].max()})" + (f" [{chosen}]" if chosen else "")
             log.info("%s: %s", key, status[key])
         except Exception as e:  # noqa: BLE001
+            cached = data_dir / "clean" / f"ine_{key}.parquet"
+            if cached.exists() and not isinstance(e, ine.AmbiguousDimensionError):
+                frames[key] = pd.read_parquet(cached)
+                status[key] = f"CACHE (INE indisponível, dados do último snapshot): {str(e)[:120]}"
+                log.warning("indicador %s (%s): INE falhou, a usar snapshot anterior: %s", key, varcd, e)
+                continue
             status[key] = f"ERRO: {e}"
             log.warning("indicador %s (%s) falhou: %s", key, varcd, e)
             if not spec.get("optional") and key == "sales_price_12m":

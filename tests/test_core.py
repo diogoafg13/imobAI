@@ -107,3 +107,22 @@ def test_ambiguity_error_lists_labels_and_dim_labels():
     with pytest.raises(ine.AmbiguousDimensionError, match="Apartamento"):
         ine.apply_dim_filters(df, None, "X")
     assert ine.dim_labels(df, {"dim_3": "H11"}) == "dim_3=H11 'Apartamento'"
+
+
+def test_ingest_falls_back_to_cached_snapshot(tmp_path, monkeypatch):
+    from imopt import pipeline
+    clean = tmp_path / "clean"
+    clean.mkdir()
+    pd.DataFrame({"dico": ["1106"], "value": [1.0]}).to_parquet(clean / "ine_sales_price_12m.parquet")
+    cfg = {"ine": {"base_url": "http://x", "lang": "PT",
+                   "indicators": {"sales_price_12m": {"varcd": "0012234"}}}}
+
+    def boom(*a, **k):
+        raise RuntimeError("timeout")
+    monkeypatch.setattr(pipeline.ine, "fetch", boom)
+    frames, status = pipeline.ingest_ine(cfg, tmp_path, "20260930")
+    assert "sales_price_12m" in frames and status["sales_price_12m"].startswith("CACHE")
+    # sem cache, o indicador obrigatório continua a falhar alto
+    (clean / "ine_sales_price_12m.parquet").unlink()
+    with pytest.raises(RuntimeError):
+        pipeline.ingest_ine(cfg, tmp_path, "20260930")

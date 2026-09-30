@@ -21,12 +21,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
       - run: pip install -e ".[dev]"
       - run: pytest -q
+      - name: Restaurar último snapshot (fallback se o INE falhar)
+        run: |
+          git fetch origin data || true
+          if git rev-parse --verify origin/data >/dev/null 2>&1; then
+            git archive origin/data data | tar -x || true
+          fi
       - name: Construir dados (INE, BCE, Eurostat, BIS)
         run: python -m imopt build
       - name: Guardar snapshots no branch data
