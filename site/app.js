@@ -122,7 +122,7 @@ function updateMetric() {
 }
 
 // ---------- detalhe / comparação
-function select(dico) {
+function select(dico, scroll = true) {
   const m = BY[dico]; if (!m) return;
   if (MAP && MAP.getSource('c')) {
     if (selected) MAP.setFeatureState({ source: 'c', id: selected }, { sel: false });
@@ -143,24 +143,33 @@ function select(dico) {
   $('#chart-detail').innerHTML = ''; delete charts['chart-detail'];
   lineChart('chart-detail', 'Evolução', s, { dual: s.length > 1 });
   $('#d-compare').textContent = compare.includes(dico) ? 'Remover da comparação' : 'Comparar';
-  $('#detail').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  if (scroll) $('#detail').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 function renderCompare() {
   $('#compare').hidden = compare.length === 0;
   if (!compare.length) return;
   $('#c-chips').innerHTML = compare.map((d) => `<span class="chip" data-d="${esc(d)}">${esc(BY[d].name)} ✕</span>`).join('');
+  $('#c-hint').textContent = compare.length < 2
+    ? 'Escolhe outro concelho (no mapa ou no ranking) e clica em "Comparar" para o juntar. Máximo 4.'
+    : compare.length >= 4 ? 'Máximo de 4 concelhos atingido. Clica num concelho acima para o remover.' : 'Podes juntar mais concelhos (máximo 4).';
+  const has = (d) => new Map(BY[d].series.price);
+  const maps = compare.map((d) => [d, has(d)]);
   const periods = [...new Set(compare.flatMap((d) => BY[d].series.price.map((p) => p[0])))].sort();
-  const series = compare.map((d) => {
-    const map = new Map(BY[d].series.price), base = map.get(periods.find((p) => map.has(p)));
-    return { name: BY[d].name, data: periods.map((p) => [p, map.has(p) ? +((map.get(p) / base) * 100).toFixed(2) : null]) };
-  });
+  const base = periods.find((p) => maps.every(([, m]) => m.has(p)));   // 1.º período com dados em todos
+  const series = maps.map(([d, m]) => ({
+    name: BY[d].name,
+    data: periods.filter((p) => base && p >= base).map((p) => [p, m.has(p) ? +((m.get(p) / m.get(base)) * 100).toFixed(2) : null]),
+  }));
   $('#chart-compare').innerHTML = ''; delete charts['chart-compare'];
-  lineChart('chart-compare', 'Preço (base 100 no 1.º período comum)', series);
+  lineChart('chart-compare', base ? `Preço (base 100 em ${base})` : 'Preço', series);
+  if (!base) $('#chart-compare').innerHTML = '<p class="muted">Estes concelhos não têm nenhum período de preços em comum.</p>';
 }
 function toggleCompare(d) {
   const i = compare.indexOf(d);
   if (i >= 0) compare.splice(i, 1); else if (compare.length < 4) compare.push(d);
-  renderCompare(); if (selected) select(selected);
+  renderCompare();
+  if (selected) select(selected, false);            // atualiza o texto do botão sem saltar para o detalhe
+  if (compare.length) $('#compare').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 // ---------- ranking
