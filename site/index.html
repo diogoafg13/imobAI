@@ -48,6 +48,8 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       <div id="nat-score" class="nat-score"></div>
       <ul id="nat-components"></ul>
     </div>
+    <p class="muted" style="margin:10px 0 2px"><b>Leitura</b></p>
+    <ul id="nat-read" class="read"></ul>
     <div class="charts">
       <div class="chart-wrap">
         <div class="chart-cap"><span>Índice de preços da habitação (2015 = 100) <button type="button" class="info" data-k="hpi" aria-label="Sobre o HPI">ⓘ</button></span></div>
@@ -115,6 +117,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       <h2>Ranking <button type="button" class="info" data-k="ranking" aria-label="Sobre o ranking">ⓘ</button></h2>
       <input id="search" type="search" placeholder="Pesquisar concelho…" aria-label="Pesquisar concelho">
     </div>
+    <p id="ranking-summary" class="muted"></p>
     <div class="table-wrap"><table id="table"></table></div>
   </section>
 

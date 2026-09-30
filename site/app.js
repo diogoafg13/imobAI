@@ -107,6 +107,7 @@ function renderNational() {
     return `<li><span>${esc(c.label)} ${info(key)}</span><span>${val} ${pill(band, c.score == null ? 'n/d' : Math.round(c.score))}</span></li>`;
   });
   $('#nat-components').innerHTML = li.join('') || '<li class="muted">Sem componentes disponíveis</li>';
+  $('#nat-read').innerHTML = natReadList(n);
   const fHpi = (v) => fmt.n(v, 1) + ' (2015 = 100)';
   lineChart('chart-hpi', 'HPI', [
     { name: 'Nominal', data: n.series.hpi, fmt: fHpi },
@@ -124,6 +125,41 @@ function renderEuribor() {
   const series = pick.map(([name, data]) => ({ name, data: data || [] })).filter((x) => x.data.length);
   const fE = (v) => fmt.n(v, 2) + ' %';
   lineChart('chart-euribor', 'Euribor', series.map((x) => ({ ...x, fmt: fE })), { notitle: true, refs: [{ y: 0, label: '0 %' }] });
+}
+
+// Traduz os números do score nacional em frases — a leitura que, de outra forma, só se tem perguntando.
+const NAT_BAND_TXT = {
+  green: 'poucos sinais de sobreaquecimento neste momento.',
+  amber: 'há sinais presentes, mas não os suficientes para soar o alarme.',
+  red: 'a maioria dos sinais aponta para sobreaquecimento — historicamente associado a mais risco de correção ' +
+    'nos 3 anos seguintes (ver a secção "Backtest" mais abaixo), mas isso não é uma certeza, nem diz quando.',
+};
+const NAT_DESCR = {
+  hpi_yoy: (c) => `Os preços da habitação (HPI) sobem ${fmt.pct(c.value)} ao ano — ` +
+    (c.score >= 65 ? 'ritmo invulgarmente rápido face à história da série.'
+      : c.score <= 35 ? 'ritmo lento face ao habitual.' : 'perto do ritmo típico.'),
+  hpi_trend_dev: (c) => `O índice está ${fmt.n(Math.abs(c.value), 1)} desvios-padrão ${c.value >= 0 ? 'acima' : 'abaixo'} ` +
+    `da sua tendência de longo prazo — ${Math.abs(c.value) >= 1.5 ? 'bastante fora do habitual.' : 'relativamente perto da tendência.'}`,
+  euribor_change_12m: (c) => `A Euribor 12M ${c.value >= 0 ? 'subiu' : 'desceu'} ${fmt.n(Math.abs(c.value), 2)} p.p. no último ano — ` +
+    (c.value >= 0 ? 'crédito mais caro, o que tende a arrefecer a procura.' : 'crédito mais barato, o que tende a aquecer a procura.'),
+  credit_gap: (c) => `O crédito ao setor privado está ${fmt.n(Math.abs(c.value), 1)} p.p. ${c.value >= 0 ? 'acima' : 'abaixo'} ` +
+    `da sua tendência de longo prazo — ${c.value >= 10 ? 'zona de alerta de alavancagem alta.'
+      : c.value <= -10 ? 'desalavancagem: o crédito não está a alimentar os preços.' : 'perto da tendência.'}`,
+};
+function natReadList(n) {
+  if (n.overall == null) return '<li class="muted">Sem dados macro suficientes para uma leitura.</li>';
+  const li = [`Score global de ${fmt.n(n.overall)}, na faixa <b>${esc(BAND_LABEL[n.band] || 'n/d')}</b>: ${esc(NAT_BAND_TXT[n.band] || '')}`];
+  const withScore = [];
+  Object.entries(n.components).forEach(([key, c]) => {
+    if (c.value == null || c.score == null || !NAT_DESCR[key]) return;
+    li.push(`${esc(NAT_DESCR[key](c))} <span class="muted">(score ${fmt.n(c.score)})</span>`);
+    withScore.push([key, c]);
+  });
+  if (withScore.length > 1) {
+    const [, top] = withScore.slice().sort((a, b) => b[1].score - a[1].score)[0];
+    li.push(`O sinal mais forte agora é <b>${esc(top.label)}</b> (score ${fmt.n(top.score)}).`);
+  }
+  return li.map((t) => `<li>${t}</li>`).join('');
 }
 
 function lineChart(id, title, series, opts = {}) {
@@ -395,6 +431,37 @@ function renderTable() {
   $('#table').innerHTML = `<thead><tr>${COLS.map(([k, l]) => `<th data-k="${k}"${COL_HELP[k] ? ` title="${esc(GLOSS[COL_HELP[k]][1])}"` : ''}>${l}${k === sortKey ? (sortDir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('')}</tr></thead>` +
     `<tbody>${rows.map((m) => `<tr data-d="${esc(m.dico)}">${COLS.map(([, , f]) => `<td>${f(m)}</td>`).join('')}</tr>`).join('')}</tbody>`;
 }
+// Contexto geral do ranking, uma vez (não depende da pesquisa/ordenação): quantos concelhos em cada
+// faixa, e se "Elevado" está ligado a ser caro ou só a subir depressa — a pergunta que motivou isto.
+function renderRankingSummary() {
+  const el = document.getElementById('ranking-summary');
+  if (!el) return;
+  const bands = { green: 0, amber: 0, red: 0, none: 0 };
+  MUNIS.forEach((m) => bands[m.band || 'none']++);
+  let txt = `${bands.red} concelhos em risco elevado, ${bands.amber} em moderado, ${bands.green} em baixo` +
+    (bands.none ? `, ${bands.none} sem dados suficientes` : '') + '.';
+  const prices = (b) => MUNIS.filter((m) => m.band === b).map((m) => m.price).filter((x) => x != null);
+  const medRed = median(prices('red')), medGreen = median(prices('green'));
+  if (medRed != null && medGreen != null) {
+    const ratio = medRed / medGreen;
+    if (ratio <= 0.85) {
+      txt += ` Os concelhos "Elevado" tendem a ser mais baratos (mediana ${fmt.eur(medRed)}/m²) do que os "Baixo" ` +
+        `(${fmt.eur(medGreen)}/m²): o score mede a velocidade de subida recente, não o preço em si — concelhos ` +
+        'pequenos e baratos que sobem depressa em percentagem pontuam mais alto do que mercados caros e ' +
+        'estáveis como Lisboa ou o Porto.';
+    } else if (ratio >= 1.15) {
+      txt += ` Os concelhos "Elevado" são, em geral, mais caros (mediana ${fmt.eur(medRed)}/m²) do que os "Baixo" ` +
+        `(${fmt.eur(medGreen)}/m²) — aqui preço alto e crescimento rápido andam juntos, mas há exceções nos dois ` +
+        'sentidos (clica num concelho para ver o caso concreto). O score continua a medir velocidade de subida, ' +
+        'não o nível de preço em si.';
+    } else {
+      txt += ` Os concelhos "Elevado" (mediana ${fmt.eur(medRed)}/m²) e "Baixo" (${fmt.eur(medGreen)}/m²) não ` +
+        'têm preços claramente diferentes nesta leitura — o score mede sobretudo a velocidade de subida recente, ' +
+        'não se o concelho é caro ou barato.';
+    }
+  }
+  el.textContent = txt;
+}
 
 async function main() {
   try {
@@ -425,7 +492,7 @@ async function main() {
   // Cada parte é isolada: uma falha (por exemplo o mapa/WebGL no Safari) não impede as restantes.
   const safe = (name, fn) => { try { fn(); } catch (e) { console.error(`Falha em ${name}:`, e); return e; } };
   safe('painel nacional', renderNational);
-  safe('ranking', renderTable);
+  safe('ranking', () => { renderTable(); renderRankingSummary(); });
   safe('backtest', renderBacktest);
   const mapErr = safe('mapa', initMap);
   if (mapErr) {
