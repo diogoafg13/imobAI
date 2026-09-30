@@ -29,6 +29,7 @@ const GLOSS = {
   p2r: ['Preço/renda (anos)', 'Anos de renda bruta necessários para "pagar" o imóvel (preço ÷ renda anual). Regra de bolso: acima de ~20–25 anos é caro face às rendas.'],
   p2i: ['Preço/rendimento (meses)', 'Meses de ganho médio mensal (por trabalhador, INE/MTSSS) necessários para pagar 1 m². É um indicador simplificado — não é o clássico "anos de salário para comprar casa", que precisaria do preço total do imóvel e do rendimento do agregado familiar, não do ganho médio individual por m². Quanto mais alto, mais esticado o preço face aos salários locais. É sobre COMPRA, não arrendamento.'],
   r2i: ['Renda/rendimento', 'Fração do ganho médio mensal (por trabalhador) necessária para arrendar 1 m². Ao contrário do "Preço/rendimento" (que é sobre comprar), este é sobre ARRENDAR — quanto mais alto, mais pesa a renda no salário local. Só aparece quando o concelho tem renda e rendimento publicados.'],
+  migration: ['Saldo migratório', 'Diferença entre quem chegou e quem saiu do concelho num ano (INE). Positivo = mais gente a chegar do que a sair. Só contexto demográfico — não entra em nenhum score.'],
   score_valuation: ['Score de valorização', 'Percentil entre concelhos: mistura crescimento do preço a 12 meses e a 3 anos com rendibilidade baixa. 0 = menos esticado, 100 = mais. É relativo, não uma probabilidade de bolha.'],
   score_overall: ['Score global', 'Igual ao de valorização enquanto não houver dados de oferta (licenças, conclusões). Concelhos voláteis (⚠) são atenuados para o meio (50).'],
   band: ['Faixa de risco', 'Baixo: abaixo de 40 · Moderado: 40 a 69 · Elevado: 70 ou mais. Posição relativa entre concelhos, não uma previsão.'],
@@ -428,11 +429,16 @@ function renderBacktestRobustness() {
 }
 
 // ---------- ranking
-const COL_HELP = { price: 'price', price_growth_1y: 'g1y', rent: 'rent', gross_yield: 'yield', score_overall: 'score_overall', band: 'band' };
+const COL_HELP = { price: 'price', price_growth_1y: 'g1y', rent: 'rent', gross_yield: 'yield', price_to_income_months: 'p2i',
+  rent_to_income: 'r2i', migration_balance: 'migration', score_overall: 'score_overall', band: 'band' };
 const COLS = [
   ['name', 'Concelho', (m) => esc(m.name) + (m.volatile ? ' <span title="Preços muito voláteis (poucas transações): score atenuado">⚠</span>' : '')], ['price', '€/m²', (m) => fmt.eur(m.price)],
   ['price_growth_1y', 'Var. 12m', (m) => fmt.pct(m.price_growth_1y)], ['rent', 'Renda €/m²', (m) => (m.rent == null ? '—' : fmt.eur2(m.rent))],
-  ['gross_yield', 'Rendib.', (m) => fmt.pct(m.gross_yield, 2)], ['score_overall', 'Score', (m) => fmt.n(m.score_overall)],
+  ['gross_yield', 'Rendib.', (m) => fmt.pct(m.gross_yield, 2)],
+  ['price_to_income_months', 'Preço/rend. (m)', (m) => fmt.n(m.price_to_income_months, 1)],
+  ['rent_to_income', 'Renda/rend.', (m) => (m.rent_to_income == null ? '—' : fmt.pct(m.rent_to_income, 1))],
+  ['migration_balance', 'Saldo migrat.', (m) => (m.migration_balance == null ? '—' : (m.migration_balance >= 0 ? '+' : '') + fmt.n(m.migration_balance, 0))],
+  ['score_overall', 'Score', (m) => fmt.n(m.score_overall)],
   ['band', 'Nível', (m) => pill(m.band)],
 ];
 function renderTable() {
