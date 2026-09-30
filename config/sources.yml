@@ -1,0 +1,83 @@
+# Fontes de dados. Tudo o que muda (códigos, filtros) vive aqui, não no código.
+#
+# ATENÇÃO: os códigos INE abaixo foram recolhidos de projetos públicos e da
+# documentação do INE, mas a estrutura das respostas não foi verificada ao vivo
+# no momento da escrita. Corre `python -m imopt inspect <varcd>` para ver as
+# dimensões reais de um indicador e ajusta `dims` se necessário.
+
+ine:
+  base_url: https://www.ine.pt/ine/json_indicador/pindica.jsp
+  lang: PT
+  indicators:
+    sales_price_12m:
+      varcd: "0012234"          # Valor mediano das vendas, últimos 12 meses (Metod. 2022), trimestral
+      description: Preço mediano de venda (€/m²), 12 meses, trimestral
+      level: municipality       # município (com detalhe até freguesia no INE)
+      dims: {}                  # ex.: {Dim2: "T"} para filtrar categorias
+      period_kind: quarter
+    sales_price_annual:
+      varcd: "0013042"          # Vendas de alojamentos familiares (€/m²), quartis, anual
+      description: Preço de venda (€/m²) por quartil, anual
+      level: municipality
+      dims: {}
+      period_kind: year
+      optional: true
+    rent_new_contracts:
+      varcd: "0014711"          # Rendas de novos contratos (Metodologia 2026), anual/quartis
+      description: Renda mediana de novos contratos (€/m²/mês)
+      level: municipality
+      dims: {}
+      period_kind: year
+    hpi:
+      varcd: "0009201"          # Índice de Preços da Habitação (base 2015), trimestral
+      description: Índice de preços da habitação (nacional)
+      level: national
+      dims: {}
+      period_kind: quarter
+    bank_valuation:
+      varcd: "0012248"          # Avaliação bancária €/m², mensal
+      description: Avaliação bancária mediana (€/m²)
+      level: municipality
+      dims: {}
+      period_kind: month
+      optional: true
+    # Por preencher (códigos não confirmados). Quando souberes o varcd, define-o
+    # e o pipeline passa a usá-lo automaticamente no sub-score de oferta.
+    building_permits:
+      varcd: null               # Fogos licenciados em construções novas (habitação familiar)
+      description: Fogos licenciados em construções novas
+      level: municipality
+      period_kind: year
+      optional: true
+    completed_dwellings:
+      varcd: null               # Fogos concluídos em construções novas (habitação familiar)
+      description: Fogos concluídos em construções novas
+      level: municipality
+      period_kind: year
+      optional: true
+
+macro:
+  euribor_12m:
+    url: https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR1YD_.HSTA
+    params: {format: csvdata}
+  eurostat_hpi:
+    url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hpi_q
+    params: {geo: PT, purchase: TOTAL, unit: I15_Q, format: JSON, lang: EN}
+  bis_credit_gap:
+    # BIS data portal (SDMX). Série: crédito ao sector privado não financeiro / PIB, desvio da tendência.
+    url: https://stats.bis.org/api/v2/data/dataflow/BIS/WS_CREDIT_GAP/1.0/Q.PT.P.A.C
+    params: {format: csv}
+    optional: true
+
+geo:
+  # Fronteiras dos concelhos (E-REDES / OpenDataSoft, licença aberta).
+  municipalities_geojson: https://e-redes.opendatasoft.com/api/explore/v2.1/catalog/datasets/municipalities-portugal/exports/geojson
+  # Candidatos a propriedade com o código DICO (4 dígitos) e com o nome.
+  dico_props: [dico, DICO, codigo, code, cod_concelho]
+  name_props: [concelho, municipality, name, nome, dtmn]
+
+listings:
+  # Módulo opcional e DESLIGADO por omissão. Ver docs/listings.md.
+  enabled: false
+  respect_robots_txt: true
+  min_delay_seconds: 5

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel Imobiliário PT</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Painel de Risco Imobiliário — Portugal</h1>
+  <p id="stamp" class="muted"></p>
+  <p id="demo-banner" class="banner" hidden>DADOS SINTÉTICOS DE DEMONSTRAÇÃO — não representam o mercado real.</p>
+</header>
+
+<main>
+  <section id="national" class="card">
+    <h2>Visão nacional</h2>
+    <div class="nat-grid">
+      <div id="nat-score" class="nat-score"></div>
+      <ul id="nat-components"></ul>
+    </div>
+    <div class="charts">
+      <div id="chart-hpi" class="chart"></div>
+      <div id="chart-euribor" class="chart"></div>
+    </div>
+  </section>
+
+  <section id="mapsec" class="card">
+    <div class="row">
+      <h2>Mapa por concelho</h2>
+      <select id="metric" aria-label="Indicador do mapa">
+        <option value="score">Score de risco (relativo)</option>
+        <option value="price">Preço €/m²</option>
+        <option value="yield">Rendibilidade bruta</option>
+        <option value="g1y">Variação preço 12 meses</option>
+      </select>
+    </div>
+    <div id="map"></div>
+    <div id="legend" class="legend"></div>
+  </section>
+
+  <section id="detail" class="card" hidden>
+    <div class="row">
+      <h2 id="d-title"></h2>
+      <button id="d-compare" class="btn">Comparar</button>
+    </div>
+    <div id="d-stats" class="stats"></div>
+    <div id="chart-detail" class="chart tall"></div>
+  </section>
+
+  <section id="compare" class="card" hidden>
+    <div class="row"><h2>Comparação (preço, base 100)</h2><button id="c-clear" class="btn">Limpar</button></div>
+    <div id="c-chips" class="chips"></div>
+    <div id="chart-compare" class="chart tall"></div>
+  </section>
+
+  <section id="ranking" class="card">
+    <div class="row">
+      <h2>Ranking</h2>
+      <input id="search" type="search" placeholder="Pesquisar concelho…" aria-label="Pesquisar concelho">
+    </div>
+    <div class="table-wrap"><table id="table"></table></div>
+  </section>
+</main>
+
+<footer class="muted">
+  <p id="disclaimer"></p>
+  <p>Fontes: INE, BCE, Eurostat, BIS. Sem aconselhamento financeiro.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+"""Séries macro: Euribor 12M (BCE), HPI (Eurostat), desvio crédito/PIB (BIS).
+
+Cada função devolve um DataFrame [period, value] ordenado, ou levanta erro; o
+pipeline decide se a falha é fatal (nunca é, para macro: degrada com aviso).
+"""
+from __future__ import annotations
+
+import io
+from typing import Any
+
+import pandas as pd
+import requests
+
+UA = {"User-Agent": "imobiliario-pt/0.1 (dados abertos)"}
+
+
+def _get(url: str, params: dict[str, Any], accept: str | None = None) -> requests.Response:
+    headers = dict(UA)
+    if accept:
+        headers["Accept"] = accept
+    r = requests.get(url, params=params, headers=headers, timeout=60)
+    r.raise_for_status()
+    return r
+
+
+def fetch_euribor_12m(cfg: dict) -> pd.DataFrame:
+    r = _get(cfg["url"], cfg.get("params", {}))
+    df = pd.read_csv(io.StringIO(r.text))
+    out = df.rename(columns={"TIME_PERIOD": "period", "OBS_VALUE": "value"})[["period", "value"]]
+    out["value"] = pd.to_numeric(out["value"], errors="coerce")
+    return out.dropna().sort_values("period").reset_index(drop=True)
+
+
+def parse_jsonstat_time_series(js: dict) -> pd.DataFrame:
+    """JSON-stat 2.0 com uma única dimensão de tempo não trivial (Eurostat)."""
+    ids = js["id"]
+    sizes = js["size"]
+    time_dim = "time"
+    idx = ids.index(time_dim)
+    cat = js["dimension"][time_dim]["category"]["index"]
+    labels = sorted(cat, key=lambda k: cat[k]) if isinstance(cat, dict) else list(cat)
+    # Todas as outras dimensões têm tamanho 1 nos pedidos filtrados.
+    if any(s != 1 for i, s in enumerate(sizes) if i != idx):
+        raise ValueError(f"JSON-stat com dimensões não filtradas: {dict(zip(ids, sizes))}")
+    values = js["value"]
+    get = (lambda i: values.get(str(i))) if isinstance(values, dict) else (lambda i: values[i])
+    rows = [(labels[i], get(i)) for i in range(len(labels))]
+    df = pd.DataFrame(rows, columns=["period", "value"]).dropna()
+    df["period"] = df["period"].str.replace("-Q", "Q", regex=False)
+    return df.reset_index(drop=True)
+
+
+def fetch_eurostat_hpi(cfg: dict) -> pd.DataFrame:
+    r = _get(cfg["url"], cfg.get("params", {}))
+    return parse_jsonstat_time_series(r.json())
+
+
+def fetch_bis_credit_gap(cfg: dict) -> pd.DataFrame:
+    r = _get(cfg["url"], cfg.get("params", {}))
+    df = pd.read_csv(io.StringIO(r.text))
+    out = df.rename(columns={"TIME_PERIOD": "period", "OBS_VALUE": "value"})[["period", "value"]]
+    out["period"] = out["period"].str.replace("-Q", "Q", regex=False)
+    out["value"] = pd.to_numeric(out["value"], errors="coerce")
+    return out.dropna().sort_values("period").reset_index(drop=True)
+
+
+FETCHERS = {
+    "euribor_12m": fetch_euribor_12m,
+    "eurostat_hpi": fetch_eurostat_hpi,
+    "bis_credit_gap": fetch_bis_credit_gap,
+}
