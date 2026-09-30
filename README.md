@@ -12,6 +12,7 @@ Pipeline Python (INE, BCE, Eurostat, BIS → Parquet/DuckDB → scores) + site e
 | 3b. Censos 2021 / RNAL por freguesia | Não implementado |
 | 3c. Anúncios (opcional, desligado) | Esqueleto com robots.txt + API oficial Idealista (`listings.py`) |
 | 3d. Rendimento por concelho (preço/rendimento) | Implementado (`varcd 0012653`, INE/MTSSS, `dim_3=T` confirmado) |
+| 3e. Contexto demográfico (densidade, envelhecimento, saldo migratório) | Ligado ao pipeline (`varcd`s 0013189/0012909/0013179); `dims` não confirmado ao vivo, mas os títulos do catálogo do INE não sugerem dimensão extra além da geográfica |
 | 4. Backtest do score nacional | Implementado, multi-país (ver secção "Backtest do score nacional" abaixo). Cenários/alertas: não implementado. |
 
 ## O que NÃO foi verificado

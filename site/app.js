@@ -283,6 +283,17 @@ function readList(m) {
   } else li.push('Sem renda publicada pelo INE para este concelho (poucos contratos): não há rendibilidade nem preço/renda, e o score assenta só no ritmo de subida dos preços.');
   const sc = m.score_overall;
   if (sc != null) li.push(`Score ${fmt.n(sc)}: ${sc >= 70 ? 'entre os concelhos mais "esticados"' : sc >= 40 ? 'a meio do pelotão de concelhos' : 'entre os concelhos menos "esticados"'}. É uma posição relativa, não uma previsão de queda.`);
+  const demoBits = [];
+  if (m.density != null) {
+    const md = median(col((x) => x.density));
+    demoBits.push(`${fmt.n(m.density, 0)} hab/km²${md ? ` (mediana ${fmt.n(md, 0)})` : ''}`);
+  }
+  if (m.migration_balance != null) demoBits.push(`saldo migratório ${m.migration_balance >= 0 ? '+' : ''}${fmt.n(m.migration_balance, 0)}/ano`);
+  if (m.ageing_index != null) demoBits.push(`índice de envelhecimento ${fmt.n(m.ageing_index, 0)} (idosos por 100 jovens)`);
+  if (demoBits.length) {
+    const thin = m.density != null && m.density < 50;
+    li.push(`Contexto demográfico: ${demoBits.join(', ')}.${thin ? ' Densidade baixa costuma significar poucas transações por trimestre — um salto grande em percentagem pode ser só uma ou duas vendas, não uma tendência de mercado.' : ''}`);
+  }
   if (m.volatile) li.push('⚠ Poucos negócios: o preço é muito volátil e o score foi atenuado. Lê estes números com cautela.');
   return li.map((t) => `<li>${esc(t)}</li>`).join('');
 }

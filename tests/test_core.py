@@ -105,6 +105,24 @@ def test_rent_to_income_needs_both_rent_and_income():
     assert pd.isna(f2.loc["0001", "rent_to_income"])
 
 
+def test_demographic_context_merges_and_degrades_gracefully():
+    qs = [202501, 202502, 202503, 202504, 202601]
+    sales = pd.concat([_muni("0001", "A", [1000] * 5, qs), _muni("0002", "B", [1000] * 5, qs)])
+    density = pd.concat([_muni("0001", "A", [30.0], [202500]), _muni("0002", "B", [5000.0], [202500])])
+    ageing = pd.concat([_muni("0001", "A", [250.0], [202500]), _muni("0002", "B", [90.0], [202500])])
+    migration = pd.concat([_muni("0001", "A", [-40.0], [202500]), _muni("0002", "B", [500.0], [202500])])
+    f = scoring.municipal_features(sales, None, density=density, ageing=ageing, migration=migration).set_index("dico")
+    assert f.loc["0001", "density"] == pytest.approx(30.0)
+    assert f.loc["0001", "ageing_index"] == pytest.approx(250.0)
+    assert f.loc["0001", "migration_balance"] == pytest.approx(-40.0)
+    assert f.loc["0002", "density"] == pytest.approx(5000.0)
+    # sem dados demográficos: continua a funcionar, campos vazios
+    f2 = scoring.municipal_features(sales, None).set_index("dico")
+    assert pd.isna(f2.loc["0001", "density"])
+    assert pd.isna(f2.loc["0001", "ageing_index"])
+    assert pd.isna(f2.loc["0001", "migration_balance"])
+
+
 def test_national_scores_direction():
     idx = [f"{y}Q{q}" for y in range(2010, 2026) for q in range(1, 5)]
     calm = pd.DataFrame({"period": idx, "value": [100 * 1.005 ** i for i in range(len(idx))]})

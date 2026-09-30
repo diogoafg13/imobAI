@@ -68,6 +68,29 @@ ine:
       dims: {dim_3: "T"}
       period_kind: year
       optional: true
+    # Contexto demográfico (por concelho): explica porque é que mercados pequenos saltam tanto em
+    # percentagem. Títulos do catálogo do INE só mencionam a dimensão geográfica (sem categoria extra),
+    # ao contrário do rendimento acima — por isso é provável que não precisem de `dims`, mas não foi
+    # confirmado ao vivo (`imopt inspect <varcd>`) nesta sessão; falham alto e de forma não-fatal se
+    # houver alguma dimensão inesperada.
+    population_density:
+      varcd: "0013189"          # Densidade populacional (N.º/km²), por concelho, anual
+      description: Densidade populacional (N.º/km²)
+      level: municipality
+      period_kind: year
+      optional: true
+    ageing_index:
+      varcd: "0012909"          # Índice de envelhecimento (idosos por 100 jovens), por concelho, anual
+      description: Índice de envelhecimento (N.º)
+      level: municipality
+      period_kind: year
+      optional: true
+    migration_balance:
+      varcd: "0013179"          # Saldo migratório (N.º), por concelho, anual
+      description: Saldo migratório (N.º)
+      level: municipality
+      period_kind: year
+      optional: true
 
 macro:
   euribor_3m:

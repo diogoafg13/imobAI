@@ -77,7 +77,10 @@ def volatility(sales: pd.DataFrame, window: int = 12) -> pd.Series:
 def municipal_features(sales: pd.DataFrame, rent: pd.DataFrame | None,
                        permits: pd.DataFrame | None = None,
                        completed: pd.DataFrame | None = None,
-                       income: pd.DataFrame | None = None) -> pd.DataFrame:
+                       income: pd.DataFrame | None = None,
+                       density: pd.DataFrame | None = None,
+                       ageing: pd.DataFrame | None = None,
+                       migration: pd.DataFrame | None = None) -> pd.DataFrame:
     """Uma linha por concelho com níveis, variações e sub-scores."""
     s = latest_with_lags(sales, "quarter", {"p_1y": 4, "p_3y": 12, "p_5y": 20})
     s = s.rename(columns={"latest": "price"})
@@ -113,6 +116,15 @@ def municipal_features(sales: pd.DataFrame, rent: pd.DataFrame | None,
     # Esforço de arrendamento: fração do salário médio mensal necessária para 1 m² de renda
     # (só calculável quando há renda E rendimento — o NaN propaga-se sozinho quando falta um dos dois).
     s["rent_to_income"] = s["rent"] / s["income"]
+
+    # Contexto demográfico (só leitura, não entra em nenhum score): mercados pequenos/a esvaziar
+    # explicam porque é que o preço pode saltar muito em percentagem com poucas vendas.
+    for df, col in ((density, "density"), (ageing, "ageing_index"), (migration, "migration_balance")):
+        if df is not None and not df.empty:
+            d = latest_with_lags(df, "year", {}).rename(columns={"latest": col})
+            s = s.merge(d[["dico", col]], on="dico", how="left")
+        else:
+            s[col] = np.nan
 
     # Sub-score de valorização: crescimento recente + rendibilidade baixa.
     parts = [pct_rank(s["price_growth_1y"]), pct_rank(s["price_growth_3y"]), 100 - pct_rank(s["gross_yield"])]
