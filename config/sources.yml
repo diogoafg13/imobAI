@@ -59,6 +59,15 @@ ine:
       level: municipality
       period_kind: year
       optional: true
+    income:
+      varcd: "0012653"          # Ganho médio mensal (€), por concelho, anual (MTSSS/GEP, Quadros de Pessoal)
+      description: Ganho médio mensal dos trabalhadores por conta de outrem (€)
+      level: municipality
+      period_kind: year
+      optional: true
+      # dim_3 = nível de escolaridade; não sabemos ainda o código de "Total" (sem acesso à rede para
+      # correr `imopt inspect 0012653`). Sem `dims`, o pipeline falha alto (AmbiguousDimensionError) e
+      # regista as opções reais em meta.json — normal, corre `imopt inspect 0012653` e define aqui.
 
 macro:
   euribor_3m:

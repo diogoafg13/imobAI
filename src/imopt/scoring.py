@@ -76,7 +76,8 @@ def volatility(sales: pd.DataFrame, window: int = 12) -> pd.Series:
 
 def municipal_features(sales: pd.DataFrame, rent: pd.DataFrame | None,
                        permits: pd.DataFrame | None = None,
-                       completed: pd.DataFrame | None = None) -> pd.DataFrame:
+                       completed: pd.DataFrame | None = None,
+                       income: pd.DataFrame | None = None) -> pd.DataFrame:
     """Uma linha por concelho com níveis, variações e sub-scores."""
     s = latest_with_lags(sales, "quarter", {"p_1y": 4, "p_3y": 12, "p_5y": 20})
     s = s.rename(columns={"latest": "price"})
@@ -95,6 +96,18 @@ def municipal_features(sales: pd.DataFrame, rent: pd.DataFrame | None,
         s["price_to_rent_years"] = s["price"] / (s["rent"] * 12)
     else:
         for c in ("rent", "rent_growth_1y", "gross_yield", "price_to_rent_years"):
+            s[c] = np.nan
+
+    if income is not None and not income.empty:
+        i = latest_with_lags(income, "year", {})
+        i = i.rename(columns={"latest": "income", "latest_key": "income_year"})
+        s = s.merge(i[["dico", "income", "income_year"]], on="dico", how="left")
+        # Proxy simples (não é o "anos de salário para comprar casa" clássico, que precisaria do preço
+        # total do imóvel e do rendimento do agregado, não por m² e por trabalhador): meses de ganho
+        # médio necessários para pagar 1 m².
+        s["price_to_income_months"] = s["price"] / s["income"]
+    else:
+        for c in ("income", "income_year", "price_to_income_months"):
             s[c] = np.nan
 
     # Sub-score de valorização: crescimento recente + rendibilidade baixa.

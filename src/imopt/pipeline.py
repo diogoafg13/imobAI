@@ -146,8 +146,9 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     rent = municipal(frames.get("rent_new_contracts"))
     permits = municipal(frames.get("building_permits"))
     completed = municipal(frames.get("completed_dwellings"))
+    income = municipal(frames.get("income"))
 
-    feats = scoring.municipal_features(sales, rent, permits, completed)
+    feats = scoring.municipal_features(sales, rent, permits, completed, income)
     price_series = series_by_dico(sales)
     rent_series = series_by_dico(rent)
 
@@ -168,7 +169,8 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     }
 
     cols = ["price", "latest_key", "price_growth_1y", "price_growth_3y", "price_growth_5y", "rent",
-            "rent_year", "rent_growth_1y", "gross_yield", "price_to_rent_years", "permits", "permits_growth",
+            "rent_year", "rent_growth_1y", "gross_yield", "price_to_rent_years", "income", "income_year",
+            "price_to_income_months", "permits", "permits_growth",
             "completed", "completed_growth", "score_valuation", "score_supply", "score_overall", "band",
             "volatility", "volatile"]
     munis = []

@@ -73,6 +73,20 @@ def test_features_without_rent_still_work():
     sales = pd.concat([_muni("0001", "A", [1, 1, 1, 1, 1.2], qs), _muni("0002", "B", [1, 1, 1, 1, 1.0], qs)])
     f = scoring.municipal_features(sales, None).set_index("dico")
     assert f.loc["0001", "score_overall"] > f.loc["0002", "score_overall"]
+
+
+def test_municipal_features_income_ratio_and_graceful_absence():
+    qs = [202501, 202502, 202503, 202504, 202601]
+    sales = pd.concat([_muni("0001", "A", [1000, 1000, 1000, 1000, 1100], qs),
+                       _muni("0002", "B", [1000, 1000, 1000, 1000, 1000], qs)])
+    income = pd.concat([_muni("0001", "A", [1000.0], [202600]), _muni("0002", "B", [1100.0], [202600])])
+    f = scoring.municipal_features(sales, None, income=income).set_index("dico")
+    assert f.loc["0001", "income"] == pytest.approx(1000.0)
+    assert f.loc["0001", "price_to_income_months"] == pytest.approx(1100 / 1000)
+    assert f.loc["0002", "price_to_income_months"] == pytest.approx(1000 / 1100)
+    # sem dados de rendimento, continua a funcionar (degrada com NaN, não crasha)
+    f2 = scoring.municipal_features(sales, None).set_index("dico")
+    assert pd.isna(f2.loc["0001", "price_to_income_months"])
     assert pd.isna(f.loc["0001", "gross_yield"])
 
 

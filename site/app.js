@@ -27,6 +27,7 @@ const GLOSS = {
   rent: ['Renda de novos contratos', 'Mediana (2.º quartil) das rendas de contratos novos, em €/m² por mês (INE, anual). Contratos antigos costumam ter rendas mais baixas. Sem valor = INE não publica (poucos contratos).'],
   yield: ['Rendibilidade bruta', 'Renda anual ÷ preço. É "bruta": sem IMI, condomínio, vazio ou obras. Mais baixa = preço mais alto face ao que o imóvel rende.'],
   p2r: ['Preço/renda (anos)', 'Anos de renda bruta necessários para "pagar" o imóvel (preço ÷ renda anual). Regra de bolso: acima de ~20–25 anos é caro face às rendas.'],
+  p2i: ['Preço/rendimento (meses)', 'Meses de ganho médio mensal (por trabalhador, INE/MTSSS) necessários para pagar 1 m². É um indicador simplificado — não é o clássico "anos de salário para comprar casa", que precisaria do preço total do imóvel e do rendimento do agregado familiar, não do ganho médio individual por m². Quanto mais alto, mais esticado o preço face aos salários locais.'],
   score_valuation: ['Score de valorização', 'Percentil entre concelhos: mistura crescimento do preço a 12 meses e a 3 anos com rendibilidade baixa. 0 = menos esticado, 100 = mais. É relativo, não uma probabilidade de bolha.'],
   score_overall: ['Score global', 'Igual ao de valorização enquanto não houver dados de oferta (licenças, conclusões). Concelhos voláteis (⚠) são atenuados para o meio (50).'],
   band: ['Faixa de risco', 'Baixo: abaixo de 40 · Moderado: 40 a 69 · Elevado: 70 ou mais. Posição relativa entre concelhos, não uma previsão.'],
@@ -302,6 +303,7 @@ function select(dico, scroll = true) {
     tile('rent', 'Renda (novos contratos)', m.rent == null ? '—' : fmt.eur2(m.rent) + '/m²', ctx((x) => x.rent, m.rent, fmt.eur2)),
     tile('yield', 'Rendibilidade bruta', fmt.pct(m.gross_yield, 2), ctx((x) => x.gross_yield, m.gross_yield, (v) => fmt.pct(v, 2))),
     tile('p2r', 'Preço/renda (anos)', fmt.n(m.price_to_rent_years, 1), ctx((x) => x.price_to_rent_years, m.price_to_rent_years, (v) => fmt.n(v, 1))),
+    tile('p2i', 'Preço/rendimento (meses)', fmt.n(m.price_to_income_months, 1), ctx((x) => x.price_to_income_months, m.price_to_income_months, (v) => fmt.n(v, 1))),
     tile('score_valuation', 'Score valorização', fmt.n(m.score_valuation)),
     tile('score_overall', 'Score global', fmt.n(m.score_overall)),
   ].join('');

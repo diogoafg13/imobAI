@@ -11,6 +11,7 @@ Pipeline Python (INE, BCE, Eurostat, BIS → Parquet/DuckDB → scores) + site e
 | 3a. Licenças/fogos concluídos por concelho | Ligado ao pipeline; **falta preencher os `varcd`** em `config/sources.yml` |
 | 3b. Censos 2021 / RNAL por freguesia | Não implementado |
 | 3c. Anúncios (opcional, desligado) | Esqueleto com robots.txt + API oficial Idealista (`listings.py`) |
+| 3d. Rendimento por concelho (preço/rendimento) | Ligado ao pipeline (`varcd 0012653`, INE/MTSSS); **falta confirmar a dimensão `dim_3` (nível de escolaridade)** — corre `imopt inspect 0012653` com rede real e define `dims` em `config/sources.yml` |
 | 4. Backtest do score nacional | Implementado, multi-país (ver secção "Backtest do score nacional" abaixo). Cenários/alertas: não implementado. |
 
 ## O que NÃO foi verificado
