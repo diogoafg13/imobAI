@@ -158,7 +158,9 @@ function lineChart(id, title, series, opts = {}) {
         }).join('<br>');
       },
     },
-    legend: series.length > 1 ? { top: 0, right: 0, textStyle: { color: txt } } : undefined,
+    // Com eixos duplos e nome em cada eixo, a legenda ficaria por cima do nome do eixo direito
+    // (ambos no canto superior direito): o nome do eixo já diz a que série pertence cada linha.
+    legend: (series.length > 1 && !(opts.dual && opts.names)) ? { top: 0, right: 0, textStyle: { color: txt } } : undefined,
     xAxis: { type: 'category', data: [...new Set(series.flatMap((s) => s.data.map((d) => d[0])))].sort(), axisLabel: { color: txt }, axisLine: { lineStyle: { color: line } } },
     yAxis,
     series: series.map((s, i) => ({
