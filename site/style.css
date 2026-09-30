@@ -35,3 +35,5 @@ th{position:sticky;top:0;background:var(--card);cursor:pointer;user-select:none}
 tbody tr{cursor:pointer}tbody tr:hover td{background:var(--bg)}
 footer{padding-bottom:30px}
 @media (max-width:700px){.nat-grid,.charts{grid-template-columns:1fr}#map{height:340px}}
+.chart-wrap{position:relative}
+.chart-select{position:absolute;top:0;right:0;z-index:2;padding:3px 8px;font-size:.8rem}

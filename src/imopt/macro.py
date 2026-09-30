@@ -23,7 +23,7 @@ def _get(url: str, params: dict[str, Any], accept: str | None = None) -> request
     return r
 
 
-def fetch_euribor_12m(cfg: dict) -> pd.DataFrame:
+def fetch_euribor(cfg: dict) -> pd.DataFrame:
     r = _get(cfg["url"], cfg.get("params", {}))
     df = pd.read_csv(io.StringIO(r.text))
     out = df.rename(columns={"TIME_PERIOD": "period", "OBS_VALUE": "value"})[["period", "value"]]
@@ -65,7 +65,9 @@ def fetch_bis_credit_gap(cfg: dict) -> pd.DataFrame:
 
 
 FETCHERS = {
-    "euribor_12m": fetch_euribor_12m,
+    "euribor_3m": fetch_euribor,
+    "euribor_6m": fetch_euribor,
+    "euribor_12m": fetch_euribor,
     "eurostat_hpi": fetch_eurostat_hpi,
     "bis_credit_gap": fetch_bis_credit_gap,
 }

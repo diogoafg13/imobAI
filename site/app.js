@@ -59,7 +59,15 @@ function renderNational() {
   });
   $('#nat-components').innerHTML = li.join('') || '<li class="muted">Sem componentes disponíveis</li>';
   lineChart('chart-hpi', 'Índice de preços da habitação', [{ name: 'HPI', data: n.series.hpi }]);
-  lineChart('chart-euribor', 'Euribor 12M (%)', [{ name: 'Euribor 12M', data: n.series.euribor_12m }]);
+  renderEuribor();
+}
+
+function renderEuribor() {
+  const sel = $('#euribor-sel').value, S = NAT.series;
+  const all = [['3M', S.euribor_3m], ['6M', S.euribor_6m], ['12M', S.euribor_12m]];
+  const pick = sel === 'all' ? all : all.filter(([n]) => n.toLowerCase() === sel);
+  const series = pick.map(([name, data]) => ({ name, data: data || [] })).filter((x) => x.data.length);
+  lineChart('chart-euribor', sel === 'all' ? 'Euribor (%)' : `Euribor ${sel.toUpperCase()} (%)`, series);
 }
 
 function lineChart(id, title, series, opts = {}) {
@@ -122,7 +130,7 @@ function select(dico) {
   }
   selected = dico;
   $('#detail').hidden = false;
-  $('#d-title').innerHTML = `${esc(m.name)} ${pill(m.band)}`;
+  $('#d-title').innerHTML = `${esc(m.name)} ${pill(m.band)}${m.volatile ? ' ' + pill(null, '⚠ dados voláteis') : ''}`;
   const st = [
     ['Preço mediano', fmt.eur(m.price) + '/m²'], ['Var. 12m', fmt.pct(m.price_growth_1y)], ['Var. 3 anos', fmt.pct(m.price_growth_3y)],
     ['Renda (novos contratos)', m.rent == null ? '—' : fmt.eur2(m.rent) + '/m²'], ['Rendibilidade bruta', fmt.pct(m.gross_yield, 2)],
@@ -157,7 +165,7 @@ function toggleCompare(d) {
 
 // ---------- ranking
 const COLS = [
-  ['name', 'Concelho', (m) => esc(m.name)], ['price', '€/m²', (m) => fmt.eur(m.price)],
+  ['name', 'Concelho', (m) => esc(m.name) + (m.volatile ? ' <span title="Preços muito voláteis (poucas transações): score atenuado">⚠</span>' : '')], ['price', '€/m²', (m) => fmt.eur(m.price)],
   ['price_growth_1y', 'Var. 12m', (m) => fmt.pct(m.price_growth_1y)], ['rent', 'Renda €/m²', (m) => (m.rent == null ? '—' : fmt.eur2(m.rent))],
   ['gross_yield', 'Rendib.', (m) => fmt.pct(m.gross_yield, 2)], ['score_overall', 'Score', (m) => fmt.n(m.score_overall)],
   ['band', 'Nível', (m) => pill(m.band)],
@@ -186,8 +194,8 @@ async function main() {
   $('#stamp').textContent = `Atualizado ${META.built_at.slice(0, 10)} · último período de preços: ${META.latest_price_period} · ${META.n_municipalities} concelhos`;
   $('#demo-banner').hidden = !META.demo;
   $('#disclaimer').textContent = META.disclaimer;
-  renderNational(); initMap(); renderTable();
   $('#metric').addEventListener('change', updateMetric);
+  $('#euribor-sel').addEventListener('change', renderEuribor);
   $('#search').addEventListener('input', renderTable);
   $('#table').addEventListener('click', (e) => {
     const th = e.target.closest('th'), tr = e.target.closest('tbody tr');
@@ -197,6 +205,15 @@ async function main() {
   $('#d-compare').addEventListener('click', () => selected && toggleCompare(selected));
   $('#c-clear').addEventListener('click', () => { compare.length = 0; renderCompare(); });
   $('#c-chips').addEventListener('click', (e) => { const c = e.target.closest('.chip'); if (c) toggleCompare(c.dataset.d); });
+  // Cada parte é isolada: uma falha (por exemplo o mapa/WebGL no Safari) não impede as restantes.
+  const safe = (name, fn) => { try { fn(); } catch (e) { console.error(`Falha em ${name}:`, e); return e; } };
+  safe('painel nacional', renderNational);
+  safe('ranking', renderTable);
+  const mapErr = safe('mapa', initMap);
+  if (mapErr) {
+    $('#map').innerHTML = '<p class="muted" style="padding:16px">Não foi possível iniciar o mapa neste browser (WebGL?). O resto do painel funciona.</p>';
+    $('#legend').innerHTML = '';
+  }
   window.addEventListener('resize', () => Object.values(charts).forEach((c) => c.resize()));
 }
 main();

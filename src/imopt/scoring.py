@@ -61,6 +61,15 @@ def latest_with_lags(df: pd.DataFrame, kind: str, lags: dict[str, int]) -> pd.Da
     return out.reset_index()
 
 
+def volatility(sales: pd.DataFrame, window: int = 12) -> pd.Series:
+    """Desvio-padrão das variações trimestrais (log) do preço nos últimos `window` trimestres, por concelho."""
+    p = _pivot(sales).astype(float)
+    p = p.where(p > 0)
+    cols = list(p.columns)[-(window + 1):]
+    lg = np.log(p[cols]).diff(axis=1).iloc[:, 1:]
+    return lg.std(axis=1, ddof=1)
+
+
 def municipal_features(sales: pd.DataFrame, rent: pd.DataFrame | None,
                        permits: pd.DataFrame | None = None,
                        completed: pd.DataFrame | None = None) -> pd.DataFrame:
@@ -99,9 +108,15 @@ def municipal_features(sales: pd.DataFrame, rent: pd.DataFrame | None,
             supply_parts.append(100 - pct_rank(s[f"{name}_growth"]))  # mais oferta nova alivia pressão
     s["score_supply"] = pd.concat(supply_parts, axis=1).mean(axis=1) if supply_parts else np.nan
 
+    # Ruído de amostra pequena: preços muito voláteis => score atenuado para o neutro (50).
+    s["volatility"] = s["dico"].map(volatility(sales))
+    thr = s["volatility"].quantile(0.9) if s["volatility"].notna().sum() >= 10 else np.inf
+    s["volatile"] = (s["volatility"] >= thr).fillna(False)
+
     sub = s[["score_valuation", "score_supply"]]
     s["score_overall"] = sub.mean(axis=1, skipna=True)
     s.loc[sub.isna().all(axis=1), "score_overall"] = np.nan
+    s.loc[s["volatile"], "score_overall"] = 50 + 0.5 * (s.loc[s["volatile"], "score_overall"] - 50)
     s["band"] = pd.cut(s["score_overall"], [-1, 40, 70, 101], labels=["green", "amber", "red"]).astype("object")
     return s.drop(columns=["p_1y", "p_3y", "p_5y", "r_1y"], errors="ignore")
 

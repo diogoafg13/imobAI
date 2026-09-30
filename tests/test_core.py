@@ -150,3 +150,43 @@ def test_ine_auto_mode_stops_after_first_failure(tmp_path, monkeypatch):
     monkeypatch.setenv("IMOPT_INE_MODE", "cache")
     pipeline.ingest_ine(cfg, tmp_path, "d")
     assert calls == []                                        # nunca toca na rede
+
+
+def test_geocod_with_letters_in_nuts3_is_municipality():
+    assert ine.classify_level("11A1312") == "municipality"      # Porto (AMP)
+    assert ine.dico_from_geocod("11A1312") == "1312"
+    assert ine.classify_level("1701106") == "municipality"      # Lisboa
+    assert ine.dico_from_geocod("1701106") == "1106"
+    assert ine.classify_level("16B1004") == "municipality"
+    assert ine.classify_level("11A") == "nuts3" and ine.classify_level("150") == "nuts3"
+    assert ine.classify_level("PT") == "national" and ine.classify_level("11") == "nuts2"
+    assert ine.dico_from_geocod("11A") is None
+
+
+def test_volatile_municipality_is_flagged_and_shrunk():
+    import numpy as np
+    qs = [y * 100 + q for y in range(2022, 2027) for q in range(1, 5)][:17]
+    rows = []
+    for i in range(12):                       # 11 estáveis com crescimento crescente, 1 muito volátil
+        d = f"{i + 1:04d}"
+        if i == 11:
+            vals = [100 * (1.8 if k % 2 else 0.6) for k in range(len(qs))]
+            vals[-1] = vals[-5] * 2.5          # +150% a 1 ano
+        else:
+            vals = [100 * (1 + 0.005 * (i + 1)) ** k for k in range(len(qs))]
+        rows.append(pd.DataFrame({"dico": d, "geoname": d, "sort_key": qs, "value": vals, "period": [str(k) for k in qs]}))
+    f = scoring.municipal_features(pd.concat(rows), None).set_index("dico")
+    assert bool(f.loc["0012", "volatile"]) and f["volatile"].sum() >= 1
+    assert abs(f.loc["0012", "score_overall"] - 50) <= 25 + 1e-9    # atenuado: no máximo 50 ± 25
+
+
+def test_build_outputs_exports_all_euribor_series(tmp_path):
+    import json
+    from imopt import demo, pipeline
+    frames, macro_frames = demo.demo_frames()
+    pipeline.build_outputs(frames, macro_frames, {}, {}, tmp_path, None, demo=True)
+    nat = json.loads((tmp_path / "national.json").read_text(encoding="utf-8"))
+    for k in ("euribor_3m", "euribor_6m", "euribor_12m"):
+        assert len(nat["series"][k]) > 100, k
+    # o score nacional continua a usar só a variação da 12M
+    assert "euribor_change_12m" in nat["components"]

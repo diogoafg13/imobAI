@@ -60,21 +60,27 @@ def parse_period(raw: str) -> Period:
     return Period(str(year), "year", year, 0)
 
 
+_MUNI_RE = re.compile(r"[0-9][0-9A-Z]{2}\d{4}")   # NUTS III (pode ter letra: 11A, 16B...) + DICO
+_NUTS3_RE = re.compile(r"[0-9][0-9A-Z]{2}")
+
+
 def classify_level(geocod: str) -> str:
-    g = str(geocod).strip()
-    if g.upper() in {"PT", "1", "0"} and not g.isdigit():
+    g = str(geocod).strip().upper()
+    if g == "PT":
         return "national"
-    if g.upper() == "PT":
-        return "national"
+    if _MUNI_RE.fullmatch(g):
+        return "municipality"
     if g.isdigit():
-        return {1: "nuts1", 2: "nuts2", 3: "nuts3", 7: "municipality", 9: "parish"}.get(len(g), "other")
+        return {1: "nuts1", 2: "nuts2", 3: "nuts3", 9: "parish"}.get(len(g), "other")
+    if _NUTS3_RE.fullmatch(g):
+        return "nuts3"
     return "other"
 
 
 def dico_from_geocod(geocod: str) -> str | None:
-    """Código DICO (4 dígitos) de um concelho a partir do geocod INE de 7 dígitos."""
-    g = str(geocod).strip()
-    return g[-4:] if g.isdigit() and len(g) == 7 else None
+    """Código DICO (4 dígitos) de um concelho a partir do geocod INE (NUTS III + DICO, 7 caracteres)."""
+    g = str(geocod).strip().upper()
+    return g[-4:] if _MUNI_RE.fullmatch(g) else None
 
 
 def _to_float(v: Any) -> float | None:

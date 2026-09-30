@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Painel Imobiliário PT</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.css">
-<link rel="stylesheet" href="style.css">
+<script>/* evita cache antiga (Safari, etc.): pede sempre a versão atual do CSS e do JS */
+window.__v = Date.now();
+document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
+</script>
 </head>
 <body>
 <header>
@@ -23,7 +26,15 @@
     </div>
     <div class="charts">
       <div id="chart-hpi" class="chart"></div>
-      <div id="chart-euribor" class="chart"></div>
+      <div class="chart-wrap">
+        <select id="euribor-sel" class="chart-select" aria-label="Maturidade da Euribor">
+          <option value="12m">Euribor 12M</option>
+          <option value="6m">Euribor 6M</option>
+          <option value="3m">Euribor 3M</option>
+          <option value="all">Comparar as 3</option>
+        </select>
+        <div id="chart-euribor" class="chart"></div>
+      </div>
     </div>
   </section>
 
@@ -72,6 +83,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
-<script src="app.js"></script>
+<script>document.write('<script src="app.js?v=' + window.__v + '"><\/script>');</script>
 </body>
 </html>

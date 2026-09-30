@@ -53,6 +53,8 @@ def demo_frames(seed: int = 7):
     e = np.clip(shape + rng.normal(0, 0.05, n), -0.7, None)
     macro_frames = {
         "eurostat_hpi": pd.DataFrame(hv, columns=["period", "value"]),
+        "euribor_3m": pd.DataFrame({"period": months, "value": np.clip(e - 0.35, -0.7, None)}),
+        "euribor_6m": pd.DataFrame({"period": months, "value": np.clip(e - 0.15, -0.7, None)}),
         "euribor_12m": pd.DataFrame({"period": months, "value": e}),
         "bis_credit_gap": pd.DataFrame({"period": [p.label for p in hq], "value": rng.normal(-5, 6, len(hq))}),
     }

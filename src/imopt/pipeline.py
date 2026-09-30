@@ -145,15 +145,16 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     national = scoring.national_scores(hpi, macro_frames.get("euribor_12m"), macro_frames.get("bis_credit_gap"))
     national["series"] = {
         "hpi": [[r.period, _clean(r.value)] for r in hpi.itertuples()] if hpi is not None else [],
-        "euribor_12m": [[r.period, _clean(r.value)] for r in macro_frames["euribor_12m"].itertuples()]
-        if "euribor_12m" in macro_frames else [],
+        **{k: [[r.period, _clean(r.value)] for r in macro_frames[k].itertuples()] if k in macro_frames else []
+           for k in ("euribor_3m", "euribor_6m", "euribor_12m")},
         "credit_gap": [[r.period, _clean(r.value)] for r in macro_frames["bis_credit_gap"].itertuples()]
         if "bis_credit_gap" in macro_frames else [],
     }
 
     cols = ["price", "latest_key", "price_growth_1y", "price_growth_3y", "price_growth_5y", "rent",
             "rent_year", "rent_growth_1y", "gross_yield", "price_to_rent_years", "permits", "permits_growth",
-            "completed", "completed_growth", "score_valuation", "score_supply", "score_overall", "band"]
+            "completed", "completed_growth", "score_valuation", "score_supply", "score_overall", "band",
+            "volatility", "volatile"]
     munis = []
     for r in feats.to_dict("records"):
         item = {"dico": r["dico"], "name": r["name"]}
@@ -168,7 +169,8 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
         "latest_price_period": latest_period,
         "n_municipalities": len(munis),
         "sources": {"ine": ine_status, "macro": macro_status},
-        "geo_unmatched": geo_unmatched or [],
+        "geo_unmatched": (geo_unmatched or [])[:20],
+        "geo_unmatched_count": len(geo_unmatched or []),
         "disclaimer": ("Indicador informativo, não é aconselhamento financeiro. Scores municipais são "
                        "relativos (percentis entre concelhos) e não foram validados por backtest."),
     }
@@ -198,7 +200,22 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
             sales = municipal(frames["sales_price_12m"])
             by_name = {geo.norm_name(n): d for d, n in sales.drop_duplicates("dico")[["dico", "geoname"]].itertuples(index=False)}
             geojson, unmatched = geo.attach_dico(gj, cfg["geo"]["dico_props"], cfg["geo"]["name_props"], by_name)
+            if len(unmatched) > 0.1 * len(gj.get("features", [])):
+                sample = (gj["features"][0].get("properties") if gj.get("features") else None)
+                ine_status["geo"] = (f"AVISO: {len(unmatched)} fronteiras sem código DICO; "
+                                     f"propriedades de exemplo: {sample}")
+                log.warning(ine_status["geo"])
+            else:
+                ine_status["geo"] = f"ok ({len(gj['features']) - len(unmatched)} fronteiras ligadas)"
+                geo.dump(geo.slim_geojson(geojson, {}), str(data_dir / "clean" / "geo_municipalities.json"))
         except Exception as e:  # noqa: BLE001
-            log.warning("geometrias indisponíveis: %s", e)
-            ine_status["geo"] = f"ERRO: {e}"
+            cached_geo = data_dir / "clean" / "geo_municipalities.json"
+            if cached_geo.exists():
+                import json as _json
+                geojson = _json.loads(cached_geo.read_text(encoding="utf-8"))
+                ine_status["geo"] = f"CACHE (download falhou): {str(e)[:100]}"
+                log.warning("fronteiras: a usar cache (%s)", e)
+            else:
+                log.warning("geometrias indisponíveis: %s", e)
+                ine_status["geo"] = f"ERRO: {e}"
     return build_outputs(frames, macro_frames, ine_status, macro_status, out_dir, geojson, geo_unmatched=unmatched)

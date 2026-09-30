@@ -62,6 +62,7 @@ Alternativa: um runner self-hosted (por exemplo no Raspberry Pi) executa o mesmo
 ## Método (resumo)
 
 - **Score municipal (0–100)**: percentis *entre concelhos* de crescimento a 12m e 3 anos e de rendibilidade bruta baixa. É **relativo**: diz quem está mais esticado, não quando corrige.
+- **Dados voláteis (⚠)**: concelhos no decil mais volátil de variações trimestrais do preço (poucas transações) têm o score atenuado a meio caminho do neutro (50).
 - **Score nacional**: z-scores históricos do crescimento do HPI, desvio face à tendência, variação da Euribor e desvio crédito/PIB, convertidos por função logística.
 - **Nada disto foi validado por backtest** (2008, 2011–13). Não é aconselhamento financeiro.
 

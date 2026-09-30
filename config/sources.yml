@@ -13,34 +13,36 @@ ine:
       varcd: "0012234"          # Valor mediano das vendas, últimos 12 meses (Metod. 2022), trimestral
       description: Preço mediano de venda (€/m²), 12 meses, trimestral
       level: municipality       # município (com detalhe até freguesia no INE)
-      # dim_3 tem H1, H11, H12. ASSUNÇÃO (não verificada): H1 = total, H11/H12 = apartamento/moradia.
-      # Confirma o nome real em site/data/meta.json (sources.ine.sales_price_12m) após o build.
+      # dim_3: H1 = Total (confirmado no build real), H11/H12 = restantes categorias.
       dims: {dim_3: "H1"}
       period_kind: quarter
+    # sales_price_annual (0013042): redundante com o indicador de 12 meses acima; desligado.
     sales_price_annual:
-      varcd: "0013042"          # Vendas de alojamentos familiares (€/m²), quartis, anual
-      description: Preço de venda (€/m²) por quartil, anual
+      varcd: null
+      description: Preço de venda (€/m²) por quartil, anual (desligado)
       level: municipality
-      dims: {}
       period_kind: year
       optional: true
     rent_new_contracts:
       varcd: "0014711"          # Rendas de novos contratos (Metodologia 2026), anual/quartis
       description: Renda mediana de novos contratos (€/m²/mês)
       level: municipality
-      dims: {}
+      # dim_3 = quartil (1, 2, 3). O 2.º quartil é a mediana.
+      dims: {dim_3: "2"}
       period_kind: year
     hpi:
       varcd: "0009201"          # Índice de Preços da Habitação (base 2015), trimestral
       description: Índice de preços da habitação (nacional)
       level: national
-      dims: {}
+      # dim_3: H1 = Total, H11 = Novos, H12 = Existentes.
+      dims: {dim_3: "H1"}
       period_kind: quarter
     bank_valuation:
       varcd: "0012248"          # Avaliação bancária €/m², mensal
       description: Avaliação bancária mediana (€/m²)
       level: municipality
-      dims: {}
+      # dim_3: T = Total, 1 = Apartamentos, 2 = Moradias.
+      dims: {dim_3: "T"}
       period_kind: month
       optional: true
     # Por preencher (códigos não confirmados). Quando souberes o varcd, define-o
@@ -59,6 +61,14 @@ ine:
       optional: true
 
 macro:
+  euribor_3m:
+    url: https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR3MD_.HSTA
+    params: {format: csvdata}
+    optional: true
+  euribor_6m:
+    url: https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR6MD_.HSTA
+    params: {format: csvdata}
+    optional: true
   euribor_12m:
     url: https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR1YD_.HSTA
     params: {format: csvdata}
@@ -75,8 +85,8 @@ geo:
   # Fronteiras dos concelhos (E-REDES / OpenDataSoft, licença aberta).
   municipalities_geojson: https://e-redes.opendatasoft.com/api/explore/v2.1/catalog/datasets/municipalities-portugal/exports/geojson
   # Candidatos a propriedade com o código DICO (4 dígitos) e com o nome.
-  dico_props: [dico, DICO, codigo, code, cod_concelho]
-  name_props: [concelho, municipality, name, nome, dtmn]
+  dico_props: [con_code, dico, DICO, codigo, code, cod_concelho]
+  name_props: [con_name, concelho, municipality, name, nome, dtmn]
 
 listings:
   # Módulo opcional e DESLIGADO por omissão. Ver docs/listings.md.
