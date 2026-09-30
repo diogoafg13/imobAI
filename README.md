@@ -43,7 +43,7 @@ python -m imopt build                 # dados reais
 
 ## Se o INE não responde ao GitHub (timeouts de ligação)
 
-O INE pode não aceitar ligações dos runners do GitHub. O workflow corre com `IMOPT_INE_MODE=auto`: tenta o INE uma vez e, se falhar, usa `data/clean` (marcado como `CACHE` no `meta.json`). Para alimentar essa cache, corre o build **no teu computador** (IP normal) e faz commit dos dados limpos:
+O INE pode não aceitar ligações dos runners do GitHub. O workflow corre com `IMOPT_INE_MODE=auto`: tenta o INE uma vez e, se falhar, usa o snapshot mais recente entre `data/clean` de `main` (commit manual) e `data/clean` do branch `data` (último run que alterou dados), marcado como `CACHE` no `meta.json`. Para alimentar essa cache, corre o build **no teu computador** (IP normal) e faz commit dos dados limpos:
 
 ```bash
 python -m imopt build
