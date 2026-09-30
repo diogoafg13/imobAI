@@ -55,12 +55,29 @@ jobs:
         env:
           IMOPT_INE_MODE: auto   # o INE pode não aceitar ligações dos runners: usa data/clean
         run: python -m imopt build
+      - name: Restaurar backtest.json em cache (se existir)
+        # site/data/ nunca fica no repositório: cada build parte do zero. Sem isto, um deploy
+        # normal (sem a flag abaixo) publicava um site SEM secção de backtest, apagando o
+        # resultado do último "Also run the backtest" até alguém voltar a correr manualmente.
+        run: |
+          if [ -f data/clean/backtest.json ]; then
+            mkdir -p site/data
+            cp data/clean/backtest.json site/data/backtest.json
+            echo "backtest.json restaurado da cache (data/clean)"
+          else
+            echo "sem cache de backtest.json ainda (corre com a flag 'backtest' pelo menos uma vez)"
+          fi
       - name: Backtest multi-país do score nacional (opcional, só quando pedido manualmente)
         # Não corre nas execuções automáticas (agendada/push): ~40 pedidos extra a Eurostat/BIS
         # tornariam o workflow semanal mais lento e frágil. Ver README, secção "Backtest".
+        # Atualiza site/data/backtest.json E a cópia em cache (data/clean), para o passo acima
+        # continuar a servir este resultado nos deploys seguintes até ser corrido de novo.
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.backtest == 'true'
         continue-on-error: true
-        run: python -m imopt backtest
+        run: |
+          python -m imopt backtest
+          mkdir -p data/clean
+          cp site/data/backtest.json data/clean/backtest.json
       - name: Guardar snapshots no branch data
         run: |
           # Trabalha num worktree separado: não mexe no checkout do build (que tem data/ alterado).

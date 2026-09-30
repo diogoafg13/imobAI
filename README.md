@@ -139,9 +139,16 @@ históricos de que depende mudam pouco de semana para semana. Em vez disso, o
 `.github/workflows/build.yml` ganhou uma entrada manual opcional
 (`workflow_dispatch` → "Também correr o backtest"): só quando alguém a liga é que o passo
 `python -m imopt backtest` corre, sempre com `continue-on-error` (não bloqueia o deploy do
-resto do site), e o `data/clean/backtest_*.parquet` resultante entra no mesmo snapshot do
-branch `data` que os outros indicadores, para servir de cache nas execuções seguintes. As
-execuções automáticas (agendada e por push) não são afetadas.
+resto do site). As execuções automáticas (agendada e por push) não correm o backtest.
+
+**`site/data/` nunca é commitado — cada deploy parte do zero.** Para a secção "Backtest" não
+desaparecer do site sempre que houver um deploy normal (ex.: um push a `main` sem pedir o
+backtest), o `backtest.json` gerado é também copiado para `data/clean/backtest.json`, que entra
+no mesmo snapshot do branch `data` que os outros indicadores (`data/clean/*.parquet`). Todo
+deploy — mesmo sem a flag `backtest` — restaura essa cópia para `site/data/backtest.json` antes
+de publicar, servindo o **último resultado real conhecido** até alguém voltar a ligar a flag e
+gerar um novo. Antes da primeira vez que alguém corre o backtest, não há cache: a secção mostra
+"ainda não gerado" (não é um erro).
 
 ## Anúncios (opcional)
 
