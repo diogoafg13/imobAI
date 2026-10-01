@@ -387,22 +387,31 @@ Secção do site onde a pessoa indica concelho (e, se quiser, freguesia), mês d
 de casa e, opcionalmente, o crédito, o rendimento líquido do agregado e a renda atual. Tudo é calculado no
 browser; os dados ficam só nesse browser (`localStorage`), nada é enviado. Devolve:
 
-- **preço pago face ao mercado da altura**: €/m² pago vs mediana de venda do concelho e da freguesia (INE,
-  desde 2019) e vs avaliação bancária do tipo de casa no trimestre da compra;
+- **preço pago face ao mercado da altura**: €/m² pago vs mediana de venda do concelho, da tipologia no concelho
+  e da freguesia (INE, desde 2019) e vs avaliação bancária do tipo de casa no trimestre da compra. O veredicto usa
+  a mediana da freguesia — ajustada à tipologia pela diferença de €/m² dessa tipologia no concelho, quando
+  indicada (o INE não publica tipologia por freguesia) —, depois a da freguesia, a da tipologia e a do concelho;
 - **valor estimado hoje**: preço pago × variação de um índice local desde a compra, por ordem de preferência
   mediana de venda da tipologia indicada (T0/T1, T2, T3, T4+) no concelho (INE, só ~55 concelhos com vendas
   suficientes), avaliação bancária do tipo de casa no concelho (desde 2011), avaliação bancária de todas as
   casas, preço mediano de venda do concelho e de casas existentes; com o intervalo dado pelos outros índices
   locais. A tipologia conta muito: em Loures, de 2021T1 a 2026T1, a mediana de T4+ subiu +56% e a avaliação
   bancária de apartamentos +80% (+96% até 2026T3) — os índices são medianas do que se transaciona em cada
-  trimestre, não a mesma casa, e o texto di-lo. O índice nacional só é usado
+  trimestre, não a mesma casa, e o texto di-lo. As medianas de venda do INE (concelho, freguesia, tipologia,
+  existentes) são das vendas dos **12 meses anteriores**: o valor de um trimestre reflete o mercado de ~1,5
+  trimestres antes. Por isso, para o mercado do trimestre da compra usa-se a média das janelas que acabam 1 e 2
+  trimestres depois (centradas na compra); se ainda não saíram, projeta-se o último valor com a variação anual do
+  preço do concelho (dito no texto). A valorização é medida a partir dessa base centrada; O índice nacional só é usado
   se nenhum local cobrir a data. Valorização real (IHPC) e previsão a 12 meses do concelho;
 - **crédito**: prestação, taxa de esforço face ao rendimento líquido (limite de 50% do Banco de Portugal),
   com +2 p.p. de juros, e crédito em dívida face ao valor estimado;
 - **arrendamento**: renda de mercado (renda mediana de novos contratos da freguesia ou do concelho × área
   habitável, com o 1.º e 3.º quartil do concelho; o INE não publica rendas por tipologia, por isso, com a
   tipologia indicada, a renda por m² é ajustada pela diferença de €/m² entre essa tipologia e o total nas
-  vendas do concelho — aproximação dita no texto), rendibilidade bruta e líquida com pressupostos editáveis (IMI,
+  vendas do concelho — aproximação dita no texto; a renda da freguesia, publicada com um ano de atraso, é
+  atualizada com a variação da do concelho, a faixa 25%–75% do concelho é escalada à freguesia, e freguesias com
+  menos de 100 contratos são assinaladas como pouco fiáveis, com o valor do concelho ao lado; acima de 120 m²
+  avisa que a renda real tende a ficar abaixo da mediana), rendibilidade bruta e líquida com pressupostos editáveis (IMI,
   condomínio, seguro, meses vazio, manutenção, IRS sobre rendas), saldo face à prestação e, se a casa já
   estiver arrendada, renda atual face ao mercado;
 - **comprar ou arrendar** para aquela casa (ponto de equilíbrio).

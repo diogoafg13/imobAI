@@ -1600,10 +1600,31 @@ const qOfMonth = (ym) => {
 const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 const monthTxt = (ym) => { const [y, m] = String(ym).split('-').map(Number); return MESES[m - 1] ? `${MESES[m - 1]} de ${y}` : String(ym); };
 function serVal(ser, q) { const r = (ser || []).find((x) => x[0] === q); return r ? r[1] : null; }
-function serGrowth(ser, q0) {
+// As medianas de venda do INE (concelho, freguesia, tipologia) são das vendas dos últimos 12 meses: o valor do
+// trimestre Q reflete o mercado de ~1,5 trimestres antes. Para o mercado do trimestre q usa-se a média das
+// janelas que acabam em q+1 e q+2 (centradas em q); se ainda não saíram, projeta-se o último valor com a
+// variação anual da série `trend` (a do concelho, menos ruidosa do que a de uma freguesia).
+const qAdd = (q, k) => { const i = +q.slice(0, 4) * 4 + +q.slice(-1) - 1 + k; return `${Math.floor(i / 4)}Q${(i % 4) + 1}`; };
+const qIdx = (q) => +q.slice(0, 4) * 4 + +q.slice(-1) - 1;
+function at12(ser, q, trend) {
+  if (!ser || !ser.length || q < ser[0][0]) return null;
+  const a = serVal(ser, qAdd(q, 1)), b = serVal(ser, qAdd(q, 2));
+  if (a && b) return { v: (a + b) / 2 };
+  const last = ser[ser.length - 1];
+  if (q < qAdd(last[0], -1)) { const x = serVal(ser, q); return x ? { v: x } : null; }   // falha no meio da série
+  const tr = trend && trend.length ? trend : ser, tl = tr[tr.length - 1], tp = serVal(tr, qAdd(tl[0], -4));
+  const gq = tp ? (tl[1] / tp) ** 0.25 : 1;
+  return { v: last[1] * gq ** (qIdx(q) + 1.5 - qIdx(last[0])), proj: last[0], gy: tp ? tl[1] / tp - 1 : null };
+}
+function serGrowth(ser, q0, roll12 = false) {
   if (!ser || !ser.length) return null;
   const first = ser[0][0], last = ser[ser.length - 1];
   if (q0 < first) return null;
+  if (roll12) {
+    const b = at12(ser, q0);
+    if (!b || b.proj) return { g: 0, from: q0, to: last[0], recent: true };
+    return { g: last[1] / b.v - 1, from: q0, to: last[0], v0: b.v, roll12: true };
+  }
   if (q0 >= last[0]) return { g: 0, from: q0, to: last[0], recent: true };
   const v0 = serVal(ser, q0);
   return v0 ? { g: last[1] / v0 - 1, from: q0, to: last[0], v0 } : null;
@@ -1666,7 +1687,8 @@ async function imAnalyse() {
   if (HIST.exist && HIST.exist[v.dico]) idx.push(['exist', `preço mediano de venda de casas existentes em ${m.name} (INE)`, HIST.exist[v.dico]]);
   if (pr && HIST.parish[v.par]) idx.push(['par', `preço mediano de venda na freguesia ${pr.name} (INE)`, HIST.parish[v.par]]);
   if (NAT && NAT.series && NAT.series.hpi) idx.push(['nat', 'índice nacional de preços da habitação', NAT.series.hpi]);
-  const res = idx.map(([k, label, ser]) => ({ k, label, ...(serGrowth(ser, q0) || {}) })).filter((r) => r.g != null);
+  const ROLL12 = new Set(['typ', 'ine', 'exist', 'par']);
+  const res = idx.map(([k, label, ser]) => ({ k, label, ...(serGrowth(ser, q0, ROLL12.has(k)) || {}) })).filter((r) => r.g != null);
   let chartData = null, rentVerdict = null, tenant = null;
   // o índice nacional só serve quando não há nenhum local que cubra a data da compra
   const local = res.filter((r) => r.k !== 'nat');
@@ -1678,16 +1700,26 @@ async function imAnalyse() {
   const cmp = [];
   const at = (ser) => { if (!ser || !ser.length) return null; const last = ser[ser.length - 1]; return q0 > last[0] ? [last[1], last[0]] : (serVal(ser, q0) ? [serVal(ser, q0), q0] : null); };
   const addCmp = (label, ser) => { const r = at(ser); if (r) cmp.push([r[1] === q0 ? label : `${label} (último publicado, ${qpt(r[1])})`, r[0]]); };
-  if (typSer) addCmp(`mediana de venda de ${typName} no concelho`, typSer);
-  addCmp('mediana de venda do concelho', m.series.price);
-  if (pr) addCmp(`mediana da freguesia ${pr.name}`, HIST.parish[v.par]);
+  const trend = m.series.price;
+  const add12 = (label, ser) => { const r = at12(ser, q0, trend); if (r) cmp.push([r.proj ? `${label} (projetada a partir de ${qpt(r.proj)})` : label, r.v]); return r; };
+  let projTxt = null;
+  if (typSer) add12(`mediana de venda de ${typName} no concelho`, typSer);
+  const totAt = add12('mediana de venda do concelho', m.series.price);
+  if (totAt && totAt.proj) projTxt = `As medianas de venda do INE são das vendas dos 12 meses anteriores, por isso o valor publicado para ${qpt(totAt.proj)} reflete o mercado de meados desse período. Para comparar com ${qpt(q0)}, foram projetadas com a variação anual do preço no concelho (${totAt.gy != null ? fmt.spct(totAt.gy, 0) : 'sem variação conhecida'}) — uma aproximação.`;
+  const parR = pr ? add12(`mediana da freguesia ${pr.name}`, HIST.parish[v.par]) : null;
   if (kindKey && HIST.val[kindKey]) addCmp(`avaliação bancária de ${kindKey === 'apt' ? 'apartamentos' : 'moradias'}`, HIST.val[kindKey][v.dico]);
   tiles.push(tile('Preço pago', `${fmt.eur(ppm)}/m²`, `${fmt.eur(v.price)} por ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m², ${qpt(q0)}`));
-  const ref = cmp.find((c) => typSer && c[0].startsWith(`mediana de venda de ${typName}`)) || cmp.find((c) => c[0].startsWith('mediana da freguesia')) || cmp[0];
+  // com freguesia e tipologia: a mediana da freguesia ajustada pela diferença de €/m² da tipologia no concelho
+  // (o INE não publica tipologia por freguesia); a localização dentro do concelho pesa mais do que o tamanho
+  if (parR && typSer) {
+    const tq = at12(typSer, q0, trend), cq = at12(m.series.price, q0, trend);
+    if (tq && cq) cmp.push([`mediana da freguesia ${pr.name}, ajustada a ${typName}${parR.proj ? ` (projetada a partir de ${qpt(parR.proj)})` : ''}`, parR.v * tq.v / cq.v]);
+  }
+  const ref = cmp.find((c) => c[0].includes(', ajustada a ')) || cmp.find((c) => c[0].startsWith('mediana da freguesia')) || cmp.find((c) => typSer && c[0].startsWith(`mediana de venda de ${typName}`)) || cmp[0];
   const verdict = ref ? imVerdict(ppm / ref[1] - 1, 'pagaste', ref[0]) : null;
   const strips = [];
   if (cmp.length) strips.push(['Preço pago face às medianas da altura (€/m²)', imStrip(cmp.map(([l, x]) => ({ label: imShort(l), value: x })), { label: 'tu', value: ppm }, null, (x) => fmt.eur(x))]);
-  if (cmp.length) li.push(`Na altura da compra (${qpt(q0)}), pagaste ${cmp.map(([l, x]) => `${rel(ppm / x - 1)} da ${l} (${fmt.eur(x)}/m²)`).join('; ')}. Uma diferença grande pode ser só a casa (estado, área, vista, piso) e não um bom ou mau negócio.`);
+  if (cmp.length) li.push(`Na altura da compra (${qpt(q0)}), pagaste ${cmp.map(([l, x]) => `${rel(ppm / x - 1)} da ${l} (${fmt.eur(x)}/m²)`).join('; ')}. Uma diferença grande pode ser só a casa (estado, área, vista, piso) e não um bom ou mau negócio. As medianas do INE são preços de escritura de todas as vendas (incluindo casas antigas ou a precisar de obras) e costumam ficar abaixo dos preços pedidos nos anúncios.${projTxt ? ' ' + projTxt : ''}`);
   else li.push(`Não há medianas publicadas para ${m.name} em ${qpt(q0)} para comparar o preço pago (o INE só publica o preço por concelho desde 2019 e a avaliação bancária onde há avaliações suficientes).`);
   // 2) valor hoje
   if (main) {
@@ -1703,7 +1735,7 @@ async function imAnalyse() {
     tiles.push(tile(main.recent ? 'Valor estimado' : `Valor estimado (${qpt(main.to)})`, fmt.eur(val), main.recent ? 'compra recente: ainda sem variação medida' : `${fmt.spct(main.g, 0)} desde a compra${multi ? ` · ${fmt.eur(lo)} a ${fmt.eur(hi)} conforme o índice` : ''}`));
     li.push(main.recent ? `A compra é tão recente como os últimos dados publicados (${qpt(main.to)}): ainda não há valorização medida, por isso o valor estimado é o preço pago.`
       : `Aplicando ao preço pago a variação ${main.label.startsWith('preço') ? 'do' : 'da'} ${main.label} entre ${qpt(main.from)} e ${qpt(main.to)} (${fmt.spct(main.g, 0)}), o valor estimado é ${fmt.eur(val)}${multi ? `; com os outros índices locais fica entre ${fmt.eur(lo)} e ${fmt.eur(hi)} (${use.filter((r) => r !== main).map((r) => `${r.label}, até ${qpt(r.to)}: ${fmt.spct(r.g, 0)}`).join('; ')})` : ''}.${main.k === 'nat' ? ' Não há índice local que cubra a data da compra: usou-se o índice nacional, que pode estar longe do teu concelho.' : ''}${infl != null ? ` Descontada a inflação até ${qpt(hl[0])} (${fmt.spct(infl, 0)}), a valorização real é de ${fmt.spct((1 + main.g) / (1 + infl) - 1, 0)}${hl[0] < main.to ? ` (o índice de preços no consumidor publicado só vai até ${qpt(hl[0])}, por isso este valor real fica um pouco acima do verdadeiro)` : ''}.` : ''}`);
-    if (!main.recent) li.push(`Os índices são medianas do que se vendeu ou avaliou em cada trimestre, não a mesma casa: se mudar o tipo de casas transacionadas (mais pequenas, mais novas, noutra zona do concelho), a mediana mexe-se mais ou menos do que uma casa concreta. ${typSer ? `Por isso se usa a mediana de ${typName}: casas grandes e pequenas valorizaram de forma diferente.` : 'Indicar a tipologia (T0/T1 … T4+) torna a estimativa mais próxima da tua casa: casas grandes e pequenas valorizaram de forma diferente.'} Vendas recentes de casas parecidas na tua rua são a melhor referência.`);
+    if (!main.recent) li.push(`${main.roll12 ? `${main.label.startsWith('preço') ? 'O' : 'A'} ${main.label} é a mediana das vendas dos 12 meses anteriores a cada trimestre: a variação foi medida entre as janelas centradas na compra e a última publicada, por isso o valor estimado reflete o mercado de cerca de meio ano antes de ${qpt(main.to)}. ` : ''}Os índices são medianas do que se vendeu ou avaliou em cada trimestre, não a mesma casa: se mudar o tipo de casas transacionadas (mais pequenas, mais novas, noutra zona do concelho), a mediana mexe-se mais ou menos do que uma casa concreta. ${typSer ? `Por isso se usa a mediana de ${typName}: casas grandes e pequenas valorizaram de forma diferente.` : 'Indicar a tipologia (T0/T1 … T4+) torna a estimativa mais próxima da tua casa: casas grandes e pequenas valorizaram de forma diferente.'} Vendas recentes de casas parecidas na tua rua são a melhor referência.`);
     const fcg = kindKey && m[`${kindKey}_fc_growth_12m`] != null ? [m[`${kindKey}_fc_growth_12m`], m[`${kindKey}_fc_lo80`], m[`${kindKey}_fc_hi80`], kindKey === 'apt' ? 'a avaliação bancária de apartamentos' : 'a avaliação bancária de moradias', m[kindKey === 'apt' ? 'val_apt' : 'val_house']]
       : m.fc_growth_12m != null ? [m.fc_growth_12m, m.fc_lo80, m.fc_hi80, 'o preço mediano de venda', m.nowcast_price ?? m.price] : null;
     if (fcg) {
@@ -1726,25 +1758,34 @@ async function imAnalyse() {
       li.push(`Valor estimado face ao crédito em dívida: ${fmt.pct(v.loan / val, 0)} (quanto do valor da casa ainda é do banco).`);
     }
     // 4) arrendamento
-    const rm2 = pr && pr.rent != null ? pr.rent : m.rent;
+    // renda da freguesia: atualizada para o ano da do concelho com a variação do concelho (a da freguesia sai
+    // com um ano de atraso) e escalada a faixa 25%–75% do concelho pela relação freguesia/concelho
+    const rs = (m.series && m.series.rent) || [], rLast = rs.length ? rs[rs.length - 1] : null;
+    const rAt = (y) => { const r = rs.find((x) => +String(x[0]).slice(0, 4) === +y); return r ? r[1] : null; };
+    const usePar = pr && pr.rent != null && m.rent != null;
+    const parUp = usePar && rLast && pr.rent_year && +String(rLast[0]).slice(0, 4) > pr.rent_year && rAt(pr.rent_year) ? m.rent / rAt(pr.rent_year) : 1;
+    const rm2 = usePar ? pr.rent * parUp : m.rent;
+    const bandF = usePar ? rm2 / m.rent : 1;
     if (rm2 != null) {
       // o INE não publica rendas por tipologia: com a tipologia indicada, ajusta-se a renda por m² pela diferença de
       // €/m² entre essa tipologia e o total nas vendas do concelho (aproximação, dita no texto)
       const tLast = typSer && typSer.length ? typSer[typSer.length - 1] : null, tTot = tLast ? serVal(m.series.price, tLast[0]) : null;
       const tf = tLast && tTot ? tLast[1] / tTot : 1;
-      const rentHome = rm2 * v.area * tf, rLo = m.rent_q1 != null ? m.rent_q1 * v.area * tf : null, rHi = m.rent_q3 != null ? m.rent_q3 * v.area * tf : null;
+      const rentHome = rm2 * v.area * tf, rLo = m.rent_q1 != null ? m.rent_q1 * v.area * tf * bandF : null, rHi = m.rent_q3 != null ? m.rent_q3 * v.area * tf * bandF : null;
+      const parTxt = usePar ? ` Renda da freguesia ${pr.name}: ${fmt.eur2(pr.rent)}/m² em ${pr.rent_year}${parUp !== 1 ? `, atualizada para ${String(rLast[0]).slice(0, 4)} com a variação do concelho (${fmt.spct(parUp - 1, 0)}): ${fmt.eur2(rm2)}/m²` : ''}${pr.rent_contracts != null && pr.rent_contracts < 100 ? ` — só ${fmt.n(pr.rent_contracts, 0)} novos contratos nesse ano, por isso a mediana é pouco fiável` : ''}; com a renda do concelho (${fmt.eur2(m.rent)}/m²) seriam ${fmt.eur(m.rent * v.area * tf)}/mês. A faixa 25%–75% é a do concelho, escalada na proporção freguesia/concelho.` : '';
+      const big = v.area > 120;
       const tfTxt = tf !== 1 ? ` O INE não publica rendas por tipologia: como nas vendas do concelho o €/m² de ${typName} está ${rel(tf - 1)} do total (${qpt(tLast[0])}), a renda por m² foi ajustada na mesma proporção — é uma aproximação.` : '';
       const rent = v.rent || rentHome;
       const months = 12 - (v.vac ?? 1);
       const gross = rent * months;
       const costs = (v.imi ?? v.price * 0.003) + (v.condo ?? (v.kind === 'house' ? 0 : 25)) * 12 + (v.ins ?? 150) + (v.maint ?? 5) / 100 * rent * 12;
       const taxR = (v.tax ?? 25) / 100, tax = Math.max(0, gross - costs) * taxR, net = gross - costs - tax;
-      if (rLo && rHi) strips.push([`Renda para ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m²: faixa central dos novos contratos no concelho (€/mês)`,
+      if (rLo && rHi) strips.push([`Renda para ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m²: faixa central dos novos contratos ${usePar ? 'na freguesia (estimada)' : 'no concelho'} (€/mês)`,
         imStrip([{ label: 'mediana', value: rentHome }], v.rent ? { label: 'a tua', value: v.rent } : null, [rLo, rHi], (x) => fmt.eur(x))]);
       if (v.rent) rentVerdict = imVerdict(v.rent / rentHome - 1, 'a tua renda está', 'renda mediana de novos contratos');
-      tiles.push(tile('Renda de mercado (estimada)', `${fmt.eur(rentHome)}/mês`, `${pr && pr.rent != null ? `freguesia ${esc(pr.name)}` : `concelho`}, novos contratos${tf !== 1 ? `, ajustada a ${typName}` : ''}${rLo ? ` · 25%–75% do concelho: ${fmt.eur(rLo)}–${fmt.eur(rHi)}` : ''}`));
+      tiles.push(tile('Renda de mercado (estimada)', `${fmt.eur(rentHome)}/mês`, `${pr && pr.rent != null ? `freguesia ${esc(pr.name)}` : `concelho`}, novos contratos${tf !== 1 ? `, ajustada a ${typName}` : ''}${rLo ? ` · 25%–75%: ${fmt.eur(rLo)}–${fmt.eur(rHi)}` : ''}${big ? ' · casa grande: a renda real tende a ficar abaixo' : ''}`));
       tiles.push(tile('Rendibilidade', `${fmt.pct(gross / val, 1)} bruta`, `${fmt.pct(net / val, 1)} líquida de custos e IRS · ${fmt.pct(net / v.price, 1)} sobre o preço pago`));
-      li.push(`${v.rent ? `A renda que indicaste (${fmt.eur(v.rent)}/mês) está ${rel(v.rent / rentHome - 1)} da renda mediana de novos contratos para ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m² (${fmt.eur(rentHome)}).` : `Arrendada, a casa renderia cerca de ${fmt.eur(rentHome)}/mês (renda mediana de novos contratos${pr && pr.rent != null ? ' da freguesia' : ' do concelho'} × área${rLo ? `; no concelho, 25% dos novos contratos ficam abaixo de ${fmt.eur(rLo)} e 25% acima de ${fmt.eur(rHi)} para esta área` : ''}).`} Com ${fmt.n(v.vac ?? 1, 0)} ${(v.vac ?? 1) === 1 ? 'mês' : 'meses'} vazio por ano, custos de ${fmt.eur(costs)}/ano (IMI, condomínio, seguro, manutenção) e IRS de ${fmt.n(v.tax ?? 25, 0)}% sobre o rendimento depois de custos, ficam ${fmt.eur(net)}/ano líquidos (${fmt.pct(net / val, 1)} do valor estimado).${pay ? ` Face à prestação, o saldo mensal seria de ${net / 12 - pay < 0 ? '−' : '+'}${fmt.eur(Math.abs(net / 12 - pay))} (${net / 12 - pay >= 0 ? 'a renda paga a prestação' : 'a renda não chega para a prestação'}).` : ''} A taxa do IRS sobre rendas depende do contrato e das opções fiscais: confirma com as Finanças ou um contabilista.${tfTxt} A renda estimada é proporcional à área: anexos, garagem ou arrumos contados como área habitável inflacionam-na, e casas grandes costumam ter renda por m² mais baixa do que a mediana.`);
+      li.push(`${v.rent ? `A renda que indicaste (${fmt.eur(v.rent)}/mês) está ${rel(v.rent / rentHome - 1)} da renda mediana de novos contratos para ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m² (${fmt.eur(rentHome)}).` : `Arrendada, a casa renderia cerca de ${fmt.eur(rentHome)}/mês (renda mediana de novos contratos${pr && pr.rent != null ? ' da freguesia' : ' do concelho'} × área${rLo ? `; ${usePar ? 'na freguesia (estimativa)' : 'no concelho'}, 25% dos novos contratos ficam abaixo de ${fmt.eur(rLo)} e 25% acima de ${fmt.eur(rHi)} para esta área` : ''}).`} Com ${fmt.n(v.vac ?? 1, 0)} ${(v.vac ?? 1) === 1 ? 'mês' : 'meses'} vazio por ano, custos de ${fmt.eur(costs)}/ano (IMI, condomínio, seguro, manutenção) e IRS de ${fmt.n(v.tax ?? 25, 0)}% sobre o rendimento depois de custos, ficam ${fmt.eur(net)}/ano líquidos (${fmt.pct(net / val, 1)} do valor estimado).${pay ? ` Face à prestação, o saldo mensal seria de ${net / 12 - pay < 0 ? '−' : '+'}${fmt.eur(Math.abs(net / 12 - pay))} (${net / 12 - pay >= 0 ? 'a renda paga a prestação' : 'a renda não chega para a prestação'}).` : ''} A taxa do IRS sobre rendas depende do contrato e das opções fiscais: confirma com as Finanças ou um contabilista.${parTxt}${tfTxt} A renda estimada é proporcional à área: anexos, garagem ou arrumos contados como área habitável inflacionam-na, e casas grandes costumam ter renda por m² mais baixa do que a mediana.${big ? ` Com ${fmt.n(v.area, 0)} m², esta casa é bem maior do que a maioria das que se arrendam, de onde vem a mediana por m²: conta com uma renda mais perto da parte de baixo da faixa${rLo ? ` (${fmt.eur(rLo)})` : ''} do que da mediana.` : ''} As rendas do INE são as dos contratos declarados às Finanças, que costumam ficar abaixo dos valores pedidos nos anúncios.`);
       tenant = imTenants(v.rent || rentHome, !!v.rent, m, pr);
       const be = (rate / 100 + 0.013) - (rentHome * 12) / val;
       const own = rate / 100 + 0.013, ry = (rentHome * 12) / val;
@@ -1766,6 +1807,7 @@ async function imAnalyse() {
     <div class="disclaimer">${IM_DISCLAIMER}</div>
     <p class="noprint"><button type="button" class="btn" id="im-print">Imprimir análise</button></p>`;
   imLast = chartData;
+  layoutStrips(out);
   if (chartData) try { imChart('im-chart', chartData); } catch (e) { console.error('gráfico do imóvel:', e); }
 }
 // Quem consegue pagar esta renda? Perfis com rendimentos locais e parte dos agregados fiscais do concelho com
@@ -1828,22 +1870,52 @@ function imVerdict(d, who, refLabel) {
   return `<p class="im-verdict">${pill(band, `${arrow} ${txt}`)} <span>${esc(who.charAt(0).toUpperCase() + who.slice(1))} ${fmt.spct(d, 0)} face à ${esc(refLabel)}.</span></p>`;
 }
 const TYP_NAMES = { t01: 'T0/T1', t2: 'T2', t3: 'T3', t4: 'T4+' };
-const imShort = (l) => l.replace('mediana de venda do concelho', 'concelho').replace(/^mediana de venda de (T\S+) no concelho/, '$1 concelho').replace(/^mediana da freguesia .*?(\(|$)/, 'freguesia $1')
-  .replace(/^avaliação bancária de /, 'aval. ').replace(/\s*\(último publicado, (.*)\)/, ' ($1)').replace(/\s+\($/, '').trim();
+const imShort = (l) => l.replace('mediana de venda do concelho', 'concelho').replace(/^mediana da freguesia .*?, ajustada a (\S+)/, 'freguesia $1').replace(/^mediana de venda de (T\S+) no concelho/, '$1 concelho').replace(/^mediana da freguesia .*?(\(|$)/, 'freguesia $1')
+  .replace(/^avaliação bancária de /, 'aval. ').replace(/\s*\(último publicado, (.*)\)/, ' ($1)').replace(/\s*\(projetada a partir de .*\)/, ' (proj.)').replace(/\s+\($/, '').trim();
 // faixa horizontal: pontos de referência (traço + etiqueta em baixo), o teu valor (círculo + etiqueta em cima), banda opcional
 function imStrip(refs, you, band, f) {
   const vals = [...refs.map((r) => r.value), ...(you ? [you.value] : []), ...(band || [])];
   let lo = Math.min(...vals), hi = Math.max(...vals);
   const pad = (hi - lo) * 0.15 || hi * 0.1; lo -= pad; hi += pad;
   const pos = (x) => ((x - lo) / (hi - lo)) * 100, clamp = (x) => Math.max(6, Math.min(94, x));
-  const refsSorted = [...refs].sort((a, b) => a.value - b.value);
-  return `<div class="strip" role="img" aria-label="${esc([...refs.map((r) => `${r.label} ${f(r.value)}`), ...(you ? [`${you.label} ${f(you.value)}`] : [])].join(', '))}">
+  // etiquetas por baixo da linha: cada uma vai para a primeira fila onde não se sobrepõe às vizinhas
+  // (largura estimada pelo n.º de caracteres, ~1,1% da faixa por carácter)
+  const labs = [...(band ? [['25%', band[0]], ['75%', band[1]]] : []), ...refs.map((r) => [r.label, r.value])]
+    .map(([l, x]) => ({ text: `${l}: ${f(x)}`, at: clamp(pos(x)) })).sort((p, q) => p.at - q.at);
+  const rows = [];
+  labs.forEach((l) => {
+    const half = l.text.length * 0.55;
+    let r = rows.findIndex((end) => end < l.at - half);
+    if (r < 0) { rows.push(0); r = rows.length - 1; }
+    rows[r] = l.at + half; l.row = r;
+  });
+  const top = (r) => 46 + r * 14;
+  return `<div class="strip" style="height:${top(Math.max(rows.length, 1)) + 4}px" role="img" aria-label="${esc([...refs.map((r) => `${r.label} ${f(r.value)}`), ...(you ? [`${you.label} ${f(you.value)}`] : [])].join(', '))}">
     <span class="track"></span>
-    ${band ? `<span class="band" style="left:${pos(band[0])}%;width:${pos(band[1]) - pos(band[0])}%"></span><span class="lab low" style="left:${clamp(pos(band[0]))}%">25%: ${esc(f(band[0]))}</span><span class="lab low" style="left:${clamp(pos(band[1]))}%">75%: ${esc(f(band[1]))}</span>` : ''}
-    ${refsSorted.map((r, i) => `<span class="pt" style="left:${pos(r.value)}%"></span><span class="lab ${band ? 'mid' : i % 2 ? 'low2' : 'low'}" style="left:${clamp(pos(r.value))}%">${esc(r.label)}: ${esc(f(r.value))}</span>`).join('')}
+    ${band ? `<span class="band" style="left:${pos(band[0])}%;width:${pos(band[1]) - pos(band[0])}%"></span>` : ''}
+    ${refs.map((r) => `<span class="pt" style="left:${pos(r.value)}%"></span>`).join('')}
+    ${labs.map((l) => `<span class="lab" style="left:${l.at}%;top:${top(l.row)}px">${esc(l.text)}</span>`).join('')}
     ${you ? `<span class="pt you" style="left:${pos(you.value)}%"></span><span class="lab top" style="left:${clamp(pos(you.value))}%"><b>${esc(you.label)}: ${esc(f(you.value))}</b></span>` : ''}
   </div>`;
 }
+// Depois de desenhadas, as etiquetas são medidas: ficam dentro da faixa e vão para a primeira fila livre
+// (no telemóvel a faixa é estreita e as etiquetas de valores próximos sobrepunham-se).
+function layoutStrips(root = document) {
+  root.querySelectorAll('.strip').forEach((st) => {
+    const W = st.clientWidth; if (!W) return;
+    const fit = (el) => { el.dataset.at ??= el.style.left; const w = el.offsetWidth, x = Math.max(w / 2, Math.min(W - w / 2, (parseFloat(el.dataset.at) / 100) * W)); el.style.left = `${x}px`; return [x - w / 2, x + w / 2]; };
+    st.querySelectorAll('.lab.top').forEach(fit);
+    const labs = [...st.querySelectorAll('.lab:not(.top)')].map((el) => ({ el, r: fit(el) })).sort((a, b) => a.r[0] - b.r[0]);
+    const rows = [];
+    labs.forEach((l) => {
+      let r = rows.findIndex((end) => end + 6 < l.r[0]);
+      if (r < 0) { rows.push(0); r = rows.length - 1; }
+      rows[r] = l.r[1]; l.el.style.top = `${46 + r * 14}px`;
+    });
+    st.style.height = `${46 + Math.max(rows.length, 1) * 14 + 4}px`;
+  });
+}
+window.addEventListener('resize', () => layoutStrips($('#im-out') || document));
 let imLast = null;
 function imChart(id, D) {
   const txt = css('--muted'), line = css('--line');
@@ -1851,8 +1923,11 @@ function imChart(id, D) {
   const start = qi(D.q0) - 12;
   const names = { typ: `Mediana de venda, ${D.typName || 'tipologia'} (concelho, INE)`, exist: 'Mediana de venda, casas existentes (concelho, INE)', type: 'Avaliação bancária do tipo de casa (concelho)', all: 'Avaliação bancária, todas as casas (concelho)', ine: 'Mediana de venda (concelho, INE)', par: 'Mediana de venda (freguesia, INE)' };
   const mk = D.idx.filter(([, , ser]) => ser && ser.length).map(([k, , ser]) => ({ k, name: names[k] || k, data: ser.filter((r) => qi(r[0]) >= start) }));
-  const ms = D.mainSer || [], b0 = (ms.find((r) => r[0] === D.q0) || [])[1];
-  const yours = b0 ? ms.filter((r) => r[0] >= D.q0).map((r) => [r[0], Math.round(D.ppm * r[1] / b0)]) : [[D.q0, Math.round(D.ppm)]];
+  const ms = D.mainSer || [];
+  // índice de 12 meses: a base é a janela centrada na compra (ver at12), por isso a linha só segue o índice a
+  // partir de q0+2; antes disso é só o ponto da compra
+  const b0 = D.main.roll12 ? D.main.v0 : (ms.find((r) => r[0] === D.q0) || [])[1], from = D.main.roll12 ? qAdd(D.q0, 2) : D.q0;
+  const yours = b0 ? [...(D.main.roll12 ? [[D.q0, Math.round(D.ppm)]] : []), ...ms.filter((r) => r[0] >= from).map((r) => [r[0], Math.round(D.ppm * r[1] / b0)])] : [[D.q0, Math.round(D.ppm)]];
   const cats = [...new Set([...mk.flatMap((s) => s.data.map((r) => r[0])), ...yours.map((r) => r[0])])].sort();
   const toMap = (arr) => new Map(arr.map((r) => [r[0], r[1]]));
   const series = mk.map((s) => {
