@@ -11,7 +11,7 @@ import duckdb
 import pandas as pd
 import yaml
 
-from . import changes, geo, ine, macro, outlook, parishes, scoring, tracking
+from . import changes, geo, housing, ine, macro, outlook, parishes, scoring, tracking
 
 log = logging.getLogger("imopt")
 ROOT = Path(__file__).resolve().parents[2]
@@ -102,6 +102,9 @@ EXTRA_KEYS = ("sales_price_new", "sales_price_existing", "valuation_apartments",
               "sales_price_t4", "valuation_count", "valuation_count_apartments",
               "valuation_count_houses", "sales_price_households", "sales_price_companies")
 
+# Contexto de habitação (imopt/housing.py): IRS de quem vive no concelho, oferta nova, parque e camas turísticas.
+CONTEXT_KEYS = ("irs_median", "dwellings_licensed", "dwellings_completed", "dwellings_stock", "tourism_beds")
+
 
 def municipal(df: pd.DataFrame | None) -> pd.DataFrame | None:
     if df is None or df.empty:
@@ -168,6 +171,9 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     extras = scoring.extra_features({k: municipal(frames.get(k)) for k in EXTRA_KEYS})
     if not extras.empty:
         feats = feats.merge(extras, on="dico", how="left")
+    ctx = housing.context_features({k: municipal(frames.get(k)) for k in CONTEXT_KEYS})
+    if not ctx.empty:
+        feats = feats.merge(ctx, on="dico", how="left")
     feats = scoring.real_growth(feats, macro_frames.get("eurostat_hicp"))
     price_series = series_by_dico(sales)
     h_at, h_last = scoring.hicp_asof(macro_frames.get("eurostat_hicp"))
@@ -210,7 +216,9 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
             "housing_credit_pc", "housing_credit_pc_year", "price_domestic", "price_foreign", "foreign_premium",
             "price_apt_sales", "price_t01", "price_t2", "price_t3", "price_t4", "val_count", "val_count_growth_1y",
             "val_count_apt", "val_count_apt_growth_1y", "val_count_house", "val_count_house_growth_1y",
-            "price_households", "price_companies", "companies_premium"]
+            "price_households", "price_companies", "companies_premium", "irs_median", "irs_year", "irs_growth_1y",
+            "lic_avg3", "lic_year", "lic_growth_3y", "lic_per_1000", "comp_avg3", "comp_year", "comp_growth_3y",
+            "comp_per_1000", "dwellings", "dwellings_year", "tourism_beds", "tourism_beds_year", "beds_per_100"]
     # Perspetivas (previsões e padrões): só leitura, não mexe nos scores; falha de forma não-fatal.
     try:
         outlook_data, per = outlook.build(frames, macro_frames, feats, geojson, hpi, hpi_real, demo=demo)

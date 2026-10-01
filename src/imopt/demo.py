@@ -102,6 +102,25 @@ def demo_frames(seed: int = 7):
     frames["rent_contracts"] = yearly.assign(value=lambda d: (d["value"] * rng.uniform(0.5, 2, len(d))).round())
     frames["tourism_nights"] = yearly.assign(value=lambda d: d["value"] * rng.uniform(200, 4000, len(d)))
     frames["housing_credit_pc"] = yearly.assign(value=lambda d: rng.uniform(3000, 15000, len(d)))
+    # oferta, parque, IRS e camas turísticas (anuais; licenças desde 2016 para haver médias de 3 anos)
+    ydf = pd.DataFrame([_row(r.dico, names[r.dico], r.geocod, str(y), "year", y * 100, 1.0)
+                        for r in yearly.drop_duplicates("dico").itertuples() for y in range(2016, 2026)])
+    stock = {d: rng.uniform(3000, 60000) for d in dicos}
+    frames["dwellings_stock"] = ydf.assign(value=lambda d: [stock[x] * (1 + 0.004 * (int(p) - 2016)) for x, p in zip(d["dico"], d["period"])])
+    frames["dwellings_licensed"] = ydf.assign(value=lambda d: [round(stock[x] * rng.uniform(0.001, 0.008)) for x in d["dico"]])
+    frames["dwellings_completed"] = ydf.assign(value=lambda d: [round(stock[x] * rng.uniform(0.001, 0.006)) for x in d["dico"]])
+    frames["tourism_beds"] = ydf.assign(value=lambda d: [round(stock[x] * rng.uniform(0.0, 0.2)) for x in d["dico"]])
+    inc_m = frames["income"].groupby("dico")["value"].first()
+    frames["irs_median"] = ydf[ydf["period"].astype(int) >= 2016].assign(
+        value=lambda d: [inc_m[x] * 10.5 * 1.03 ** (int(p) - 2016) for x, p in zip(d["dico"], d["period"])])
+    nat_rows = []
+    for key in ("irs_median",):
+        g = frames[key].groupby(["period", "sort_key"])["value"].median().reset_index()
+        nat_rows = [_row("PT", "Portugal", "PT", r.period, "year", r.sort_key, r.value, "national") for r in g.itertuples()]
+        frames[key] = pd.concat([frames[key], pd.DataFrame(nat_rows)], ignore_index=True)
+    g = frames["income"].groupby(["period", "sort_key"])["value"].median().reset_index()
+    frames["income"] = pd.concat([frames["income"], pd.DataFrame(
+        [_row("PT", "Portugal", "PT", r.period, "year", r.sort_key, r.value, "national") for r in g.itertuples()])], ignore_index=True)
 
     hq = _quarters("2009Q1", "2026Q2")
     h, hv = 90.0, []

@@ -284,6 +284,39 @@ do selo, escritura, seguros do crédito e mudanças de taxa ao longo do emprést
 
 Tudo só contexto: não entra em nenhum score.
 
+### Rendimento de quem vive, construção nova, alojamento turístico e esforço no tempo
+
+Indicadores do catálogo de indicadores principais do INE, em `config/sources.yml` (`imopt/housing.py`).
+**Estado: códigos configurados, dimensões ainda não confirmadas ao vivo** — o INE recusou ligações dos
+runners do GitHub (403/timeout) no build em que foram adicionados. Até chegarem, o site não mostra estas
+partes (exceto o esforço no tempo, que já funciona com o salário médio).
+
+| Chave | Código | O que é |
+|---|---|---|
+| `irs_median` | 0012757 | Mediana do rendimento bruto declarado deduzido do IRS liquidado, por sujeito passivo (€/ano) |
+| `irs_gross_mean`, `tax_households` | 0012748, 0012742 | Rendimento bruto declarado por sujeito passivo; agregados fiscais (recolhidos, ainda não usados) |
+| `dwellings_licensed`, `dwellings_completed` | 0012097, 0012778 | Fogos licenciados / concluídos em construções novas para habitação familiar |
+| `dwellings_stock` | 0008329 | Alojamentos familiares clássicos (parque habitacional, estimativas anuais) |
+| `dwellings_census` | 0012502 | Alojamentos familiares clássicos (Censos) — à espera de ver as dimensões (forma de ocupação?) |
+| `transactions_value` | 0012786 | Transações (€) de alojamentos familiares — à espera de ver as dimensões |
+| `tourism_beds` | 0013366 | Capacidade de alojamento turístico (camas) |
+
+- **Calculadora "Comprar casa"**: com o IRS publicado, o rendimento por omissão passa a ser o de quem
+  **vive** no concelho (mediana após IRS ÷ 12, limite aproximado de 45%), o que corrige o exagero dos
+  concelhos-dormitório; o salário de quem trabalha continua disponível.
+- **Construção nova**: fogos licenciados e concluídos (média dos últimos 3 anos) por 1000 alojamentos;
+  série nacional; concelhos com preço a subir muito e pouca construção. Os campos `building_permits` e
+  `completed_dwellings` (que alimentariam o sub-score de oferta) ficam vazios de propósito: decidir se a
+  oferta entra no score fica para depois de ver os dados.
+- **Camas turísticas por 100 alojamentos** (inclui só o alojamento local com 10+ camas; o registo RNAL não
+  está acessível a partir dos runners nem deste ambiente).
+- **Esforço de compra no tempo**: 90 m² à avaliação bancária mediana do país, 90% a 30 anos à taxa média
+  dos novos créditos (BCE) de cada trimestre, desde 2011, em € e em % do salário médio (desde 2021) e da
+  mediana do IRS (quando chegar). Hoje: 742 €/mês e 47% do salário médio bruto (2026T2, salário de 2024),
+  contra 23% em 2021T1.
+- **Ainda por fazer**: compras sem crédito (precisa do NÚMERO de vendas por concelho; o 0012786 é o valor
+  em €) e Censos (casas vagas e de segunda habitação) — ver as dimensões com `python -m imopt inspect`.
+
 ### Freguesias
 
 `imopt/parishes.py`. O preço mediano de venda por freguesia vem do mesmo indicador do INE (0012234,
