@@ -372,3 +372,26 @@ def construction_costs(cost: dict[str, pd.DataFrame | None], price_new: pd.DataF
             out["prices"][key] = {"until": f"{kq // 100}Q{kq % 100}", "yoy": float(s[kq] / s[b] - 1) if b in s.index else None,
                                   "since_2021": since(s, 202100)}
     return out
+
+
+def history_export(sales: pd.DataFrame | None, val_apt: pd.DataFrame | None, val_house: pd.DataFrame | None,
+                   hicp: pd.DataFrame | None, val_all: pd.DataFrame | None = None) -> dict:
+    """Séries para a análise "O meu imóvel" (carregadas pelo site só quando é usada): preço mediano de venda por
+    freguesia (INE, trimestral desde 2019), avaliação bancária trimestral por concelho e tipo de casa (desde 2011)
+    e IHPC trimestral (para descontar a inflação)."""
+    from . import parishes
+    from .outlook import monthly_to_quarterly_muni
+    out: dict = {"parish": {}, "val": {}, "hicp": []}
+    p = parishes._parish_rows(sales)
+    if p is not None:
+        for code, g in p.sort_values("sort_key").groupby("code"):
+            out["parish"][code] = [[str(a), round(float(b))] for a, b in zip(g["period"], g["value"])]
+    for key, df in (("apt", val_apt), ("house", val_house), ("all", val_all)):
+        d = None if df is None or df.empty else df[df["level"] == "municipality"].dropna(subset=["dico", "value"])
+        q = monthly_to_quarterly_muni(d) if d is not None and not d.empty else None
+        if q is not None:
+            out["val"][key] = {str(dico): [[str(a), round(float(b))] for a, b in zip(g["period"], g["value"])]
+                               for dico, g in q.sort_values("sort_key").groupby("dico")}
+    if hicp is not None and not hicp.empty:
+        out["hicp"] = [[str(a), round(float(b), 2)] for a, b in zip(hicp["period"], hicp["value"])]
+    return out

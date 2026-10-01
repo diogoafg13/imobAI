@@ -97,3 +97,13 @@ a.lnk{color:var(--fg);text-decoration:underline;text-decoration-color:var(--line
   .stat,.why-row,tr{break-inside:avoid}
 }
 .sum-tile{text-decoration:none;color:inherit}.sum-tile:hover{outline:1px solid var(--accent)}
+.disclaimer{border-left:4px solid var(--amber);background:color-mix(in srgb,var(--amber) 14%,transparent);padding:8px 12px;border-radius:6px;font-size:.88rem;margin:10px 0}
+.im-form input,.im-form select{width:170px}.im-form label{max-width:220px}.im-assume{flex-basis:100%;display:flex;flex-wrap:wrap;gap:10px 14px}
+.im-assume summary{flex-basis:100%;cursor:pointer;color:var(--muted);font-size:.85rem}.im-assume[open]{display:flex}
+.im-buttons{display:flex;gap:8px;align-items:flex-end}
+@media print{
+  body.print-imovel main>section:not(#imovel),body.print-imovel #detail{display:none!important}
+  body.print-imovel #imovel{display:block!important;border:0;box-shadow:none;padding:0}
+  body.print-imovel #im-form,body.print-imovel #im-disclaimer{display:none!important}
+  body:not(.print-imovel) #imovel{display:none!important}
+}

@@ -114,3 +114,13 @@ def test_construction_costs_vs_prices():
     assert k["until"] == "2023-12" and k["yoy"] == pytest.approx(0.1) and k["since_2021"] == pytest.approx(0.21)
     assert k["prices"]["new"]["yoy"] == pytest.approx(0.25) and k["prices"]["new"]["since_2021"] == pytest.approx(0.5)
     assert housing.construction_costs({}) is None
+
+
+def test_history_export_for_property_analysis(tmp_path):
+    frames, macro_frames = demo.demo_frames()
+    pipeline.build_outputs(frames, macro_frames, {}, {}, tmp_path, None, demo=True)
+    h = json.loads((tmp_path / "history.json").read_text(encoding="utf-8"))
+    assert h["parish"] and all(len(v) > 4 for v in h["parish"].values())
+    assert set(h["val"]) >= {"apt", "house", "all"} and h["hicp"]
+    code, ser = next(iter(h["parish"].items()))
+    assert len(code) == 6 and ser[0][0] <= ser[-1][0]

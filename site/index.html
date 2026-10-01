@@ -23,6 +23,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     <a href="#national">Visão nacional</a>
     <a href="#changes">O que mudou</a>
     <a href="#afford">Comprar casa</a>
+    <a href="#imovel">O meu imóvel</a>
     <a href="#mapsec">Mapa</a>
     <a href="#ranking">Ranking</a>
     <a href="#outlook">Perspetivas</a>
@@ -118,6 +119,35 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     </form>
     <p id="aff-rate-note" class="muted"></p>
     <div id="aff-body"></div>
+  </section>
+
+  <section id="imovel" class="card">
+    <div class="row"><h2>O meu imóvel: análise não vinculativa <button type="button" class="info" data-k="imovel" aria-label="Sobre a análise do imóvel">ⓘ</button></h2></div>
+    <div id="im-disclaimer" class="disclaimer"></div>
+    <form id="im-form" class="aff-form im-form" autocomplete="off">
+      <label>Concelho <input name="conc" list="im-conc" placeholder="ex.: Lisboa" required></label>
+      <datalist id="im-conc"></datalist>
+      <label>Freguesia <select name="par"><option value="">— (usar o concelho)</option></select></label>
+      <label>Mês da compra <input name="date" type="month" min="2008-01" required></label>
+      <label>Preço pago (€) <input name="price" type="number" min="1000" step="500" inputmode="numeric" required></label>
+      <label>Área (m²) <input name="area" type="number" min="10" max="2000" step="1" inputmode="numeric" required></label>
+      <label>Tipo <select name="kind"><option value="">Não sei</option><option value="apt">Apartamento</option><option value="house">Moradia</option></select></label>
+      <label>Crédito em dívida (€) <input name="loan" type="number" min="0" step="500" inputmode="numeric"></label>
+      <label>Taxa do crédito (%) <input name="rate" type="number" min="0" max="15" step="0.05" inputmode="decimal" placeholder="média atual"></label>
+      <label>Prazo restante (anos) <input name="years" type="number" min="1" max="50" step="1" inputmode="numeric"></label>
+      <label>Rendimento líquido do agregado (€/mês) <input name="income" type="number" min="0" step="50" inputmode="numeric"></label>
+      <label>Renda atual, se arrendado (€/mês) <input name="rent" type="number" min="0" step="10" inputmode="numeric"></label>
+      <details class="im-assume"><summary>Pressupostos do arrendamento (editáveis)</summary>
+        <label>IMI (€/ano) <input name="imi" type="number" min="0" step="10" placeholder="0,3% do preço"></label>
+        <label>Condomínio (€/mês) <input name="condo" type="number" min="0" step="5" placeholder="25 (apart.)"></label>
+        <label>Seguro (€/ano) <input name="ins" type="number" min="0" step="10" placeholder="150"></label>
+        <label>Meses vazio por ano <input name="vac" type="number" min="0" max="12" step="0.5" placeholder="1"></label>
+        <label>Manutenção (% da renda) <input name="maint" type="number" min="0" max="50" step="1" placeholder="5"></label>
+        <label>IRS sobre rendas (%) <input name="tax" type="number" min="0" max="60" step="1" placeholder="25"></label>
+      </details>
+      <span class="im-buttons"><button type="submit" class="btn">Analisar</button> <button type="button" id="im-clear" class="btn">Limpar</button></span>
+    </form>
+    <div id="im-out"></div>
   </section>
 
   <section id="mapsec" class="card">

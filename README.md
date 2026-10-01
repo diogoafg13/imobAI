@@ -372,6 +372,32 @@ no snapshot bruto do build de 2026-10-01 (ver `config/sources.yml`). Nenhum entr
 - **Ficha para imprimir**: botão "Imprimir ficha" no detalhe; a impressão (ou "guardar como PDF") mostra só o
   concelho, com data e fontes.
 
+### O meu imóvel: análise não vinculativa
+
+Secção do site onde a pessoa indica concelho (e, se quiser, freguesia), mês da compra, preço, área e tipo
+de casa e, opcionalmente, o crédito, o rendimento líquido do agregado e a renda atual. Tudo é calculado no
+browser; os dados ficam só nesse browser (`localStorage`), nada é enviado. Devolve:
+
+- **preço pago face ao mercado da altura**: €/m² pago vs mediana de venda do concelho e da freguesia (INE,
+  desde 2019) e vs avaliação bancária do tipo de casa no trimestre da compra;
+- **valor estimado hoje**: preço pago × variação de um índice local desde a compra, por ordem de preferência
+  avaliação bancária do tipo de casa no concelho (desde 2011), avaliação bancária de todas as casas, preço
+  mediano de venda do concelho; com o intervalo dado pelos outros índices locais. O índice nacional só é usado
+  se nenhum local cobrir a data. Valorização real (IHPC) e previsão a 12 meses do concelho;
+- **crédito**: prestação, taxa de esforço face ao rendimento líquido (limite de 50% do Banco de Portugal),
+  com +2 p.p. de juros, e crédito em dívida face ao valor estimado;
+- **arrendamento**: renda de mercado (renda mediana de novos contratos da freguesia ou do concelho × área,
+  com o 1.º e 3.º quartil do concelho), rendibilidade bruta e líquida com pressupostos editáveis (IMI,
+  condomínio, seguro, meses vazio, manutenção, IRS sobre rendas), saldo face à prestação e, se a casa já
+  estiver arrendada, renda atual face ao mercado;
+- **comprar ou arrendar** para aquela casa (ponto de equilíbrio).
+
+Aviso obrigatório no topo da secção, no resultado e na impressão: estimativa estatística, não vinculativa;
+não é avaliação imobiliária nem aconselhamento financeiro, fiscal ou jurídico; para decisões, perito
+avaliador registado na CMVM, banco ou contabilista. Os dados vêm de `history.json` (preço por freguesia,
+avaliação bancária trimestral por concelho e tipo, IHPC; ~0,4 MB), descarregado só quando a secção é usada.
+"Imprimir análise" imprime só a análise e o aviso.
+
 ### Ronda 5: validação, resumo e site mais leve
 
 - **Que sinais ajudam a prever o preço** (`imopt/signals.py`): seis sinais candidatos (crédito novo, custo de

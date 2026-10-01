@@ -283,6 +283,13 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
         item["rent_first"] = int(str(rent_s[0][0])[:4]) if rent_s else None
         heavy[item["dico"]] = {k: item.pop(k) for k in ("series", "fc", "effort_hist") if k in item}
     geo.dump(heavy, str(out_dir / "series.json"))
+    try:
+        geo.dump(housing.history_export(frames.get("sales_price_12m"), frames.get("valuation_apartments"),
+                                        frames.get("valuation_houses"), macro_frames.get("eurostat_hicp"),
+                                        frames.get("bank_valuation")),
+                 str(out_dir / "history.json"))
+    except Exception as e:  # noqa: BLE001
+        log.warning("histórico para \"O meu imóvel\" falhou: %s", e)
     geo.dump(munis, str(out_dir / "municipalities.json"))
     geo.dump(national, str(out_dir / "national.json"))
     geo.dump(meta, str(out_dir / "meta.json"))
