@@ -198,9 +198,11 @@ def extra_features(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame:
             add(d[["dico", name]])
     if "price_domestic" in out and "price_foreign" in out:
         out["foreign_premium"] = out["price_foreign"] / out["price_domestic"] - 1
-    d = latest("valuation_count", "month", "val_count", {"y0": 12})
-    if d is not None:
-        add(pd.DataFrame({"dico": d["dico"], "val_count": d["val_count"], "val_count_growth_1y": d["val_count"] / d["y0"] - 1}))
+    for key, name in (("valuation_count", "val_count"), ("valuation_count_apartments", "val_count_apt"),
+                      ("valuation_count_houses", "val_count_house")):
+        d = latest(key, "month", name, {"y0": 12})
+        if d is not None:
+            add(pd.DataFrame({"dico": d["dico"], name: d[name], f"{name}_growth_1y": d[name] / d["y0"] - 1}))
     for key, name in (("tourism_nights", "tourism_nights"), ("housing_credit_pc", "housing_credit_pc")):
         d = latest(key, "year", name)
         if d is not None:

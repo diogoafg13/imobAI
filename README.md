@@ -209,7 +209,7 @@ Todos opcionais (falham de forma não-fatal) e só leitura — nenhum entra nos 
 | Crédito à habitação por habitante | INE 0013048 | Contexto (não entra no valor justo: acompanha os preços) |
 | Preço pago por compradores com domicílio no estrangeiro vs em Portugal | INE 0012246, `dim_3` 2/1 (confirmado com `imopt inspect`) | Prémio pago por estrangeiros: detalhe, mapa, lista em "Perspetivas" |
 | Preço por tipologia (T0/T1, T2, T3, T4+) e de apartamentos | INE 0012241 `dim_3` 1–4 e 0012235 (confirmados) | Detalhe e comparação |
-| Avaliações bancárias (N.º, últimos 3 meses) | INE 0012247, `dim_3` T (confirmado) | Volume de compras com crédito — substituto do número de vendas, que o INE não publica por concelho; o volume costuma cair antes dos preços |
+| Avaliações bancárias (N.º, últimos 3 meses) | INE 0012247, `dim_3` T, 1 e 2 — total, apartamentos e moradias (confirmado) | Volume de compras com crédito — substituto do número de vendas, que o INE não publica por concelho; o volume costuma cair antes dos preços |
 | Taxa dos novos créditos à habitação em PT | BCE MIR `M.PT.B.A2C.A.R.A.2250.EUR.N` | Spread real nos cenários de juros (em vez de 1 p.p. assumido) |
 
 Os códigos do INE vêm do catálogo do INE; para 0012601, 0009183 e 0013048 as dimensões não foram

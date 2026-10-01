@@ -45,6 +45,8 @@ def test_foreign_premium_tipologia_and_volume():
         "sales_price_foreign": pd.DataFrame([_q("0001", "2026Q1", 3000.0)]),
         "sales_price_t2": pd.DataFrame([_q("0001", "2026Q1", 2100.0)]),
         "valuation_count": pd.DataFrame([_m("0001", 2025, 8, 80.0), _m("0001", 2026, 8, 60.0)]),
+        "valuation_count_apartments": pd.DataFrame([_m("0001", 2025, 8, 50.0), _m("0001", 2026, 8, 30.0)]),
+        "valuation_count_houses": pd.DataFrame([_m("0001", 2025, 8, 30.0), _m("0001", 2026, 8, 30.0)]),
     }
     x = scoring.extra_features(frames).set_index("dico")
     assert x.at["0001", "foreign_premium"] == pytest.approx(0.5) and x.at["0001", "price_t2"] == 2100.0
@@ -55,6 +57,9 @@ def test_foreign_premium_tipologia_and_volume():
     d = outlook.demand(many)
     assert d["foreign"]["median_premium"] == pytest.approx(0.5) and d["volume"]["total_growth_1y"] == pytest.approx(-0.25)
     assert d["volume"]["share_falling"] == 1.0 and len(d["foreign"]["top"]) == 6
+    assert x.at["0001", "val_count_apt_growth_1y"] == pytest.approx(-0.4) and x.at["0001", "val_count_house_growth_1y"] == 0
+    bt = d["volume"]["by_type"]
+    assert bt["apartments"]["total_growth_1y"] == pytest.approx(-0.4) and bt["houses"]["share_falling"] == 0.0
 
 
 def test_same_indicator_other_category_is_fetched_once(monkeypatch, tmp_path):

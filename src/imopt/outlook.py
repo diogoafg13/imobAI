@@ -396,15 +396,23 @@ def demand(feats: pd.DataFrame | None) -> dict | None:
                               "top": [{"dico": str(r.dico), "name": str(r.name), "premium": float(r.foreign_premium),
                                        "price_foreign": float(r.price_foreign), "price_domestic": float(r.price_domestic)}
                                       for r in top.itertuples()]}
-    if "val_count" in feats:
-        vc = feats.dropna(subset=["val_count", "val_count_growth_1y"])
-        vc = vc[np.isfinite(vc["val_count_growth_1y"])]
-        if len(vc) >= 5:
-            now = float(vc["val_count"].sum())
-            ago = float((vc["val_count"] / (1 + vc["val_count_growth_1y"])).sum())
-            out["volume"] = {"n": int(len(vc)), "total": now, "total_growth_1y": now / ago - 1 if ago > 0 else None,
-                             "median_growth_1y": float(vc["val_count_growth_1y"].median()),
-                             "share_falling": float((vc["val_count_growth_1y"] < 0).mean())}
+    def volume(col):
+        if col not in feats:
+            return None
+        g = f"{col}_growth_1y"
+        vc = feats.dropna(subset=[col, g])
+        vc = vc[np.isfinite(vc[g])]
+        if len(vc) < 5:
+            return None
+        now, ago = float(vc[col].sum()), float((vc[col] / (1 + vc[g])).sum())
+        return {"n": int(len(vc)), "total": now, "total_growth_1y": now / ago - 1 if ago > 0 else None,
+                "median_growth_1y": float(vc[g].median()), "share_falling": float((vc[g] < 0).mean())}
+
+    if (v := volume("val_count")) is not None:
+        out["volume"] = v
+        by_type = {k: volume(c) for k, c in (("apartments", "val_count_apt"), ("houses", "val_count_house"))}
+        if any(by_type.values()):
+            out["volume"]["by_type"] = {k: x for k, x in by_type.items() if x}
     return out or None
 
 

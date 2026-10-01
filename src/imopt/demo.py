@@ -87,6 +87,8 @@ def demo_frames(seed: int = 7):
     for k, f in (("t01", 1.25), ("t2", 1.05), ("t3", 0.95), ("t4", 0.85)):
         frames[f"sales_price_{k}"] = sales.assign(value=lambda d, f=f: d["value"] * f)
     frames["valuation_count"] = muni_val.assign(value=lambda d: (40 + 30 * np.sin(d["sort_key"] / 7.0)).round())
+    frames["valuation_count_apartments"] = frames["valuation_count"].assign(value=lambda d: (d["value"] * 0.6).round())
+    frames["valuation_count_houses"] = frames["valuation_count"].assign(value=lambda d: (d["value"] * 0.4).round())
     yearly = frames["population_density"]
     frames["rent_contracts"] = yearly.assign(value=lambda d: (d["value"] * rng.uniform(0.5, 2, len(d))).round())
     frames["tourism_nights"] = yearly.assign(value=lambda d: d["value"] * rng.uniform(200, 4000, len(d)))

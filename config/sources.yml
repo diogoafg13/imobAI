@@ -140,6 +140,20 @@ ine:
       dims: {dim_3: "T"}
       period_kind: month
       optional: true
+    valuation_count_apartments:
+      varcd: "0012247"
+      description: Número de avaliações bancárias de apartamentos, últimos 3 meses
+      level: municipality
+      dims: {dim_3: "1"}
+      period_kind: month
+      optional: true
+    valuation_count_houses:
+      varcd: "0012247"
+      description: Número de avaliações bancárias de moradias, últimos 3 meses
+      level: municipality
+      dims: {dim_3: "2"}
+      period_kind: month
+      optional: true
     valuation_apartments:
       varcd: "0012248"          # dim_3 = 1 (confirmado no snapshot bruto: 116 concelhos)
       description: Avaliação bancária mediana de APARTAMENTOS (€/m²)

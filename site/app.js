@@ -347,7 +347,11 @@ function readList(m) {
   if (m.foreign_premium != null) li.push(`Compradores com domicílio no estrangeiro pagam ${fmt.eur(m.price_foreign)}/m², ${fmt.spct(m.foreign_premium, 0)} face aos residentes em Portugal (${fmt.eur(m.price_domestic)}/m²)${m.foreign_premium > 0.3 ? ' — sinal de procura externa forte' : ''}.`);
   const tps = [['T0/T1', m.price_t01], ['T2', m.price_t2], ['T3', m.price_t3], ['T4+', m.price_t4]].filter((x) => x[1] != null);
   if (tps.length >= 2) li.push(`Preço por tipologia: ${tps.map(([k, v]) => `${k} ${fmt.eur(v)}/m²`).join(', ')}${m.price_apt_sales != null ? `; apartamentos ${fmt.eur(m.price_apt_sales)}/m²` : ''}.`);
-  if (m.val_count != null && m.val_count_growth_1y != null) li.push(`Volume: ${fmt.n(m.val_count, 0)} avaliações bancárias nos últimos 3 meses, ${fmt.spct(m.val_count_growth_1y, 0)} num ano${m.val_count_growth_1y < -0.15 ? ' — queda forte do volume, que costuma anteceder abrandamento de preços' : m.val_count_growth_1y > 0.15 ? ' — mais compras com crédito' : ''}.`);
+  if (m.val_count != null && m.val_count_growth_1y != null) {
+    const vt = [['apartamentos', m.val_count_apt, m.val_count_apt_growth_1y], ['moradias', m.val_count_house, m.val_count_house_growth_1y]]
+      .filter((x) => x[1] != null).map(([k, n, g]) => `${k} ${fmt.n(n, 0)} (${fmt.spct(g, 0)})`);
+    li.push(`Volume: ${fmt.n(m.val_count, 0)} avaliações bancárias nos últimos 3 meses, ${fmt.spct(m.val_count_growth_1y, 0)} num ano${vt.length ? ` — ${vt.join(', ')}` : ''}${m.val_count_growth_1y < -0.15 ? '. Queda forte do volume, que costuma anteceder abrandamento de preços' : m.val_count_growth_1y > 0.15 ? '. Mais compras com crédito' : ''}.`);
+  }
   if (m.rent_q1 != null && m.rent_q3 != null) li.push(`Renda de novos contratos: 25% abaixo de ${fmt.eur2(m.rent_q1)}/m² e 25% acima de ${fmt.eur2(m.rent_q3)}/m²${m.rent_contracts != null ? `, em ${fmt.n(m.rent_contracts, 0)} contratos em ${m.rent_contracts_year}` : ''}.`);
   if (m.tourism_pc != null) {
     const mt = median(col((x) => x.tourism_pc));
@@ -460,7 +464,8 @@ function select(dico, scroll = true) {
     ...(m.price_t2 != null || m.price_t3 != null ? [tile('tipologia', 'T2 / T3 (€/m²)', `${fmt.eur(m.price_t2)} / ${fmt.eur(m.price_t3)}`,
       `<span class="ctx">T0/T1 ${fmt.eur(m.price_t01)} · T4+ ${fmt.eur(m.price_t4)}</span>`)] : []),
     ...(m.val_count != null ? [tile('val_count', 'Avaliações (3 meses)', fmt.n(m.val_count, 0),
-      `<span class="ctx">${fmt.spct(m.val_count_growth_1y, 0)} num ano</span>`)] : []),
+      `<span class="ctx">${fmt.spct(m.val_count_growth_1y, 0)} num ano${m.val_count_apt != null || m.val_count_house != null
+        ? ` · apart. ${fmt.n(m.val_count_apt, 0)} (${fmt.spct(m.val_count_apt_growth_1y, 0)}) · morad. ${fmt.n(m.val_count_house, 0)} (${fmt.spct(m.val_count_house_growth_1y, 0)})` : ''}</span>`)] : []),
     ...(m.tourism_pc != null ? [tile('tourism', 'Dormidas por habitante', fmt.n(m.tourism_pc, 1),
       ctx((x) => x.tourism_pc, m.tourism_pc, (v) => fmt.n(v, 1)))] : []),
     ...(m.housing_credit_pc != null ? [tile('credit_pc', 'Crédito habitação/hab.', fmt.eur(m.housing_credit_pc),
@@ -502,6 +507,8 @@ const COMPARE_ROWS = [
   ['foreign', 'Estrangeiros vs residentes', (m) => (m.foreign_premium == null ? '—' : `${fmt.spct(m.foreign_premium, 0)} (${fmt.eur(m.price_foreign)})`)],
   ['tipologia', 'T0-T1 / T2 / T3 / T4+ (€/m²)', (m) => [m.price_t01, m.price_t2, m.price_t3, m.price_t4].map(fmt.eur).join(' / ')],
   ['val_count', 'Avaliações bancárias (3 meses)', (m) => (m.val_count == null ? '—' : `${fmt.n(m.val_count, 0)} (${fmt.spct(m.val_count_growth_1y, 0)})`)],
+  ['val_count', 'Avaliações: apartamentos / moradias', (m) => (m.val_count_apt == null && m.val_count_house == null ? '—'
+    : `${fmt.n(m.val_count_apt, 0)} (${fmt.spct(m.val_count_apt_growth_1y, 0)}) / ${fmt.n(m.val_count_house, 0)} (${fmt.spct(m.val_count_house_growth_1y, 0)})`)],
   ['tourism', 'Dormidas por habitante', (m) => fmt.n(m.tourism_pc, 1)],
   ['credit_pc', 'Crédito habitação/hab.', (m) => fmt.eur(m.housing_credit_pc)],
 ];
@@ -734,7 +741,10 @@ function olDemand(D) {
   const parts = [];
   if (D.volume) {
     const v = D.volume;
-    parts.push(`<p><b>Volume ${info('val_count')}:</b> ${fmt.n(v.total, 0)} avaliações bancárias nos últimos 3 meses nos ${v.n} concelhos com dados, ${fmt.spct(v.total_growth_1y, 0)} face a um ano antes; o volume caiu em ${Math.round(v.share_falling * 100)}% dos concelhos (variação mediana ${fmt.spct(v.median_growth_1y, 0)}). ${v.share_falling > 0.6 && v.total_growth_1y < -0.1 ? 'Queda generalizada — historicamente um sinal de arrefecimento que costuma chegar antes dos preços.' : v.total_growth_1y > 0 ? 'Sem sinal de arrefecimento pelo lado do volume.' : 'Ligeiro abrandamento do volume; a acompanhar.'}</p>`);
+    const bt = v.by_type || {};
+    const types = [['apartamentos', bt.apartments], ['moradias', bt.houses]].filter(([, x]) => x)
+      .map(([k, x]) => `${k} ${fmt.n(x.total, 0)} (${fmt.spct(x.total_growth_1y, 0)}; caiu em ${Math.round(x.share_falling * 100)}% dos concelhos)`);
+    parts.push(`<p><b>Volume ${info('val_count')}:</b> ${fmt.n(v.total, 0)} avaliações bancárias nos últimos 3 meses nos ${v.n} concelhos com dados, ${fmt.spct(v.total_growth_1y, 0)} face a um ano antes; o volume caiu em ${Math.round(v.share_falling * 100)}% dos concelhos (variação mediana ${fmt.spct(v.median_growth_1y, 0)}). ${v.share_falling > 0.6 && v.total_growth_1y < -0.1 ? 'Queda generalizada — historicamente um sinal de arrefecimento que costuma chegar antes dos preços.' : v.total_growth_1y > 0 ? 'Sem sinal de arrefecimento pelo lado do volume.' : 'Ligeiro abrandamento do volume; a acompanhar.'}${types.length ? ` Por tipo: ${types.join('; ')}.` : ''}</p>`);
   }
   if (D.foreign) {
     const f = D.foreign;
