@@ -18,43 +18,17 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
   <p id="demo-banner" class="banner" hidden>DADOS SINTÉTICOS DE DEMONSTRAÇÃO — não representam o mercado real.</p>
 </header>
 
-<nav id="topnav" aria-label="Secções do painel">
-  <div class="topnav-inner">
-    <a href="#national">Visão nacional</a>
-    <a href="#changes">O que mudou</a>
-    <a href="#afford">Comprar casa</a>
-    <a href="#imovel">O meu imóvel</a>
-    <a href="#mapsec">Mapa</a>
-    <a href="#ranking">Ranking</a>
-    <a href="#outlook">Perspetivas</a>
-    <a href="#backtest">Backtest</a>
+<nav id="topnav" aria-label="Separadores do painel">
+  <div class="topnav-inner" role="tablist">
+    <a href="#mercado" data-tab="mercado" role="tab">Mercado</a>
+    <a href="#comprar" data-tab="comprar" role="tab">Comprar casa</a>
+    <a href="#imovel" data-tab="imovel" role="tab">O meu imóvel</a>
+    <a href="#perspetivas" data-tab="perspetivas" role="tab">Perspetivas</a>
+    <a href="#metodo" data-tab="metodo" role="tab">Método</a>
   </div>
 </nav>
 
 <main>
-  <details id="howto" class="card">
-    <summary><b>Como ler este painel</b> <span class="muted">— glossário e limites (clica para abrir)</span></summary>
-    <dl class="gloss">
-      <dt>HPI (Índice de Preços da Habitação)</dt>
-      <dd>Índice do INE/Eurostat, base 2015 = 100: 150 significa que os preços estão 50% acima da média de 2015. Ajusta a mistura de casas vendidas. <b>Nominal</b> = valores correntes; <b>real</b> = descontada a inflação (IHPC), a medida certa para dizer se a habitação ficou "mais cara" e não apenas o dinheiro mais barato.</dd>
-      <dt>Score macro (0–100)</dt>
-      <dd>Resume 4 sinais nacionais (crescimento do HPI, desvio face à tendência, variação da Euribor 12M e desvio crédito/PIB). Cada um é comparado com a própria história da série. Mais alto = mais sinais típicos de sobreaquecimento. <b>Não prevê</b> quando, nem se, haverá correção.</dd>
-      <dt>Score municipal (0–100)</dt>
-      <dd>Posição <b>relativa</b> entre concelhos: mistura a subida do preço a 12 meses e a 3 anos com uma rendibilidade bruta baixa. 0 = menos "esticado", 100 = mais. Não é uma probabilidade de bolha e não foi validado por backtest. A componente de oferta (licenças/conclusões) ainda não tem dados.</dd>
-      <dt>Faixas de cor</dt>
-      <dd><span class="pill green">Baixo</span> abaixo de 40 · <span class="pill amber">Moderado</span> 40 a 69 · <span class="pill red">Elevado</span> 70 ou mais. Concelhos a cinzento não têm dados.</dd>
-      <dt>Rendibilidade bruta e preço/renda</dt>
-      <dd>Rendibilidade = renda anual ÷ preço (sem IMI, condomínio, vazio ou obras). Preço/renda = o inverso: quantos anos de renda bruta "pagam" o imóvel. Rendibilidade baixa / preço/renda alto = preço esticado face ao que o imóvel rende. A renda é a de <b>novos contratos</b> (mediana), mais alta do que a dos contratos antigos.</dd>
-      <dt>⚠ Dados voláteis</dt>
-      <dd>Concelhos com poucas transações têm preços que saltam de trimestre para trimestre. O score deles é atenuado para o meio (50) para não dominar o mapa com ruído.</dd>
-      <dt>Euribor</dt>
-      <dd>Taxa a que os bancos europeus se emprestam entre si (3, 6 ou 12 meses). Grande parte do crédito à habitação em Portugal é indexada a ela: quando sobe, a prestação sobe e a procura tende a arrefecer.</dd>
-      <dt>Desvio crédito/PIB (BIS)</dt>
-      <dd>Crédito ao setor privado em % do PIB menos a sua tendência de longo prazo. Acima de +10 p.p. é sinal de alerta de crises bancárias; valores muito negativos indicam desalavancagem, ou seja, os preços não estão a ser puxados por crédito.</dd>
-      <dt>Limites</dt>
-      <dd>Preços nominais, medianas do INE com atraso de um ou dois trimestres, e concelhos com poucas vendas ou sem rendas publicadas. É um instrumento de leitura, não aconselhamento financeiro.</dd>
-    </dl>
-  </details>
 
   <section id="summary" class="card" hidden>
     <h2>Resumo</h2>
@@ -252,6 +226,30 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     </div>
     <div id="outlook-body"><p class="muted">A carregar…</p></div>
   </section>
+
+  <details id="howto" class="card">
+    <summary><b>Como ler este painel</b> <span class="muted">— glossário e limites (clica para abrir)</span></summary>
+    <dl class="gloss">
+      <dt>HPI (Índice de Preços da Habitação)</dt>
+      <dd>Índice do INE/Eurostat, base 2015 = 100: 150 significa que os preços estão 50% acima da média de 2015. Ajusta a mistura de casas vendidas. <b>Nominal</b> = valores correntes; <b>real</b> = descontada a inflação (IHPC), a medida certa para dizer se a habitação ficou "mais cara" e não apenas o dinheiro mais barato.</dd>
+      <dt>Score macro (0–100)</dt>
+      <dd>Resume 4 sinais nacionais (crescimento do HPI, desvio face à tendência, variação da Euribor 12M e desvio crédito/PIB). Cada um é comparado com a própria história da série. Mais alto = mais sinais típicos de sobreaquecimento. <b>Não prevê</b> quando, nem se, haverá correção.</dd>
+      <dt>Score municipal (0–100)</dt>
+      <dd>Posição <b>relativa</b> entre concelhos: mistura a subida do preço a 12 meses e a 3 anos com uma rendibilidade bruta baixa. 0 = menos "esticado", 100 = mais. Não é uma probabilidade de bolha e não foi validado por backtest. A componente de oferta (licenças/conclusões) ainda não tem dados.</dd>
+      <dt>Faixas de cor</dt>
+      <dd><span class="pill green">Baixo</span> abaixo de 40 · <span class="pill amber">Moderado</span> 40 a 69 · <span class="pill red">Elevado</span> 70 ou mais. Concelhos a cinzento não têm dados.</dd>
+      <dt>Rendibilidade bruta e preço/renda</dt>
+      <dd>Rendibilidade = renda anual ÷ preço (sem IMI, condomínio, vazio ou obras). Preço/renda = o inverso: quantos anos de renda bruta "pagam" o imóvel. Rendibilidade baixa / preço/renda alto = preço esticado face ao que o imóvel rende. A renda é a de <b>novos contratos</b> (mediana), mais alta do que a dos contratos antigos.</dd>
+      <dt>⚠ Dados voláteis</dt>
+      <dd>Concelhos com poucas transações têm preços que saltam de trimestre para trimestre. O score deles é atenuado para o meio (50) para não dominar o mapa com ruído.</dd>
+      <dt>Euribor</dt>
+      <dd>Taxa a que os bancos europeus se emprestam entre si (3, 6 ou 12 meses). Grande parte do crédito à habitação em Portugal é indexada a ela: quando sobe, a prestação sobe e a procura tende a arrefecer.</dd>
+      <dt>Desvio crédito/PIB (BIS)</dt>
+      <dd>Crédito ao setor privado em % do PIB menos a sua tendência de longo prazo. Acima de +10 p.p. é sinal de alerta de crises bancárias; valores muito negativos indicam desalavancagem, ou seja, os preços não estão a ser puxados por crédito.</dd>
+      <dt>Limites</dt>
+      <dd>Preços nominais, medianas do INE com atraso de um ou dois trimestres, e concelhos com poucas vendas ou sem rendas publicadas. É um instrumento de leitura, não aconselhamento financeiro.</dd>
+    </dl>
+  </details>
 
   <section id="backtest" class="card">
     <div class="row">

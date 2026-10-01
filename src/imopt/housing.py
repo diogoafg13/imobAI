@@ -95,6 +95,16 @@ def context_features(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame:
     if (d := latest("tourism_occupancy", lags={"y1": 1})) is not None:
         add(pd.DataFrame({"dico": d["dico"], "occupancy": d["latest"] / 100, "occupancy_year": d["latest_key"] // 100,
                           "occupancy_chg": (d["latest"] - d["y1"]) / 100}))
+    br = [latest(f"tax_households_{k}") for k in range(1, 7)]
+    if all(b is not None for b in br):
+        t = br[0][["dico", "latest_key"]].rename(columns={"latest_key": "k"})
+        for i, b in enumerate(br, 1):
+            t = t.merge(b[["dico", "latest"]].rename(columns={"latest": f"n{i}"}), on="dico", how="inner")
+        tot = t[[f"n{i}" for i in range(1, 7)]].sum(axis=1)
+        sh = pd.DataFrame({"dico": t["dico"], "tax_hh_year": t["k"] // 100, "tax_hh_total": tot})
+        for i in range(1, 7):
+            sh[f"tax_hh_{i}"] = (t[f"n{i}"] / tot).where(tot > 0)
+        add(sh)
     census = {k: latest(f"census_{k}") for k in ("total", "secondary", "vacant_market", "vacant_other")}
     if census["total"] is not None:
         c = census["total"][["dico", "latest", "latest_key"]].rename(columns={"latest": "census_total"})

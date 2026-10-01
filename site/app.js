@@ -16,7 +16,7 @@ const pill = (band, txt) => `<span class="pill ${band || 'none'}">${esc(txt ?? B
 
 // ---------- glossário (popover ⓘ)
 const GLOSS = {
-  nat_score: ['Score macro (0–100)', 'Resume 4 sinais nacionais, cada um comparado com a própria história. Mais alto = mais sinais típicos de sobreaquecimento. Não prevê quando, nem se, haverá correção. Ver a secção "Backtest" mais abaixo para saber como este score se saiu no passado, em vários países.'],
+  nat_score: ['Score macro (0–100)', 'Resume 4 sinais nacionais, cada um comparado com a própria história. Mais alto = mais sinais típicos de sobreaquecimento. Não prevê quando, nem se, haverá correção. Ver o separador "Método" para saber como este score se saiu no passado, em vários países.'],
   hpi_yoy: ['Crescimento anual do HPI', 'Variação do Índice de Preços da Habitação face ao mesmo trimestre do ano anterior (nominal). A pontuação compara este ritmo com o histórico da série: quanto mais raro, mais alto o score.'],
   hpi_trend_dev: ['Desvio face à tendência', 'Quantos desvios-padrão o índice está acima (+) ou abaixo (−) da sua tendência de longo prazo. Perto de 0 = em linha; 1,8 = bastante acima do que a tendência sugeria.'],
   euribor_change_12m: ['Variação da Euribor 12M', 'Quanto a Euribor 12M subiu (+) ou desceu (−), em pontos percentuais, nos últimos 12 meses. Subidas encarecem o crédito indexado e tendem a arrefecer a procura.'],
@@ -56,7 +56,7 @@ const GLOSS = {
   changes: ['O que mudou', 'Compara o trimestre mais recente publicado pelo INE com o anterior: variação do preço e do score de cada concelho, e quem mudou de faixa de risco. O score do trimestre anterior é recalculado com o mesmo método. As listas de maiores movimentos só incluem concelhos com mercado suficiente (pelo menos 20 avaliações bancárias em 3 meses), porque em concelhos pequenos o preço salta com poucas vendas.'],
   tracking: ['Previsões anteriores vs realidade', 'Cada build guarda as previsões que publicou. Quando o INE publica o valor real de um trimestre (ou ano, nas rendas) previsto, o erro é medido aqui — com os dados tal como saíram, sem revisões nem o benefício da retrospetiva. É a avaliação mais honesta, mas precisa de tempo: a 12 meses, os primeiros resultados só aparecem um ano depois do arranque do arquivo.'],
   ol_backtest: ['Como se saiu no passado', 'Para cada trimestre desde 2021, o modelo foi treinado só com o que se sabia nessa data e previu os trimestres seguintes. Erro médio em pontos percentuais (p.p.) de variação do preço, comparado com «fica igual» e «continua o ritmo do último ano». Cobertura: % das vezes em que o valor real caiu dentro do intervalo de 80%.'],
-  effort: ['Esforço de compra', 'Prestação mensal do crédito para comprar uma casa ao preço mediano do concelho (área, entrada, prazo e taxa escolhidos na secção "Comprar casa"), a dividir pelo rendimento mensal escolhido: a mediana do rendimento declarado no IRS, após imposto, de quem VIVE no concelho (quando publicada), ou o salário médio bruto de quem TRABALHA no concelho. É o rendimento de uma pessoa: com dois rendimentos, escolhe "2". O Banco de Portugal limita a prestação a 50% do rendimento líquido — cerca de 45% do rendimento após IRS ou 40% do salário bruto. Os rendimentos publicados são de 1 a 2 anos antes do preço, por isso o esforço real tende a ser um pouco menor.'],
+  effort: ['Esforço de compra', 'Prestação mensal do crédito para comprar uma casa ao preço mediano do concelho (área, entrada, prazo e taxa escolhidos no separador "Comprar casa"), a dividir pelo rendimento mensal escolhido: a mediana do rendimento declarado no IRS, após imposto, de quem VIVE no concelho (quando publicada), ou o salário médio bruto de quem TRABALHA no concelho. É o rendimento de uma pessoa: com dois rendimentos, escolhe "2". O Banco de Portugal limita a prestação a 50% do rendimento líquido — cerca de 45% do rendimento após IRS ou 40% do salário bruto. Os rendimentos publicados são de 1 a 2 anos antes do preço, por isso o esforço real tende a ser um pouco menor.'],
   buy_rent: ['Comprar ou arrendar', 'Compara a prestação do crédito com a renda da mesma casa (mesma área, renda mediana de novos contratos). A prestação inclui amortização, que é poupança, por isso não é um custo puro. A medida mais justa é o ponto de equilíbrio: custo anual de ser dono (juros à taxa escolhida sobre o preço todo — assume que a entrada renderia o mesmo —, mais cerca de 1,3% do preço para IMI, manutenção e seguros) menos a renda que se deixa de pagar, em % do preço. Comprar só sai mais barato do que arrendar se a casa valorizar mais do que isso por ano. Não inclui IMT, imposto do selo e escritura (pesam mais em quem fica poucos anos), nem impostos sobre mais-valias ou benefícios fiscais.'],
   val_gap: ['Avaliação bancária vs preço pago', 'Avaliação bancária média dos 12 meses que o preço de venda do INE cobre, face a esse preço. O nível da diferença é sobretudo composição: a avaliação só cobre casas compradas com crédito, e o preço mediano inclui todas as vendas. O sinal é a VARIAÇÃO num ano: se a avaliação fica para trás do preço pago, os bancos estão mais cautelosos ou há mais compras sem crédito; se a avaliação avança mais depressa, a banca acompanha (ou puxa) a subida.'],
   cycle: ['Ciclo preço–volume', 'Cruza a variação do preço a 12 meses com a variação do número de avaliações bancárias (compras com crédito) num ano. Preço a subir com menos compras é a fase típica de fim de ciclo: a procura já arrefece mas os preços, que reagem mais devagar, ainda sobem. Não diz quando, nem se, os preços vão cair. Só concelhos com pelo menos 20 avaliações em 3 meses.'],
@@ -79,6 +79,7 @@ const GLOSS = {
   credit: ['Crédito à habitação novo', 'Montante de novos empréstimos à habitação concedidos pelos bancos em Portugal (BCE, estatísticas de taxas de juro MIR), somado nos últimos 12 meses. "Novas operações" inclui renegociações de créditos antigos; "crédito novo puro" exclui-as. Mede quanto dinheiro novo entra no mercado: costuma mudar antes dos preços. Valores nominais.'],
   costs: ['Custo de construção', 'Índice de custo de construção de habitação nova do INE (materiais e mão de obra, mensal, nacional, 2021 = 100), comparado com o preço mediano de venda das casas novas e usadas (INE, 12 meses, nacional). Se os preços sobem muito mais do que o custo de construir, a subida vem sobretudo da procura e do preço do terreno, não do custo da obra. O índice não inclui terreno, licenças, impostos nem margem do promotor.'],
   signals: ['Que sinais ajudam a prever', 'Cada sinal é acrescentado à previsão do preço de venda e testado no passado sem ver o futuro, contra a mesma previsão sem ele. Só entra se reduzir o erro a 12 meses em pelo menos 1% sem piorar o trimestre seguinte em mais de 1% — regra fixada antes de ver os resultados. O teste é refeito em cada atualização. O teste exploratório usa a avaliação bancária de apartamentos e moradias (15 anos de histórico) e não decide nada: serve para ver se a conclusão se mantém.'],
+  tenants: ['Quem consegue pagar a renda', 'Compara a renda com rendimentos locais: a mediana do IRS após imposto de quem vive na freguesia e no concelho (por pessoa que declara), o salário médio bruto de quem trabalha no concelho, e casais com dois desses rendimentos. A referência habitual é a renda não passar de cerca de um terço do rendimento (35%). Estima ainda que parte dos agregados fiscais do concelho declarou rendimento bruto suficiente, a partir dos escalões de rendimento do INE (interpolação dentro de cada escalão; o escalão de topo, 32 500 € ou mais, é aberto, por isso acima disso só se sabe o máximo).'],
   imovel: ['O meu imóvel', 'Aplica ao preço que indicaste índices oficiais do mercado local: avaliação bancária do concelho por tipo de casa (INE, desde 2011), preço mediano de venda do concelho e da freguesia (INE, desde 2019) e o índice nacional de preços da habitação. Compara o €/m² pago com as medianas da altura, estima a renda de mercado a partir das rendas de novos contratos e calcula prestação, esforço e rendibilidade com os pressupostos que escolheres. É estatística sobre medianas, não uma avaliação do teu imóvel.'],
   migration: ['Saldo migratório', 'Diferença entre quem chegou e quem saiu do concelho num ano (INE). Positivo = mais gente a chegar do que a sair. Só contexto demográfico — não entra em nenhum score.'],
   score_valuation: ['Score de valorização', 'Percentil entre concelhos: mistura crescimento do preço a 12 meses e a 3 anos com rendibilidade baixa. 0 = menos esticado, 100 = mais. É relativo, não uma probabilidade de bolha.'],
@@ -138,7 +139,7 @@ const METRICS = {
   g1y: { prop: 'g1y', pal: SEQ, f: (v) => fmt.pct(v), label: 'Var. 12m',
     help: 'Variação nominal do preço face ao mesmo trimestre do ano anterior (não desconta a inflação). Mais escuro = subiu mais.' },
   fc: { prop: 'fc', pal: SEQ, f: (v) => fmt.spct(v), label: 'Previsão 12 meses',
-    help: 'Variação prevista do preço mediano de venda nos próximos 12 meses (valor central; cada concelho tem um intervalo no detalhe). Ver a secção "Perspetivas" para saber como a previsão se saiu no passado. Cinzento = sem previsão.' },
+    help: 'Variação prevista do preço mediano de venda nos próximos 12 meses (valor central; cada concelho tem um intervalo no detalhe). Ver o separador "Perspetivas" para saber como a previsão se saiu no passado. Cinzento = sem previsão.' },
   fv: { prop: 'fv', pal: ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'], diverge: true, f: (v) => fmt.spct(v, 0), label: 'Face ao valor justo',
     help: 'Laranja = preço acima do que rendimento, demografia, litoral, distância e região explicam; azul = abaixo; cinzento claro = em linha. Não é prova de bolha: pode ser praia, turismo ou qualidade das casas, que o modelo não vê. Cinzento escuro = sem dados.' },
 };
@@ -275,7 +276,7 @@ const NAT_BAND_TXT = {
   green: 'poucos sinais de sobreaquecimento neste momento.',
   amber: 'há sinais presentes, mas não os suficientes para soar o alarme.',
   red: 'a maioria dos sinais aponta para sobreaquecimento — historicamente associado a mais risco de correção ' +
-    'nos 3 anos seguintes (ver a secção "Backtest" mais abaixo), mas isso não é uma certeza, nem diz quando.',
+    'nos 3 anos seguintes (ver o separador "Método"), mas isso não é uma certeza, nem diz quando.',
 };
 const NAT_DESCR = {
   hpi_yoy: (c) => `Os preços da habitação (HPI) sobem ${fmt.pct(c.value)} ao ano — ` +
@@ -634,6 +635,7 @@ function scoreWhy(m) {
 }
 function select(dico, scroll = true) {
   const m = BY[dico]; if (!m) return;
+  if (TAB !== 'mercado') showTab('mercado');
   if (!SER) { ensureSeries().then(() => select(dico, scroll)); return; }
   if (!parP) ensurePar().then(() => { if (selected === dico) { try { renderParTable(dico); } catch (e) { console.error(e); } } });
   if (MAP && MAP.getSource('c')) {
@@ -1095,7 +1097,7 @@ function initAfford() {
   $('#aff-body').addEventListener('click', (e) => {
     const a = e.target.closest('a[data-d]'); if (a) { e.preventDefault(); select(a.dataset.d); return; }
     const b = e.target.closest('[data-m]');
-    if (b) { if (LEVEL !== 'c') setLevel('c'); $('#metric').value = b.dataset.m; updateMetric(); $('#mapsec').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    if (b) { if (LEVEL !== 'c') setLevel('c'); $('#metric').value = b.dataset.m; updateMetric(); goTo('mapsec'); }
   });
 }
 
@@ -1661,6 +1663,7 @@ async function imAnalyse() {
   if (pr && HIST.parish[v.par]) idx.push(['par', `preço mediano de venda na freguesia ${pr.name} (INE)`, HIST.parish[v.par]]);
   if (NAT && NAT.series && NAT.series.hpi) idx.push(['nat', 'índice nacional de preços da habitação', NAT.series.hpi]);
   const res = idx.map(([k, label, ser]) => ({ k, label, ...(serGrowth(ser, q0) || {}) })).filter((r) => r.g != null);
+  let chartData = null, rentVerdict = null, tenant = null;
   // o índice nacional só serve quando não há nenhum local que cubra a data da compra
   const local = res.filter((r) => r.k !== 'nat');
   const use = local.length ? local : res;
@@ -1675,6 +1678,10 @@ async function imAnalyse() {
   if (pr) addCmp(`mediana da freguesia ${pr.name}`, HIST.parish[v.par]);
   if (kindKey && HIST.val[kindKey]) addCmp(`avaliação bancária de ${kindKey === 'apt' ? 'apartamentos' : 'moradias'}`, HIST.val[kindKey][v.dico]);
   tiles.push(tile('Preço pago', `${fmt.eur(ppm)}/m²`, `${fmt.eur(v.price)} por ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m², ${qpt(q0)}`));
+  const ref = cmp.find((c) => c[0].startsWith('mediana da freguesia')) || cmp[0];
+  const verdict = ref ? imVerdict(ppm / ref[1] - 1, 'pagaste', ref[0]) : null;
+  const strips = [];
+  if (cmp.length) strips.push(['Preço pago face às medianas da altura (€/m²)', imStrip(cmp.map(([l, x]) => ({ label: imShort(l), value: x })), { label: 'tu', value: ppm }, null, (x) => fmt.eur(x))]);
   if (cmp.length) li.push(`Na altura da compra (${qpt(q0)}), pagaste ${cmp.map(([l, x]) => `${rel(ppm / x - 1)} da ${l} (${fmt.eur(x)}/m²)`).join('; ')}. Uma diferença grande pode ser só a casa (estado, área, vista, piso) e não um bom ou mau negócio.`);
   else li.push(`Não há medianas publicadas para ${m.name} em ${qpt(q0)} para comparar o preço pago (o INE só publica o preço por concelho desde 2019 e a avaliação bancária onde há avaliações suficientes).`);
   // 2) valor hoje
@@ -1687,6 +1694,7 @@ async function imAnalyse() {
     const hl = H.length ? H[H.length - 1] : null, h0 = avg4(q0), h1 = hl ? avg4(hl[0]) : null;
     const infl = h0 && h1 && q0 <= hl[0] ? h1 / h0 - 1 : null;
     const multi = use.length > 1 && !main.recent;
+    chartData = { q0, ppm, main, idx: idx.filter(([k]) => k !== 'nat'), mainSer: (idx.find(([k]) => k === main.k) || [])[2], val };
     tiles.push(tile(main.recent ? 'Valor estimado' : `Valor estimado (${qpt(main.to)})`, fmt.eur(val), main.recent ? 'compra recente: ainda sem variação medida' : `${fmt.spct(main.g, 0)} desde a compra${multi ? ` · ${fmt.eur(lo)} a ${fmt.eur(hi)} conforme o índice` : ''}`));
     li.push(main.recent ? `A compra é tão recente como os últimos dados publicados (${qpt(main.to)}): ainda não há valorização medida, por isso o valor estimado é o preço pago.`
       : `Aplicando ao preço pago a variação da ${main.label} entre ${qpt(main.from)} e ${qpt(main.to)} (${fmt.spct(main.g, 0)}), o valor estimado é ${fmt.eur(val)}${multi ? `; com os outros índices locais fica entre ${fmt.eur(lo)} e ${fmt.eur(hi)} (${use.filter((r) => r !== main).map((r) => `${r.label}, até ${qpt(r.to)}: ${fmt.spct(r.g, 0)}`).join('; ')})` : ''}.${main.k === 'nat' ? ' Não há índice local que cubra a data da compra: usou-se o índice nacional, que pode estar longe do teu concelho.' : ''}${infl != null ? ` Descontada a inflação até ${qpt(hl[0])} (${fmt.spct(infl, 0)}), a valorização real é de ${fmt.spct((1 + main.g) / (1 + infl) - 1, 0)}${hl[0] < main.to ? ` (o índice de preços no consumidor publicado só vai até ${qpt(hl[0])}, por isso este valor real fica um pouco acima do verdadeiro)` : ''}.` : ''}`);
@@ -1720,9 +1728,13 @@ async function imAnalyse() {
       const gross = rent * months;
       const costs = (v.imi ?? v.price * 0.003) + (v.condo ?? (v.kind === 'house' ? 0 : 25)) * 12 + (v.ins ?? 150) + (v.maint ?? 5) / 100 * rent * 12;
       const taxR = (v.tax ?? 25) / 100, tax = Math.max(0, gross - costs) * taxR, net = gross - costs - tax;
+      if (rLo && rHi) strips.push([`Renda para ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m²: faixa central dos novos contratos no concelho (€/mês)`,
+        imStrip([{ label: 'mediana', value: rentHome }], v.rent ? { label: 'a tua', value: v.rent } : null, [rLo, rHi], (x) => fmt.eur(x))]);
+      if (v.rent) rentVerdict = imVerdict(v.rent / rentHome - 1, 'a tua renda está', 'renda mediana de novos contratos');
       tiles.push(tile('Renda de mercado (estimada)', `${fmt.eur(rentHome)}/mês`, `${pr && pr.rent != null ? `freguesia ${esc(pr.name)}` : `concelho`}, novos contratos${rLo ? ` · 25%–75% do concelho: ${fmt.eur(rLo)}–${fmt.eur(rHi)}` : ''}`));
       tiles.push(tile('Rendibilidade', `${fmt.pct(gross / val, 1)} bruta`, `${fmt.pct(net / val, 1)} líquida de custos e IRS · ${fmt.pct(net / v.price, 1)} sobre o preço pago`));
       li.push(`${v.rent ? `A renda que indicaste (${fmt.eur(v.rent)}/mês) está ${rel(v.rent / rentHome - 1)} da renda mediana de novos contratos para ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m² (${fmt.eur(rentHome)}).` : `Arrendada, a casa renderia cerca de ${fmt.eur(rentHome)}/mês (renda mediana de novos contratos${pr && pr.rent != null ? ' da freguesia' : ' do concelho'} × área${rLo ? `; no concelho, 25% dos novos contratos ficam abaixo de ${fmt.eur(rLo)} e 25% acima de ${fmt.eur(rHi)} para esta área` : ''}).`} Com ${fmt.n(v.vac ?? 1, 0)} ${(v.vac ?? 1) === 1 ? 'mês' : 'meses'} vazio por ano, custos de ${fmt.eur(costs)}/ano (IMI, condomínio, seguro, manutenção) e IRS de ${fmt.n(v.tax ?? 25, 0)}% sobre o rendimento depois de custos, ficam ${fmt.eur(net)}/ano líquidos (${fmt.pct(net / val, 1)} do valor estimado).${pay ? ` Face à prestação, o saldo mensal seria de ${net / 12 - pay < 0 ? '−' : '+'}${fmt.eur(Math.abs(net / 12 - pay))} (${net / 12 - pay >= 0 ? 'a renda paga a prestação' : 'a renda não chega para a prestação'}).` : ''} A taxa do IRS sobre rendas depende do contrato e das opções fiscais: confirma com as Finanças ou um contabilista.`);
+      tenant = imTenants(v.rent || rentHome, !!v.rent, m, pr);
       const be = (rate / 100 + 0.013) - (rentHome * 12) / val;
       li.push(`Comprar vs arrendar hoje, para esta casa: com juros de ${fmt.n(rate, 2)}% e ~1,3%/ano de IMI e manutenção, ser dono só sai mais barato do que arrendar a mesma casa se ela valorizar mais de ${fmt.spct(be)}/ano.`);
     } else li.push(`Não há renda publicada para ${m.name}: sem estimativa de arrendamento.`);
@@ -1730,10 +1742,121 @@ async function imAnalyse() {
   const inputs = [`${esc(m.name)}${pr ? `, ${esc(pr.name)}` : ''}`, `compra em ${esc(monthTxt(v.date))}`, `${fmt.eur(v.price)}`, `${fmt.n(v.area, v.area % 1 ? 1 : 0)} m²`,
     v.kind === 'apt' ? 'apartamento' : v.kind === 'house' ? 'moradia' : null].filter(Boolean).join(' · ');
   out.innerHTML = `<p class="muted">Dados: ${inputs}. Calculado em ${new Date().toISOString().slice(0, 10)} com os dados do painel de ${META.built_at.slice(0, 10)}.</p>
+    ${verdict || rentVerdict ? `<div class="im-verdicts">${[verdict, rentVerdict].filter(Boolean).join('')}</div>` : ''}
     <div class="stats">${tiles.join('')}</div>
+    ${chartData ? `<div class="chart-cap"><span>Onde estava e onde está: o teu imóvel face às medianas locais (€/m²)</span></div><div id="im-chart" class="chart tall"></div>
+      <p class="muted">Linha laranja: o teu €/m² na compra, atualizado com a ${esc(chartData.main.label)} — uma estimativa, não o valor real da casa. Linhas azul e cinzentas: medianas do mercado local.</p>` : ''}
+    ${strips.map(([t, h]) => `<p class="muted" style="margin:14px 0 0"><b>${esc(t)}</b></p>${h}`).join('')}
+    ${tenant || ''}
     <ul class="read">${li.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
     <div class="disclaimer">${IM_DISCLAIMER}</div>
     <p class="noprint"><button type="button" class="btn" id="im-print">Imprimir análise</button></p>`;
+  if (chartData) try { imChart('im-chart', chartData); } catch (e) { console.error('gráfico do imóvel:', e); }
+}
+// Quem consegue pagar esta renda? Perfis com rendimentos locais e parte dos agregados fiscais do concelho com
+// rendimento bruto suficiente (escalões do INE, interpolação linear dentro de cada escalão).
+const TAX_EDGES = [0, 5000, 10000, 13500, 19000, 32500];
+function shareAbove(m, annual) {
+  const sh = [1, 2, 3, 4, 5, 6].map((i) => m[`tax_hh_${i}`]);
+  if (sh.some((x) => x == null)) return null;
+  let tot = 0;
+  for (let i = 0; i < 5; i++) {
+    const a = TAX_EDGES[i], b = TAX_EDGES[i + 1];
+    tot += annual <= a ? sh[i] : annual >= b ? 0 : sh[i] * (b - annual) / (b - a);
+  }
+  // escalão de topo (32 500 € ou mais) é aberto: abaixo do limiar conta inteiro; acima, só sabemos o máximo
+  return annual <= 32500 ? { v: tot + sh[5], exact: true } : { v: sh[5], exact: false };
+}
+function imTenants(rent, isUser, m, pr) {
+  const fit = (e) => (e <= 0.35 ? ['comportável', 'neutral'] : e <= 0.5 ? ['pesado', 'neutral'] : ['não suporta', 'neutral']);
+  const prof = [];
+  if (pr && pr.irs_median) prof.push([`1 pessoa com o rendimento mediano da freguesia (IRS, após imposto, ${pr.irs_year})`, pr.irs_median / 12]);
+  if (m.irs_median) {
+    prof.push([`1 pessoa com o rendimento mediano do concelho (IRS, após imposto, ${m.irs_year})`, m.irs_median / 12]);
+    prof.push(['casal com 2 rendimentos medianos do concelho (IRS)', (2 * m.irs_median) / 12]);
+  }
+  if (m.income) {
+    prof.push([`1 trabalhador com o salário médio do concelho (bruto, ${String(m.income_year).slice(0, 4)})`, m.income]);
+    prof.push(['casal com 2 salários médios do concelho (bruto)', 2 * m.income]);
+  }
+  const rows = prof.map(([l, inc]) => { const e = rent / inc, [t] = fit(e); return `<tr><td>${esc(l)}</td><td>${fmt.eur(inc)}</td><td>${fmt.pct(e, 0)}</td><td>${e <= 0.35 ? '✓ ' : e <= 0.5 ? '~ ' : '✗ '}${t}</td></tr>`; }).join('');
+  const need35 = rent / 0.35, s35 = shareAbove(m, rent * 12 / 0.35), s50 = shareAbove(m, rent * 12 / 0.5);
+  const okProf = prof.filter(([, inc]) => rent / inc <= 0.35).map(([l]) => l.split(' (')[0]);
+  const li = [];
+  if (s35) li.push(`Para a renda não passar de 35% do rendimento bruto, o agregado precisa de ganhar pelo menos ${fmt.eur(rent * 12 / 0.35)}/ano (${fmt.eur(need35)}/mês brutos). Em ${m.name}, ${s35.exact ? 'cerca de' : 'no máximo'} ${fmt.pct(s35.v, 0)} dos agregados fiscais declararam esse rendimento em ${m.tax_hh_year}${s50 ? `; aceitando até 50%, ${s50.exact ? 'cerca de' : 'no máximo'} ${fmt.pct(s50.v, 0)}` : ''} (${fmt.n(m.tax_hh_total, 0)} agregados; estimativa por escalões de rendimento do INE).`);
+  const act = [];
+  if (pr && pr.rent_contracts != null) act.push(`${fmt.n(pr.rent_contracts, 0)} novos contratos de arrendamento na freguesia em ${pr.rent_year ?? '—'}${pr.rent_g3y != null ? ` (renda ${fmt.spct(pr.rent_g3y, 0)} em 3 anos)` : ''}`);
+  if (m.rent_contracts != null) act.push(`${fmt.n(m.rent_contracts, 0)} no concelho em ${m.rent_contracts_year}${m.rent_contracts_growth != null ? ` (${fmt.spct(m.rent_contracts_growth, 0)} num ano)` : ''}`);
+  if (m.migration_balance != null) act.push(`saldo migratório de ${m.migration_balance >= 0 ? '+' : ''}${fmt.n(m.migration_balance, 0)} pessoas/ano`);
+  if (pr && pr.vacant_share != null) act.push(`${fmt.pct(pr.vacant_share, 0)} de casas vagas na freguesia em 2021`);
+  else if (m.vacant_share != null) act.push(`${fmt.pct(m.vacant_share, 0)} de casas vagas no concelho em 2021`);
+  if (m.guests_al_share != null && m.guests_12m != null) act.push(`${fmt.n(m.guests_12m / 1000, 0)} mil hóspedes turísticos num ano (${fmt.pct(m.guests_al_share, 0)} em alojamento local)`);
+  if (act.length) li.push(`Procura local: ${act.join('; ')}.`);
+  const v35 = s35 ? s35.v : null;
+  const verdict = okProf.length && (v35 == null || v35 >= 0.3)
+    ? `Viável: a renda cabe em 35% do rendimento de ${okProf.join(', ')}${v35 != null ? `, e de ${s35.exact ? 'cerca de' : 'até'} ${fmt.pct(v35, 0)} dos agregados do concelho` : ''}.`
+    : okProf.length || (v35 != null && v35 >= 0.15)
+      ? `Apertada: só ${okProf.length ? okProf.join(', ') : 'os agregados de rendimento mais alto'}${v35 != null ? ` (${s35.exact ? 'cerca de' : 'até'} ${fmt.pct(v35, 0)} dos agregados do concelho)` : ''} pagam esta renda sem passar de 35% do rendimento.`
+      : `Difícil para quem vive e trabalha no concelho: nenhum dos perfis locais típicos paga esta renda sem passar de 35% do rendimento${v35 != null ? `, e só ${s35.exact ? 'cerca de' : 'até'} ${fmt.pct(v35, 0)} dos agregados do concelho o conseguem` : ''}.`;
+  li.push('Os inquilinos podem vir de fora do concelho (estudantes, quem muda de cidade, estrangeiros) e ter rendimentos diferentes destes. Os rendimentos do IRS e os escalões são de há 1–2 anos.');
+  return `<h3 style="margin-top:18px">Quem consegue pagar ${isUser ? 'a tua renda' : 'a renda de mercado'} (${fmt.eur(rent)}/mês)? ${info('tenants')}</h3>
+    <p class="im-verdict">${pill('neutral', verdict.split(':')[0])} <span>${esc(verdict.split(': ').slice(1).join(': '))}</span></p>
+    ${rows ? `<div class="table-wrap"><table class="ol-table"><thead><tr><th>Perfil de inquilino</th><th>Rendimento/mês</th><th>A renda pesa</th><th>Leitura (≤35% comportável, ≤50% pesado)</th></tr></thead><tbody>${rows}</tbody></table></div>` : ''}
+    <ul class="read">${li.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>`;
+}
+// "alinhado / acima / abaixo": ±10% alinhado; 10–25% acima/abaixo; mais de 25% bem acima/abaixo
+function imVerdict(d, who, refLabel) {
+  const a = Math.abs(d);
+  const txt = a <= 0.10 ? 'alinhado com o mercado' : `${a > 0.25 ? 'bem ' : ''}${d > 0 ? 'acima' : 'abaixo'} do mercado`;
+  const band = 'neutral';               // neutro: pagar acima ou abaixo não é, por si, bom ou mau
+  const arrow = a <= 0.10 ? '≈' : d > 0 ? '▲' : '▼';
+  return `<p class="im-verdict">${pill(band, `${arrow} ${txt}`)} <span>${esc(who.charAt(0).toUpperCase() + who.slice(1))} ${fmt.spct(d, 0)} face à ${esc(refLabel)}.</span></p>`;
+}
+const imShort = (l) => l.replace('mediana de venda do concelho', 'concelho').replace(/^mediana da freguesia .*?(\(|$)/, 'freguesia $1')
+  .replace(/^avaliação bancária de /, 'aval. ').replace(/\s*\(último publicado, (.*)\)/, ' ($1)').replace(/\s+\($/, '').trim();
+// faixa horizontal: pontos de referência (traço + etiqueta em baixo), o teu valor (círculo + etiqueta em cima), banda opcional
+function imStrip(refs, you, band, f) {
+  const vals = [...refs.map((r) => r.value), ...(you ? [you.value] : []), ...(band || [])];
+  let lo = Math.min(...vals), hi = Math.max(...vals);
+  const pad = (hi - lo) * 0.15 || hi * 0.1; lo -= pad; hi += pad;
+  const pos = (x) => ((x - lo) / (hi - lo)) * 100, clamp = (x) => Math.max(6, Math.min(94, x));
+  const refsSorted = [...refs].sort((a, b) => a.value - b.value);
+  return `<div class="strip" role="img" aria-label="${esc([...refs.map((r) => `${r.label} ${f(r.value)}`), ...(you ? [`${you.label} ${f(you.value)}`] : [])].join(', '))}">
+    <span class="track"></span>
+    ${band ? `<span class="band" style="left:${pos(band[0])}%;width:${pos(band[1]) - pos(band[0])}%"></span><span class="lab low" style="left:${clamp(pos(band[0]))}%">25%: ${esc(f(band[0]))}</span><span class="lab low" style="left:${clamp(pos(band[1]))}%">75%: ${esc(f(band[1]))}</span>` : ''}
+    ${refsSorted.map((r, i) => `<span class="pt" style="left:${pos(r.value)}%"></span><span class="lab ${band ? 'mid' : i % 2 ? 'low2' : 'low'}" style="left:${clamp(pos(r.value))}%">${esc(r.label)}: ${esc(f(r.value))}</span>`).join('')}
+    ${you ? `<span class="pt you" style="left:${pos(you.value)}%"></span><span class="lab top" style="left:${clamp(pos(you.value))}%"><b>${esc(you.label)}: ${esc(f(you.value))}</b></span>` : ''}
+  </div>`;
+}
+function imChart(id, D) {
+  const txt = css('--muted'), line = css('--line');
+  const qi = (q) => +q.slice(0, 4) * 4 + +q.slice(-1) - 1;
+  const start = qi(D.q0) - 12;
+  const names = { type: 'Avaliação bancária do tipo de casa (concelho)', all: 'Avaliação bancária, todas as casas (concelho)', ine: 'Mediana de venda (concelho, INE)', par: 'Mediana de venda (freguesia, INE)' };
+  const mk = D.idx.filter(([, , ser]) => ser && ser.length).map(([k, , ser]) => ({ k, name: names[k] || k, data: ser.filter((r) => qi(r[0]) >= start) }));
+  const ms = D.mainSer || [], b0 = (ms.find((r) => r[0] === D.q0) || [])[1];
+  const yours = b0 ? ms.filter((r) => r[0] >= D.q0).map((r) => [r[0], Math.round(D.ppm * r[1] / b0)]) : [[D.q0, Math.round(D.ppm)]];
+  const cats = [...new Set([...mk.flatMap((s) => s.data.map((r) => r[0])), ...yours.map((r) => r[0])])].sort();
+  const toMap = (arr) => new Map(arr.map((r) => [r[0], r[1]]));
+  const series = mk.map((s) => {
+    const mp = toMap(s.data), primary = s.k === D.main.k;
+    return { name: s.name, type: 'line', showSymbol: false, connectNulls: true, data: cats.map((c) => (mp.has(c) ? mp.get(c) : null)),
+      lineStyle: { width: primary ? 2 : 1.5, type: primary ? 'solid' : 'dashed', color: primary ? css('--s1') : txt }, itemStyle: { color: primary ? css('--s1') : txt } };
+  });
+  const ym = toMap(yours), last = yours[yours.length - 1][0];
+  series.push({ name: 'O teu imóvel (estimado)', type: 'line', connectNulls: true, symbol: 'circle', lineStyle: { width: 2.5, color: css('--s2') }, itemStyle: { color: css('--s2'), borderColor: css('--card'), borderWidth: 2 },
+    data: cats.map((c) => (ym.has(c) ? { value: ym.get(c), symbolSize: c === D.q0 || c === last ? 10 : 0,
+      label: { show: c === D.q0 || c === last, position: 'top', color: css('--fg'), fontSize: 11, formatter: c === D.q0 ? `Compra: ${fmt.eur(ym.get(c))}` : `Hoje (est.): ${fmt.eur(ym.get(c))}` } } : null)) });
+  freshChart(id).setOption({
+    animation: false,
+    grid: { left: 8, right: 70, top: 56, bottom: 24, containLabel: true },
+    legend: { top: 0, left: 0, textStyle: { color: txt, fontSize: 11 } },
+    tooltip: { trigger: 'axis', confine: true, formatter: (ps) => `<b>${esc(qpt(ps[0].axisValue))}</b><br>` + ps.filter((p) => p.value != null && (typeof p.value !== 'object' || p.value.value != null))
+      .map((p) => `${p.marker} ${esc(p.seriesName)}: <b>${fmt.eur(typeof p.value === 'object' ? p.value.value : p.value)}/m²</b>`).join('<br>') },
+    xAxis: { type: 'category', data: cats, axisLabel: { color: txt, formatter: qpt }, axisLine: { lineStyle: { color: line } } },
+    yAxis: { type: 'value', scale: true, axisLabel: { color: txt, formatter: (x) => fmt.eur(x) }, splitLine: { lineStyle: { color: line } } },
+    series,
+  }, true);
 }
 const IM_DISCLAIMER = '⚠ <b>Estimativa estatística, não vinculativa.</b> Isto não é uma avaliação imobiliária nem aconselhamento financeiro, fiscal ou jurídico. Os números aplicam medianas e índices oficiais (INE, BCE, Eurostat) ao preço que indicaste: não conhecem o estado, a localização exata, a vista, o piso, as obras nem o mercado da tua rua, que podem afastar o valor real muito destes valores. Para decisões (vender, pedir ou renegociar crédito, partilhas, impostos) consulta um perito avaliador registado na CMVM, o teu banco ou um contabilista. Os dados que introduzes ficam só neste browser: nada é enviado.';
 function initImovel() {
@@ -1755,17 +1878,18 @@ function renderSummary() {
   const t = [], n = NAT && NAT.series && NAT.series.hpi_real;
   if (n && n.length > 4) {
     const a = n[n.length - 1], b = n[n.length - 5];
-    t.push(['Preço real (país)', fmt.spct(a[1] / b[1] - 1), `num ano até ${qpt(a[0])}, já sem inflação`, '#national']);
+    t.push(['Preço real (país)', fmt.spct(a[1] / b[1] - 1), `num ano até ${qpt(a[0])}, já sem inflação`, 'national']);
   }
   const A = OL && OL.afford_hist;
-  if (A && A.last) t.push(['Esforço de compra', fmt.pct(A.last.effort_wage ?? A.last.effort_irs, 0), `90 m² no país, do ${A.last.effort_wage != null ? 'salário médio' : 'rendimento IRS'} (${qpt(A.last.period)})`, '#outlook']);
-  if (OL && OL.credit) t.push(['Crédito novo', `${fmt.n(OL.credit.last12 / 1000, 1)} mil M€`, `12 meses até ${OL.credit.until}${OL.credit.change != null ? `, ${fmt.spct(OL.credit.change, 0)}` : ''}`, '#outlook']);
-  if (OL && OL.cycle) { const c = OL.cycle; t.push(['Fim de ciclo?', `${c.counts.up_down} de ${c.n}`, 'concelhos com preço a subir e compras a cair', '#outlook']); }
-  if (OL && OL.sales) t.push(['Previsão 12 meses', fmt.spct(OL.sales.median_growth_12m), `concelho típico, até ${qpt(OL.sales.target_period)}`, '#outlook']);
-  if (OL && OL.europe) t.push(['Portugal na UE', `${OL.europe.rank}.º de ${OL.europe.n}`, `subida real desde 2015 (${fmt.spct(OL.europe.pt.real_2015, 0)})`, '#outlook']);
+  if (A && A.last) t.push(['Esforço de compra', fmt.pct(A.last.effort_wage ?? A.last.effort_irs, 0), `90 m² no país, do ${A.last.effort_wage != null ? 'salário médio' : 'rendimento IRS'} (${qpt(A.last.period)})`, 'outlook']);
+  if (OL && OL.credit) t.push(['Crédito novo', `${fmt.n(OL.credit.last12 / 1000, 1)} mil M€`, `12 meses até ${OL.credit.until}${OL.credit.change != null ? `, ${fmt.spct(OL.credit.change, 0)}` : ''}`, 'outlook']);
+  if (OL && OL.cycle) { const c = OL.cycle; t.push(['Fim de ciclo?', `${c.counts.up_down} de ${c.n}`, 'concelhos com preço a subir e compras a cair', 'outlook']); }
+  if (OL && OL.sales) t.push(['Previsão 12 meses', fmt.spct(OL.sales.median_growth_12m), `concelho típico, até ${qpt(OL.sales.target_period)}`, 'outlook']);
+  if (OL && OL.europe) t.push(['Portugal na UE', `${OL.europe.rank}.º de ${OL.europe.n}`, `subida real desde 2015 (${fmt.spct(OL.europe.pt.real_2015, 0)})`, 'outlook']);
   if (!t.length) return;
   $('#summary').hidden = false;
-  $('#summary-tiles').innerHTML = t.map(([l, v, c, h]) => `<a class="stat sum-tile" href="${h}"><span class="muted">${esc(l)}</span><b>${esc(v)}</b><span class="ctx">${esc(c)}</span></a>`).join('');
+  $('#summary-tiles').innerHTML = t.map(([l, v, c, h]) => `<a class="stat sum-tile" href="#${h}" data-go="${h}"><span class="muted">${esc(l)}</span><b>${esc(v)}</b><span class="ctx">${esc(c)}</span></a>`).join('');
+  $('#summary-tiles').onclick = (e) => { const a = e.target.closest('[data-go]'); if (a) { e.preventDefault(); goTo(a.dataset.go); } };
 }
 function renderSources() {
   const S = META.sources || {}, ine = S.ine || {}, mac = S.macro || {}, sum = META.ine_summary;
@@ -1788,13 +1912,38 @@ function renderSources() {
     ? `<div class="table-wrap"><table class="ol-table"><thead><tr><th>Fonte</th><th>Indicador</th><th>Estado</th></tr></thead><tbody>${bad.map((r) =>
       `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td style="text-align:left">${esc(r[2].slice(0, 140))}</td></tr>`).join('')}</tbody></table></div>` : '');
 }
+// ---------- separadores: cada secção pertence a um tema; os links entre secções mudam de separador sozinhos
+const TABS = {
+  mercado: ['summary', 'national', 'follow', 'changes', 'mapsec', 'detail', 'compare', 'ranking'],
+  comprar: ['afford'],
+  imovel: ['imovel'],
+  perspetivas: ['outlook'],
+  metodo: ['howto', 'backtest'],
+};
+let TAB = 'mercado';
+const tabOf = (id) => Object.keys(TABS).find((k) => TABS[k].includes(id));
+function showTab(tab, target) {
+  if (!TABS[tab]) tab = 'mercado';
+  const changed = tab !== TAB;
+  TAB = tab;
+  Object.entries(TABS).forEach(([k, ids]) => ids.forEach((id) => { const el = document.getElementById(id); if (el) el.classList.toggle('off', k !== tab); }));
+  document.querySelectorAll('#topnav a[data-tab]').forEach((a) => { const on = a.dataset.tab === tab; a.classList.toggle('active', on); a.setAttribute('aria-selected', on); });
+  if (location.hash.slice(1) !== tab) history.replaceState(null, '', '#' + tab);
+  // gráficos e mapa criados com o separador escondido ficam com tamanho 0: redimensionar ao mostrar
+  requestAnimationFrame(() => { Object.values(charts).forEach((c) => c.resize()); if (MAP && tab === 'mercado') MAP.resize(); });
+  if (target) { const el = document.getElementById(target); if (el) requestAnimationFrame(() => el.scrollIntoView({ behavior: changed ? 'auto' : 'smooth', block: 'start' })); }
+  else if (changed) window.scrollTo(0, 0);
+}
+function goTo(id) { showTab(tabOf(id) || 'mercado', id); }
 function initTopNav() {
-  const links = [...document.querySelectorAll('#topnav a')];
-  const byId = new Map(links.map((a) => [a.getAttribute('href').slice(1), a]));
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach((e) => { const a = byId.get(e.target.id); if (a) a.classList.toggle('active', e.isIntersecting); });
-  }, { rootMargin: '-56px 0px -70% 0px' });
-  byId.forEach((_, id) => { const el = document.getElementById(id); if (el) obs.observe(el); });
+  const fromHash = () => {
+    const h = location.hash.slice(1);
+    if (TABS[h]) showTab(h);
+    else if (tabOf(h)) goTo(h);                 // ligações antigas (#ranking, #outlook…) continuam a funcionar
+    else showTab('mercado');
+  };
+  window.addEventListener('hashchange', fromHash);
+  fromHash();
 }
 
 async function main() {
@@ -1845,7 +1994,7 @@ async function main() {
   });
   safe('seguidos', renderFollow);
   $('#d-follow').addEventListener('click', () => selected && toggleFollow(selected));
-  $('#d-print').addEventListener('click', () => window.print());
+  $('#d-print').addEventListener('click', () => { document.body.classList.add('print-ficha'); window.print(); setTimeout(() => document.body.classList.remove('print-ficha'), 500); });
   window.addEventListener('beforeprint', () => { document.body.classList.add('printing'); Object.values(charts).forEach((c) => c.resize()); });
   window.addEventListener('afterprint', () => { document.body.classList.remove('printing'); Object.values(charts).forEach((c) => c.resize()); });
   $('#follow-body').addEventListener('click', (e) => {

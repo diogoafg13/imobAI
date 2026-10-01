@@ -372,6 +372,15 @@ no snapshot bruto do build de 2026-10-01 (ver `config/sources.yml`). Nenhum entr
 - **Ficha para imprimir**: botão "Imprimir ficha" no detalhe; a impressão (ou "guardar como PDF") mostra só o
   concelho, com data e fontes.
 
+### Organização do site em separadores
+
+O site passou a ter cinco separadores: **Mercado** (resumo, visão nacional, os teus concelhos, o que mudou,
+mapa, detalhe, comparação e ranking), **Comprar casa** (calculadora), **O meu imóvel**, **Perspetivas**
+(previsões e padrões) e **Método** (glossário e backtest). O endereço guarda o separador (`#mercado`,
+`#comprar`, `#imovel`, `#perspetivas`, `#metodo`); ligações antigas a secções (`#ranking`, `#outlook`…) abrem
+o separador certo. Clicar num concelho em qualquer separador abre o detalhe em Mercado. Imprimir a ficha do
+concelho ou a análise do imóvel imprime só essa parte; imprimir a página imprime o separador aberto.
+
 ### O meu imóvel: análise não vinculativa
 
 Secção do site onde a pessoa indica concelho (e, se quiser, freguesia), mês da compra, preço, área e tipo
@@ -391,6 +400,18 @@ browser; os dados ficam só nesse browser (`localStorage`), nada é enviado. Dev
   condomínio, seguro, meses vazio, manutenção, IRS sobre rendas), saldo face à prestação e, se a casa já
   estiver arrendada, renda atual face ao mercado;
 - **comprar ou arrendar** para aquela casa (ponto de equilíbrio).
+
+- **veredicto e gráficos**: "alinhado / acima / bem acima / abaixo do mercado" (±10% alinhado; mais de 25% "bem")
+  face à mediana da freguesia (ou do concelho) na altura da compra, e o mesmo para a renda indicada; gráfico
+  "onde estava e onde está" com as medianas locais em €/m² e a linha do imóvel (o €/m² pago atualizado pelo
+  índice principal); faixas com o preço pago face às medianas e a renda face à faixa central (25%–75%);
+- **quem consegue pagar a renda**: perfis de inquilino com rendimentos locais (1 pessoa ou casal com a mediana
+  do IRS da freguesia/concelho, 1 ou 2 salários médios do concelho) e quanto a renda pesa (≤35% comportável,
+  ≤50% pesado); parte dos agregados fiscais do concelho com rendimento bruto suficiente para a renda ficar em
+  35% (e 50%), estimada pelos escalões do INE 0012742 (interpolação linear dentro de cada escalão; o de topo,
+  32 500 € ou mais, é aberto — acima disso só o máximo); procura local (novos contratos na freguesia e no
+  concelho, saldo migratório, casas vagas, turismo); veredicto viável / apertada / difícil. Os inquilinos
+  podem vir de fora do concelho — dito no texto.
 
 Aviso obrigatório no topo da secção, no resultado e na impressão: estimativa estatística, não vinculativa;
 não é avaliação imobiliária nem aconselhamento financeiro, fiscal ou jurídico; para decisões, perito
