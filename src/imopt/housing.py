@@ -221,10 +221,7 @@ def affordability_history(valuation: pd.DataFrame | None, mortgage: pd.DataFrame
     k = v["sort_key"].astype(int)
     vq = v.assign(q=(k // 100) * 100 + ((k % 100) - 1) // 3 + 1).groupby("q")["value"].agg(["mean", "count"])
     vq = vq[vq["count"] == 3]["mean"]
-    m = mortgage.dropna(subset=["value"])
-    mk = np.array([int(str(p)[:4]) * 100 + int(str(p)[5:7]) for p in m["period"]])
-    mq = pd.Series(m["value"].astype(float).to_numpy(), index=(mk // 100) * 100 + ((mk % 100) - 1) // 3 + 1)
-    mq = mq.groupby(level=0).mean()
+    mq = _quarterly_rate(mortgage)
     common = [q for q in vq.index if q in mq.index]
     if len(common) < 8:
         return None
@@ -256,4 +253,122 @@ def affordability_history(valuation: pd.DataFrame | None, mortgage: pd.DataFrame
     pay = df.set_index("period")["payment"]
     out["payment_max"] = {"period": pay.idxmax(), "value": float(pay.max())}
     out["payment_min"] = {"period": pay.idxmin(), "value": float(pay.min())}
+    return out
+
+
+def _quarterly_rate(mortgage: pd.DataFrame | None) -> pd.Series | None:
+    """Taxa média dos novos créditos (mensal, 'AAAA-MM') -> média por trimestre, índice AAAAQQ."""
+    if mortgage is None or mortgage.empty:
+        return None
+    m = mortgage.dropna(subset=["value"])
+    mk = np.array([int(str(p)[:4]) * 100 + int(str(p)[5:7]) for p in m["period"]])
+    q = (mk // 100) * 100 + ((mk % 100) - 1) // 3 + 1
+    return pd.Series(m["value"].astype(float).to_numpy(), index=q).groupby(level=0).mean()
+
+
+def _asof_year(piv: pd.DataFrame | None, dico: str, year: int, max_lag: int = 2) -> float:
+    if piv is None or dico not in piv.index:
+        return np.nan
+    row = piv.loc[dico].dropna()
+    row = row[row.index <= year]
+    return float(row.iloc[-1]) if len(row) and year - int(row.index[-1]) <= max_lag else np.nan
+
+
+def effort_history_muni(sales: pd.DataFrame | None, mortgage: pd.DataFrame | None, irs: pd.DataFrame | None = None,
+                        wages: pd.DataFrame | None = None, names: dict | None = None,
+                        volume: pd.Series | None = None) -> tuple[dict | None, dict]:
+    """Esforço de compra por concelho e trimestre: 90 m² ao preço mediano de venda do INE, 90% a 30 anos à taxa
+    média dos novos créditos desse trimestre, ÷ rendimento do concelho (IRS de quem vive ÷ 12 e salário médio de
+    quem trabalha), o do próprio ano ou o último publicado até 2 anos antes."""
+    rq = _quarterly_rate(mortgage)
+    if sales is None or sales.empty or rq is None:
+        return None, {}
+
+    def yearly(df):
+        if df is None or df.empty:
+            return None
+        d = df.dropna(subset=["dico", "value"])
+        return d.assign(y=d["sort_key"] // 100).pivot_table(index="dico", columns="y", values="value", aggfunc="last")
+
+    pi, pw = yearly(irs), yearly(wages)
+    if pi is None and pw is None:
+        return None, {}
+    s = sales.dropna(subset=["dico", "value"])
+    per, rows = {}, []
+    for d, g in s.groupby("dico"):
+        pts = []
+        for k, v in zip(g["sort_key"], g["value"]):
+            k = int(k)
+            if k not in rq.index:
+                continue
+            pay = float(_annuity(float(v) * AREA_M2 * LTV, rq[k]))
+            y = k // 100
+            i, w = _asof_year(pi, d, y), _asof_year(pw, d, y)
+            ei = pay / (i / 12) if i == i and i > 0 else None
+            ew = pay / w if w == w and w > 0 else None
+            if ei is not None or ew is not None:
+                pts.append([f"{y}Q{k % 100}", None if ei is None else round(ei, 4), None if ew is None else round(ew, 4)])
+                rows.append({"dico": str(d), "q": k, "ei": ei, "ew": ew})
+        if pts:
+            per[str(d)] = {"effort_hist": sorted(pts)}
+    if not rows:
+        return None, {}
+    df = pd.DataFrame(rows)
+    med = df.groupby("q")[["ei", "ew"]].median()
+    first, last = int(df["q"].min()), int(df["q"].max())
+    summary = {"area": AREA_M2, "ltv": LTV, "years": YEARS, "first": f"{first // 100}Q{first % 100}",
+               "last": f"{last // 100}Q{last % 100}",
+               "median": [[f"{q // 100}Q{q % 100}", None if pd.isna(r.ei) else round(float(r.ei), 4),
+                           None if pd.isna(r.ew) else round(float(r.ew), 4)] for q, r in med.iterrows()]}
+    a, b = df[df["q"] == first].set_index("dico")["ei"], df[df["q"] == last].set_index("dico")["ei"]
+    chg = (b - a.reindex(b.index)).dropna()
+    if volume is not None:
+        chg = chg[volume.reindex(chg.index).fillna(0) >= 20]
+    if len(chg) >= 10:
+        summary["risers"] = [{"dico": d, "name": (names or {}).get(d, d), "from": float(a[d]), "to": float(b[d]),
+                              "change": float(x)} for d, x in chg.sort_values(ascending=False).head(10).items()]
+        summary["n_doubled"] = int(((b / a.reindex(b.index)) >= 2).sum())
+        summary["n_compared"] = int(b.notna().sum())
+    return summary, per
+
+
+def construction_costs(cost: dict[str, pd.DataFrame | None], price_new: pd.DataFrame | None = None,
+                       price_existing: pd.DataFrame | None = None) -> dict | None:
+    """Custo de construção de habitação nova (INE, mensal, nacional) face ao preço de venda das casas novas e
+    usadas (INE, mediana de 12 meses, nacional): variação a 1 ano e desde 2021 (base do índice)."""
+    def nat_m(df):
+        if df is None or df.empty:
+            return None
+        d = df[df["level"] == "national"] if "level" in df else df
+        d = d.dropna(subset=["value"])
+        return None if d.empty else pd.Series(d["value"].astype(float).to_numpy(), index=d["sort_key"].astype(int)).sort_index()
+
+    tot = nat_m(cost.get("total"))
+    if tot is None or len(tot) < 24:
+        return None
+
+    def yoy_m(s):
+        k = int(s.index.max())
+        b = (k // 100 - 1) * 100 + k % 100
+        return float(s[k] / s[b] - 1) if b in s.index else None
+
+    def since(s, start):
+        base = s[(s.index >= start) & (s.index < start + 100)]
+        return float(s.iloc[-1] / base.mean() - 1) if len(base) else None
+
+    k = int(tot.index.max())
+    out = {"until": f"{k // 100}-{k % 100:02d}", "yoy": yoy_m(tot), "since_2021": since(tot, 202100),
+           "parts": {}, "prices": {},
+           "series": [[f"{i // 100}-{i % 100:02d}", round(float(v), 1)] for i, v in tot.items() if i >= 201501 and i % 100 in (3, 6, 9, 12)]}
+    for key in ("materials", "labour"):
+        s = nat_m(cost.get(key))
+        if s is not None and len(s) >= 13:
+            out["parts"][key] = {"yoy": yoy_m(s), "since_2021": since(s, 202100)}
+    for key, df in (("new", price_new), ("existing", price_existing)):
+        s = nat_m(df)
+        if s is not None and len(s) >= 5:
+            kq = int(s.index.max())
+            b = (kq // 100 - 1) * 100 + kq % 100
+            out["prices"][key] = {"until": f"{kq // 100}Q{kq % 100}", "yoy": float(s[kq] / s[b] - 1) if b in s.index else None,
+                                  "since_2021": since(s, 202100)}
     return out

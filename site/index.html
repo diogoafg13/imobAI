@@ -14,6 +14,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
 <header>
   <h1>Painel de Risco Imobiliário — Portugal</h1>
   <p id="stamp" class="muted"></p>
+  <details id="sources" class="sources" hidden><summary id="sources-sum"></summary><div id="sources-body"></div></details>
   <p id="demo-banner" class="banner" hidden>DADOS SINTÉTICOS DE DEMONSTRAÇÃO — não representam o mercado real.</p>
 </header>
 
@@ -147,6 +148,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <option value="f_rel_muni">Preço face ao concelho</option>
         <option value="f_price">Preço €/m²</option>
         <option value="f_g1y">Variação preço 12 meses</option>
+        <option value="f_rg">Renda: variação 3 anos</option>
         <option value="f_irs">Rendimento (IRS)</option>
         <option value="f_ef">Esforço de compra</option>
         <option value="f_vac">Casas vagas (Censos 2021)</option>
@@ -160,15 +162,21 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
   </section>
 
   <section id="detail" class="card" hidden>
+    <p id="d-print-head" class="print-only muted"></p>
     <div class="row">
       <h2 id="d-title"></h2>
-      <span><button id="d-follow" class="btn" type="button" aria-pressed="false">☆ Seguir</button> <button id="d-compare" class="btn">Comparar</button></span>
+      <span class="noprint"><button id="d-follow" class="btn" type="button" aria-pressed="false">☆ Seguir</button> <button id="d-print" class="btn" type="button">Imprimir ficha</button> <button id="d-compare" class="btn">Comparar</button></span>
     </div>
     <div id="d-stats" class="stats"></div>
     <ul id="d-read" class="read"></ul>
     <div id="d-why"></div>
     <div id="chart-detail" class="chart tall"></div>
     <p id="d-chart-note" class="muted">Preço: mediana de vendas dos últimos 12 meses, trimestral (eixo esquerdo). Renda: mediana de novos contratos, anual (eixo direito, pontos).</p>
+    <div id="d-eff-wrap" hidden>
+      <div class="chart-cap"><span>Esforço de compra ao longo do tempo <button type="button" class="info" data-k="effort_hist_muni" aria-label="Sobre o esforço ao longo do tempo">ⓘ</button></span></div>
+      <div id="chart-eff" class="chart"></div>
+      <p id="d-eff-note" class="muted"></p>
+    </div>
     <div id="d-par" hidden>
       <h3>Freguesias <button type="button" class="info" data-k="parishes" aria-label="Sobre as freguesias">ⓘ</button></h3>
       <div class="table-wrap"><table id="d-par-table" class="ol-table"></table></div>

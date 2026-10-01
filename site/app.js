@@ -73,6 +73,11 @@ const GLOSS = {
   follow: ['Os teus concelhos', 'Concelhos que escolheste seguir (botão ☆ no detalhe). A lista fica guardada só neste browser. Mostra o que mudou desde o trimestre anterior e os números principais.'],
   par_irs: ['Freguesias: rendimento e Censos', 'Por freguesia: mediana do rendimento declarado no IRS depois do imposto (por pessoa que declara, ÷ 12; o INE não publica freguesias com poucos declarantes), e a parte das casas vagas e de segunda habitação no Censos 2021. O esforço de compra por freguesia usa o preço da freguesia (só onde o INE o publica) e o rendimento do IRS de quem lá vive, com a casa e o crédito da calculadora.'],
   tourism_guests: ['Hóspedes e ocupação', 'Hóspedes em alojamento turístico nos últimos 12 meses publicados (INE, mensal; hotelaria, alojamento local com 10+ camas e turismo rural) e variação face aos 12 meses anteriores; parte dos hóspedes em alojamento local; taxa líquida de ocupação-cama no último ano (camas ocupadas ÷ camas disponíveis). Turismo a crescer depressa num concelho costuma puxar pelos preços e pelas rendas, sobretudo pelo alojamento local.'],
+  effort_hist_muni: ['Esforço ao longo do tempo (concelho)', 'Para cada trimestre: prestação de 90 m² ao preço mediano de venda do concelho nesse trimestre (INE), 90% financiados a 30 anos à taxa média dos novos créditos desse trimestre (BCE), a dividir pelo rendimento do concelho desse ano (ou do último publicado, até 2 anos antes): mediana do IRS após imposto de quem lá vive (÷ 12) e salário médio bruto de quem lá trabalha. A casa e o crédito são fixos (não seguem a calculadora) para a série ser comparável no tempo.'],
+  rent_parish: ['Rendas por freguesia', 'Renda mediana de novos contratos por freguesia (INE, anual) e a variação face a 1 e 3 anos antes. Só freguesias onde o INE publica a renda; nas listas, só as com pelo menos 50 novos contratos no ano, porque com poucos contratos a mediana salta muito.'],
+  sources: ['Estado das fontes', 'Cada build tenta descarregar todos os indicadores. Se o INE não responder (acontece com os servidores do GitHub), usa os dados do último build que chegou ao INE e volta a tentar automaticamente mais tarde no mesmo dia. Indicadores opcionais com erro ficam simplesmente de fora do painel.'],
+  credit: ['Crédito à habitação novo', 'Montante de novos empréstimos à habitação concedidos pelos bancos em Portugal (BCE, estatísticas de taxas de juro MIR), somado nos últimos 12 meses. "Novas operações" inclui renegociações de créditos antigos; "crédito novo puro" exclui-as. Mede quanto dinheiro novo entra no mercado: costuma mudar antes dos preços. Valores nominais.'],
+  costs: ['Custo de construção', 'Índice de custo de construção de habitação nova do INE (materiais e mão de obra, mensal, nacional, 2021 = 100), comparado com o preço mediano de venda das casas novas e usadas (INE, 12 meses, nacional). Se os preços sobem muito mais do que o custo de construir, a subida vem sobretudo da procura e do preço do terreno, não do custo da obra. O índice não inclui terreno, licenças, impostos nem margem do promotor.'],
   migration: ['Saldo migratório', 'Diferença entre quem chegou e quem saiu do concelho num ano (INE). Positivo = mais gente a chegar do que a sair. Só contexto demográfico — não entra em nenhum score.'],
   score_valuation: ['Score de valorização', 'Percentil entre concelhos: mistura crescimento do preço a 12 meses e a 3 anos com rendibilidade baixa. 0 = menos esticado, 100 = mais. É relativo, não uma probabilidade de bolha.'],
   score_overall: ['Score global', 'Igual ao de valorização enquanto não houver dados de oferta (licenças, conclusões). Concelhos voláteis (⚠) são atenuados para o meio (50).'],
@@ -170,6 +175,8 @@ const PMETRICS = {
     help: 'Parte dos alojamentos vagos na freguesia no Censos 2021 (para venda, arrendamento ou outros motivos). Muitos precisam de obras.' },
   f_sec: { prop: 'sec', src: 'par', pal: SEQ, f: (v) => fmt.pct(v, 0), label: '2.ª habitação (Censos 2021)',
     help: 'Parte dos alojamentos de residência secundária na freguesia no Censos 2021.' },
+  f_rg: { prop: 'rent_g3y', src: 'par', pal: SEQ, f: (v) => fmt.spct(v, 0), label: 'Renda: variação 3 anos (freguesia)',
+    help: 'Variação da renda mediana de novos contratos da freguesia face a 3 anos antes (INE). Mais escuro = renda a subir mais. Só freguesias onde o INE publica a renda; com poucos contratos salta muito.' },
   f_g1y: { prop: 'g1y', src: 'par', pal: SEQ, f: (v) => fmt.pct(v), label: 'Var. 12m (freguesia)',
     help: 'Variação do preço mediano da freguesia face a um ano antes. Com poucas vendas, salta muito: lê com cautela.' },
 };
@@ -184,7 +191,7 @@ function parishDerive() {
     r.ef = pay != null && r.irs_m ? pay / (r.irs_m * AFF.earners) : null;
   });
   if (PGJ) {
-    PGJ.features.forEach((f) => { const r = PARBY[f.properties.code]; ['irs_m', 'ef', 'vac', 'sec'].forEach((k) => { f.properties[k] = r ? r[k] ?? null : null; }); });
+    PGJ.features.forEach((f) => { const r = PARBY[f.properties.code]; ['irs_m', 'ef', 'vac', 'sec', 'rent_g3y'].forEach((k) => { f.properties[k] = r ? r[k] ?? null : null; }); });
     if (MAP && MAP.getSource('f')) MAP.getSource('f').setData(PGJ);
   }
 }
@@ -412,12 +419,21 @@ function renderParList() {
   const el = $('#par-list');
   if (!PAR) return;
   const ok = PAR.rows.filter((r) => r.rel_nb != null);
-  if (!ok.length) { el.innerHTML = ''; return; }
+  if (!ok.length) { el.innerHTML = rentRisers(); return; }
   const item = (r) => `<li><span>${lnk(r.dico, r.name)} <span class="muted">(${esc((BY[r.dico] || {}).name || r.dico)})</span></span><span class="v">${fmt.spct(r.rel_nb, 0)} <span class="muted">${fmt.eur(r.price)}/m² · ${fmt.spct(r.rel_muni, 0)} vs concelho</span></span></li>`;
   const cheap = ok.slice().sort((a, b) => a.rel_nb - b.rel_nb).slice(0, 12).map(item).join('');
   el.innerHTML = `<h3>Freguesias mais baratas do que as vizinhas ${info('parishes')}</h3>
     <p class="muted">Preço mediano de venda (${qpt(PAR.period)}) face à mediana das freguesias vizinhas com dados. Pode ser oportunidade, ou só casas diferentes (mais pequenas, mais antigas, a precisar de obras): confirma no terreno.</p>
-    <ul class="ol-list">${cheap}</ul>`;
+    <ul class="ol-list">${cheap}</ul>${rentRisers()}`;
+}
+function rentRisers() {
+  const ok = PAR.rows.filter((r) => r.rent_g3y != null && (r.rent_contracts == null || r.rent_contracts >= 50));
+  if (ok.length < 10) return '';
+  const y = (ok.find((r) => r.rent_year) || {}).rent_year;
+  const it = (r) => `<li><span>${lnk(r.dico, r.name)} <span class="muted">(${esc((BY[r.dico] || {}).name || r.dico)})</span></span><span class="v">${fmt.spct(r.rent_g3y, 0)} <span class="muted">${fmt.eur2(r.rent)}/m²${r.rent_contracts != null ? ` · ${fmt.n(r.rent_contracts, 0)} contratos` : ''}</span></span></li>`;
+  return `<h3>Freguesias onde a renda mais subiu ${info('rent_parish')}</h3>
+    <p class="muted">Renda mediana de novos contratos em ${y ?? '—'} face a 3 anos antes; só freguesias com pelo menos 50 novos contratos no ano.</p>
+    <ul class="ol-list wrap-list">${ok.sort((a, b) => b.rent_g3y - a.rent_g3y).slice(0, 12).map(it).join('')}</ul>`;
 }
 function renderParTable(dico) {
   const rows = PAR ? PAR.rows.filter((r) => r.dico === dico).sort((a, b) => (b.price ?? -1) - (a.price ?? -1) || String(a.name).localeCompare(String(b.name), 'pt')) : [];
@@ -425,9 +441,10 @@ function renderParTable(dico) {
   if (!rows.length) return;
   const has = (k) => rows.some((r) => r[k] != null);
   const hasP = has('price'), hasRent = has('rent'), hasNb = has('rel_nb'), hasIrs = has('irs_median'), hasCen = has('vacant_share');
-  const th = [['Freguesia', true], ['€/m²', hasP], ['Face ao concelho', hasP], ['Face às vizinhas', hasNb], ['Var. 12m', hasP], ['Renda €/m²', hasRent],
+  const hasRg = has('rent_g3y');
+  const th = [['Freguesia', true], ['€/m²', hasP], ['Face ao concelho', hasP], ['Face às vizinhas', hasNb], ['Var. 12m', hasP], ['Renda €/m²', hasRent], ['Renda 3 anos', hasRg],
     ['IRS €/mês', hasIrs], ['Esforço', hasP && hasIrs], ['Vagos', hasCen], ['2.ª hab.', hasCen]];
-  const td = (r) => [esc(r.name), fmt.eur(r.price), fmt.spct(r.rel_muni, 0), fmt.spct(r.rel_nb, 0), fmt.pct(r.g1y), r.rent == null ? '—' : fmt.eur2(r.rent),
+  const td = (r) => [esc(r.name), fmt.eur(r.price), fmt.spct(r.rel_muni, 0), fmt.spct(r.rel_nb, 0), fmt.pct(r.g1y), r.rent == null ? '—' : fmt.eur2(r.rent), fmt.spct(r.rent_g3y, 0),
     fmt.eur(r.irs_m), fmt.pct(r.ef, 0), fmt.pct(r.vacant_share, 0), fmt.pct(r.secondary_share, 0)];
   $('#d-par-table').innerHTML = `<thead><tr>${th.filter((x) => x[1]).map((x) => `<th>${x[0]}</th>`).join('')}</tr></thead><tbody>` +
     rows.map((r) => `<tr>${td(r).filter((_, i) => th[i][1]).map((v) => `<td>${v}</td>`).join('')}</tr>`).join('') + '</tbody>';
@@ -594,6 +611,7 @@ function select(dico, scroll = true) {
   }
   selected = dico;
   $('#detail').hidden = false;
+  $('#d-print-head').textContent = `Painel de Risco Imobiliário — ficha de ${m.name} · ${META.built_at.slice(0, 10)} · preços até ${qpt(META.latest_price_period)} · fontes: INE, BCE, Eurostat · não é aconselhamento financeiro`;
   $('#detail').style.borderLeftColor = `var(--${m.band || 'none'})`;
   $('#d-title').innerHTML = `${esc(m.name)} ${pill(m.band)} ${info('band')}${m.volatile ? ' ' + pill(null, '⚠ dados voláteis') + ' ' + info('volatile') : ''}`;
   const tile = (k, label, val, c = '') => `<div class="stat"><span class="muted">${label} ${info(k)}</span><b>${val}</b>${c}</div>`;
@@ -671,6 +689,18 @@ function select(dico, scroll = true) {
     lineChart('chart-detail', 'Evolução', s, { dual: hasRent, names: hasRent ? ['Preço (€/m²)', 'Renda (€/m²/mês)'] : ['Preço (€/m²)'], notitle: true });
   } catch (e) { console.error('Falha no gráfico do detalhe:', e); }
   if (m.fc) try { fanChart('chart-fc', m); } catch (e) { console.error('Falha no gráfico da previsão:', e); }
+  const eh = m.effort_hist || [];
+  $('#d-eff-wrap').hidden = !eh.length;
+  if (eh.length) {
+    try {
+      lineChart('chart-eff', 'Esforço', [
+        ...(eh.some((r) => r[1] != null) ? [{ name: 'IRS de quem vive', data: eh.filter((r) => r[1] != null).map((r) => [qpt(r[0]), +(r[1] * 100).toFixed(1)]), fmt: (v) => fmt.n(v, 0) + '%' }] : []),
+        ...(eh.some((r) => r[2] != null) ? [{ name: 'Salário de quem trabalha', data: eh.filter((r) => r[2] != null).map((r) => [qpt(r[0]), +(r[2] * 100).toFixed(1)]), fmt: (v) => fmt.n(v, 0) + '%' }] : []),
+      ], { names: ['% do rendimento mensal'], notitle: true });
+    } catch (e) { console.error('Falha no gráfico do esforço:', e); }
+    const a = eh.find((r) => r[1] != null), b = [...eh].reverse().find((r) => r[1] != null);
+    $('#d-eff-note').textContent = `Prestação de 90 m² ao preço mediano do concelho (90% a 30 anos, taxa média dos novos créditos de cada trimestre) em % do rendimento.${a && b ? ` Com o IRS: ${fmt.pct(a[1], 0)} em ${qpt(a[0])}, ${fmt.pct(b[1], 0)} em ${qpt(b[0])}.` : ''} O rendimento do último ano publicado repete-se até 2 anos.`;
+  }
   $('#d-compare').textContent = compare.includes(dico) ? 'Remover da comparação' : 'Comparar';
   if (scroll) $('#detail').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
@@ -1245,6 +1275,11 @@ function olRates(R) {
     <p>${hist}</p>`;
 }
 const CYCLE_SHORT = { up_up: 'preço a subir, mais compras', up_down: 'preço a subir, menos compras', down_down: 'preço a descer, menos compras', down_up: 'preço a descer, mais compras' };
+function olCredit(C) {
+  return `<h3>Crédito à habitação novo ${info('credit')}</h3>
+    <p>Nos 12 meses até ${esc(C.until)} os bancos concederam <b>${fmt.n(C.last12 / 1000, 1)} mil M€</b> em novos créditos à habitação${C.change != null ? ` (${fmt.spct(C.change, 0)} face aos 12 meses anteriores)` : ''}; ${C.peak.period === C.until ? 'é o valor mais alto da série (nominal, desde 2003)' : `o máximo da série foi ${fmt.n(C.peak.value / 1000, 1)} mil M€ (12 meses até ${esc(C.peak.period)})`}.${C.reneg_share != null ? ` Cerca de ${fmt.pct(C.reneg_share, 0)} foram renegociações de créditos antigos; o crédito novo "puro" somou ${fmt.n(C.pure12 / 1000, 1)} mil M€.` : ''}</p>
+    <div class="chart-cap"><span>Novos créditos à habitação, soma de 12 meses (M€, nominal)</span></div><div id="ol-credit" class="chart"></div>`;
+}
 function olCycle(C) {
   const c = C.counts, late = C.late.slice(0, 10).map((x) => `<li><span>${lnk(x.dico, x.name)}</span><span class="v">compras ${fmt.spct(x.v, 0)} <span class="muted">preço ${fmt.spct(x.g)} · ${fmt.n(x.n, 0)} aval.</span></span></li>`).join('');
   const nat = C.national && C.national.length ? C.national[C.national.length - 1] : null;
@@ -1291,6 +1326,15 @@ function olValGap(V) {
     </div>
     <p class="muted">O nível da diferença reflete sobretudo casas diferentes (a avaliação só cobre compras com crédito). ${V.min_volume ? `As listas só incluem concelhos com pelo menos ${V.min_volume} avaliações em 3 meses.` : ''} Concelhos com avaliação publicada em pelo menos 9 dos 12 meses.</p>`;
 }
+function olCosts(K) {
+  const row = (label, x) => (x ? `<tr><td>${label}</td><td>${fmt.spct(x.yoy)}</td><td>${fmt.spct(x.since_2021, 0)}</td></tr>` : '');
+  const pn = K.prices.new, pe = K.prices.existing;
+  return `<h3>Custo de construção vs preço ${info('costs')}</h3>
+    <p>O custo de construir habitação nova subiu ${fmt.spct(K.yoy)} no último ano e ${fmt.spct(K.since_2021, 0)} desde 2021 (até ${esc(K.until)})${pn ? `; o preço das casas novas subiu ${fmt.spct(pn.since_2021, 0)} no mesmo período${pe ? ` e o das usadas ${fmt.spct(pe.since_2021, 0)}` : ''}` : ''}.${pn && pn.since_2021 > K.since_2021 * 1.3 ? ' Os preços subiram bem mais do que o custo da obra: a diferença vem de outros fatores (terreno, procura, margens), não do custo de construir.' : ''}</p>
+    <div class="table-wrap"><table class="ol-table"><thead><tr><th></th><th>Último ano</th><th>Desde 2021</th></tr></thead><tbody>
+      ${row('Custo de construção (total)', K)}${row('— materiais', K.parts.materials)}${row('— mão de obra', K.parts.labour)}
+      ${row(`Preço das casas novas (${pn ? qpt(pn.until) : ''})`, pn)}${row('Preço das casas usadas', pe)}</tbody></table></div>`;
+}
 function olSupply(S) {
   const L = S.series.licensed || [], C = S.series.completed || [];
   const ll = L[L.length - 1], lc = C[C.length - 1];
@@ -1306,6 +1350,12 @@ function olSupply(S) {
     <div class="table-wrap"><table class="ol-table"><thead><tr><th>Tipologia</th><th>% das licenças ${S.mix.year_before}</th><th>% das licenças ${S.mix.year}</th><th>Preço, 12 meses (país)</th></tr></thead><tbody>
     ${S.mix.rows.map((r) => `<tr><td>${esc(r.label)}</td><td>${fmt.pct(r.share_before, 0)}</td><td>${fmt.pct(r.share_now, 0)}</td><td>${fmt.spct(r.price_growth_1y)}</td></tr>`).join('')}</tbody></table></div>` : ''}
     <p class="muted">O INE só publica licenças e conclusões até às regiões, não por concelho. Licenças são oferta futura (2 a 3 anos até à conclusão) e nem todas são construídas. Só contexto: não entra no score.</p>`;
+}
+function olEffortMuni(E) {
+  const last = E.median[E.median.length - 1], first = E.median.find((r) => r[1] != null);
+  const it = (r) => `<li><span>${lnk(r.dico, r.name)}</span><span class="v">${fmt.pct(r.from, 0)} → ${fmt.pct(r.to, 0)}</span></li>`;
+  return `<p><b>Por concelho</b> ${info('effort_hist_muni')}: a meio dos concelhos, a prestação de 90 m² ao preço local passou de ${fmt.pct(first[1], 0)} para <b>${fmt.pct(last[1], 0)}</b> do rendimento mediano do IRS entre ${qpt(first[0])} e ${qpt(last[0])}${E.n_doubled != null ? `; em <b>${E.n_doubled} de ${E.n_compared}</b> concelhos o esforço pelo menos duplicou` : ''}. O gráfico de cada concelho está no detalhe.</p>
+    ${E.risers ? `<p class="muted"><b>Onde o esforço mais subiu</b> (IRS, concelhos com 20+ avaliações em 3 meses)</p><ul class="ol-list wrap-list">${E.risers.map(it).join('')}</ul>` : ''}`;
 }
 function olAffHist(A) {
   const s = A.series, last = A.last, first = A.first;
@@ -1365,8 +1415,10 @@ function renderOutlook() {
   if (OL.fair_value) add('valor justo', () => olFair(OL.fair_value));
   if (OL.rates) add('juros', () => olRates(OL.rates));
   if (OL.europe) add('europa', () => olEurope(OL.europe));
-  if (OL.afford_hist) add('esforço no tempo', () => olAffHist(OL.afford_hist));
+  if (OL.afford_hist) add('esforço no tempo', () => olAffHist(OL.afford_hist) + (OL.effort_muni ? olEffortMuni(OL.effort_muni) : ''));
   if (OL.supply) add('oferta', () => olSupply(OL.supply));
+  if (OL.costs) add('custos', () => olCosts(OL.costs));
+  if (OL.credit) add('crédito', () => olCredit(OL.credit));
   if (OL.cycle) add('ciclo', () => olCycle(OL.cycle));
   if (OL.val_gap) add('avaliação', () => olValGap(OL.val_gap));
   parts.push(`<h3>Limites</h3><ul class="read">${(OL.limits || []).map((l) => `<li>${esc(l)}</li>`).join('')}</ul>`);
@@ -1374,6 +1426,10 @@ function renderOutlook() {
   const chart = (name, fn) => { try { fn(); } catch (e) { console.error(`Falha no gráfico ${name}:`, e); } };
   if ($('#ol-regimes')) chart('regimes', () => regimesChart('ol-regimes', OL.regimes));
   if ($('#ol-cycle')) chart('ciclo', () => cycleChart('ol-cycle', OL.cycle));
+  if ($('#ol-credit')) chart('crédito', () => lineChart('ol-credit', 'Crédito', [
+    { name: 'Novas operações', data: OL.credit.series, fmt: (v) => fmt.n(v, 0) + ' M€' },
+    ...(OL.credit.series_pure ? [{ name: 'Crédito novo puro', data: OL.credit.series_pure, fmt: (v) => fmt.n(v, 0) + ' M€' }] : []),
+  ], { names: ['M€ em 12 meses'], notitle: true }));
   if ($('#ol-eu-bars')) chart('europa barras', () => euBars('ol-eu-bars', OL.europe));
   if ($('#ol-eu-line')) chart('europa linha', () => lineChart('ol-eu-line', 'Preço real', [
     { name: 'Portugal', data: OL.europe.series.PT.map((r) => [qpt(r[0]), r[1]]), fmt: (v) => fmt.n(v, 0) },
@@ -1473,6 +1529,27 @@ function renderRankingSummary() {
   el.textContent = txt;
 }
 
+function renderSources() {
+  const S = META.sources || {}, ine = S.ine || {}, mac = S.macro || {}, sum = META.ine_summary;
+  const ent = (o) => Object.entries(o).filter(([k]) => k !== 'geo');
+  const all = [...ent(ine).map(([k, v]) => ['INE', k, String(v)]), ...ent(mac).map(([k, v]) => ['BCE/Eurostat/BIS', k, String(v)]),
+    ...(ine.geo ? [['Fronteiras', 'concelhos', String(ine.geo)]] : [])].filter((r) => !r[2].startsWith('sem código'));
+  if (!all.length) { $('#sources').hidden = true; return; }
+  const bad = all.filter((r) => /^(CACHE|ERRO|AVISO)/.test(r[2]));
+  const cache = bad.filter((r) => r[0] === 'INE' && r[2].startsWith('CACHE'));
+  const day = META.built_at.slice(0, 10);
+  let head;
+  if (cache.length) head = `⚠ O INE não respondeu neste build (${day}): ${cache.length} ${cache.length === 1 ? 'indicador usa' : 'indicadores usam'} os dados do último build que chegou ao INE${sum && sum.last_live ? ` (${sum.last_live})` : ''}. Nova tentativa automática mais tarde.`;
+  else if (bad.length) head = `Fontes atualizadas em ${day}; ${bad.length} ${bad.length === 1 ? 'indicador opcional' : 'indicadores opcionais'} com erro (fora do painel).`;
+  else head = `✓ Todas as fontes atualizadas em ${day}.`;
+  $('#sources').hidden = false;
+  $('#sources').classList.toggle('warn', cache.length > 0);
+  $('#sources-sum').innerHTML = `${esc(head)} ${info('sources')}`;
+  const ok = all.length - bad.length;
+  $('#sources-body').innerHTML = `<p class="muted">${ok} de ${all.length} fontes descarregadas neste build.</p>` + (bad.length
+    ? `<div class="table-wrap"><table class="ol-table"><thead><tr><th>Fonte</th><th>Indicador</th><th>Estado</th></tr></thead><tbody>${bad.map((r) =>
+      `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td style="text-align:left">${esc(r[2].slice(0, 140))}</td></tr>`).join('')}</tbody></table></div>` : '');
+}
 function initTopNav() {
   const links = [...document.querySelectorAll('#topnav a')];
   const byId = new Map(links.map((a) => [a.getAttribute('href').slice(1), a]));
@@ -1499,6 +1576,7 @@ async function main() {
   $('#stamp').textContent = `Atualizado ${META.built_at.slice(0, 10)} · último período de preços: ${META.latest_price_period} · ${META.n_municipalities} concelhos`;
   $('#demo-banner').hidden = !META.demo;
   $('#disclaimer').textContent = META.disclaimer;
+  try { renderSources(); } catch (e) { console.error('fontes:', e); }
   $('#metric').addEventListener('change', updateMetric);
   $('#metric-f').addEventListener('change', updateMetric);
   $('#lvlnav').addEventListener('click', (e) => { const b = e.target.closest('[data-lvl]'); if (b) setLevel(b.dataset.lvl); });
@@ -1533,6 +1611,9 @@ async function main() {
   });
   safe('seguidos', renderFollow);
   $('#d-follow').addEventListener('click', () => selected && toggleFollow(selected));
+  $('#d-print').addEventListener('click', () => window.print());
+  window.addEventListener('beforeprint', () => { document.body.classList.add('printing'); Object.values(charts).forEach((c) => c.resize()); });
+  window.addEventListener('afterprint', () => { document.body.classList.remove('printing'); Object.values(charts).forEach((c) => c.resize()); });
   $('#follow-body').addEventListener('click', (e) => {
     const u = e.target.closest('[data-unfollow]'); if (u) { toggleFollow(u.dataset.unfollow); return; }
     const a = e.target.closest('a[data-d]'); if (a) { e.preventDefault(); select(a.dataset.d); }

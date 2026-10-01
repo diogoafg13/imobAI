@@ -103,3 +103,14 @@ def test_last12_needs_full_years():
     r = housing.last12(df).iloc[0]
     assert r["now"] == 24.0 and r["growth"] == pytest.approx(1.0) and r["until"] == "2025-12"
     assert pd.isna(housing.last12(df[df["sort_key"] >= 202403]).iloc[0]["growth"])
+
+
+def test_construction_costs_vs_prices():
+    keys = [y * 100 + m for y in (2021, 2022, 2023) for m in range(1, 13)]
+    cost = pd.DataFrame(_rows("PT", "month", keys, [100.0] * 12 + [110.0] * 12 + [121.0] * 12, "national"))
+    pq = [y * 100 + q for y in (2021, 2022, 2023) for q in range(1, 5)]
+    new = pd.DataFrame(_rows("PT", "quarter", pq, [1000.0] * 4 + [1200.0] * 4 + [1500.0] * 4, "national"))
+    k = housing.construction_costs({"total": cost}, new)
+    assert k["until"] == "2023-12" and k["yoy"] == pytest.approx(0.1) and k["since_2021"] == pytest.approx(0.21)
+    assert k["prices"]["new"]["yoy"] == pytest.approx(0.25) and k["prices"]["new"]["since_2021"] == pytest.approx(0.5)
+    assert housing.construction_costs({}) is None

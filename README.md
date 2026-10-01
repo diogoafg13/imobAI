@@ -347,6 +347,31 @@ no snapshot bruto do build de 2026-10-01 (ver `config/sources.yml`). Nenhum entr
   acima, todo abaixo ou se não decide. Com aviso: uma previsão a 12 meses não diz nada sobre os anos
   seguintes e não é aconselhamento.
 
+### Ronda 4: estado das fontes, novas tentativas, esforço no tempo por concelho, rendas, crédito e ficha
+
+- **Estado das fontes** no topo do site: diz se todas as fontes vieram neste build; se o INE não respondeu,
+  quantos indicadores usam os dados do último build que chegou ao INE e de que dia (`meta.json`:
+  `ine_summary`, a partir de `data/clean/ine_status.json`). A lista dos que falharam abre ao clicar.
+- **Novas tentativas automáticas**: além do build semanal (segunda, 06:17 UTC), o workflow corre todos os
+  dias às 10:47 e 16:47 UTC, mas só constrói e publica se o último build não chegou ao INE (o passo
+  "Decidir se é preciso tentar outra vez" lê `ine_status.json` do branch `data`). Push e execução manual
+  constroem sempre.
+- **Esforço de compra ao longo do tempo, por concelho** (`housing.effort_history_muni`): por trimestre desde
+  2019T4, 90 m² ao preço mediano do concelho, 90% a 30 anos à taxa média dos novos créditos do trimestre, ÷
+  rendimento do concelho (IRS de quem vive e salário de quem trabalha; o do ano ou o último até 2 anos antes).
+  Gráfico no detalhe; em "Perspetivas", a mediana dos concelhos (IRS: 24% → 41%) e onde mais subiu. Em 93 de
+  299 concelhos o esforço pelo menos duplicou.
+- **Rendas por freguesia**: variação da renda mediana de novos contratos a 1 e 3 anos e n.º de contratos
+  (0012600, 0012601 ao nível da freguesia), na tabela, no mapa de freguesias e numa lista das que mais
+  subiram (com pelo menos 50 contratos).
+- **Crédito à habitação novo** (BCE MIR, `M.PT.B.A2C.A.B.A.2250.EUR.N` e `...EUR.P`, confirmadas no build):
+  soma de 12 meses, variação e parte de renegociações. 12 meses até 2026-08: 32,0 mil M€ (+18%), o valor
+  nominal mais alto desde 2003; ~21% renegociações.
+- **Custo de construção vs preço** (INE 0011748, mensal, nacional; dim_3 T/1 materiais/2 mão de obra): desde
+  2021 o custo de construir subiu +35% (mão de obra +45%), o preço das casas novas +63% e o das usadas +76%.
+- **Ficha para imprimir**: botão "Imprimir ficha" no detalhe; a impressão (ou "guardar como PDF") mostra só o
+  concelho, com data e fontes.
+
 ### Freguesias
 
 `imopt/parishes.py`. O preço mediano de venda por freguesia vem do mesmo indicador do INE (0012234,

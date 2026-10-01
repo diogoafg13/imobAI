@@ -157,7 +157,8 @@ def real_index(nominal: pd.DataFrame | None, hicp: pd.DataFrame | None) -> pd.Da
 def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.DataFrame],
                   ine_status: dict, macro_status: dict, out_dir: Path,
                   geojson: dict | None, demo: bool = False, geo_unmatched: list[str] | None = None,
-                  forecast_log: Path | None = None, parish_geojson: dict | None = None) -> dict:
+                  forecast_log: Path | None = None, parish_geojson: dict | None = None,
+                  ine_summary: dict | None = None) -> dict:
     sales = municipal(frames.get("sales_price_12m"))
     if sales is None or sales.empty:
         raise RuntimeError("sem dados de preços por concelho: nada para calcular")
@@ -267,6 +268,7 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
         "latest_price_period": latest_period,
         "n_municipalities": len(munis),
         "sources": {"ine": ine_status, "macro": macro_status},
+        "ine_summary": ine_summary,
         "geo_unmatched": (geo_unmatched or [])[:20],
         "geo_unmatched_count": len(geo_unmatched or []),
         "disclaimer": ("Indicador informativo, não é aconselhamento financeiro. Scores municipais são "
@@ -281,7 +283,8 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     try:
         ptab = parishes.table(frames.get("sales_price_12m"), frames.get("rent_parish"),
                               dict(zip(feats["dico"].astype(str), feats["price"])), frames.get("irs_median"),
-                              {k: frames.get(f"census_{k}") for k in ("total", "secondary", "vacant_market", "vacant_other")})
+                              {k: frames.get(f"census_{k}") for k in ("total", "secondary", "vacant_market", "vacant_other")},
+                              frames.get("rent_contracts"))
         ptab = parishes.add_neighbours(ptab, parish_geojson)
         rows = [{k: _clean(v) for k, v in r.items()} for r in ptab.to_dict("records")]
         geo.dump({"period": ptab.attrs.get("period"), "with_map": False, "rows": rows}, str(out_dir / "freguesias.json"))
@@ -309,7 +312,7 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
     today = dt.date.today().strftime("%Y%m%d")
     frames, ine_status = ingest_ine(cfg, data_dir, today)
     macro_frames, macro_status = ingest_macro(cfg, data_dir)
-    write_ine_status(ine_status, data_dir)
+    ine_summary = write_ine_status(ine_status, data_dir)
 
     geojson, unmatched = None, []
     if not skip_geo:
@@ -338,7 +341,8 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
                 ine_status["geo"] = f"ERRO: {e}"
     parish_gj = None if skip_geo else load_parish_geojson(cfg, data_dir, ine_status)
     return build_outputs(frames, macro_frames, ine_status, macro_status, out_dir, geojson, geo_unmatched=unmatched,
-                         forecast_log=data_dir / "clean" / "forecast_log.parquet", parish_geojson=parish_gj)
+                         forecast_log=data_dir / "clean" / "forecast_log.parquet", parish_geojson=parish_gj,
+                         ine_summary=ine_summary)
 
 
 def ine_live(status: dict) -> dict:
@@ -350,12 +354,21 @@ def ine_live(status: dict) -> dict:
             "n_error": sum(v.startswith("ERRO") for v in vals)}
 
 
-def write_ine_status(status: dict, data_dir: Path) -> None:
-    """data/clean/ine_status.json: o workflow só repete o build (tentativas extra) se o último não chegou ao INE."""
+def write_ine_status(status: dict, data_dir: Path) -> dict:
+    """data/clean/ine_status.json: o workflow só repete o build (tentativas extra) se o último não chegou ao INE.
+    Guarda também a data do último build que chegou ao INE (para o site dizer de quando são os dados)."""
     import json as _json
+    path = data_dir / "clean" / "ine_status.json"
+    prev = {}
+    try:
+        prev = _json.loads(path.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        pass
     out = {"date": dt.date.today().isoformat(), **ine_live(status)}
-    (data_dir / "clean").mkdir(parents=True, exist_ok=True)
-    (data_dir / "clean" / "ine_status.json").write_text(_json.dumps(out), encoding="utf-8")
+    out["last_live"] = out["date"] if out["live"] else prev.get("last_live")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(_json.dumps(out), encoding="utf-8")
+    return out
 
 
 def load_parish_geojson(cfg: dict, data_dir: Path, status: dict) -> dict | None:

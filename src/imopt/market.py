@@ -142,3 +142,35 @@ def national_cycle(valuation: pd.DataFrame | None, counts: pd.DataFrame | None) 
         if qa in p.index and q in v.index and qa in v.index and v[qa] > 0:
             out.append([_qlabel(int(q)), float(p[q] / p[qa] - 1), float(v[q] / v[qa] - 1)])
     return out or None
+
+
+def _monthly(df: pd.DataFrame | None) -> pd.Series | None:
+    if df is None or df.empty:
+        return None
+    d = df.dropna(subset=["value"])
+    idx = [int(str(p)[:4]) * 12 + int(str(p)[5:7]) - 1 for p in d["period"]]
+    return pd.Series(d["value"].astype(float).to_numpy(), index=idx).groupby(level=0).last().sort_index()
+
+
+def credit_flow(volume: pd.DataFrame | None, pure: pd.DataFrame | None = None) -> dict | None:
+    """Novos créditos à habitação em Portugal (BCE, M€/mês): soma dos últimos 12 meses, variação face aos 12
+    anteriores e série da soma móvel de 12 meses. Com o crédito novo "puro", a parte de renegociações."""
+    v = _monthly(volume)
+    if v is None or len(v) < 36:
+        return None
+    full = v.reindex(range(int(v.index.min()), int(v.index.max()) + 1))
+    roll = full.rolling(12, min_periods=12).sum().dropna()
+    label = lambda i: f"{i // 12}-{i % 12 + 1:02d}"  # noqa: E731
+    last = int(roll.index.max())
+    out = {"until": label(last), "last12": float(roll[last]),
+           "change": float(roll[last] / roll[last - 12] - 1) if last - 12 in roll.index else None,
+           "peak": {"period": label(int(roll.idxmax())), "value": float(roll.max())},
+           "series": [[label(int(i)), round(float(x), 1)] for i, x in roll.items() if i % 3 == 2 or i == last]}
+    p = _monthly(pure)
+    if p is not None and len(p) >= 12:
+        pr = p.reindex(full.index).rolling(12, min_periods=12).sum()
+        if last in pr.index and pd.notna(pr[last]) and roll[last] > 0:
+            out["pure12"] = float(pr[last])
+            out["reneg_share"] = float(1 - pr[last] / roll[last])
+            out["series_pure"] = [[label(int(i)), round(float(x), 1)] for i, x in pr.dropna().items() if i % 3 == 2 or i == last]
+    return out

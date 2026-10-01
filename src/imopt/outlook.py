@@ -561,6 +561,13 @@ def build(frames: dict, macro_frames: dict, feats: pd.DataFrame | None, geojson:
         frames.get("dwellings_licensed"), frames.get("dwellings_completed"), frames.get("dwellings_stock"),
         {k: frames.get(f"dwellings_licensed_{k}") for k, _ in housing.TYPOLOGIES},
         {k: frames.get(f"sales_price_{k}") for k, _ in housing.TYPOLOGIES}))
+    part("effort_muni", lambda: housing.effort_history_muni(
+        sales, macro_frames.get("mortgage_rate_pt"), muni(frames.get("irs_median")), muni(frames.get("income")), names,
+        None if feats is None or "val_count" not in feats else feats.set_index(feats["dico"].astype(str))["val_count"]))
+    part("costs", lambda: housing.construction_costs(
+        {"total": frames.get("construction_cost"), "materials": frames.get("construction_cost_materials"),
+         "labour": frames.get("construction_cost_labour")}, frames.get("sales_price_new"), frames.get("sales_price_existing")))
+    part("credit", lambda: market.credit_flow(macro_frames.get("mortgage_volume_pt"), macro_frames.get("mortgage_volume_pure_pt")))
     part("europe", lambda: europe.compare(macro_frames.get("eurostat_hpi_eu"), macro_frames.get("eurostat_hicp_eu")))
     part("afford_hist", lambda: housing.affordability_history(valuation, macro_frames.get("mortgage_rate_pt"),
                                                               frames.get("income"), frames.get("irs_median")))

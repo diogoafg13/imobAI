@@ -86,3 +86,13 @@ a.lnk{color:var(--fg);text-decoration:underline;text-decoration-color:var(--line
 .why-row b{text-align:right}
 @media (max-width:700px){.why-row{grid-template-columns:1fr 1.2fr 32px}.why-row .muted{grid-column:1/-1;margin-top:-4px}}
 .btn.small{padding:2px 8px;font-size:.8rem}
+.sources{margin:6px 0;font-size:.85rem;color:var(--muted)}.sources summary{cursor:pointer}
+.sources.warn summary{color:var(--fg);background:color-mix(in srgb,var(--amber) 30%,transparent);padding:6px 10px;border-radius:8px}
+.print-only{display:none}
+@media print{
+  #topnav,footer,#howto,#sources,#demo-banner,main>section:not(#detail),.noprint,.info,#tip{display:none!important}
+  body{background:#fff;color:#000}header h1{font-size:1.1rem}#stamp{display:none}
+  #detail{display:block!important;border:0;box-shadow:none;padding:0}
+  .print-only{display:block}.chart{break-inside:avoid;page-break-inside:avoid}.stats{grid-template-columns:repeat(4,1fr)}
+  .stat,.why-row,tr{break-inside:avoid}
+}

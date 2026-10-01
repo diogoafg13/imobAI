@@ -67,3 +67,13 @@ def test_build_outputs_has_cycle_and_valuation_gap(tmp_path):
     assert "cycle" in ol and "val_gap" in ol, ol["errors"]
     m = json.loads((tmp_path / "municipalities.json").read_text(encoding="utf-8"))
     assert any("cycle_phase" in x for x in m) and any("val_gap" in x for x in m)
+
+
+def test_credit_flow_rolling_sum_and_renegotiation_share():
+    months = [f"{y}-{m:02d}" for y in (2023, 2024, 2025) for m in range(1, 13)]
+    vol = pd.DataFrame({"period": months, "value": [100.0] * 24 + [120.0] * 12})
+    pure = pd.DataFrame({"period": months, "value": [80.0] * 24 + [90.0] * 12})
+    c = market.credit_flow(vol, pure)
+    assert c["until"] == "2025-12" and c["last12"] == 1440.0 and c["change"] == pytest.approx(0.2)
+    assert c["reneg_share"] == pytest.approx(1 - 1080 / 1440) and c["series"][-1] == ["2025-12", 1440.0]
+    assert market.credit_flow(vol.head(10)) is None

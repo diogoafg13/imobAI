@@ -317,11 +317,26 @@ ine:
       level: municipality
       dims: {dim_3: "T"}
       optional: true
+    # Índice de custo de construção de habitação nova (base 2021), MENSAL desde 2000, só nacional.
+    # dim_3 (confirmado no snapshot bruto): T = Total, 1 = Materiais, 2 = Mão de obra.
     construction_cost:
-      varcd: "0011748"          # Índice de custo de construção de habitação nova (Base 2021), catálogo do INE
-      description: Índice de custo de construção de habitação nova (2021 = 100)
+      varcd: "0011748"
+      description: Índice de custo de construção de habitação nova, total (2021 = 100)
       level: national
-      optional: true            # dimensões por confirmar no snapshot bruto
+      dims: {dim_3: "T"}
+      optional: true
+    construction_cost_materials:
+      varcd: "0011748"
+      description: Índice de custo de construção de habitação nova, materiais (2021 = 100)
+      level: national
+      dims: {dim_3: "1"}
+      optional: true
+    construction_cost_labour:
+      varcd: "0011748"
+      description: Índice de custo de construção de habitação nova, mão de obra (2021 = 100)
+      level: national
+      dims: {dim_3: "2"}
+      optional: true
     # Não usados: 0012786 (Transações em €, só até NUTS II, sem número de vendas), 0012748 e 0012742
     # (rendimento bruto médio e agregados fiscais por escalão) — ver README.
     income:

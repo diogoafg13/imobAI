@@ -36,12 +36,34 @@ def _census_rows(df: pd.DataFrame | None) -> pd.Series | None:
     return d.assign(code=d["geocod"].astype(str).str.strip()).drop_duplicates("code", keep="last").set_index("code") if len(d) else None
 
 
+def rent_table(rent: pd.DataFrame | None, contracts: pd.DataFrame | None = None) -> pd.DataFrame | None:
+    """Renda mediana de novos contratos por freguesia (anual), variação a 1 e 3 anos e n.º de contratos."""
+    r = _parish_rows(rent)
+    if r is None:
+        return None
+    ly = int(r["sort_key"].max())
+    piv = r.pivot_table(index="code", columns="sort_key", values="value", aggfunc="last")
+    out = pd.DataFrame({"rent": piv[ly], "rent_year": ly // 100})
+    for name, back in (("rent_g1y", 1), ("rent_g3y", 3)):
+        k = _shift_key(ly, "year", back)
+        out[name] = piv[ly] / piv[k] - 1 if k in piv.columns else np.nan
+    c = _parish_rows(contracts)
+    if c is not None:
+        cc = c[c["sort_key"] == int(c["sort_key"].max())].drop_duplicates("code", keep="last").set_index("code")["value"]
+        out["rent_contracts"] = cc.reindex(out.index)
+    return out.dropna(subset=["rent"])
+
+
 def table(sales: pd.DataFrame | None, rent: pd.DataFrame | None, muni_price: dict[str, float],
-          irs: pd.DataFrame | None = None, census: dict[str, pd.DataFrame | None] | None = None) -> pd.DataFrame:
-    """Uma linha por freguesia com preço (INE publica ~400) OU rendimento do IRS / Censos (quase todas)."""
-    out = _price_table(sales, rent, muni_price)
+          irs: pd.DataFrame | None = None, census: dict[str, pd.DataFrame | None] | None = None,
+          contracts: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Uma linha por freguesia com preço (INE publica ~400), renda, rendimento do IRS ou Censos (quase todas)."""
+    out = _price_table(sales, None, muni_price)
     period = out.attrs.get("period")
-    names = {} if out.empty else dict(zip(out.index, out["name"]))
+    rt = rent_table(rent, contracts)
+    if rt is not None:
+        out = rt if out.empty else out.join(rt, how="outer")
+    names = {} if out.empty or "name" not in out else {k: v for k, v in zip(out.index, out["name"]) if isinstance(v, str)}
     extra = pd.DataFrame()
     r = _parish_rows(irs)
     if r is not None:
@@ -53,6 +75,9 @@ def table(sales: pd.DataFrame | None, rent: pd.DataFrame | None, muni_price: dic
             extra["irs_growth_1y"] = piv[ly] / piv[prev] - 1
         extra = extra.dropna(subset=["irs_median"])
         names.update({c: n for c, n in r.drop_duplicates("code", keep="last").set_index("code")["geoname"].items() if c not in names})
+    rr = _parish_rows(rent)
+    if rr is not None:
+        names.update({c: n for c, n in rr.drop_duplicates("code", keep="last").set_index("code")["geoname"].items() if c not in names})
     c = {k: _census_rows((census or {}).get(k)) for k in ("total", "secondary", "vacant_market", "vacant_other")}
     if c["total"] is not None:
         tot = c["total"]["value"]
@@ -87,12 +112,9 @@ def _price_table(sales, rent, muni_price) -> pd.DataFrame:
     out["name"] = names.reindex(out.index)
     out["dico"] = out.index.str[:4]
     out["rel_muni"] = out["price"] / out["dico"].map(muni_price) - 1
-    r = _parish_rows(rent)
-    if r is not None:
-        ly = int(r["sort_key"].max())
-        rr = r[r["sort_key"] == ly].drop_duplicates("code", keep="last").set_index("code")["value"]
-        out["rent"] = rr.reindex(out.index)
-        out["rent_year"] = ly // 100
+    rt = rent_table(rent)
+    if rt is not None:
+        out = out.join(rt, how="left")
     out.attrs["period"] = s.loc[s["sort_key"] == latest, "period"].iloc[0]
     return out.rename_axis("code")
 
