@@ -136,3 +136,4 @@ a.lnk{color:var(--fg);text-decoration:underline;text-decoration-color:var(--line
   .pill{border:1px solid #4a5562}
   .disclaimer{border:1px solid #c98a00;border-left-width:4px}
 }
+.follow-add{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px 12px;margin:0 0 12px}.follow-add label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;color:var(--muted)}.follow-add input{width:220px;max-width:100%}

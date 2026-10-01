@@ -70,7 +70,7 @@ const GLOSS = {
   rent_effort: ['Esforço de arrendar', 'Renda da mesma casa (renda mediana de novos contratos × área escolhida) a dividir pelo rendimento mensal escolhido na calculadora. É o par do esforço de compra para quem arrenda. Como referência, o Eurostat considera sobrecarga gastar mais de 40% do rendimento disponível com a casa.'],
   fc_vs_be: ['Previsão vs ponto de equilíbrio', 'Compara a variação do preço prevista pelo modelo para os próximos 12 meses (e o intervalo onde o valor real caiu 80% das vezes no passado) com a valorização anual a partir da qual comprar sai mais barato do que arrendar. É só uma comparação de números: uma previsão a 12 meses não diz nada sobre os anos seguintes, o modelo erra, e não é aconselhamento financeiro.'],
   europe: ['Portugal face à Europa', 'Índice de preços da habitação de cada país da UE (Eurostat, 2015 = 100) dividido pelo índice de preços no consumidor desse país (IHPC): a subida dos preços das casas acima da inflação. Compara ritmos de subida, não níveis de preço (um m² em Lisboa e em Paris não é comparável por este índice). Cada país publica com atrasos diferentes: usa-se o último trimestre com dados em pelo menos 2/3 dos países.'],
-  follow: ['Os teus concelhos', 'Concelhos que escolheste seguir (botão ☆ no detalhe). A lista fica guardada só neste browser. Mostra o que mudou desde o trimestre anterior e os números principais.'],
+  follow: ['Concelhos que segues', 'Concelhos que escolheste seguir: escreve o nome aqui ou usa o botão ☆ Seguir na ficha de um concelho (separador Mercado). A lista fica guardada só neste browser. Mostra o que mudou desde o trimestre anterior e os números principais.'],
   par_irs: ['Freguesias: rendimento e Censos', 'Por freguesia: mediana do rendimento declarado no IRS depois do imposto (por pessoa que declara, ÷ 12; o INE não publica freguesias com poucos declarantes), e a parte das casas vagas e de segunda habitação no Censos 2021. O esforço de compra por freguesia usa o preço da freguesia (só onde o INE o publica) e o rendimento do IRS de quem lá vive, com a casa e o crédito da calculadora.'],
   tourism_guests: ['Hóspedes e ocupação', 'Hóspedes em alojamento turístico nos últimos 12 meses publicados (INE, mensal; hotelaria, alojamento local com 10+ camas e turismo rural) e variação face aos 12 meses anteriores; parte dos hóspedes em alojamento local; taxa líquida de ocupação-cama no último ano (camas ocupadas ÷ camas disponíveis). Turismo a crescer depressa num concelho costuma puxar pelos preços e pelas rendas, sobretudo pelo alojamento local.'],
   effort_hist_muni: ['Esforço ao longo do tempo (concelho)', 'Para cada trimestre: prestação de 90 m² ao preço mediano de venda do concelho nesse trimestre (INE), 90% financiados a 30 anos à taxa média dos novos créditos desse trimestre (BCE), a dividir pelo rendimento do concelho desse ano (ou do último publicado, até 2 anos antes): mediana do IRS após imposto de quem lá vive (÷ 12) e salário médio bruto de quem lá trabalha. A casa e o crédito são fixos (não seguem a calculadora) para a série ser comparável no tempo.'],
@@ -787,12 +787,17 @@ function toggleFollow(d) {
   if (i >= 0) FOLLOW.splice(i, 1); else FOLLOW.push(d);
   try { localStorage.setItem(FOLLOW_KEY, JSON.stringify(FOLLOW)); } catch { /* sem armazenamento */ }
   renderFollow();
-  if (selected) select(selected, false);
+  // atualiza o botão da ficha sem a redesenhar (select() mudaria para o separador Mercado)
+  const fb = $('#d-follow');
+  if (selected && fb) { fb.textContent = FOLLOW.includes(selected) ? '★ A seguir' : '☆ Seguir'; fb.setAttribute('aria-pressed', FOLLOW.includes(selected)); }
 }
 function renderFollow() {
-  const sec = $('#follow'), list = FOLLOW.filter((d) => BY[d]);
-  sec.hidden = !list.length;
-  if (!list.length) return;
+  const list = FOLLOW.filter((d) => BY[d]);
+  $('#follow-n').textContent = list.length ? ` (${list.length})` : '';
+  if (!list.length) {
+    $('#follow-body').innerHTML = '<p class="muted">Ainda não segues nenhum concelho. Escreve o nome acima ou, no separador Mercado, abre a ficha de um concelho (no mapa ou no ranking) e carrega em ☆ Seguir. Fica guardado só neste browser.</p>';
+    return;
+  }
   const row = (m) => `<tr><td>${lnk(m.dico, m.name)}</td><td>${fmt.eur(m.price)}</td><td>${fmt.spct(m.price_qoq)}</td><td>${fmt.pct(m.price_growth_1y)}</td>
     <td>${m.score_prev != null ? `${fmt.n(m.score_prev)} → ` : ''}${fmt.n(m.score_overall)} ${pill(m.band)}${m.band_prev && m.band_prev !== m.band ? ' <span class="muted">mudou</span>' : ''}</td>
     <td>${fmt.spct(m.fc_growth_12m)}</td><td>${fmt.pct(m.aff_effort, 0)}</td><td>${m.cycle_phase ? esc(CYCLE_SHORT[m.cycle_phase]) : '—'}</td>
@@ -2017,7 +2022,8 @@ function renderSources() {
 }
 // ---------- separadores: cada secção pertence a um tema; os links entre secções mudam de separador sozinhos
 const TABS = {
-  mercado: ['summary', 'national', 'follow', 'changes', 'mapsec', 'detail', 'compare', 'ranking'],
+  mercado: ['summary', 'national', 'changes', 'mapsec', 'detail', 'compare', 'ranking'],
+  seguir: ['follow'],
   comprar: ['afford'],
   imovel: ['imovel'],
   perspetivas: ['outlook'],
@@ -2100,6 +2106,14 @@ async function main() {
   $('#d-print').addEventListener('click', () => { document.body.classList.add('print-ficha'); window.print(); setTimeout(() => document.body.classList.remove('print-ficha'), 500); });
   window.addEventListener('beforeprint', () => { document.body.classList.add('printing'); printColors(true); Object.values(charts).forEach((c) => c.resize()); });
   window.addEventListener('afterprint', () => { document.body.classList.remove('printing'); printColors(false); Object.values(charts).forEach((c) => c.resize()); });
+  $('#follow-add').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const inp = e.target.conc, name = inp.value.trim().toLowerCase(), m = MUNIS.find((x) => x.name.toLowerCase() === name);
+    const msg = $('#follow-msg');
+    if (!m) { msg.textContent = name ? 'Concelho não encontrado: escolhe um nome da lista.' : 'Escreve o nome de um concelho.'; return; }
+    if (FOLLOW.includes(m.dico)) { msg.textContent = `Já segues ${m.name}.`; return; }
+    toggleFollow(m.dico); inp.value = ''; msg.textContent = `A seguir ${m.name}.`;
+  });
   $('#follow-body').addEventListener('click', (e) => {
     const u = e.target.closest('[data-unfollow]'); if (u) { toggleFollow(u.dataset.unfollow); return; }
     const a = e.target.closest('a[data-d]'); if (a) { e.preventDefault(); select(a.dataset.d); }

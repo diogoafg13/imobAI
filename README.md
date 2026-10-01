@@ -374,10 +374,11 @@ no snapshot bruto do build de 2026-10-01 (ver `config/sources.yml`). Nenhum entr
 
 ### Organização do site em separadores
 
-O site passou a ter cinco separadores: **Mercado** (resumo, visão nacional, os teus concelhos, o que mudou,
-mapa, detalhe, comparação e ranking), **Comprar casa** (calculadora), **O meu imóvel**, **Perspetivas**
-(previsões e padrões) e **Método** (glossário e backtest). O endereço guarda o separador (`#mercado`,
-`#comprar`, `#imovel`, `#perspetivas`, `#metodo`); ligações antigas a secções (`#ranking`, `#outlook`…) abrem
+O site passou a ter seis separadores: **Mercado** (resumo, visão nacional, o que mudou, mapa, detalhe,
+comparação e ranking), **A seguir** (concelhos que segues: junta-se pelo nome ou com ☆ Seguir na ficha; o
+separador mostra quantos são; lista guardada só no browser), **Comprar casa** (calculadora), **O meu imóvel**,
+**Perspetivas** (previsões e padrões) e **Método** (glossário e backtest). O endereço guarda o separador
+(`#mercado`, `#seguir`, `#comprar`, `#imovel`, `#perspetivas`, `#metodo`); ligações antigas a secções (`#ranking`, `#outlook`…) abrem
 o separador certo. Clicar num concelho em qualquer separador abre o detalhe em Mercado. Imprimir a ficha do
 concelho ou a análise do imóvel imprime só essa parte; imprimir a página imprime o separador aberto.
 

@@ -21,6 +21,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
 <nav id="topnav" aria-label="Separadores do painel">
   <div class="topnav-inner" role="tablist">
     <a href="#mercado" data-tab="mercado" role="tab">Mercado</a>
+    <a href="#seguir" data-tab="seguir" role="tab">A seguir<span id="follow-n"></span></a>
     <a href="#comprar" data-tab="comprar" role="tab">Comprar casa</a>
     <a href="#imovel" data-tab="imovel" role="tab">O meu imóvel</a>
     <a href="#perspetivas" data-tab="perspetivas" role="tab">Perspetivas</a>
@@ -68,8 +69,13 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     </div>
   </section>
 
-  <section id="follow" class="card" hidden>
-    <div class="row"><h2>Os teus concelhos <button type="button" class="info" data-k="follow" aria-label="Sobre os concelhos seguidos">ⓘ</button></h2></div>
+  <section id="follow" class="card">
+    <div class="row"><h2>Concelhos que segues <button type="button" class="info" data-k="follow" aria-label="Sobre os concelhos seguidos">ⓘ</button></h2></div>
+    <form id="follow-add" class="follow-add" autocomplete="off">
+      <label>Seguir um concelho <input name="conc" list="im-conc" placeholder="ex.: Loures"></label>
+      <button type="submit" class="btn">☆ Seguir</button>
+      <span id="follow-msg" class="muted" role="status"></span>
+    </form>
     <div id="follow-body"></div>
   </section>
 
