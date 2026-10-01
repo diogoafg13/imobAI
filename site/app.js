@@ -58,6 +58,9 @@ const GLOSS = {
   ol_backtest: ['Como se saiu no passado', 'Para cada trimestre desde 2021, o modelo foi treinado só com o que se sabia nessa data e previu os trimestres seguintes. Erro médio em pontos percentuais (p.p.) de variação do preço, comparado com «fica igual» e «continua o ritmo do último ano». Cobertura: % das vezes em que o valor real caiu dentro do intervalo de 80%.'],
   effort: ['Esforço de compra', 'Prestação mensal do crédito para comprar uma casa ao preço mediano do concelho (área, entrada, prazo e taxa escolhidos na secção "Comprar casa"), a dividir pelo ganho médio mensal bruto de quem trabalha no concelho (INE). Não é o rendimento líquido nem o do agregado: com dois salários, escolhe "2". O Banco de Portugal limita a prestação a 50% do rendimento líquido, o que para um salário médio corresponde a cerca de 40% do bruto. O salário publicado é de um ano anterior ao preço, por isso o esforço real tende a ser um pouco menor.'],
   buy_rent: ['Comprar ou arrendar', 'Compara a prestação do crédito com a renda da mesma casa (mesma área, renda mediana de novos contratos). A prestação inclui amortização, que é poupança, por isso não é um custo puro. A medida mais justa é o ponto de equilíbrio: custo anual de ser dono (juros à taxa escolhida sobre o preço todo — assume que a entrada renderia o mesmo —, mais cerca de 1,3% do preço para IMI, manutenção e seguros) menos a renda que se deixa de pagar, em % do preço. Comprar só sai mais barato do que arrendar se a casa valorizar mais do que isso por ano. Não inclui IMT, imposto do selo e escritura (pesam mais em quem fica poucos anos), nem impostos sobre mais-valias ou benefícios fiscais.'],
+  val_gap: ['Avaliação bancária vs preço pago', 'Avaliação bancária média dos 12 meses que o preço de venda do INE cobre, face a esse preço. O nível da diferença é sobretudo composição: a avaliação só cobre casas compradas com crédito, e o preço mediano inclui todas as vendas. O sinal é a VARIAÇÃO num ano: se a avaliação fica para trás do preço pago, os bancos estão mais cautelosos ou há mais compras sem crédito; se a avaliação avança mais depressa, a banca acompanha (ou puxa) a subida.'],
+  cycle: ['Ciclo preço–volume', 'Cruza a variação do preço a 12 meses com a variação do número de avaliações bancárias (compras com crédito) num ano. Preço a subir com menos compras é a fase típica de fim de ciclo: a procura já arrefece mas os preços, que reagem mais devagar, ainda sobem. Não diz quando, nem se, os preços vão cair. Só concelhos com pelo menos 20 avaliações em 3 meses.'],
+  stress: ['Teste de juros', 'Prestação e esforço se a taxa subir os pontos escolhidos, mantendo o mesmo empréstimo. A maioria dos créditos em Portugal tem taxa variável ou mista: uma subida da Euribor passa para a prestação. O Banco de Portugal também pede aos bancos que testem a prestação com uma subida de juros antes de conceder o crédito.'],
   migration: ['Saldo migratório', 'Diferença entre quem chegou e quem saiu do concelho num ano (INE). Positivo = mais gente a chegar do que a sair. Só contexto demográfico — não entra em nenhum score.'],
   score_valuation: ['Score de valorização', 'Percentil entre concelhos: mistura crescimento do preço a 12 meses e a 3 anos com rendibilidade baixa. 0 = menos esticado, 100 = mais. É relativo, não uma probabilidade de bolha.'],
   score_overall: ['Score global', 'Igual ao de valorização enquanto não houver dados de oferta (licenças, conclusões). Concelhos voláteis (⚠) são atenuados para o meio (50).'],
@@ -404,6 +407,8 @@ function readList(m) {
     li.push(`Rendibilidade bruta de ${fmt.pct(m.gross_yield, 2)} (mediana ${fmt.pct(my, 2)}): ${m.gross_yield < my ? 'o preço está esticado face à renda, pois cada € investido rende menos do que no concelho típico' : 'a renda paga melhor o preço do que no concelho típico'}.`);
   } else li.push('Sem renda publicada pelo INE para este concelho (poucos contratos): não há rendibilidade nem preço/renda, e o score assenta só no ritmo de subida dos preços.');
   if (m.aff_pay != null) li.push(affReadTxt(m));
+  if (m.cycle_phase) li.push(`Ciclo: preço ${fmt.spct(m.price_growth_1y)} e compras com crédito ${fmt.spct(m.val_count_growth_1y, 0)} num ano — «${CYCLE_SHORT[m.cycle_phase]}»${m.cycle_phase === 'up_down' ? ', a fase típica de fim de ciclo (a procura arrefece antes dos preços)' : ''}.`);
+  if (m.val_gap_chg != null) li.push(`A avaliação bancária está ${fmt.spct(m.val_gap, 0)} face ao preço pago e ${Math.abs(m.val_gap_chg) < 0.03 ? 'acompanhou os preços' : m.val_gap_chg < 0 ? `ficou ${fmt.n(-m.val_gap_chg * 100, 0)} p.p. mais para trás num ano (bancos mais cautelosos ou mais compras sem crédito)` : `avançou ${fmt.n(m.val_gap_chg * 100, 0)} p.p. mais do que o preço num ano`}.`);
   const sc = m.score_overall;
   if (sc != null) li.push(`Score ${fmt.n(sc)}: ${sc >= 70 ? 'entre os concelhos mais "esticados"' : sc >= 40 ? 'a meio do pelotão de concelhos' : 'entre os concelhos menos "esticados"'}. É uma posição relativa, não uma previsão de queda.`);
   const demoBits = [];
@@ -536,9 +541,13 @@ function select(dico, scroll = true) {
     tile('p2i', 'Preço/rendimento (meses)', fmt.n(m.price_to_income_months, 1), ctx((x) => x.price_to_income_months, m.price_to_income_months, (v) => fmt.n(v, 1))),
     tile('r2i', 'Renda/rendimento', fmt.pct(m.rent_to_income, 1), ctx((x) => x.rent_to_income, m.rent_to_income, (v) => fmt.pct(v, 1))),
     ...(m.aff_effort != null ? [tile('effort', `Esforço de compra (${AFF.area} m²)`, fmt.pct(m.aff_effort, 0),
-      `<span class="ctx">prestação ${fmt.eur(m.aff_pay)}/mês · ${fmt.n(m.aff_years_salary, 1)} anos de salário bruto · ${ctx((x) => x.aff_effort, m.aff_effort, (v) => fmt.pct(v, 0)).replace(/<[^>]+>/g, '')}</span>`)] : []),
+      `<span class="ctx">prestação ${fmt.eur(m.aff_pay)}/mês · ${fmt.n(m.aff_years_salary, 1)} anos de salário bruto · com +${fmt.n(AFF.shock, 0)} p.p. de juros: ${fmt.pct(m.aff_effort_stress, 0)} · ${ctx((x) => x.aff_effort, m.aff_effort, (v) => fmt.pct(v, 0)).replace(/<[^>]+>/g, '')}</span>`)] : []),
     ...(m.aff_rent_home != null ? [tile('buy_rent', 'Prestação vs renda', `${fmt.eur(m.aff_pay)} vs ${fmt.eur(m.aff_rent_home)}`,
       `<span class="ctx">${breakevenTxt(m.aff_breakeven)}</span>`)] : []),
+    ...(m.cycle_phase ? [tile('cycle', 'Ciclo preço–volume', esc(CYCLE_SHORT[m.cycle_phase]),
+      `<span class="ctx">preço ${fmt.spct(m.price_growth_1y)} · compras com crédito ${fmt.spct(m.val_count_growth_1y, 0)} num ano</span>`)] : []),
+    ...(m.val_gap != null ? [tile('val_gap', 'Avaliação vs preço pago', fmt.spct(m.val_gap, 0),
+      `<span class="ctx">${m.val_gap_chg != null ? `${m.val_gap_chg >= 0 ? '+' : '−'}${fmt.n(Math.abs(m.val_gap_chg) * 100, 1)} p.p. num ano` : 'sem comparação a um ano'}</span>`)] : []),
     tile('score_valuation', 'Score valorização', fmt.n(m.score_valuation)),
     tile('score_overall', 'Score global', fmt.n(m.score_overall)),
     ...(m.nowcast_price != null ? [tile('nowcast', `Estimativa hoje (${qpt(m.nowcast_period)})`, fmt.eur(m.nowcast_price) + '/m²',
@@ -600,6 +609,9 @@ const COMPARE_ROWS = [
   ['effort', 'Esforço de compra (prestação/salário)', (m) => (m.aff_effort == null ? '—' : `${fmt.pct(m.aff_effort, 0)} (${fmt.eur(m.aff_pay)}/mês)`)],
   ['buy_rent', 'Prestação vs renda da mesma casa', (m) => (m.aff_rent_home == null ? '—' : `${fmt.eur(m.aff_pay)} vs ${fmt.eur(m.aff_rent_home)}`)],
   ['buy_rent', 'Valorização para comprar compensar', (m) => (m.aff_breakeven == null ? '—' : fmt.spct(m.aff_breakeven) + '/ano')],
+  ['stress', 'Esforço com subida de juros', (m) => (m.aff_effort_stress == null ? '—' : `${fmt.pct(m.aff_effort_stress, 0)} (+${fmt.n(AFF.shock, 0)} p.p.)`)],
+  ['cycle', 'Ciclo preço–volume', (m) => esc(m.cycle_phase ? CYCLE_SHORT[m.cycle_phase] : '—')],
+  ['val_gap', 'Avaliação vs preço pago', (m) => (m.val_gap == null ? '—' : `${fmt.spct(m.val_gap, 0)}${m.val_gap_chg != null ? ` (${m.val_gap_chg >= 0 ? '+' : '−'}${fmt.n(Math.abs(m.val_gap_chg) * 100, 1)} p.p.)` : ''}`)],
   ['migration', 'Saldo migratório', (m) => (m.migration_balance == null ? '—' : (m.migration_balance >= 0 ? '+' : '') + fmt.n(m.migration_balance, 0))],
   ['score_overall', 'Score global', (m) => fmt.n(m.score_overall)],
   ['nowcast', 'Estimativa hoje', (m) => (m.nowcast_price == null ? '—' : fmt.eur(m.nowcast_price) + '/m²')],
@@ -753,7 +765,7 @@ const AFF_KEY = 'imopt.afford.v1';
 const OWN_COST = 0.013;     // IMI (~0,3%) + manutenção e seguros (~1%) por ano, em % do preço
 const PRUDENT = 0.40;       // ≈ 50% do rendimento líquido (limite do Banco de Portugal) para um salário médio
 const AFF_FALLBACK_RATE = 3.5;
-const affDefaults = () => ({ area: 90, down: 10, years: 30, rate: null, earners: 1 });
+const affDefaults = () => ({ area: 90, down: 10, years: 30, rate: null, earners: 1, shock: 2 });
 let AFF = affDefaults();
 const affRateNow = () => (OL && OL.rates && OL.rates.rate_now != null ? +OL.rates.rate_now.toFixed(2) : AFF_FALLBACK_RATE);
 const affRate = () => (AFF.rate != null ? AFF.rate : affRateNow());
@@ -769,6 +781,8 @@ function affordOf(m) {
   return {
     aff_home: P, aff_down: P - loan, aff_pay: pay,
     aff_effort: inc ? pay / inc : null,
+    aff_pay_stress: annuity(loan, rate + AFF.shock, AFF.years),
+    aff_effort_stress: inc ? annuity(loan, rate + AFF.shock, AFF.years) / inc : null,
     aff_years_salary: inc ? P / (inc * 14) : null,
     aff_rent_home: rentHome,
     aff_pay_vs_rent: rentHome ? pay / rentHome - 1 : null,
@@ -801,7 +815,7 @@ function affLoad() {
 function affSave() { try { localStorage.setItem(AFF_KEY, JSON.stringify(AFF)); } catch { /* sem armazenamento: não faz mal */ } }
 function affForm() {
   const f = $('#aff-form');
-  f.area.value = AFF.area; f.down.value = AFF.down; f.years.value = AFF.years; f.earners.value = AFF.earners;
+  f.area.value = AFF.area; f.down.value = AFF.down; f.years.value = AFF.years; f.earners.value = AFF.earners; f.shock.value = AFF.shock;
   f.rate.value = affRate().toFixed(2);
   const R = OL && OL.rates;
   $('#aff-rate-note').innerHTML = R && R.rate_now != null
@@ -815,6 +829,7 @@ function affReadForm() {
   AFF.down = num(f.down, 0, 90, def.down);
   AFF.years = Math.round(num(f.years, 5, 40, def.years));
   AFF.earners = f.earners.value === '2' ? 2 : 1;
+  AFF.shock = num(f.shock, 0, 5, def.shock);
   const r = num(f.rate, 0, 15, affRateNow());
   AFF.rate = Math.abs(r - affRateNow()) < 0.005 ? null : r;      // igual à atual: segue a taxa das próximas builds
 }
@@ -824,6 +839,7 @@ function renderAfford() {
   if (!ok.length) { body.innerHTML = '<p class="muted">Sem preços e salários suficientes nesta build.</p>'; return; }
   const P = median(col((x) => x.price)), payTyp = annuity(P * AFF.area * (1 - AFF.down / 100), affRate(), AFF.years);
   const eMed = median(ok.map((m) => m.aff_effort)), over = ok.filter((m) => m.aff_effort > PRUDENT).length;
+  const overS = ok.filter((m) => m.aff_effort_stress > PRUDENT).length, payS = annuity(P * AFF.area * (1 - AFF.down / 100), affRate() + AFF.shock, AFF.years);
   const wr = MUNIS.filter((m) => m.aff_pay_vs_rent != null), cheaper = wr.filter((m) => m.aff_pay_vs_rent < 0).length;
   const be = median(wr.map((m) => m.aff_breakeven)), beNeg = wr.filter((m) => m.aff_breakeven <= 0).length;
   // listas só com mercado suficiente (como em "O que mudou"): sem dados voláteis e com >= 20 avaliações em 3 meses
@@ -836,14 +852,15 @@ function renderAfford() {
   body.innerHTML = `
     <p class="verdict">No concelho típico (${fmt.eur(P)}/m²), ${AFF.area} m² custam <b>${fmt.eur(P * AFF.area)}</b>: com ${fmt.n(AFF.down, 0)}% de entrada e ${AFF.years} anos a ${fmt.n(affRate(), 2)}%, a prestação é <b>${fmt.eur(payTyp)}/mês</b>.
       A prestação leva, a meio dos concelhos, <b>${fmt.pct(eMed, 0)}</b> de ${who} (bruto); em <b>${over} de ${ok.length}</b> passa de ${fmt.pct(PRUDENT, 0)}, perto do limite do Banco de Portugal.
+      <b>Teste de juros</b> ${info('stress')}: com a taxa ${fmt.n(AFF.shock, 1)} p.p. acima (${fmt.n(affRate() + AFF.shock, 2)}%), a mesma prestação típica passa para <b>${fmt.eur(payS)}</b> (${fmt.spct(payS / payTyp - 1, 0)}) e ${overS} concelhos ficam acima de ${fmt.pct(PRUDENT, 0)}.
       ${wr.length ? `Nos ${wr.length} concelhos com renda publicada, a prestação é mais baixa do que a renda da mesma casa em <b>${cheaper}</b>; contando juros, IMI e manutenção, ${be <= 0 ? 'no concelho típico comprar sai mais barato do que arrendar mesmo sem a casa valorizar' : `no concelho típico comprar só sai mais barato do que arrendar se a casa valorizar mais de <b>${fmt.pct(be, 1)}/ano</b>`} — em <b>${beNeg} dos ${wr.length}</b> compensa mesmo sem valorizar.` : ''}</p>
     <div class="ol-cols">
-      <div><p class="muted"><b>Menor esforço</b> (prestação ÷ salário)</p><ul class="ol-list aff-list">${top(ok, 'aff_effort', true).map(itE).join('')}</ul></div>
-      <div><p class="muted"><b>Maior esforço</b></p><ul class="ol-list aff-list">${top(ok, 'aff_effort', false).map(itE).join('')}</ul></div>
+      <div><p class="muted"><b>Menor esforço</b> (prestação ÷ salário)</p><ul class="ol-list wrap-list">${top(ok, 'aff_effort', true).map(itE).join('')}</ul></div>
+      <div><p class="muted"><b>Maior esforço</b></p><ul class="ol-list wrap-list">${top(ok, 'aff_effort', false).map(itE).join('')}</ul></div>
     </div>
     ${wr.length ? `<div class="ol-cols">
-      <div><p class="muted"><b>Prestação mais abaixo da renda</b> ${info('buy_rent')}</p><ul class="ol-list aff-list">${top(wr, 'aff_pay_vs_rent', true).map(itR).join('')}</ul></div>
-      <div><p class="muted"><b>Prestação mais acima da renda</b></p><ul class="ol-list aff-list">${top(wr, 'aff_pay_vs_rent', false).map(itR).join('')}</ul></div>
+      <div><p class="muted"><b>Prestação mais abaixo da renda</b> ${info('buy_rent')}</p><ul class="ol-list wrap-list">${top(wr, 'aff_pay_vs_rent', true).map(itR).join('')}</ul></div>
+      <div><p class="muted"><b>Prestação mais acima da renda</b></p><ul class="ol-list wrap-list">${top(wr, 'aff_pay_vs_rent', false).map(itR).join('')}</ul></div>
     </div>` : ''}
     <p class="aff-map"><button type="button" class="btn" data-m="ef">Ver esforço no mapa</button> <button type="button" class="btn" data-m="br">Ver prestação vs renda no mapa</button></p>
     <ul class="read muted">
@@ -1079,6 +1096,53 @@ function olRates(R) {
     <div class="table-wrap"><table class="ol-table"><thead><tr><th>Cenário</th><th>Prestação (mesmo empréstimo)</th><th>Quanto se pode pedir (mesma prestação)</th><th>Efeito histórico no preço (12m)</th></tr></thead><tbody>${rows}</tbody></table></div>
     <p>${hist}</p>`;
 }
+const CYCLE_SHORT = { up_up: 'preço a subir, mais compras', up_down: 'preço a subir, menos compras', down_down: 'preço a descer, menos compras', down_up: 'preço a descer, mais compras' };
+function olCycle(C) {
+  const c = C.counts, late = C.late.slice(0, 10).map((x) => `<li><span>${lnk(x.dico, x.name)}</span><span class="v">compras ${fmt.spct(x.v, 0)} <span class="muted">preço ${fmt.spct(x.g)} · ${fmt.n(x.n, 0)} aval.</span></span></li>`).join('');
+  const nat = C.national && C.national.length ? C.national[C.national.length - 1] : null;
+  return `<h3>Ciclo preço–volume ${info('cycle')}</h3>
+    <p>Nos ${C.n} concelhos com mercado suficiente (≥ ${C.min_volume} avaliações em 3 meses): <b>${c.up_up}</b> com preço a subir e mais compras com crédito, <b>${c.up_down}</b> com preço a subir mas <b>menos</b> compras, ${c.down_down} com preço a descer e menos compras, ${c.down_up} com preço a descer e mais compras.
+      No concelho típico, o preço subiu ${fmt.spct(C.median_price_growth)} e as compras com crédito ${fmt.spct(C.median_volume_growth, 0)} num ano.${nat ? ` No país, no trimestre ${qpt(nat[0])}: avaliação ${fmt.spct(nat[1])} e número de avaliações ${fmt.spct(nat[2], 0)} face a um ano antes.` : ''}</p>
+    <div class="chart-cap"><span>Cada ponto é um concelho: preço a 12 meses (vertical) contra compras com crédito num ano (horizontal). Clica num ponto para o detalhe.</span></div>
+    <div id="ol-cycle" class="chart tall"></div>
+    ${C.national ? '<div class="chart-cap"><span>País, por trimestre: variação num ano da avaliação bancária (€/m²) e do número de avaliações</span></div><div id="ol-cycle-nat" class="chart"></div>' : ''}
+    <p class="muted"><b>Preço a subir, compras a cair mais</b> (fase típica de fim de ciclo)</p><ul class="ol-list wrap-list">${late}</ul>
+    <p class="muted">A queda do volume costuma vir antes do abrandamento dos preços, mas o desfasamento varia muito e nem toda a queda de volume acaba em descida de preços (pode ser falta de casas à venda). O volume só conta compras com crédito.</p>`;
+}
+function cycleChart(id, C) {
+  const txt = css('--muted'), line = css('--line');
+  const late = C.points.filter((p) => p.phase === 'up_down'), other = C.points.filter((p) => p.phase !== 'up_down');
+  const pts = (arr) => arr.map((p) => ({ value: [p.v * 100, p.g * 100], name: p.name, dico: p.dico, n: p.n }));
+  const lim = (k) => { const v = C.points.map((p) => Math.abs(p[k])).sort((a, b) => a - b); return Math.ceil(quantile(v, 0.97) * 100 / 10) * 10 || 10; };
+  const lx = lim('v'), ly = lim('g');
+  const ch = freshChart(id);
+  ch.setOption({
+    animation: false,
+    grid: { left: 8, right: 16, top: 34, bottom: 28, containLabel: true },
+    legend: { top: 0, right: 0, textStyle: { color: txt } },
+    tooltip: { trigger: 'item', confine: true, formatter: (p) => `<b>${esc(p.data.name)}</b><br>Preço: ${fmt.spct(p.data.value[1] / 100)}<br>Compras com crédito: ${fmt.spct(p.data.value[0] / 100, 0)}<br>${fmt.n(p.data.n, 0)} avaliações em 3 meses<br><span style="color:#888">clica para o detalhe</span>` },
+    xAxis: { type: 'value', min: -lx, max: lx, name: 'Compras com crédito, variação num ano (%)', nameLocation: 'middle', nameGap: 22, nameTextStyle: { color: txt, fontSize: 11 }, axisLabel: { color: txt, formatter: (v) => v + '%' }, splitLine: { lineStyle: { color: line } } },
+    yAxis: { type: 'value', min: -Math.min(ly, 20), max: ly, axisLabel: { color: txt, formatter: (v) => v + '%' }, splitLine: { lineStyle: { color: line } } },
+    series: [
+      { name: 'Preço a subir, menos compras', type: 'scatter', symbolSize: 9, itemStyle: { color: css('--s2'), borderColor: css('--card'), borderWidth: 1 }, data: pts(late),
+        markLine: { silent: true, symbol: 'none', lineStyle: { color: txt, type: 'solid', width: 1 }, label: { show: false }, data: [{ xAxis: 0 }, { yAxis: 0 }] } },
+      { name: 'Restantes', type: 'scatter', symbolSize: 9, itemStyle: { color: css('--s1'), borderColor: css('--card'), borderWidth: 1 }, data: pts(other) },
+    ],
+  }, true);
+  ch.on('click', (e) => e.data && e.data.dico && select(e.data.dico));
+}
+function olValGap(V) {
+  const it = (x) => `<li><span>${lnk(x.dico, x.name)}</span><span class="v">${x.value >= 0 ? '+' : '−'}${fmt.n(Math.abs(x.value) * 100, 0)} p.p. <span class="muted">agora ${fmt.spct(x.gap, 0)}</span></span></li>`;
+  const last = V.series.length ? V.series[V.series.length - 1] : null, first = V.series.length ? V.series[0] : null;
+  return `<h3>Avaliação bancária vs preço pago ${info('val_gap')}</h3>
+    <p>No concelho típico, a avaliação bancária média dos 12 meses até ${qpt(V.period)} está <b>${fmt.spct(V.median_gap, 0)}</b> face ao preço mediano de venda${V.median_change != null ? `, ${V.median_change >= 0 ? 'mais' : 'menos'} ${fmt.n(Math.abs(V.median_change) * 100, 1)} p.p. do que um ano antes (a diferença ${V.median_change < 0 ? 'alargou-se: as avaliações ficaram para trás dos preços' : 'estreitou-se'} em ${Math.round((V.median_change < 0 ? 1 - V.share_widening : V.share_widening) * 100)}% dos ${V.n_change} concelhos)` : ''}.${last && first ? ` No país: ${fmt.spct(first[1], 1)} em ${qpt(first[0])}, ${fmt.spct(last[1], 1)} em ${qpt(last[0])}.` : ''}</p>
+    ${V.series.length > 3 ? '<div id="ol-valgap" class="chart"></div>' : ''}
+    <div class="ol-cols">
+      <div><p class="muted"><b>Avaliação a ficar para trás do preço</b> (variação num ano)</p><ul class="ol-list wrap-list">${V.lagging.map(it).join('')}</ul></div>
+      <div><p class="muted"><b>Avaliação a avançar mais do que o preço</b></p><ul class="ol-list wrap-list">${V.leading.map(it).join('')}</ul></div>
+    </div>
+    <p class="muted">O nível da diferença reflete sobretudo casas diferentes (a avaliação só cobre compras com crédito). ${V.min_volume ? `As listas só incluem concelhos com pelo menos ${V.min_volume} avaliações em 3 meses.` : ''} Concelhos com avaliação publicada em pelo menos 9 dos 12 meses.</p>`;
+}
 function renderOutlook() {
   const body = $('#outlook-body');
   if (!OL || !(OL.sales || OL.rent || OL.regimes)) {
@@ -1099,10 +1163,20 @@ function renderOutlook() {
   if (OL.ripple) add('propagação', () => olRipple(OL.ripple));
   if (OL.fair_value) add('valor justo', () => olFair(OL.fair_value));
   if (OL.rates) add('juros', () => olRates(OL.rates));
+  if (OL.cycle) add('ciclo', () => olCycle(OL.cycle));
+  if (OL.val_gap) add('avaliação', () => olValGap(OL.val_gap));
   parts.push(`<h3>Limites</h3><ul class="read">${(OL.limits || []).map((l) => `<li>${esc(l)}</li>`).join('')}</ul>`);
   body.innerHTML = parts.join('');
   const chart = (name, fn) => { try { fn(); } catch (e) { console.error(`Falha no gráfico ${name}:`, e); } };
   if ($('#ol-regimes')) chart('regimes', () => regimesChart('ol-regimes', OL.regimes));
+  if ($('#ol-cycle')) chart('ciclo', () => cycleChart('ol-cycle', OL.cycle));
+  if ($('#ol-cycle-nat')) chart('ciclo nacional', () => lineChart('ol-cycle-nat', 'País: variação num ano', [
+    { name: 'Avaliação bancária (€/m²)', data: OL.cycle.national.map((r) => [qpt(r[0]), +(r[1] * 100).toFixed(1)]), fmt: (v) => fmt.spct(v / 100) },
+    { name: 'Número de avaliações', data: OL.cycle.national.map((r) => [qpt(r[0]), +(r[2] * 100).toFixed(1)]), fmt: (v) => fmt.spct(v / 100, 0) },
+  ], { names: ['Variação num ano (%)'], refs: [{ y: 0, label: '0' }], notitle: true }));
+  if ($('#ol-valgap')) chart('avaliação', () => lineChart('ol-valgap', 'País', [
+    { name: 'Avaliação face ao preço pago', data: OL.val_gap.series.map((r) => [qpt(r[0]), +(r[1] * 100).toFixed(1)]), fmt: (v) => fmt.spct(v / 100) },
+  ], { names: ['Avaliação vs preço (%), país'], refs: [{ y: 0, label: '0' }], notitle: true }));
   if ($('#ol-typo')) chart('tipologias', () => {
     const T = OL.typologies, sp = qpt(T.split);
     barChart('ol-typo', T.clusters.map((c) => `Grupo ${c.id}`), [

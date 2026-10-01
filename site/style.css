@@ -79,4 +79,4 @@ a.lnk{color:var(--fg);text-decoration:underline;text-decoration-color:var(--line
 .aff-form label{display:flex;flex-direction:column;gap:3px;font-size:.84rem;color:var(--muted)}
 .aff-form input,.aff-form select{width:100px}
 .aff-map{margin:10px 0}
-.aff-list .v{white-space:normal}
+.wrap-list .v{white-space:normal}

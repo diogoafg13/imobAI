@@ -269,6 +269,21 @@ no concelho, não de quem lá vive (exagera o esforço nos concelhos-dormitório
 precisam de obras e as arrendadas não, o que favorece artificialmente a compra; ficam de fora IMT, imposto
 do selo, escritura, seguros do crédito e mudanças de taxa ao longo do empréstimo.
 
+### Teste de juros, ciclo preço–volume e avaliação vs preço pago
+
+- **Teste de juros** (calculadora "Comprar casa"): prestação e esforço com a taxa N p.p. acima (por omissão
+  +2), o mesmo empréstimo; quantos concelhos passam de 40% do salário bruto.
+- **Ciclo preço–volume** (`imopt/market.py`): variação do preço a 12 meses contra a variação anual do
+  número de avaliações bancárias (compras com crédito), por concelho com ≥ 20 avaliações em 3 meses, em
+  quatro fases. "Preço a subir, menos compras" é a fase típica de fim de ciclo — não diz quando, nem se, os
+  preços descem. Trajetória nacional desde 2012 (avaliação e número de avaliações, variação num ano).
+- **Avaliação bancária vs preço pago**: avaliação média dos mesmos 12 meses que o preço de venda do INE
+  cobre (≥ 9 meses publicados), face a esse preço, e a variação dessa diferença num ano. O nível é
+  sobretudo composição (a avaliação só cobre compras com crédito); a variação é o sinal (avaliações a
+  ficar para trás = bancos mais cautelosos ou mais compras sem crédito). Série nacional desde 2019.
+
+Tudo só contexto: não entra em nenhum score.
+
 ### Freguesias
 
 `imopt/parishes.py`. O preço mediano de venda por freguesia vem do mesmo indicador do INE (0012234,
