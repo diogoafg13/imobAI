@@ -237,8 +237,8 @@ face ao concelho e face à mediana das freguesias vizinhas com dados (mínimo 2)
 
 - **Detalhe de cada concelho**: tabela das suas freguesias (funciona mesmo sem fronteiras).
 - **Mapa**: botão "Freguesias", com 4 métricas, e lista das mais baratas do que as vizinhas.
-  Precisa das fronteiras: `geo.parishes_geojson` em `config/sources.yml` (o URL do "georef" do
-  OpenDataSoft **não foi confirmado ao vivo**). A primeira que funcionar fica em
+  Precisa das fronteiras: `geo.parishes_geojson` em `config/sources.yml` (o "georef" do OpenDataSoft,
+  confirmado no site publicado). A primeira que funcionar fica em
   `data/clean/geo_parishes.json` e é reutilizada; também podes pôr lá um GeoJSON teu (ex.: CAOP da
   DGT) com o código DICOFRE numa das propriedades de `geo.parish_props`. Sem fronteiras, o mapa
   avisa e a tabela continua.

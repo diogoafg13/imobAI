@@ -286,8 +286,8 @@ macro:
 geo:
   # Fronteiras dos concelhos (E-REDES / OpenDataSoft, licença aberta).
   municipalities_geojson: https://e-redes.opendatasoft.com/api/explore/v2.1/catalog/datasets/municipalities-portugal/exports/geojson
-  # Fronteiras das freguesias. URLs tentados por ordem; NENHUM foi confirmado ao vivo (sem rede ao
-  # escrever isto) — o primeiro que funcionar é guardado em data/clean/geo_parishes.json e reutilizado.
+  # Fronteiras das freguesias. URLs tentados por ordem (o georef do OpenDataSoft foi confirmado no build
+  # publicado); o primeiro que funcionar é guardado em data/clean/geo_parishes.json e reutilizado.
   # Também podes pôr lá um GeoJSON teu (ex.: CAOP da DGT convertido) com o código DICOFRE de 6 dígitos.
   parishes_geojson:
     - https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/georef-portugal-freguesia/exports/geojson
