@@ -109,11 +109,11 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     <p class="muted">Muda a casa e o crédito: as contas, o mapa, o ranking e o detalhe de cada concelho atualizam-se. Os valores ficam guardados só neste browser.</p>
     <form id="aff-form" class="aff-form" autocomplete="off">
       <label>Rendimento <select name="base"><option value="wage">Salário de quem trabalha</option><option value="irs">IRS de quem vive</option></select></label>
-      <label>Área (m²) <input name="area" type="number" min="20" max="400" step="5" inputmode="numeric"></label>
-      <label>Entrada (%) <input name="down" type="number" min="0" max="90" step="5" inputmode="decimal"></label>
-      <label>Prazo (anos) <input name="years" type="number" min="5" max="40" step="1" inputmode="numeric"></label>
-      <label>Taxa (%) <input name="rate" type="number" min="0" max="15" step="0.05" inputmode="decimal"></label>
-      <label>Teste de juros (+p.p.) <input name="shock" type="number" min="0" max="5" step="0.5" inputmode="decimal"></label>
+      <label>Área (m²) <input name="area" type="number" min="20" max="400" step="any" inputmode="numeric"></label>
+      <label>Entrada (%) <input name="down" type="number" min="0" max="90" step="any" inputmode="decimal"></label>
+      <label>Prazo (anos) <input name="years" type="number" min="5" max="40" step="any" inputmode="numeric"></label>
+      <label>Taxa (%) <input name="rate" type="number" min="0" max="15" step="any" inputmode="decimal"></label>
+      <label>Teste de juros (+p.p.) <input name="shock" type="number" min="0" max="5" step="any" inputmode="decimal"></label>
       <label>Salários <select name="earners"><option value="1">1</option><option value="2">2</option></select></label>
       <button type="button" id="aff-reset" class="btn">Repor</button>
     </form>
@@ -130,21 +130,21 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       <label>Freguesia <select name="par"><option value="">— (usar o concelho)</option></select></label>
       <label>Mês da compra <select name="month" required></select></label>
       <label>Ano da compra <select name="year" required></select></label>
-      <label>Preço pago (€) <input name="price" type="number" min="1000" step="500" inputmode="numeric" required></label>
-      <label>Área (m²) <input name="area" type="number" min="10" max="2000" step="1" inputmode="numeric" required></label>
+      <label>Preço pago (€) <input name="price" type="number" min="1000" step="any" inputmode="numeric" required></label>
+      <label>Área (m²) <input name="area" type="number" min="10" max="2000" step="any" inputmode="numeric" required></label>
       <label>Tipo <select name="kind"><option value="">Não sei</option><option value="apt">Apartamento</option><option value="house">Moradia</option></select></label>
-      <label>Crédito em dívida (€) <input name="loan" type="number" min="0" step="500" inputmode="numeric"></label>
-      <label>Taxa do crédito (%) <input name="rate" type="number" min="0" max="15" step="0.05" inputmode="decimal" placeholder="média atual"></label>
-      <label>Prazo restante (anos) <input name="years" type="number" min="1" max="50" step="1" inputmode="numeric"></label>
-      <label>Rendimento líquido do agregado (€/mês) <input name="income" type="number" min="0" step="50" inputmode="numeric"></label>
-      <label>Renda atual, se arrendado (€/mês) <input name="rent" type="number" min="0" step="10" inputmode="numeric"></label>
+      <label>Crédito em dívida (€) <input name="loan" type="number" min="0" step="any" inputmode="numeric"></label>
+      <label>Taxa do crédito (%) <input name="rate" type="number" min="0" max="15" step="any" inputmode="decimal" placeholder="média atual"></label>
+      <label>Prazo restante (anos) <input name="years" type="number" min="1" max="50" step="any" inputmode="numeric"></label>
+      <label>Rendimento líquido do agregado (€/mês) <input name="income" type="number" min="0" step="any" inputmode="numeric"></label>
+      <label>Renda atual, se arrendado (€/mês) <input name="rent" type="number" min="0" step="any" inputmode="numeric"></label>
       <details class="im-assume"><summary>Pressupostos do arrendamento (editáveis)</summary>
-        <label>IMI (€/ano) <input name="imi" type="number" min="0" step="10" placeholder="0,3% do preço"></label>
-        <label>Condomínio (€/mês) <input name="condo" type="number" min="0" step="5" placeholder="25 (apart.)"></label>
-        <label>Seguro (€/ano) <input name="ins" type="number" min="0" step="10" placeholder="150"></label>
-        <label>Meses vazio por ano <input name="vac" type="number" min="0" max="12" step="0.5" placeholder="1"></label>
-        <label>Manutenção (% da renda) <input name="maint" type="number" min="0" max="50" step="1" placeholder="5"></label>
-        <label>IRS sobre rendas (%) <input name="tax" type="number" min="0" max="60" step="1" placeholder="25"></label>
+        <label>IMI (€/ano) <input name="imi" type="number" min="0" step="any" placeholder="0,3% do preço"></label>
+        <label>Condomínio (€/mês) <input name="condo" type="number" min="0" step="any" placeholder="25 (apart.)"></label>
+        <label>Seguro (€/ano) <input name="ins" type="number" min="0" step="any" placeholder="150"></label>
+        <label>Meses vazio por ano <input name="vac" type="number" min="0" max="12" step="any" placeholder="1"></label>
+        <label>Manutenção (% da renda) <input name="maint" type="number" min="0" max="50" step="any" placeholder="5"></label>
+        <label>IRS sobre rendas (%) <input name="tax" type="number" min="0" max="60" step="any" placeholder="25"></label>
       </details>
       <span class="im-buttons"><button type="submit" class="btn">Analisar</button> <button type="button" id="im-clear" class="btn">Limpar</button></span>
     </form>
