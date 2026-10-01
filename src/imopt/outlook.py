@@ -396,6 +396,16 @@ def demand(feats: pd.DataFrame | None) -> dict | None:
                               "top": [{"dico": str(r.dico), "name": str(r.name), "premium": float(r.foreign_premium),
                                        "price_foreign": float(r.price_foreign), "price_domestic": float(r.price_domestic)}
                                       for r in top.itertuples()]}
+    if "companies_premium" in feats:
+        cp = feats.dropna(subset=["companies_premium"])
+        if len(cp) >= 5:
+            top = cp.sort_values("companies_premium", ascending=False).head(10)
+            out["companies"] = {"n": int(len(cp)), "median_premium": float(cp["companies_premium"].median()),
+                                "share_above": float((cp["companies_premium"] > 0).mean()),
+                                "top": [{"dico": str(r.dico), "name": str(r.name), "premium": float(r.companies_premium),
+                                         "price_companies": float(r.price_companies),
+                                         "price_households": float(r.price_households)} for r in top.itertuples()]}
+
     def volume(col):
         if col not in feats:
             return None

@@ -83,6 +83,8 @@ def demo_frames(seed: int = 7):
     frames["rent_q3"] = rent.assign(value=lambda d: d["value"] * 1.3)
     frames["sales_price_domestic"] = sales.assign(value=lambda d: d["value"] * 0.97)
     frames["sales_price_foreign"] = sales[sales["dico"].astype(int) % 4 == 0].assign(value=lambda d: d["value"] * 1.4)
+    frames["sales_price_households"] = sales.assign(value=lambda d: d["value"] * 0.98)
+    frames["sales_price_companies"] = sales[sales["dico"].astype(int) % 3 == 0].assign(value=lambda d: d["value"] * 1.2)
     frames["sales_price_apartments"] = sales.assign(value=lambda d: d["value"] * 1.08)
     for k, f in (("t01", 1.25), ("t2", 1.05), ("t3", 0.95), ("t4", 0.85)):
         frames[f"sales_price_{k}"] = sales.assign(value=lambda d, f=f: d["value"] * f)

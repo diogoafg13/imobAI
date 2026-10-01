@@ -208,6 +208,7 @@ Todos opcionais (falham de forma não-fatal) e só leitura — nenhum entra nos 
 | Dormidas em alojamento turístico | INE 0009183 | Pressão turística por habitante; entra no **valor justo** |
 | Crédito à habitação por habitante | INE 0013048 | Contexto (não entra no valor justo: acompanha os preços) |
 | Preço pago por compradores com domicílio no estrangeiro vs em Portugal | INE 0012246, `dim_3` 2/1 (confirmado com `imopt inspect`) | Prémio pago por estrangeiros: detalhe, mapa, lista em "Perspetivas" |
+| Preço pago por famílias vs empresas e outras entidades | INE 0012236, `dim_3` S1400000/S3000000 (confirmado) | Prémio pago por empresas: detalhe, comparação, lista em "Perspetivas" |
 | Preço por tipologia (T0/T1, T2, T3, T4+) e de apartamentos | INE 0012241 `dim_3` 1–4 e 0012235 (confirmados) | Detalhe e comparação |
 | Avaliações bancárias (N.º, últimos 3 meses) | INE 0012247, `dim_3` T, 1 e 2 — total, apartamentos e moradias (confirmado) | Volume de compras com crédito — substituto do número de vendas, que o INE não publica por concelho; o volume costuma cair antes dos preços |
 | Taxa dos novos créditos à habitação em PT | BCE MIR `M.PT.B.A2C.A.R.A.2250.EUR.N` | Spread real nos cenários de juros (em vez de 1 p.p. assumido) |
@@ -219,8 +220,7 @@ mesmo quando é usado com várias categorias.
 
 **Não incluídos**: número de vendas por concelho (o 0012786 é em € e só por NUTS II; usa-se o
 número de avaliações bancárias em vez disso) e Censos 2021 (casas vagas/segunda habitação, sem
-código encontrado). Disponível mas não usado: 0012236, preço por setor do comprador (famílias vs
-empresas). Quando houver um código confirmado com `imopt inspect`, entram como os
+código encontrado). Quando houver um código confirmado com `imopt inspect`, entram como os
 de cima. Para os procurar: `python -m imopt search …` (ver "Primeiros passos"). O catálogo
 descarregável do INE (`opc=3`) só tem os ~260 indicadores principais — estes três não estão lá; o
 `--range` consulta a ficha de cada código, e indicadores da mesma operação estatística costumam ter

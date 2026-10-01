@@ -190,7 +190,8 @@ def extra_features(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame:
         add(pd.DataFrame({"dico": d["dico"], "rent_contracts": d["rent_contracts"],
                           "rent_contracts_year": d["rent_contracts_key"] // 100,
                           "rent_contracts_growth": d["rent_contracts"] / d["prev"] - 1}))
-    for key, name in (("sales_price_domestic", "price_domestic"), ("sales_price_foreign", "price_foreign"),
+    for key, name in (("sales_price_households", "price_households"), ("sales_price_companies", "price_companies"),
+                      ("sales_price_domestic", "price_domestic"), ("sales_price_foreign", "price_foreign"),
                       ("sales_price_apartments", "price_apt_sales"), ("sales_price_t01", "price_t01"),
                       ("sales_price_t2", "price_t2"), ("sales_price_t3", "price_t3"), ("sales_price_t4", "price_t4")):
         d = latest(key, "quarter", name)
@@ -198,6 +199,8 @@ def extra_features(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame:
             add(d[["dico", name]])
     if "price_domestic" in out and "price_foreign" in out:
         out["foreign_premium"] = out["price_foreign"] / out["price_domestic"] - 1
+    if "price_households" in out and "price_companies" in out:
+        out["companies_premium"] = out["price_companies"] / out["price_households"] - 1
     for key, name in (("valuation_count", "val_count"), ("valuation_count_apartments", "val_count_apt"),
                       ("valuation_count_houses", "val_count_house")):
         d = latest(key, "month", name, {"y0": 12})

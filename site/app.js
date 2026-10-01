@@ -48,6 +48,7 @@ const GLOSS = {
   tourism: ['Pressão turística', 'Dormidas em alojamento turístico por habitante, no ano (INE). Mede o peso do turismo no concelho — uma das razões para preços acima do que os rendimentos locais explicam. Entra no modelo de valor justo.'],
   credit_pc: ['Crédito à habitação por habitante', 'Stock de crédito à habitação a dividir pela população (INE, anual). Mostra o endividamento das famílias para comprar casa; acompanha naturalmente os preços, por isso não entra no valor justo.'],
   foreign: ['Compradores estrangeiros', 'Preço mediano (€/m², 12 meses) pago por compradores com domicílio fiscal no estrangeiro, comparado com o dos compradores com domicílio em Portugal (INE). Um prémio alto indica procura externa a puxar pelos preços — muitas vezes em casas diferentes (localização, tamanho). O INE só publica onde há vendas suficientes a estrangeiros.'],
+  companies: ['Famílias vs empresas', 'Preço mediano (€/m², 12 meses) pago por famílias e por empresas e outras entidades (bancos, fundos, Estado…) — o INE chama-lhes "restantes setores institucionais". Empresas a pagar mais costuma indicar compras para investimento, reabilitação ou alojamento local, muitas vezes em casas diferentes das que as famílias compram. O INE só publica onde há vendas suficientes.'],
   tipologia: ['Preço por tipologia', 'Preço mediano de venda por m² (INE, 12 meses) por número de quartos. Casas pequenas costumam custar mais por m².'],
   val_count: ['Volume de avaliações bancárias', 'Número de avaliações bancárias nos últimos 3 meses (INE): mede quantas compras com crédito estão a acontecer. O volume costuma cair antes dos preços — uma queda forte e generalizada é um sinal clássico de arrefecimento.'],
   tracking: ['Previsões anteriores vs realidade', 'Cada build guarda as previsões que publicou. Quando o INE publica o valor real de um trimestre (ou ano, nas rendas) previsto, o erro é medido aqui — com os dados tal como saíram, sem revisões nem o benefício da retrospetiva. É a avaliação mais honesta, mas precisa de tempo: a 12 meses, os primeiros resultados só aparecem um ano depois do arranque do arquivo.'],
@@ -345,6 +346,7 @@ function readList(m) {
     .map(([n, v, g, lo, hi]) => `${n} ${fmt.eur(v)}/m²${g != null ? ` (previsão ${fmt.spct(g)} em 12 meses${lo != null ? `, 80% entre ${fmt.eur(lo)} e ${fmt.eur(hi)}` : ''})` : ''}`);
   if (tp.length) li.push(`Avaliação bancária: ${tp.join('; ')}.`);
   if (m.foreign_premium != null) li.push(`Compradores com domicílio no estrangeiro pagam ${fmt.eur(m.price_foreign)}/m², ${fmt.spct(m.foreign_premium, 0)} face aos residentes em Portugal (${fmt.eur(m.price_domestic)}/m²)${m.foreign_premium > 0.3 ? ' — sinal de procura externa forte' : ''}.`);
+  if (m.companies_premium != null) li.push(`Empresas e outras entidades pagam ${fmt.eur(m.price_companies)}/m², ${fmt.spct(m.companies_premium, 0)} face às famílias (${fmt.eur(m.price_households)}/m²)${m.companies_premium > 0.3 ? ' — sinal de compra para investimento' : ''}.`);
   const tps = [['T0/T1', m.price_t01], ['T2', m.price_t2], ['T3', m.price_t3], ['T4+', m.price_t4]].filter((x) => x[1] != null);
   if (tps.length >= 2) li.push(`Preço por tipologia: ${tps.map(([k, v]) => `${k} ${fmt.eur(v)}/m²`).join(', ')}${m.price_apt_sales != null ? `; apartamentos ${fmt.eur(m.price_apt_sales)}/m²` : ''}.`);
   if (m.val_count != null && m.val_count_growth_1y != null) {
@@ -461,6 +463,8 @@ function select(dico, scroll = true) {
       m.rent_contracts != null ? `<span class="ctx">${fmt.n(m.rent_contracts, 0)} contratos em ${m.rent_contracts_year}</span>` : '')] : []),
     ...(m.foreign_premium != null ? [tile('foreign', 'Estrangeiros vs residentes', fmt.spct(m.foreign_premium, 0),
       `<span class="ctx">${fmt.eur(m.price_foreign)} vs ${fmt.eur(m.price_domestic)}/m²</span>`)] : []),
+    ...(m.companies_premium != null ? [tile('companies', 'Empresas vs famílias', fmt.spct(m.companies_premium, 0),
+      `<span class="ctx">${fmt.eur(m.price_companies)} vs ${fmt.eur(m.price_households)}/m²</span>`)] : []),
     ...(m.price_t2 != null || m.price_t3 != null ? [tile('tipologia', 'T2 / T3 (€/m²)', `${fmt.eur(m.price_t2)} / ${fmt.eur(m.price_t3)}`,
       `<span class="ctx">T0/T1 ${fmt.eur(m.price_t01)} · T4+ ${fmt.eur(m.price_t4)}</span>`)] : []),
     ...(m.val_count != null ? [tile('val_count', 'Avaliações (3 meses)', fmt.n(m.val_count, 0),
@@ -505,6 +509,7 @@ const COMPARE_ROWS = [
   ['val_type', 'Moradias: avaliação e previsão', (m) => (m.val_house == null ? '—' : `${fmt.eur(m.val_house)} (${fmt.spct(m.house_fc_growth_12m)})`)],
   ['rent_q', 'Renda 1.º–3.º quartil', (m) => (m.rent_q1 == null ? '—' : `${fmt.eur2(m.rent_q1)}–${fmt.eur2(m.rent_q3)}`)],
   ['foreign', 'Estrangeiros vs residentes', (m) => (m.foreign_premium == null ? '—' : `${fmt.spct(m.foreign_premium, 0)} (${fmt.eur(m.price_foreign)})`)],
+  ['companies', 'Empresas vs famílias', (m) => (m.companies_premium == null ? '—' : `${fmt.spct(m.companies_premium, 0)} (${fmt.eur(m.price_companies)})`)],
   ['tipologia', 'T0-T1 / T2 / T3 / T4+ (€/m²)', (m) => [m.price_t01, m.price_t2, m.price_t3, m.price_t4].map(fmt.eur).join(' / ')],
   ['val_count', 'Avaliações bancárias (3 meses)', (m) => (m.val_count == null ? '—' : `${fmt.n(m.val_count, 0)} (${fmt.spct(m.val_count_growth_1y, 0)})`)],
   ['val_count', 'Avaliações: apartamentos / moradias', (m) => (m.val_count_apt == null && m.val_count_house == null ? '—'
@@ -752,7 +757,13 @@ function olDemand(D) {
     parts.push(`<p><b>Compradores estrangeiros ${info('foreign')}:</b> em ${f.n} concelhos com dados, quem tem domicílio fiscal no estrangeiro paga em mediana ${fmt.spct(f.median_premium, 0)} por m² face a quem reside em Portugal; pagam mais em ${Math.round(f.share_above * 100)}% desses concelhos. O mapa tem este indicador ("Prémio pago por estrangeiros").</p>
       <p class="muted"><b>Maior prémio pago por estrangeiros</b> (estrangeiros vs residentes, €/m²)</p><ul class="ol-list">${f.top.map(item).join('')}</ul>`);
   }
-  return parts.length ? `<h3>Procura: volume e compradores estrangeiros</h3>${parts.join('')}` : '';
+  if (D.companies) {
+    const c = D.companies;
+    const item = (x) => `<li><span>${lnk(x.dico, x.name)}</span><span class="v">${fmt.spct(x.premium, 0)} <span class="muted">${fmt.eur(x.price_companies)} vs ${fmt.eur(x.price_households)}</span></span></li>`;
+    parts.push(`<p><b>Empresas vs famílias ${info('companies')}:</b> em ${c.n} concelhos com dados, empresas e outras entidades pagam em mediana ${fmt.spct(c.median_premium, 0)} por m² face às famílias; pagam mais em ${Math.round(c.share_above * 100)}% desses concelhos.</p>
+      <p class="muted"><b>Maior prémio pago por empresas</b> (empresas vs famílias, €/m²)</p><ul class="ol-list">${c.top.map(item).join('')}</ul>`);
+  }
+  return parts.length ? `<h3>Procura: volume, estrangeiros e empresas</h3>${parts.join('')}` : '';
 }
 function olRent(R) {
   const m = R.backtest;

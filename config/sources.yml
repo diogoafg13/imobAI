@@ -48,6 +48,22 @@ ine:
       dims: {dim_3: "2"}
       period_kind: quarter
       optional: true
+    # Setor institucional do comprador (confirmado com `imopt inspect 0012236`): S1400000 = Famílias,
+    # S3000000 = Restantes setores institucionais (empresas, bancos, fundos, Estado…), T = Total.
+    sales_price_households:
+      varcd: "0012236"
+      description: Preço mediano de venda, compradores famílias (€/m²)
+      level: municipality
+      dims: {dim_3: "S1400000"}
+      period_kind: quarter
+      optional: true
+    sales_price_companies:
+      varcd: "0012236"
+      description: Preço mediano de venda, compradores empresas e outras entidades (€/m²)
+      level: municipality
+      dims: {dim_3: "S3000000"}
+      period_kind: quarter
+      optional: true
     # Apartamentos (0012235, sem dimensões extra) e tipologia (0012241: 1 = T0/T1, 2 = T2, 3 = T3, 4 = T4+).
     sales_price_apartments:
       varcd: "0012235"
