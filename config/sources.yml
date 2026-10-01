@@ -337,12 +337,14 @@ ine:
       level: national
       dims: {dim_3: "2"}
       optional: true
-    # População residente por concelho: 0004163 só tem país e regiões e 0004350 (subsídio de desemprego) só o
-    # total nacional (confirmado no snapshot bruto) — ficam de fora. A tentar 0008273 (catálogo do INE).
+    # População residente por concelho (estimativas anuais, 2011+). dim_3 = sexo (T = HM), dim_4 = grupo etário
+    # (T = todas as idades), confirmado no snapshot bruto. 0004163 só tem país e regiões e 0004350 (subsídio de
+    # desemprego) só o total nacional: ficaram de fora.
     population:
-      varcd: "0008273"          # População residente (N.º); dimensões por confirmar no snapshot bruto
+      varcd: "0008273"
       description: População residente (N.º)
       level: municipality
+      dims: {dim_3: "T", dim_4: "T"}
       optional: true
     # Não usados: 0012786 (Transações em €, só até NUTS II, sem número de vendas), 0012748 e 0012742
     # (rendimento bruto médio e agregados fiscais por escalão) — ver README.

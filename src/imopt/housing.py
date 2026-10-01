@@ -79,6 +79,8 @@ def context_features(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame:
     if (d := latest("irs_median", lags={"y1": 1})) is not None:
         add(pd.DataFrame({"dico": d["dico"], "irs_median": d["latest"], "irs_year": d["latest_key"] // 100,
                           "irs_growth_1y": d["latest"] / d["y1"] - 1}))
+    if (d := latest("population")) is not None:
+        add(pd.DataFrame({"dico": d["dico"], "population": d["latest"], "population_year": d["latest_key"] // 100}))
     if (d := latest("dwellings_stock")) is not None:
         add(pd.DataFrame({"dico": d["dico"], "dwellings": d["latest"], "dwellings_year": d["latest_key"] // 100}))
     for key, name in (("tourism_beds", "tourism_beds"), ("tourism_beds_al", "al_beds")):

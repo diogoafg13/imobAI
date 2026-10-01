@@ -514,6 +514,7 @@ function readList(m) {
   const sc = m.score_overall;
   if (sc != null) li.push(`Score ${fmt.n(sc)}: ${sc >= 70 ? 'entre os concelhos mais "esticados"' : sc >= 40 ? 'a meio do pelotão de concelhos' : 'entre os concelhos menos "esticados"'}. É uma posição relativa, não uma previsão de queda.`);
   const demoBits = [];
+  if (m.population != null) demoBits.push(`${fmt.n(m.population, 0)} habitantes (${m.population_year})`);
   if (m.density != null) {
     const md = median(col((x) => x.density));
     demoBits.push(`${fmt.n(m.density, 0)} hab/km²${md ? ` (mediana ${fmt.n(md, 0)})` : ''}`);

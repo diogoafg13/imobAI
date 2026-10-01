@@ -312,6 +312,14 @@ def _band_of(dist: float) -> str:
 
 
 # ---------------------------------------------------------------- valor justo
+def _population(df: pd.DataFrame, spatial: pd.DataFrame) -> pd.Series:
+    """População residente do INE (0008273) quando existe; senão a estimativa densidade × área das fronteiras."""
+    est = df["density"] * spatial.set_index("dico")["area_km2"].reindex(df.index)
+    if "population" in df and df["population"].notna().sum() >= 30:
+        return df["population"].where(df["population"] > 0).fillna(est)
+    return est
+
+
 def fair_value(feats: pd.DataFrame | None, spatial: pd.DataFrame | None, dist: pd.DataFrame | None,
                regions: dict[str, str], n_folds: int = 10, seed: int = 0) -> tuple[dict | None, dict]:
     need = ["price", "income", "density", "ageing_index"]
@@ -323,7 +331,7 @@ def fair_value(feats: pd.DataFrame | None, spatial: pd.DataFrame | None, dist: p
     x["log_density"] = np.log(df["density"].where(df["density"] > 0))
     x["log_ageing"] = np.log(df["ageing_index"].where(df["ageing_index"] > 0))
     if spatial is not None and not spatial.empty and "migration_balance" in df and df["migration_balance"].notna().sum() >= 30:
-        pop = df["density"] * spatial.set_index("dico")["area_km2"].reindex(df.index)
+        pop = _population(df, spatial)
         mr = df["migration_balance"] / pop * 1000
         x["mig_rate"] = mr.clip(mr.quantile(0.025), mr.quantile(0.975))
     if dist is not None:
@@ -332,7 +340,7 @@ def fair_value(feats: pd.DataFrame | None, spatial: pd.DataFrame | None, dist: p
         x["coastal"] = spatial.set_index("dico")["coastal"].reindex(df.index).astype(float)
     if (spatial is not None and not spatial.empty and "tourism_nights" in df
             and df["tourism_nights"].notna().sum() >= 30):
-        pop = df["density"] * spatial.set_index("dico")["area_km2"].reindex(df.index)
+        pop = _population(df, spatial)
         # concelhos sem dormidas publicadas (sigilo/sem oferta) contam como 0: quase sempre é pouco turismo
         x["log_tourism"] = np.log1p((df["tourism_nights"].fillna(0) / pop).clip(lower=0))
     reg = pd.Series({d: regions.get(d, "?") for d in df.index})
@@ -645,8 +653,7 @@ def build(frames: dict, macro_frames: dict, feats: pd.DataFrame | None, geojson:
     if not spatial.empty:
         merge({str(d): {"coastal": bool(c)} for d, c in zip(spatial["dico"], spatial["coastal"])})
         if feats is not None and "tourism_nights" in feats:
-            area = spatial.set_index("dico")["area_km2"]
-            pop = feats.set_index(feats["dico"].astype(str))["density"] * area
+            pop = _population(feats.set_index(feats["dico"].astype(str)), spatial)
             tpc = (feats.set_index(feats["dico"].astype(str))["tourism_nights"] / pop).dropna()
             merge({d: {"tourism_pc": round(float(v), 2)} for d, v in tpc.items() if np.isfinite(v)})
     return sanitize(out), sanitize(per)

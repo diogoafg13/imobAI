@@ -105,7 +105,7 @@ EXTRA_KEYS = ("sales_price_new", "sales_price_existing", "valuation_apartments",
 # Contexto de habitação (imopt/housing.py): IRS de quem vive no concelho, oferta nova, parque e camas turísticas.
 CONTEXT_KEYS = ("irs_median", "dwellings_stock", "tourism_beds", "tourism_beds_al", "census_total",
                 "census_secondary", "census_vacant_market", "census_vacant_other", "tourism_guests",
-                "tourism_guests_al", "tourism_occupancy")
+                "tourism_guests_al", "tourism_occupancy", "population")
 
 
 def municipal(df: pd.DataFrame | None) -> pd.DataFrame | None:
@@ -223,7 +223,7 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
             "dwellings", "dwellings_year", "tourism_beds", "tourism_beds_year", "beds_per_100", "al_beds",
             "al_beds_year", "al_beds_per_100", "census_total", "census_year", "secondary_share", "vacant_share",
             "vacant_market_share", "guests_12m", "guests_growth_1y", "guests_until", "guests_al_share", "occupancy",
-            "occupancy_year", "occupancy_chg", "score_part_g1y", "score_part_g3y", "score_part_yield"]
+            "occupancy_year", "occupancy_chg", "population", "population_year", "score_part_g1y", "score_part_g3y", "score_part_yield"]
     # Perspetivas (previsões e padrões): só leitura, não mexe nos scores; falha de forma não-fatal.
     try:
         outlook_data, per = outlook.build(frames, macro_frames, feats, geojson, hpi, hpi_real, demo=demo)

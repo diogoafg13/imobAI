@@ -422,8 +422,10 @@ avaliação bancária trimestral por concelho e tipo, IHPC; ~0,4 MB), descarrega
   pedidos em paralelo; os gráficos de "Perspetivas" só são desenhados quando a secção se aproxima do ecrã.
   O código do site continua num ficheiro (`app.js`): partir em módulos não o tornava mais rápido — o peso
   estava nos dados.
-- **População e desemprego por concelho**: os códigos do catálogo (0004163, 0004350) só têm país e regiões;
-  ficaram de fora. A tentar 0008273 para a população residente por concelho.
+- **População por concelho**: 0008273 (estimativas anuais 2011–2023, dim_3 = T, dim_4 = T) substitui a
+  estimativa densidade × área nos indicadores por habitante (dormidas por habitante, saldo migratório por mil
+  habitantes no valor justo). 0004163 só tem país e regiões e 0004350 (subsídio de desemprego) só o total
+  nacional: ficaram de fora — não há desemprego por concelho no catálogo principal do INE.
 
 ### Freguesias
 
