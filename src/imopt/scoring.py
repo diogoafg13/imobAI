@@ -154,6 +154,35 @@ def municipal_features(sales: pd.DataFrame, rent: pd.DataFrame | None,
     return s.drop(columns=["p_1y", "p_3y", "p_5y", "r_1y"], errors="ignore")
 
 
+def hicp_asof(hicp: pd.DataFrame | None) -> tuple[callable, str | None]:
+    """Função sort_key trimestral -> IHPC do último trimestre publicado até lá (o IHPC sai depois das vendas)."""
+    if hicp is None or hicp.empty:
+        return (lambda k: np.nan), None
+    h = hicp.dropna(subset=["value"])
+    keys = np.array([int(str(p)[:4]) * 100 + int(str(p)[-1]) for p in h["period"]])
+    order = np.argsort(keys)
+    keys, vals = keys[order], h["value"].astype(float).to_numpy()[order]
+
+    def at(k: int) -> float:
+        i = np.searchsorted(keys, k, side="right") - 1
+        return float(vals[i]) if i >= 0 else np.nan
+    return at, str(h["period"].iloc[order[-1]])
+
+
+def real_growth(feats: pd.DataFrame, hicp: pd.DataFrame | None) -> pd.DataFrame:
+    """Variações do preço descontada a inflação (IHPC): (1 + nominal) / (1 + inflação no mesmo período) - 1."""
+    at, last = hicp_asof(hicp)
+    if last is None or "latest_key" not in feats:
+        return feats
+    f = feats.copy()
+    for col, back in (("price_growth_1y", 4), ("price_growth_3y", 12), ("price_growth_5y", 20)):
+        if col in f:
+            infl = f["latest_key"].map(lambda k, b=back: at(int(k)) / at(_shift_key(int(k), "quarter", b)) if pd.notna(k) else np.nan)
+            f[f"{col}_real"] = (1 + f[col]) / infl - 1
+    f["hicp_period"] = last
+    return f
+
+
 def extra_features(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame:
     """Indicadores de contexto por concelho (só leitura, não entram em nenhum score). Cada um é opcional."""
     out = pd.DataFrame(columns=["dico"])

@@ -11,7 +11,7 @@ import duckdb
 import pandas as pd
 import yaml
 
-from . import geo, ine, macro, outlook, parishes, scoring, tracking
+from . import changes, geo, ine, macro, outlook, parishes, scoring, tracking
 
 log = logging.getLogger("imopt")
 ROOT = Path(__file__).resolve().parents[2]
@@ -168,7 +168,18 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     extras = scoring.extra_features({k: municipal(frames.get(k)) for k in EXTRA_KEYS})
     if not extras.empty:
         feats = feats.merge(extras, on="dico", how="left")
+    feats = scoring.real_growth(feats, macro_frames.get("eurostat_hicp"))
     price_series = series_by_dico(sales)
+    h_at, h_last = scoring.hicp_asof(macro_frames.get("eurostat_hicp"))
+    h_ref = h_at(10 ** 9)
+
+    def real_series(ser):
+        out = []
+        for p, v in ser:
+            k = int(p[:4]) * 100 + int(p[-1])
+            hv = h_at(k)
+            out.append([p, round(v * h_ref / hv, 1) if hv and hv == hv else None])
+        return out
     rent_series = series_by_dico(rent)
 
     hpi = macro_frames.get("eurostat_hpi")
@@ -187,7 +198,8 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
         if "bis_credit_gap" in macro_frames else [],
     }
 
-    cols = ["price", "latest_key", "price_growth_1y", "price_growth_3y", "price_growth_5y", "rent",
+    cols = ["price", "latest_key", "price_growth_1y", "price_growth_3y", "price_growth_5y", "price_growth_1y_real",
+            "price_growth_3y_real", "price_growth_5y_real", "hicp_period", "rent",
             "rent_year", "rent_growth_1y", "gross_yield", "price_to_rent_years", "income", "income_year",
             "price_to_income_months", "rent_to_income", "density", "ageing_index", "migration_balance",
             "permits", "permits_growth",
@@ -205,6 +217,15 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     except Exception as e:  # noqa: BLE001
         log.warning("perspetivas falharam: %s", e)
         outlook_data, per = {"demo": demo, "errors": {"build": str(e)[:200]}}, {}
+    try:
+        ch, ch_per = changes.quarter_changes(sales, rent, feats)
+        if ch:
+            outlook_data["changes"] = outlook.sanitize(ch)
+            for d, v in ch_per.items():
+                per.setdefault(d, {}).update(v)
+    except Exception as e:  # noqa: BLE001
+        log.warning("resumo trimestral falhou: %s", e)
+        outlook_data.setdefault("errors", {})["changes"] = str(e)[:200]
     # Arquivo de previsões (só em builds reais): guarda as deste build e avalia as antigas contra o publicado.
     if forecast_log is not None:
         try:
@@ -223,6 +244,8 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
         item.update({c: _clean(r.get(c)) for c in cols if c in r})
         item.update(per.get(str(r["dico"]), {}))
         item["series"] = {"price": price_series.get(r["dico"], []), "rent": rent_series.get(r["dico"], [])}
+        if h_last:
+            item["series"]["price_real"] = real_series(item["series"]["price"])
         munis.append(item)
 
     latest_period = sales.sort_values("sort_key")["period"].iloc[-1]
@@ -260,7 +283,7 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     geo.dump(meta, str(out_dir / "meta.json"))
     if geojson is not None:
         keep = {m["dico"]: {"name": m["name"], "band": m["band"], "score": m["score_overall"], "price": m["price"],
-                            "yield": m["gross_yield"], "g1y": m["price_growth_1y"], "fc": m.get("fc_growth_12m"),
+                            "yield": m["gross_yield"], "g1y": m["price_growth_1y"], "g1yr": m.get("price_growth_1y_real"), "fc": m.get("fc_growth_12m"),
                             "fv": m.get("fv_gap"), "fp": m.get("foreign_premium")} for m in munis}
         geo.dump(geo.slim_geojson(geojson, keep), str(out_dir / "concelhos.geojson"))
     return meta

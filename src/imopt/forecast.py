@@ -41,7 +41,7 @@ CAL_WINDOW = 8               # só as 8 origens mais recentes calibram os interv
 MAX_HORIZON = 8
 SIGMA_WINDOW = 12            # trimestres usados para medir a volatilidade de cada concelho
 QUANTS = {"lo80": 0.10, "lo50": 0.25, "hi50": 0.75, "hi80": 0.90}
-SALES_FEATURES = ["s_mom1", "s_mom4", "v_lead", "v_mom", "nat_lead", "nb_mom4", "rel_level", "eur_chg"]
+SALES_FEATURES = ["s_mom1", "s_mom4", "v_lead", "v_mom", "nat_lead", "nb_mom4", "rel_level", "eur_chg", "vol_chg"]
 RENT_FEATURES = ["r_mom", "s_yoy", "yield_gap", "v_lead"]
 FEATURE_LABELS = {
     "s_mom1": "variação do preço no último trimestre",
@@ -52,6 +52,7 @@ FEATURE_LABELS = {
     "nb_mom4": "variação do preço nos concelhos vizinhos",
     "rel_level": "nível do preço face à mediana (convergência)",
     "eur_chg": "variação da Euribor 12M no último ano",
+    "vol_chg": "variação anual do número de avaliações bancárias (volume)",
     "r_mom": "variação da renda no último ano",
     "s_yoy": "variação do preço de venda no último ano",
     "yield_gap": "rendibilidade face à mediana",
@@ -225,7 +226,7 @@ def _usable(panel: pd.DataFrame, feats: list[str]) -> list[str]:
 
 
 # ---------------------------------------------------------------- venda
-def _sales_features(s, v3, nat3, eur, a, q, lead) -> pd.DataFrame:
+def _sales_features(s, v3, nat3, eur, a, q, lead, vol=None) -> pd.DataFrame:
     me = q_end_month(q)
     idx = s.index
     s0 = _c(s, q)
@@ -247,6 +248,10 @@ def _sales_features(s, v3, nat3, eur, a, q, lead) -> pd.DataFrame:
         # último valor publicado até essa data (o trimestre mais recente pode acabar depois da última Euribor)
         asof = lambda k: float(eur[eur.index <= k].iloc[-1]) if (eur.index <= k).any() else np.nan  # noqa: E731
         f["eur_chg"] = asof(me + lead) - asof(me + lead - 12)
+    if vol is not None:
+        # volume (avaliações bancárias, já somadas a 3 meses pelo INE): o volume costuma mexer antes dos preços
+        f["vol_chg"] = _c(vol, me + lead, idx) - _c(vol, me + lead - 12, idx)
+        f["vol_chg"] = f["vol_chg"].fillna(f["vol_chg"].median())
     f["sigma"] = robust_sigma(s, q)
     return f
 
@@ -258,7 +263,8 @@ def _kind(qi: int, today: dt.date) -> str:
 
 def forecast_sales(sales: pd.DataFrame, valuation: pd.DataFrame | None = None,
                    euribor: pd.DataFrame | None = None, nbrs: dict[str, list[str]] | None = None,
-                   regions: dict[str, str] | None = None, today: dt.date | None = None) -> tuple[dict | None, dict]:
+                   regions: dict[str, str] | None = None, today: dt.date | None = None,
+                   volume: pd.DataFrame | None = None) -> tuple[dict | None, dict]:
     """Devolve (resumo para outlook.json, {dico: previsão})."""
     today = today or dt.date.today()
     s = log_grid(sales, q_index)
@@ -267,6 +273,9 @@ def forecast_sales(sales: pd.DataFrame, valuation: pd.DataFrame | None = None,
     s = s[s.notna().sum(axis=1) >= 6]
     v3, nat3 = valuation_grids(valuation)
     eur = euribor_series(euribor)
+    vol = log_grid(volume, m_index)
+    if vol is not None:   # o último trimestre pode acabar depois do último mês publicado: usa o último valor (até 3 meses)
+        vol = vol.reindex(columns=range(int(vol.columns.min()), int(vol.columns.max()) + 4)).ffill(axis=1, limit=3)
     a = adjacency(s.index, nbrs)
     qmax = int(max(k for k in s.columns if s[k].notna().any()))
     last_v = int(max(k for k in nat3.dropna().index)) if nat3 is not None and nat3.notna().any() else None
@@ -280,7 +289,7 @@ def forecast_sales(sales: pd.DataFrame, valuation: pd.DataFrame | None = None,
     origins = [q for q in range(int(s.columns.min()) + 4, qmax + 1)]
     parts = []
     for q in origins:
-        f = _sales_features(s, v3, nat3, eur, a, q, lead)
+        f = _sales_features(s, v3, nat3, eur, a, q, lead, vol)
         f["origin"] = q
         for h in horizons:
             f[f"y{h}"] = _c(s, q + h) - _c(s, q)

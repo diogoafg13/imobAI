@@ -553,11 +553,14 @@ def build(frames: dict, macro_frames: dict, feats: pd.DataFrame | None, geojson:
     part("fair_value", lambda: fair_value(feats, spatial, dist, regions))
     part("demand", lambda: demand(feats))
     part("rates", lambda: rate_scenarios(euribor, hpi, mortgage=macro_frames.get("mortgage_rate_pt")))
-    for key, prefix in (("valuation_apartments", "apt"), ("valuation_houses", "house")):
+    # O volume de avaliações (variação anual) entra só nas previsões por tipo: no backtest melhorou-as em todos os
+    # horizontes (15 anos de histórico), mas não melhorou a previsão das vendas do INE (só desde 2019). Ver README.
+    for key, vkey, prefix in (("valuation_apartments", "valuation_count_apartments", "apt"),
+                              ("valuation_houses", "valuation_count_houses", "house")):
         q = monthly_to_quarterly_muni(muni(frames.get(key)))
         if q is not None:
-            part(f"fc_{prefix}", lambda q=q, prefix=prefix: _prefixed(
-                fc.forecast_sales(q, None, euribor, nbrs, region_names, today), prefix))
+            part(f"fc_{prefix}", lambda q=q, prefix=prefix, vol=muni(frames.get(vkey)): _prefixed(
+                fc.forecast_sales(q, None, euribor, nbrs, region_names, today, volume=vol), prefix))
     if dist is not None:
         merge({d: {"dist_metro_km": round(float(r["dist_km"]), 1), "metro": r["metro"]}
                for d, r in dist.iterrows() if not r["island"]})

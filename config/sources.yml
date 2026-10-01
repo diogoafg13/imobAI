@@ -242,6 +242,8 @@ ine:
       varcd: "0009183"          # Dormidas (N.º) nos estabelecimentos de alojamento turístico, município, anual
       description: Dormidas em alojamento turístico (N.º)
       level: municipality
+      # dim_3 = país de residência dos hóspedes (PT, E = estrangeiro, ES, FR…); T = Total (confirmado no snapshot bruto).
+      dims: {dim_3: "T"}
       period_kind: year
       optional: true
     housing_credit_pc:

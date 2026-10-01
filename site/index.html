@@ -20,6 +20,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
 <nav id="topnav" aria-label="Secções do painel">
   <div class="topnav-inner">
     <a href="#national">Visão nacional</a>
+    <a href="#changes">O que mudou</a>
     <a href="#mapsec">Mapa</a>
     <a href="#ranking">Ranking</a>
     <a href="#outlook">Perspetivas</a>
@@ -84,6 +85,11 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     </div>
   </section>
 
+  <section id="changes" class="card" hidden>
+    <div class="row"><h2 id="changes-title">O que mudou <button type="button" class="info" data-k="changes" aria-label="Sobre as mudanças">ⓘ</button></h2></div>
+    <div id="changes-body"></div>
+  </section>
+
   <section id="mapsec" class="card">
     <div class="row">
       <h2>Mapa</h2>
@@ -101,6 +107,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <option value="price">Preço €/m²</option>
         <option value="yield">Rendibilidade bruta</option>
         <option value="g1y">Variação preço 12 meses</option>
+        <option value="g1yr">Variação 12 meses descontada a inflação</option>
         <option value="fc">Previsão próximos 12 meses</option>
         <option value="fv">Preço face ao valor justo</option>
         <option value="fp">Prémio pago por estrangeiros</option>
@@ -126,7 +133,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     <div id="d-stats" class="stats"></div>
     <ul id="d-read" class="read"></ul>
     <div id="chart-detail" class="chart tall"></div>
-    <p class="muted">Preço: mediana de vendas dos últimos 12 meses, trimestral (eixo esquerdo). Renda: mediana de novos contratos, anual (eixo direito, pontos).</p>
+    <p id="d-chart-note" class="muted">Preço: mediana de vendas dos últimos 12 meses, trimestral (eixo esquerdo). Renda: mediana de novos contratos, anual (eixo direito, pontos).</p>
     <div id="d-par" hidden>
       <h3>Freguesias <button type="button" class="info" data-k="parishes" aria-label="Sobre as freguesias">ⓘ</button></h3>
       <div class="table-wrap"><table id="d-par-table" class="ol-table"></table></div>

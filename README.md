@@ -227,6 +227,22 @@ descarregável do INE (`opc=3`) só tem os ~260 indicadores principais — estes
 códigos próximos (os preços locais da habitação andam pelos 0012230–0012260; as rendas da
 Metodologia 2026 pelos 0014700).
 
+### Preços reais, o que mudou e volume nas previsões
+
+- **Preços reais**: variação a 12 meses, 3 e 5 anos descontada a inflação (IHPC do Eurostat, último
+  trimestre publicado — sai depois do preço da habitação) e, no gráfico de cada concelho, o preço em €
+  do último trimestre com IHPC. Também no mapa ("Variação 12 meses descontada a inflação").
+- **O que mudou** (`imopt/changes.py`): trimestre mais recente vs anterior — variação do preço e do score,
+  mudanças de faixa de risco. O score anterior é recalculado com o mesmo método e os dados cortados
+  nesse trimestre (a renda é a mesma nos dois, por isso as mudanças vêm dos preços). As listas de
+  maiores movimentos só incluem concelhos com ≥ 20 avaliações bancárias em 3 meses e sem dados voláteis.
+- **Volume como sinal de previsão**: a variação anual do número de avaliações bancárias foi testada nos
+  dois modelos, com a regra fixada antes (entra se melhorar a 12 meses sem piorar o presente). Na
+  previsão das **vendas do INE** (histórico desde 2019) não melhorou (12 meses: 43,3% → 42,9% menos erro
+  que a regra ingénua) e **ficou de fora**. Nas previsões de **apartamentos e moradias** (avaliação
+  bancária desde 2011) melhorou em todos os horizontes (12 meses: 18,5% → 22,1% e 37,4% → 39,4%), sem
+  piorar a cobertura dos intervalos, e **entrou**.
+
 ### Freguesias
 
 `imopt/parishes.py`. O preço mediano de venda por freguesia vem do mesmo indicador do INE (0012234,
