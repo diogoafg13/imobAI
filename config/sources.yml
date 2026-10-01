@@ -136,7 +136,7 @@ ine:
       varcd: "0012247"          # Avaliações bancárias (N.º) nos últimos 3 meses, município, mensal
       description: Número de avaliações bancárias, últimos 3 meses (volume de compras com crédito)
       level: municipality
-      # dim_3 = T por analogia com o 0012248 (mesma operação); não confirmado ao vivo.
+      # dim_3: T = Total, 1 = Apartamentos, 2 = Moradias (confirmado com `imopt inspect 0012247`).
       dims: {dim_3: "T"}
       period_kind: month
       optional: true
