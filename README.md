@@ -415,6 +415,10 @@ browser; os dados ficam só nesse browser (`localStorage`), nada é enviado. Dev
   condomínio, seguro, meses vazio, manutenção, IRS sobre rendas), saldo face à prestação e, se a casa já
   estiver arrendada, renda atual face ao mercado;
 - **comprar ou arrendar** para aquela casa (ponto de equilíbrio).
+- **coeficiente de localização (Cl)**, opcional: o da caderneta predial ou do mapa de zonamento das Finanças.
+  Só é mostrado e explicado (fator de localização do valor patrimonial, 0,4–3,5; mais alto = zona que o fisco
+  considera mais valiosa). Não entra nas contas: o zonamento não está em dados abertos (só o mapa interativo das
+  Finanças), por isso não há os Cl do resto da freguesia para o situar.
 
 - **veredicto e gráficos**: "alinhado / acima / bem acima / abaixo do mercado" (±10% alinhado; mais de 25% "bem")
   face à mediana da freguesia (ou do concelho) na altura da compra, e o mesmo para a renda indicada; gráfico

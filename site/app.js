@@ -1635,7 +1635,7 @@ function imRead() {
   const m = MUNIS.find((x) => x.name.toLowerCase() === name);
   return { conc: f.conc.value.trim(), dico: m ? m.dico : null, par: f.par.value || '', date: f.year.value && f.month.value ? `${f.year.value}-${f.month.value}` : '', price: num('price'), area: num('area'), kind: f.kind.value, typ: f.typ.value,
     loan: num('loan'), rate: num('rate'), years: num('years'), income: num('income'), rent: num('rent'),
-    imi: num('imi'), condo: num('condo'), ins: num('ins'), vac: num('vac'), maint: num('maint'), tax: num('tax') };
+    cl: num('cl'), imi: num('imi'), condo: num('condo'), ins: num('ins'), vac: num('vac'), maint: num('maint'), tax: num('tax') };
 }
 function imSave(v) { try { localStorage.setItem(IM_KEY, JSON.stringify(v)); } catch { /* sem armazenamento */ } }
 function imLoad() {
@@ -1643,7 +1643,7 @@ function imLoad() {
   try { v = JSON.parse(localStorage.getItem(IM_KEY) || 'null'); } catch { v = null; }
   if (!v) return;
   const f = $('#im-form');
-  ['conc', 'price', 'area', 'kind', 'typ', 'loan', 'rate', 'years', 'income', 'rent', 'imi', 'condo', 'ins', 'vac', 'maint', 'tax']
+  ['conc', 'price', 'area', 'kind', 'typ', 'cl', 'loan', 'rate', 'years', 'income', 'rent', 'imi', 'condo', 'ins', 'vac', 'maint', 'tax']
     .forEach((k) => { if (v[k] != null && f[k]) f[k].value = v[k]; });
   // datas antigas guardadas noutro formato (ex.: "4" de um browser sem seletor de mês) são ignoradas
   if (qOfMonth(v.date)) { const [y, m] = v.date.split('-'); f.year.value = y; f.month.value = m; }
@@ -1721,6 +1721,9 @@ async function imAnalyse() {
   if (cmp.length) strips.push(['Preço pago face às medianas da altura (€/m²)', imStrip(cmp.map(([l, x]) => ({ label: imShort(l), value: x })), { label: 'tu', value: ppm }, null, (x) => fmt.eur(x))]);
   if (cmp.length) li.push(`Na altura da compra (${qpt(q0)}), pagaste ${cmp.map(([l, x]) => `${rel(ppm / x - 1)} da ${l} (${fmt.eur(x)}/m²)`).join('; ')}. Uma diferença grande pode ser só a casa (estado, área, vista, piso) e não um bom ou mau negócio. As medianas do INE são preços de escritura de todas as vendas (incluindo casas antigas ou a precisar de obras) e costumam ficar abaixo dos preços pedidos nos anúncios.${projTxt ? ' ' + projTxt : ''}`);
   else li.push(`Não há medianas publicadas para ${m.name} em ${qpt(q0)} para comparar o preço pago (o INE só publica o preço por concelho desde 2019 e a avaliação bancária onde há avaliações suficientes).`);
+  // coeficiente de localização (opcional): só é mostrado e explicado — o zonamento das Finanças não está em dados
+  // abertos, por isso não há os Cl das outras zonas da freguesia para o situar nem para ajustar valores
+  if (v.cl) li.push(`Coeficiente de localização (Cl) da tua casa: ${fmt.n(v.cl, 2)}. É o fator com que as Finanças valorizam a localização no valor patrimonial tributário (base do IMI): vai de 0,4 a 3,5 (0,35 em habitação dispersa em zonas rurais) e, dentro do mesmo concelho, um Cl mais alto indica uma zona que o fisco considera mais valiosa. Não entra nas contas desta análise: as Finanças não publicam o zonamento em dados abertos, por isso não dá para o comparar com o resto da freguesia — para isso, vê no mapa de zonamento das Finanças o Cl das zonas à volta. É revisto só de tantos em tantos anos e não acompanha o mercado de perto.`);
   // 2) valor hoje
   if (main) {
     const val = v.price * (1 + main.g);
@@ -1795,7 +1798,7 @@ async function imAnalyse() {
     } else li.push(`Não há renda publicada para ${m.name}: sem estimativa de arrendamento.`);
   } else li.push(`Não há índices de preços para ${m.name} que cubram ${qpt(q0)}: sem estimativa de valor.`);
   const inputs = [`${esc(m.name)}${pr ? `, ${esc(pr.name)}` : ''}`, `compra em ${esc(monthTxt(v.date))}`, `${fmt.eur(v.price)}`, `${fmt.n(v.area, v.area % 1 ? 1 : 0)} m²`,
-    v.kind === 'apt' ? 'apartamento' : v.kind === 'house' ? 'moradia' : null, typName || null].filter(Boolean).join(' · ');
+    v.kind === 'apt' ? 'apartamento' : v.kind === 'house' ? 'moradia' : null, typName || null, v.cl ? `Cl ${fmt.n(v.cl, 2)}` : null].filter(Boolean).join(' · ');
   out.innerHTML = `<p class="muted">Dados: ${inputs}. Calculado em ${new Date().toISOString().slice(0, 10)} com os dados do painel de ${META.built_at.slice(0, 10)}.</p>
     ${verdict || rentVerdict ? `<div class="im-verdicts">${[verdict, rentVerdict].filter(Boolean).join('')}</div>` : ''}
     <div class="stats">${tiles.join('')}</div>
