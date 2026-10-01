@@ -78,6 +78,41 @@ def fetch_bis_credit_gap(cfg: dict) -> pd.DataFrame:
     return out.dropna().sort_values("period").reset_index(drop=True)
 
 
+def parse_jsonstat_panel(js: dict, panel_dim: str = "geo") -> pd.DataFrame:
+    """JSON-stat 2.0 com duas dimensões não triviais (ex.: país e tempo) -> colunas geo, period, value."""
+    ids, sizes = js["id"], js["size"]
+    if any(s != 1 for d, s in zip(ids, sizes) if d not in (panel_dim, "time")):
+        raise ValueError(f"JSON-stat com dimensões não filtradas: {dict(zip(ids, sizes))}")
+
+    def labels(dim):
+        cat = js["dimension"][dim]["category"]["index"]
+        return sorted(cat, key=lambda k: cat[k]) if isinstance(cat, dict) else list(cat)
+
+    strides = [1] * len(ids)
+    for i in range(len(ids) - 2, -1, -1):
+        strides[i] = strides[i + 1] * sizes[i + 1]
+    gi, ti = ids.index(panel_dim), ids.index("time")
+    values = js["value"]
+    get = (lambda i: values.get(str(i))) if isinstance(values, dict) else (lambda i: values[i] if i < len(values) else None)
+    rows = []
+    for a, g in enumerate(labels(panel_dim)):
+        for b, t in enumerate(labels("time")):
+            v = get(a * strides[gi] + b * strides[ti])
+            if v is not None:
+                rows.append((g, t.replace("-Q", "Q"), float(v)))
+    return pd.DataFrame(rows, columns=[panel_dim, "period", "value"])
+
+
+def fetch_eurostat_panel(cfg: dict) -> pd.DataFrame:
+    """Vários países num só pedido (parâmetro geo repetido). Séries mensais passam a médias trimestrais."""
+    r = _get(cfg["url"], cfg.get("params", {}))
+    df = parse_jsonstat_panel(r.json())
+    if df["period"].str.contains("-").any():          # mensal ('2024-01')
+        df = pd.concat([monthly_to_quarterly(g[["period", "value"]]).assign(geo=geo)
+                        for geo, g in df.groupby("geo")], ignore_index=True)
+    return df.sort_values(["geo", "period"]).reset_index(drop=True)
+
+
 FETCHERS = {
     "euribor_3m": fetch_euribor,
     "euribor_6m": fetch_euribor,
@@ -86,4 +121,6 @@ FETCHERS = {
     "eurostat_hpi": fetch_eurostat_hpi,
     "eurostat_hicp": fetch_eurostat_hicp,
     "bis_credit_gap": fetch_bis_credit_gap,
+    "eurostat_hpi_eu": fetch_eurostat_panel,
+    "eurostat_hicp_eu": fetch_eurostat_panel,
 }

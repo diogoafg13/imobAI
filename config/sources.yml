@@ -272,6 +272,43 @@ ine:
       level: municipality
       dims: {dim_3: "02"}
       optional: true
+    # Licenças por tipologia (mesmo pedido que dwellings_licensed; só nacional/regiões): 1 = T0/T1, 2 = T2, 3 = T3, 4 = T4+.
+    dwellings_licensed_t01:
+      varcd: "0012097"
+      description: Fogos licenciados T0/T1 (N.º)
+      level: national
+      dims: {dim_3: "1"}
+      optional: true
+    dwellings_licensed_t2:
+      varcd: "0012097"
+      description: Fogos licenciados T2 (N.º)
+      level: national
+      dims: {dim_3: "2"}
+      optional: true
+    dwellings_licensed_t3:
+      varcd: "0012097"
+      description: Fogos licenciados T3 (N.º)
+      level: national
+      dims: {dim_3: "3"}
+      optional: true
+    dwellings_licensed_t4:
+      varcd: "0012097"
+      description: Fogos licenciados T4 ou mais (N.º)
+      level: national
+      dims: {dim_3: "4"}
+      optional: true
+    # Turismo: hóspedes e taxa de ocupação-cama (catálogo do INE). Dimensões ainda não confirmadas: sem
+    # `dims`, falham alto e de forma não-fatal se houver categorias; o snapshot bruto mostra as opções.
+    tourism_guests:
+      varcd: "0012089"          # Hóspedes (N.º) nos estabelecimentos de alojamento turístico
+      description: Hóspedes em alojamento turístico (N.º)
+      level: municipality
+      optional: true
+    tourism_occupancy:
+      varcd: "0013288"          # Taxa líquida de ocupação cama (%) nos estabelecimentos de alojamento turístico
+      description: Taxa líquida de ocupação-cama (%)
+      level: municipality
+      optional: true
     # Não usados: 0012786 (Transações em €, só até NUTS II, sem número de vendas), 0012748 e 0012742
     # (rendimento bruto médio e agregados fiscais por escalão) — ver README.
     income:
@@ -348,6 +385,15 @@ macro:
     # IHPC (inflação) de Portugal, 2015=100, mensal. Serve para deflacionar o HPI (preço real).
     url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_midx
     params: {geo: PT, coicop: CP00, unit: I15, format: JSON, lang: EN}
+    optional: true
+  # Portugal face à Europa: HPI e IHPC dos 27 países da UE num só pedido cada (geo repetido). Só contexto.
+  eurostat_hpi_eu:
+    url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hpi_q
+    params: {geo: [AT, BE, BG, CY, CZ, DE, DK, EE, EL, ES, FI, FR, HR, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, RO, SE, SI, SK], purchase: TOTAL, unit: I15_Q, format: JSON, lang: EN}
+    optional: true
+  eurostat_hicp_eu:
+    url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_midx
+    params: {geo: [AT, BE, BG, CY, CZ, DE, DK, EE, EL, ES, FI, FR, HR, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, RO, SE, SI, SK], coicop: CP00, unit: I15, format: JSON, lang: EN}
     optional: true
   bis_credit_gap:
     # BIS data portal (SDMX). Série: crédito ao sector privado não financeiro / PIB, desvio da tendência.
