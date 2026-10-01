@@ -66,6 +66,13 @@ const GLOSS = {
   census: ['Censos 2021: vagos e 2.ª habitação', 'Parte dos alojamentos familiares clássicos do concelho que estavam vagos (para venda ou arrendamento, ou por outros motivos: obras, heranças, abandono) ou eram de residência secundária (férias, fim de semana) no dia dos Censos 2021 (INE). Fotografia de 2021: o mercado mudou desde então. Muitas casas vagas não estão em condições de ser habitadas.'],
   beds: ['Alojamento turístico', 'Camas em alojamento turístico por 100 alojamentos familiares do concelho (INE): alojamento local e total (hotelaria, alojamento local e turismo rural). O alojamento local é o que mais compete com a habitação, porque usa casas. O INE só conta estabelecimentos com 10 ou mais camas, por isso o alojamento local pequeno (a maioria dos registos) fica de fora: o valor subestima o peso real. O parque habitacional usado é a estimativa mais recente do INE (2022).'],
   afford_hist: ['Esforço ao longo do tempo', 'Prestação de uma casa de 90 m² à avaliação bancária mediana do país, 90% financiada a 30 anos à taxa média dos novos créditos à habitação em cada trimestre (BCE), a dividir pelo rendimento nacional desse ano: salário médio bruto (INE) e mediana do rendimento declarado no IRS após imposto (÷ 12). Nos trimestres depois do último ano de rendimento publicado usa-se esse último ano (até 2 anos), o que exagera um pouco o esforço mais recente.'],
+  score_why: ['Porque é este o score', 'O score de valorização é a média de três percentis entre concelhos: quão depressa o preço subiu em 12 meses, quão depressa subiu em 3 anos e quão baixa é a rendibilidade bruta (renda ÷ preço). Cada barra diz em que posição o concelho está nessa peça (100 = o mais esticado de todos). Sem renda publicada, a média faz-se só com as duas subidas. Concelhos com dados voláteis são puxados para o meio (50).'],
+  rent_effort: ['Esforço de arrendar', 'Renda da mesma casa (renda mediana de novos contratos × área escolhida) a dividir pelo rendimento mensal escolhido na calculadora. É o par do esforço de compra para quem arrenda. Como referência, o Eurostat considera sobrecarga gastar mais de 40% do rendimento disponível com a casa.'],
+  fc_vs_be: ['Previsão vs ponto de equilíbrio', 'Compara a variação do preço prevista pelo modelo para os próximos 12 meses (e o intervalo onde o valor real caiu 80% das vezes no passado) com a valorização anual a partir da qual comprar sai mais barato do que arrendar. É só uma comparação de números: uma previsão a 12 meses não diz nada sobre os anos seguintes, o modelo erra, e não é aconselhamento financeiro.'],
+  europe: ['Portugal face à Europa', 'Índice de preços da habitação de cada país da UE (Eurostat, 2015 = 100) dividido pelo índice de preços no consumidor desse país (IHPC): a subida dos preços das casas acima da inflação. Compara ritmos de subida, não níveis de preço (um m² em Lisboa e em Paris não é comparável por este índice). Cada país publica com atrasos diferentes: usa-se o último trimestre com dados em pelo menos 2/3 dos países.'],
+  follow: ['Os teus concelhos', 'Concelhos que escolheste seguir (botão ☆ no detalhe). A lista fica guardada só neste browser. Mostra o que mudou desde o trimestre anterior e os números principais.'],
+  par_irs: ['Freguesias: rendimento e Censos', 'Por freguesia: mediana do rendimento declarado no IRS depois do imposto (por pessoa que declara, ÷ 12; o INE não publica freguesias com poucos declarantes), e a parte das casas vagas e de segunda habitação no Censos 2021. O esforço de compra por freguesia usa o preço da freguesia (só onde o INE o publica) e o rendimento do IRS de quem lá vive, com a casa e o crédito da calculadora.'],
+  tourism_guests: ['Hóspedes e ocupação', 'Hóspedes em alojamento turístico nos últimos 12 meses publicados (INE, mensal; hotelaria, alojamento local com 10+ camas e turismo rural) e variação face aos 12 meses anteriores; parte dos hóspedes em alojamento local; taxa líquida de ocupação-cama no último ano (camas ocupadas ÷ camas disponíveis). Turismo a crescer depressa num concelho costuma puxar pelos preços e pelas rendas, sobretudo pelo alojamento local.'],
   migration: ['Saldo migratório', 'Diferença entre quem chegou e quem saiu do concelho num ano (INE). Positivo = mais gente a chegar do que a sair. Só contexto demográfico — não entra em nenhum score.'],
   score_valuation: ['Score de valorização', 'Percentil entre concelhos: mistura crescimento do preço a 12 meses e a 3 anos com rendibilidade baixa. 0 = menos esticado, 100 = mais. É relativo, não uma probabilidade de bolha.'],
   score_overall: ['Score global', 'Igual ao de valorização enquanto não houver dados de oferta (licenças, conclusões). Concelhos voláteis (⚠) são atenuados para o meio (50).'],
@@ -134,6 +141,10 @@ METRICS.ef = { prop: 'ef', pal: PAL, fixed: [0.1, 0.7], f: (v) => fmt.pct(v, 0),
   help: 'Prestação do crédito ÷ rendimento mensal do concelho, para a casa, o crédito e o rendimento escolhidos em "Comprar casa". Verde = prestação leve; amarelo ≈ 40%, perto do limite do Banco de Portugal; laranja e vermelho = acima de 55%. Cinzento = sem rendimento ou preço publicado.' };
 METRICS.br = { prop: 'br', pal: DIV_PAL, diverge: true, f: (v) => fmt.spct(v, 0), label: 'Prestação face à renda',
   help: 'Prestação do crédito face à renda da mesma casa (renda mediana de novos contratos). Azul = a prestação é mais baixa do que a renda; laranja = mais alta. A prestação inclui amortização (poupança): ver o ponto de equilíbrio em "Comprar casa". Cinzento = sem renda publicada.' };
+METRICS.rf = { prop: 'rf', pal: PAL, fixed: [0.1, 0.7], f: (v) => fmt.pct(v, 0), label: 'Esforço de arrendar',
+  help: 'Renda da mesma casa (novos contratos) ÷ rendimento mensal, com a área e o rendimento escolhidos em "Comprar casa". Verde = renda leve; amarelo ≈ 40%; laranja e vermelho = acima de 55%. Cinzento = sem renda ou rendimento publicado.' };
+METRICS.tg = { prop: 'tg', pal: DIV_PAL, diverge: true, f: (v) => fmt.spct(v, 0), label: 'Hóspedes: variação num ano',
+  help: 'Variação do número de hóspedes em alojamento turístico nos últimos 12 meses face aos 12 anteriores (INE). Laranja = turismo a crescer; azul = a cair. Cinzento = sem dados (poucos estabelecimentos).' };
 METRICS.al = { prop: 'al', pal: SEQ, f: (v) => fmt.n(v, 1), label: 'Camas de alojamento local por 100 alojamentos',
   help: 'Camas em alojamento local (estabelecimentos com 10+ camas, INE) por 100 alojamentos familiares. Mais escuro = mais casas a servir turistas. Não inclui o alojamento local pequeno, que é a maioria: o peso real é maior. Cinzento = sem alojamento local publicado.' };
 METRICS.vac = { prop: 'vac', pal: SEQ, f: (v) => fmt.pct(v, 0), label: 'Alojamentos vagos (Censos 2021)',
@@ -141,7 +152,7 @@ METRICS.vac = { prop: 'vac', pal: SEQ, f: (v) => fmt.pct(v, 0), label: 'Alojamen
 METRICS.sec = { prop: 'sec', pal: SEQ, f: (v) => fmt.pct(v, 0), label: 'Residência secundária (Censos 2021)',
   help: 'Parte dos alojamentos de residência secundária (férias, fim de semana) no Censos 2021. Mais escuro = mais casas que não servem quem vive no concelho.' };
 const METRIC_VAL = { score: (x) => x.score_overall, price: (x) => x.price, yield: (x) => x.gross_yield, g1y: (x) => x.price_growth_1y, g1yr: (x) => x.price_growth_1y_real,
-  fc: (x) => x.fc_growth_12m, fv: (x) => x.fv_gap, fp: (x) => x.foreign_premium, ef: (x) => x.aff_effort, br: (x) => x.aff_pay_vs_rent,
+  fc: (x) => x.fc_growth_12m, fv: (x) => x.fv_gap, fp: (x) => x.foreign_premium, ef: (x) => x.aff_effort, br: (x) => x.aff_pay_vs_rent, rf: (x) => x.aff_rent_effort, tg: (x) => x.guests_growth_1y,
   al: (x) => x.al_beds_per_100, vac: (x) => x.vacant_share, sec: (x) => x.secondary_share };
 const DIV = ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'];
 const PMETRICS = {
@@ -151,10 +162,32 @@ const PMETRICS = {
     help: 'Preço mediano da freguesia face à mediana do concelho. Azul = mais barata do que o concelho; laranja = mais cara.' },
   f_price: { prop: 'price', src: 'par', pal: SEQ, f: fmt.eur, label: '€/m² (freguesia)',
     help: 'Preço mediano de venda da freguesia (INE, últimos 12 meses). O INE só publica cerca de 400 freguesias, quase todas urbanas.' },
+  f_irs: { prop: 'irs_m', src: 'par', pal: SEQ, f: fmt.eur, label: 'Rendimento IRS €/mês (freguesia)',
+    help: 'Mediana do rendimento declarado no IRS depois do imposto, por pessoa que declara, ÷ 12 (INE). Mais escuro = rendimento mais alto. Cinzento = o INE não publica (freguesias com poucos declarantes).' },
+  f_ef: { prop: 'ef', src: 'par', pal: PAL, fixed: [0.1, 0.7], f: (v) => fmt.pct(v, 0), label: 'Esforço de compra (freguesia)',
+    help: 'Prestação de uma casa ao preço da freguesia (casa e crédito da calculadora "Comprar casa") ÷ rendimento do IRS de quem lá vive. Só onde o INE publica preço E rendimento da freguesia. Verde = leve; amarelo ≈ 40%; vermelho = acima de 55%.' },
+  f_vac: { prop: 'vac', src: 'par', pal: SEQ, f: (v) => fmt.pct(v, 0), label: 'Vagos (Censos 2021)',
+    help: 'Parte dos alojamentos vagos na freguesia no Censos 2021 (para venda, arrendamento ou outros motivos). Muitos precisam de obras.' },
+  f_sec: { prop: 'sec', src: 'par', pal: SEQ, f: (v) => fmt.pct(v, 0), label: '2.ª habitação (Censos 2021)',
+    help: 'Parte dos alojamentos de residência secundária na freguesia no Censos 2021.' },
   f_g1y: { prop: 'g1y', src: 'par', pal: SEQ, f: (v) => fmt.pct(v), label: 'Var. 12m (freguesia)',
     help: 'Variação do preço mediano da freguesia face a um ano antes. Com poucas vendas, salta muito: lê com cautela.' },
 };
-let LEVEL = 'c', PAR = null;
+let LEVEL = 'c', PAR = null, PGJ = null, PARBY = {};
+function parishDerive() {
+  if (!PAR) return;
+  const rate = affRate();
+  PAR.rows.forEach((r) => {
+    r.irs_m = r.irs_median != null ? r.irs_median / 12 : null;
+    r.vac = r.vacant_share; r.sec = r.secondary_share;
+    const pay = r.price != null ? annuity(r.price * AFF.area * (1 - AFF.down / 100), rate, AFF.years) : null;
+    r.ef = pay != null && r.irs_m ? pay / (r.irs_m * AFF.earners) : null;
+  });
+  if (PGJ) {
+    PGJ.features.forEach((f) => { const r = PARBY[f.properties.code]; ['irs_m', 'ef', 'vac', 'sec'].forEach((k) => { f.properties[k] = r ? r[k] ?? null : null; }); });
+    if (MAP && MAP.getSource('f')) MAP.getSource('f').setData(PGJ);
+  }
+}
 const curMetric = () => (LEVEL === 'f' ? PMETRICS[$('#metric-f').value] : METRICS[$('#metric').value]);
 function quantile(sorted, q) { const i = (sorted.length - 1) * q, lo = Math.floor(i), hi = Math.ceil(i); return sorted[lo] + (sorted[hi] - sorted[lo]) * (i - lo); }
 function domain(m) {
@@ -339,6 +372,7 @@ async function addParishLayer() {
   if (MAP.getSource('f')) return true;
   let gj;
   try { gj = await j('data/freguesias.geojson'); } catch { return false; }
+  PGJ = gj; parishDerive();
   MAP.addSource('f', { type: 'geojson', data: gj, promoteId: 'code' });
   MAP.addLayer({ id: 'f-fill', type: 'fill', source: 'f', paint: { 'fill-color': metricExpr(curMetric()), 'fill-opacity': 0.92 } }, 'line');
   MAP.addLayer({ id: 'f-line', type: 'line', source: 'f', paint: { 'line-color': css('--card'), 'line-width': 0.4 } }, 'line');
@@ -347,7 +381,7 @@ async function addParishLayer() {
   MAP.on('mousemove', 'f-fill', (e) => {
     const f = e.features[0]; if (!f) return;
     const p = f.properties, m = curMetric(), conc = BY[String(p.code).slice(0, 4)];
-    pop.setLngLat(e.lngLat).setHTML(`<b>${esc(p.name)}</b>${conc ? ` <span style="color:#555">(${esc(conc.name)})</span>` : ''}<br>${esc(m.label)}: ${esc(m.f(nz(p[m.prop])))}<br>€/m²: ${esc(fmt.eur(nz(p.price)))}<br><span style="color:#555">clica para o concelho</span>`).addTo(MAP);
+    pop.setLngLat(e.lngLat).setHTML(`<b>${esc(p.name || "Freguesia sem dados")}</b>${conc ? ` <span style="color:#555">(${esc(conc.name)})</span>` : ''}<br>${esc(m.label)}: ${esc(m.f(nz(p[m.prop])))}<br>€/m²: ${esc(fmt.eur(nz(p.price)))}<br><span style="color:#555">clica para o concelho</span>`).addTo(MAP);
   });
   MAP.on('mouseleave', 'f-fill', () => pop.remove());
   MAP.on('click', 'f-fill', (e) => { const f = e.features[0]; if (f) select(String(f.properties.code).slice(0, 4)); });
@@ -386,14 +420,19 @@ function renderParList() {
     <ul class="ol-list">${cheap}</ul>`;
 }
 function renderParTable(dico) {
-  const rows = PAR ? PAR.rows.filter((r) => r.dico === dico).sort((a, b) => a.price - b.price) : [];
+  const rows = PAR ? PAR.rows.filter((r) => r.dico === dico).sort((a, b) => (b.price ?? -1) - (a.price ?? -1) || String(a.name).localeCompare(String(b.name), 'pt')) : [];
   $('#d-par').hidden = !rows.length;
   if (!rows.length) return;
-  const hasRent = rows.some((r) => r.rent != null), hasNb = rows.some((r) => r.rel_nb != null);
-  $('#d-par-table').innerHTML = `<thead><tr><th>Freguesia</th><th>€/m²</th><th>Face ao concelho</th>${hasNb ? '<th>Face às vizinhas</th>' : ''}<th>Var. 12m</th>${hasRent ? '<th>Renda €/m²</th>' : ''}</tr></thead><tbody>` +
-    rows.map((r) => `<tr><td>${esc(r.name)}</td><td>${fmt.eur(r.price)}</td><td>${fmt.spct(r.rel_muni, 0)}</td>${hasNb ? `<td>${fmt.spct(r.rel_nb, 0)}</td>` : ''}<td>${fmt.pct(r.g1y)}</td>${hasRent ? `<td>${r.rent == null ? '—' : fmt.eur2(r.rent)}</td>` : ''}</tr>`).join('') + '</tbody>';
-  const total = rows.length;
-  $('#d-par-note').textContent = `${total} ${total === 1 ? 'freguesia publicada' : 'freguesias publicadas'} pelo INE (${qpt(PAR.period)}, últimos 12 meses); as restantes têm poucas vendas.${hasRent ? ` Renda: novos contratos em ${rows.find((r) => r.rent_year)?.rent_year ?? '—'}.` : ''} Medianas de freguesia assentam em poucas vendas — diferenças grandes podem ser só o tipo de casas vendidas.`;
+  const has = (k) => rows.some((r) => r[k] != null);
+  const hasP = has('price'), hasRent = has('rent'), hasNb = has('rel_nb'), hasIrs = has('irs_median'), hasCen = has('vacant_share');
+  const th = [['Freguesia', true], ['€/m²', hasP], ['Face ao concelho', hasP], ['Face às vizinhas', hasNb], ['Var. 12m', hasP], ['Renda €/m²', hasRent],
+    ['IRS €/mês', hasIrs], ['Esforço', hasP && hasIrs], ['Vagos', hasCen], ['2.ª hab.', hasCen]];
+  const td = (r) => [esc(r.name), fmt.eur(r.price), fmt.spct(r.rel_muni, 0), fmt.spct(r.rel_nb, 0), fmt.pct(r.g1y), r.rent == null ? '—' : fmt.eur2(r.rent),
+    fmt.eur(r.irs_m), fmt.pct(r.ef, 0), fmt.pct(r.vacant_share, 0), fmt.pct(r.secondary_share, 0)];
+  $('#d-par-table').innerHTML = `<thead><tr>${th.filter((x) => x[1]).map((x) => `<th>${x[0]}</th>`).join('')}</tr></thead><tbody>` +
+    rows.map((r) => `<tr>${td(r).filter((_, i) => th[i][1]).map((v) => `<td>${v}</td>`).join('')}</tr>`).join('') + '</tbody>';
+  const np = rows.filter((r) => r.price != null).length;
+  $('#d-par-note').textContent = `${rows.length} freguesias; ${np} com preço publicado pelo INE (${qpt(PAR.period)}, últimos 12 meses) — as restantes têm poucas vendas.${hasRent ? ` Renda: novos contratos em ${rows.find((r) => r.rent_year)?.rent_year ?? '—'}.` : ''}${hasIrs ? ` IRS: mediana após imposto por pessoa que declara (${rows.find((r) => r.irs_year)?.irs_year ?? '—'}), ÷ 12; esforço com a casa e o crédito da calculadora.` : ''}${hasCen ? ' Vagos e 2.ª habitação: Censos 2021.' : ''} Medianas de freguesia assentam em poucas vendas — diferenças grandes podem ser só o tipo de casas vendidas.`;
 }
 
 // ---------- detalhe / comparação
@@ -423,6 +462,7 @@ function readList(m) {
     const mv = median(col((x) => x.vacant_share)), ms = median(col((x) => x.secondary_share));
     li.push(`Censos 2021: ${fmt.pct(m.vacant_share, 0)} dos alojamentos estavam vagos (mediana dos concelhos ${fmt.pct(mv, 0)}; ${fmt.pct(m.vacant_market_share, 1)} para venda ou arrendamento) e ${fmt.pct(m.secondary_share, 0)} eram de residência secundária (mediana ${fmt.pct(ms, 0)}).`);
   }
+  if (m.guests_12m != null) li.push(`Turismo: ${fmt.n(m.guests_12m, 0)} hóspedes nos 12 meses até ${esc(m.guests_until)} (${fmt.spct(m.guests_growth_1y, 0)} face aos 12 anteriores)${m.guests_al_share != null ? `, ${fmt.pct(m.guests_al_share, 0)} em alojamento local` : ''}${m.occupancy != null ? `; ocupação-cama de ${fmt.pct(m.occupancy, 0)} em ${m.occupancy_year}${m.occupancy_chg != null ? ` (${m.occupancy_chg >= 0 ? '+' : '−'}${fmt.n(Math.abs(m.occupancy_chg) * 100, 1)} p.p.)` : ''}` : ''}.`);
   if (m.beds_per_100 != null) li.push(`Alojamento turístico (${m.tourism_beds_year}): ${fmt.n(m.beds_per_100, 1)} camas por 100 alojamentos${m.al_beds_per_100 != null ? `, ${fmt.n(m.al_beds_per_100, 1)} delas em alojamento local` : ''} (mediana dos concelhos ${fmt.n(median(col((x) => x.beds_per_100)), 1)}; sem o alojamento local com menos de 10 camas).`);
   if (m.cycle_phase) li.push(`Ciclo: preço ${fmt.spct(m.price_growth_1y)} e compras com crédito ${fmt.spct(m.val_count_growth_1y, 0)} num ano — «${CYCLE_SHORT[m.cycle_phase]}»${m.cycle_phase === 'up_down' ? ', a fase típica de fim de ciclo (a procura arrefece antes dos preços)' : ''}.`);
   if (m.val_gap_chg != null) li.push(`A avaliação bancária está ${fmt.spct(m.val_gap, 0)} face ao preço pago e ${Math.abs(m.val_gap_chg) < 0.03 ? 'acompanhou os preços' : m.val_gap_chg < 0 ? `ficou ${fmt.n(-m.val_gap_chg * 100, 0)} p.p. mais para trás num ano (bancos mais cautelosos ou mais compras sem crédito)` : `avançou ${fmt.n(m.val_gap_chg * 100, 0)} p.p. mais do que o preço num ano`}.`);
@@ -535,6 +575,17 @@ function fanChart(id, m) {
     ],
   }, true);
 }
+function scoreWhy(m) {
+  const parts = [['Subida do preço em 12 meses', m.score_part_g1y, fmt.pct(m.price_growth_1y)],
+    ['Subida do preço em 3 anos', m.score_part_g3y, fmt.pct(m.price_growth_3y)],
+    ['Rendibilidade baixa (renda ÷ preço)', m.score_part_yield, m.gross_yield == null ? 'sem renda publicada' : `rendibilidade ${fmt.pct(m.gross_yield, 2)}`]];
+  const ok = parts.filter((x) => x[1] != null);
+  if (!ok.length || m.score_overall == null) return '';
+  const raw = ok.reduce((a, x) => a + x[1], 0) / ok.length;
+  const bar = ([label, v, ctxt]) => `<div class="why-row"><span>${esc(label)}</span><span class="why-bar"><i style="width:${v == null ? 0 : Math.max(2, v)}%"></i></span><b>${v == null ? '—' : fmt.n(v)}</b><span class="muted">${esc(ctxt)}</span></div>`;
+  return `<h3>Porque é este o score ${info('score_why')}</h3>${parts.map(bar).join('')}
+    <p class="muted">Score = média ${ok.length < 3 ? `das ${ok.length} peças com dados` : 'das três peças'} = ${fmt.n(raw)}${m.volatile ? `; com dados voláteis é puxado para o meio: 50 + (${fmt.n(raw)} − 50) ÷ 2 = ${fmt.n(m.score_overall)}` : ''}. Cada número é o percentil entre concelhos (100 = o mais esticado).</p>`;
+}
 function select(dico, scroll = true) {
   const m = BY[dico]; if (!m) return;
   if (MAP && MAP.getSource('c')) {
@@ -560,7 +611,7 @@ function select(dico, scroll = true) {
     ...(m.aff_effort != null ? [tile('effort', `Esforço de compra (${AFF.area} m²)`, fmt.pct(m.aff_effort, 0),
       `<span class="ctx">prestação ${fmt.eur(m.aff_pay)}/mês · ${fmt.n(m.aff_years_salary, 1)} anos de ${incTxt().short} · com +${fmt.n(AFF.shock, 0)} p.p. de juros: ${fmt.pct(m.aff_effort_stress, 0)} · ${ctx((x) => x.aff_effort, m.aff_effort, (v) => fmt.pct(v, 0)).replace(/<[^>]+>/g, '')}</span>`)] : []),
     ...(m.aff_rent_home != null ? [tile('buy_rent', 'Prestação vs renda', `${fmt.eur(m.aff_pay)} vs ${fmt.eur(m.aff_rent_home)}`,
-      `<span class="ctx">${breakevenTxt(m.aff_breakeven)}</span>`)] : []),
+      `<span class="ctx">${breakevenTxt(m.aff_breakeven)}${m.aff_rent_effort != null ? ` · renda = ${fmt.pct(m.aff_rent_effort, 0)} do ${incTxt().short}` : ''}${fcBeShort(m)}</span>`)] : []),
     ...(m.cycle_phase ? [tile('cycle', 'Ciclo preço–volume', esc(CYCLE_SHORT[m.cycle_phase]),
       `<span class="ctx">preço ${fmt.spct(m.price_growth_1y)} · compras com crédito ${fmt.spct(m.val_count_growth_1y, 0)} num ano</span>`)] : []),
     ...(m.val_gap != null ? [tile('val_gap', 'Avaliação vs preço pago', fmt.spct(m.val_gap, 0),
@@ -569,6 +620,8 @@ function select(dico, scroll = true) {
       `<span class="ctx">${fmt.eur(m.irs_median)}/ano por pessoa, após imposto${m.irs_growth_1y != null ? ` · ${fmt.spct(m.irs_growth_1y)} num ano` : ''}</span>`)] : []),
     ...(m.vacant_share != null ? [tile('census', 'Vagos / 2.ª habitação (2021)', `${fmt.pct(m.vacant_share, 0)} / ${fmt.pct(m.secondary_share, 0)}`,
       `<span class="ctx">vagos para venda ou arrendamento: ${fmt.pct(m.vacant_market_share, 1)} · ${fmt.n(m.census_total, 0)} alojamentos</span>`)] : []),
+    ...(m.guests_12m != null ? [tile('tourism_guests', 'Hóspedes (12 meses)', `${fmt.n(m.guests_12m / 1000, m.guests_12m < 10000 ? 1 : 0)} mil`,
+      `<span class="ctx">${fmt.spct(m.guests_growth_1y, 0)} num ano${m.guests_al_share != null ? ` · ${fmt.pct(m.guests_al_share, 0)} em AL` : ''}${m.occupancy != null ? ` · ocupação ${fmt.pct(m.occupancy, 0)} (${m.occupancy_year})` : ''}</span>`)] : []),
     ...(m.beds_per_100 != null ? [tile('beds', 'Camas turísticas /100 aloj.', `${m.al_beds_per_100 != null ? fmt.n(m.al_beds_per_100, 1) + ' AL · ' : ''}${fmt.n(m.beds_per_100, 1)} total`,
       `<span class="ctx">${m.tourism_beds_year}; AL = alojamento local com 10+ camas</span>`)] : []),
     tile('score_valuation', 'Score valorização', fmt.n(m.score_valuation)),
@@ -603,6 +656,8 @@ function select(dico, scroll = true) {
       ctx((x) => x.housing_credit_pc, m.housing_credit_pc, fmt.eur))] : []),
   ].join('');
   $('#d-read').innerHTML = readList(m);
+  $('#d-why').innerHTML = scoreWhy(m);
+  const fb = $('#d-follow'); fb.textContent = FOLLOW.includes(dico) ? '★ A seguir' : '☆ Seguir'; fb.setAttribute('aria-pressed', FOLLOW.includes(dico));
   try { renderParTable(dico); } catch (e) { console.error('Falha nas freguesias:', e); }
   const s = [{ name: 'Preço', data: m.series.price, fmt: (v) => fmt.eur(v) + '/m²' }];
   if (m.series.price_real && m.series.price_real.length) s.push({ name: `Preço real (€ de ${qpt(m.hicp_period)})`, data: m.series.price_real, dashed: true, fmt: (v) => fmt.eur(v) + '/m²' });
@@ -631,9 +686,11 @@ const COMPARE_ROWS = [
   ['r2i', 'Renda/rendimento', (m) => (m.rent_to_income == null ? '—' : fmt.pct(m.rent_to_income, 1))],
   ['effort', 'Esforço de compra (prestação/rendimento)', (m) => (m.aff_effort == null ? '—' : `${fmt.pct(m.aff_effort, 0)} (${fmt.eur(m.aff_pay)}/mês)`)],
   ['buy_rent', 'Prestação vs renda da mesma casa', (m) => (m.aff_rent_home == null ? '—' : `${fmt.eur(m.aff_pay)} vs ${fmt.eur(m.aff_rent_home)}`)],
+  ['rent_effort', 'Esforço de arrendar (renda/rendimento)', (m) => (m.aff_rent_effort == null ? '—' : `${fmt.pct(m.aff_rent_effort, 0)} (${fmt.eur(m.aff_rent_home)}/mês)`)],
   ['buy_rent', 'Valorização para comprar compensar', (m) => (m.aff_breakeven == null ? '—' : fmt.spct(m.aff_breakeven) + '/ano')],
   ['irs', 'Rendimento IRS (mediana, após imposto)', (m) => (m.irs_median == null ? '—' : `${fmt.eur(m.irs_median / 12)}/mês (${m.irs_year})`)],
   ['census', 'Vagos / 2.ª habitação (Censos 2021)', (m) => (m.vacant_share == null ? '—' : `${fmt.pct(m.vacant_share, 0)} / ${fmt.pct(m.secondary_share, 0)}`)],
+  ['tourism_guests', 'Hóspedes 12 meses (variação; ocupação)', (m) => (m.guests_12m == null ? '—' : `${fmt.n(m.guests_12m, 0)} (${fmt.spct(m.guests_growth_1y, 0)}; ${fmt.pct(m.occupancy, 0)})`)],
   ['beds', 'Camas turísticas por 100 aloj. (AL / total)', (m) => (m.beds_per_100 == null ? '—' : `${fmt.n(m.al_beds_per_100, 1)} / ${fmt.n(m.beds_per_100, 1)}`)],
   ['stress', 'Esforço com subida de juros', (m) => (m.aff_effort_stress == null ? '—' : `${fmt.pct(m.aff_effort_stress, 0)} (+${fmt.n(AFF.shock, 0)} p.p.)`)],
   ['cycle', 'Ciclo preço–volume', (m) => esc(m.cycle_phase ? CYCLE_SHORT[m.cycle_phase] : '—')],
@@ -659,6 +716,26 @@ const COMPARE_ROWS = [
   ['credit_pc', 'Crédito habitação/hab.', (m) => fmt.eur(m.housing_credit_pc)],
 ];
 let compareMetric = 'price';
+const FOLLOW_KEY = 'imopt.follow.v1';
+let FOLLOW = [];
+try { FOLLOW = JSON.parse(localStorage.getItem(FOLLOW_KEY) || '[]').filter((d) => typeof d === 'string'); } catch { FOLLOW = []; }
+function toggleFollow(d) {
+  const i = FOLLOW.indexOf(d);
+  if (i >= 0) FOLLOW.splice(i, 1); else FOLLOW.push(d);
+  try { localStorage.setItem(FOLLOW_KEY, JSON.stringify(FOLLOW)); } catch { /* sem armazenamento */ }
+  renderFollow();
+  if (selected) select(selected, false);
+}
+function renderFollow() {
+  const sec = $('#follow'), list = FOLLOW.filter((d) => BY[d]);
+  sec.hidden = !list.length;
+  if (!list.length) return;
+  const row = (m) => `<tr><td>${lnk(m.dico, m.name)}</td><td>${fmt.eur(m.price)}</td><td>${fmt.spct(m.price_qoq)}</td><td>${fmt.pct(m.price_growth_1y)}</td>
+    <td>${m.score_prev != null ? `${fmt.n(m.score_prev)} → ` : ''}${fmt.n(m.score_overall)} ${pill(m.band)}${m.band_prev && m.band_prev !== m.band ? ' <span class="muted">mudou</span>' : ''}</td>
+    <td>${fmt.spct(m.fc_growth_12m)}</td><td>${fmt.pct(m.aff_effort, 0)}</td><td>${m.cycle_phase ? esc(CYCLE_SHORT[m.cycle_phase]) : '—'}</td>
+    <td><button type="button" class="btn small" data-unfollow="${esc(m.dico)}" aria-label="Deixar de seguir ${esc(m.name)}">✕</button></td></tr>`;
+  $('#follow-body').innerHTML = `<div class="table-wrap"><table class="ol-table"><thead><tr><th>Concelho</th><th>€/m²</th><th>Trimestre${CH ? ` (${qpt(CH.prev_period)}→${qpt(CH.period)})` : ''}</th><th>12 meses</th><th>Score</th><th>Previsão 12m</th><th>Esforço</th><th>Ciclo</th><th></th></tr></thead><tbody>${list.map((d) => row(BY[d])).join('')}</tbody></table></div>`;
+}
 function renderCompare() {
   $('#compare').hidden = compare.length === 0;
   if (!compare.length) return;
@@ -826,28 +903,48 @@ function affordOf(m) {
     aff_inc: inc,
     aff_rent_home: rentHome,
     aff_pay_vs_rent: rentHome ? pay / rentHome - 1 : null,
+    aff_rent_effort: rentHome && inc ? rentHome / inc : null,
     // custo de ser dono no 1.º ano (juros sobre o preço todo + IMI/manutenção) menos a renda poupada, em % do preço
     aff_breakeven: rentHome ? rate / 100 + OWN_COST - (rentHome * 12) / P : null,
   };
 }
 function applyAfford() {
   PRUDENT = LIMIT[affBase()];
+  try { parishDerive(); } catch (e) { console.error('freguesias:', e); }
   MUNIS.forEach((m) => Object.assign(m, affordOf(m)));
   if (GEO) GEO.features.forEach((f) => {
     const m = BY[f.properties.dico];
-    ['ef', 'br', 'al', 'vac', 'sec'].forEach((k) => { f.properties[k] = m ? METRIC_VAL[k](m) ?? null : null; });
+    ['ef', 'br', 'rf', 'tg', 'al', 'vac', 'sec'].forEach((k) => { f.properties[k] = m ? METRIC_VAL[k](m) ?? null : null; });
   });
   if (MAP && MAP.getSource('c')) MAP.getSource('c').setData(GEO);
 }
 const breakevenTxt = (g) => (g == null ? '' : g <= 0
   ? 'comprar sai mais barato do que arrendar mesmo sem a casa valorizar'
   : `comprar só compensa se a casa valorizar mais de ${fmt.pct(g, 1)}/ano`);
+// previsão do modelo para 12 meses face ao ponto de equilíbrio (só comparação; não é aconselhamento)
+function fcRange(m) {
+  const base = m.nowcast_price ?? m.price;
+  if (m.fc_growth_12m == null || !base) return null;
+  return { mid: m.fc_growth_12m, lo: m.fc_lo80 != null ? m.fc_lo80 / base - 1 : null, hi: m.fc_hi80 != null ? m.fc_hi80 / base - 1 : null };
+}
+function fcBeShort(m) {
+  const r = fcRange(m);
+  return r && m.aff_breakeven != null ? ` · previsão 12m ${fmt.spct(r.mid)} vs equilíbrio ${fmt.spct(m.aff_breakeven)}` : '';
+}
+function fcBeTxt(m) {
+  const r = fcRange(m), be = m.aff_breakeven;
+  if (!r || be == null) return '';
+  const where = r.lo != null && r.lo > be ? 'mesmo o limite de baixo do intervalo fica acima do ponto de equilíbrio'
+    : r.hi != null && r.hi < be ? 'mesmo o limite de cima do intervalo fica abaixo do ponto de equilíbrio'
+      : 'o ponto de equilíbrio cai dentro do intervalo, por isso a previsão não decide';
+  return ` Previsão do modelo para o preço em 12 meses: ${fmt.spct(r.mid)}${r.lo != null ? ` (80%: ${fmt.spct(r.lo)} a ${fmt.spct(r.hi)})` : ''}, face a um ponto de equilíbrio de ${fmt.spct(be)}/ano — ${where}. Uma previsão a 12 meses não diz nada sobre os anos seguintes e não é aconselhamento.`;
+}
 function affReadTxt(m) {
   const e = m.aff_effort, who = AFF.earners > 1 ? 'de ' + incTxt().many(AFF.earners) : 'do ' + incTxt().one;
   let t = `Comprar ${AFF.area} m² ao preço mediano custa ${fmt.eur(m.aff_home)}; com ${AFF.down}% de entrada (${fmt.eur(m.aff_down)}) e crédito a ${AFF.years} anos a ${fmt.n(affRate(), 2)}%, a prestação é ${fmt.eur(m.aff_pay)}/mês`;
   if (e != null) t += ` — ${fmt.pct(e, 0)} ${who} (${incYear(m) || 'n/d'}: ${fmt.eur(m.aff_inc)}/mês)${e > PRUDENT ? `, acima de ~${fmt.pct(PRUDENT, 0)}, o equivalente aproximado ao limite do Banco de Portugal (prestação até 50% do rendimento líquido)` : ''}`;
   t += '.';
-  if (m.aff_rent_home != null) t += ` Arrendar a mesma casa custa cerca de ${fmt.eur(m.aff_rent_home)}/mês (novos contratos): a prestação fica ${fmt.spct(m.aff_pay_vs_rent, 0)} face à renda, e ${breakevenTxt(m.aff_breakeven)} (já contando juros, IMI e manutenção; sem IMT e escritura).`;
+  if (m.aff_rent_home != null) t += ` Arrendar a mesma casa custa cerca de ${fmt.eur(m.aff_rent_home)}/mês (novos contratos): a prestação fica ${fmt.spct(m.aff_pay_vs_rent, 0)} face à renda, e ${breakevenTxt(m.aff_breakeven)} (já contando juros, IMI e manutenção; sem IMT e escritura). A renda leva ${fmt.pct(m.aff_rent_effort, 0)} do mesmo rendimento.${fcBeTxt(m)}`;
   return t;
 }
 function affLoad() {
@@ -887,6 +984,7 @@ function renderAfford() {
   const eMed = median(ok.map((m) => m.aff_effort)), over = ok.filter((m) => m.aff_effort > PRUDENT).length;
   const overS = ok.filter((m) => m.aff_effort_stress > PRUDENT).length, payS = annuity(P * AFF.area * (1 - AFF.down / 100), affRate() + AFF.shock, AFF.years);
   const wr = MUNIS.filter((m) => m.aff_pay_vs_rent != null), cheaper = wr.filter((m) => m.aff_pay_vs_rent < 0).length;
+  const rfOk = MUNIS.filter((m) => m.aff_rent_effort != null), rfMed = median(rfOk.map((m) => m.aff_rent_effort)), rfOver = rfOk.filter((m) => m.aff_rent_effort > 0.4).length;
   const be = median(wr.map((m) => m.aff_breakeven)), beNeg = wr.filter((m) => m.aff_breakeven <= 0).length;
   // listas só com mercado suficiente (como em "O que mudou"): sem dados voláteis e com >= 20 avaliações em 3 meses
   const hasVol = MUNIS.filter((m) => m.val_count != null).length >= 10;
@@ -899,7 +997,8 @@ function renderAfford() {
     <p class="verdict">No concelho típico (${fmt.eur(P)}/m²), ${AFF.area} m² custam <b>${fmt.eur(P * AFF.area)}</b>: com ${fmt.n(AFF.down, 0)}% de entrada e ${AFF.years} anos a ${fmt.n(affRate(), 2)}%, a prestação é <b>${fmt.eur(payTyp)}/mês</b>.
       A prestação leva, a meio dos concelhos, <b>${fmt.pct(eMed, 0)}</b> ${who}; em <b>${over} de ${ok.length}</b> passa de ${fmt.pct(PRUDENT, 0)}, o equivalente aproximado ao limite do Banco de Portugal.
       <b>Teste de juros</b> ${info('stress')}: com a taxa ${fmt.n(AFF.shock, 1)} p.p. acima (${fmt.n(affRate() + AFF.shock, 2)}%), a mesma prestação típica passa para <b>${fmt.eur(payS)}</b> (${fmt.spct(payS / payTyp - 1, 0)}) e ${overS} concelhos ficam acima de ${fmt.pct(PRUDENT, 0)}.
-      ${wr.length ? `Nos ${wr.length} concelhos com renda publicada, a prestação é mais baixa do que a renda da mesma casa em <b>${cheaper}</b>; contando juros, IMI e manutenção, ${be <= 0 ? 'no concelho típico comprar sai mais barato do que arrendar mesmo sem a casa valorizar' : `no concelho típico comprar só sai mais barato do que arrendar se a casa valorizar mais de <b>${fmt.pct(be, 1)}/ano</b>`} — em <b>${beNeg} dos ${wr.length}</b> compensa mesmo sem valorizar.` : ''}</p>
+      ${wr.length ? `Nos ${wr.length} concelhos com renda publicada, a prestação é mais baixa do que a renda da mesma casa em <b>${cheaper}</b>; contando juros, IMI e manutenção, ${be <= 0 ? 'no concelho típico comprar sai mais barato do que arrendar mesmo sem a casa valorizar' : `no concelho típico comprar só sai mais barato do que arrendar se a casa valorizar mais de <b>${fmt.pct(be, 1)}/ano</b>`} — em <b>${beNeg} dos ${wr.length}</b> compensa mesmo sem valorizar.` : ''}
+      ${rfOk.length ? ` <b>Arrendar</b> ${info('rent_effort')} a mesma casa leva, a meio dos concelhos, <b>${fmt.pct(rfMed, 0)}</b> ${AFF.earners > 1 ? 'dos rendimentos' : 'do ' + incTxt().short}; em ${rfOver} de ${rfOk.length} passa de 40%.` : ''}</p>
     <div class="ol-cols">
       <div><p class="muted"><b>Menor esforço</b> (prestação ÷ ${incTxt().short})</p><ul class="ol-list wrap-list">${top(ok, 'aff_effort', true).map(itE).join('')}</ul></div>
       <div><p class="muted"><b>Maior esforço</b></p><ul class="ol-list wrap-list">${top(ok, 'aff_effort', false).map(itE).join('')}</ul></div>
@@ -923,7 +1022,8 @@ function initAfford() {
   const update = () => {
     affReadForm(); affSave(); applyAfford(); renderAfford();
     try { renderTable(); } catch (e) { console.error(e); }
-    if (['ef', 'br'].includes($('#metric').value)) updateMetric();
+    if (['ef', 'br', 'rf'].includes($('#metric').value) || (LEVEL === 'f' && $('#metric-f').value === 'f_ef')) updateMetric();
+    renderFollow();
     if (selected) select(selected, false);
     if (compare.length) renderCompare();
   };
@@ -1202,6 +1302,9 @@ function olSupply(S) {
       ${lc ? ` Concluíram-se ${fmt.n(lc[1], 0)} em ${lc[0]}${lc[2] != null ? ` (${fmt.n(lc[2], 1)} por 1000)` : ''}, longe dos ${fmt.n(peak(C)[1], 0)} de ${peak(C)[0]}.` : ''}
       ${rl && rl.change != null ? ` Nos 12 meses até ${esc(rl.until)}: ${fmt.n(rl.last12, 0)} licenciados (${fmt.spct(rl.change, 0)} face aos 12 meses anteriores)` : ''}${rc && rc.change != null ? `; nos 4 trimestres até ${qpt(rc.until)}: ${fmt.n(rc.last12, 0)} concluídos (${fmt.spct(rc.change, 0)})` : ''}.</p>
     <div class="chart-cap"><span>País: fogos novos por ano (anos completos)</span></div><div id="ol-supply" class="chart"></div>
+    ${S.mix ? `<p class="muted" style="margin-top:10px"><b>Que casas se licenciam</b> — peso de cada tipologia nos fogos licenciados, face à subida do preço de venda dessa tipologia no país</p>
+    <div class="table-wrap"><table class="ol-table"><thead><tr><th>Tipologia</th><th>% das licenças ${S.mix.year_before}</th><th>% das licenças ${S.mix.year}</th><th>Preço, 12 meses (país)</th></tr></thead><tbody>
+    ${S.mix.rows.map((r) => `<tr><td>${esc(r.label)}</td><td>${fmt.pct(r.share_before, 0)}</td><td>${fmt.pct(r.share_now, 0)}</td><td>${fmt.spct(r.price_growth_1y)}</td></tr>`).join('')}</tbody></table></div>` : ''}
     <p class="muted">O INE só publica licenças e conclusões até às regiões, não por concelho. Licenças são oferta futura (2 a 3 anos até à conclusão) e nem todas são construídas. Só contexto: não entra no score.</p>`;
 }
 function olAffHist(A) {
@@ -1218,6 +1321,28 @@ function olAffHist(A) {
     <div class="chart-cap"><span>Prestação mensal da mesma casa (€)</span></div><div id="ol-ah-pay" class="chart"></div>
     ${s.some((r) => eff(r) != null) ? '<div class="chart-cap"><span>Prestação em % do rendimento do país</span></div><div id="ol-ah-eff" class="chart"></div>' : ''}
     <p class="muted">A avaliação bancária só cobre casas compradas com crédito. Rendimentos nacionais: ${s.some((r) => r.irs_year) ? 'mediana do IRS após imposto (÷ 12)' : ''}${s.some((r) => r.irs_year) && s.some((r) => r.wage_year) ? ' e ' : ''}${s.some((r) => r.wage_year) ? 'salário médio bruto' : ''}; depois do último ano publicado repete-se esse ano (no máximo 2 anos), o que exagera um pouco o esforço recente.${s.some((r) => r.irs_year) ? ' A linha do IRS fica acima da do salário porque a mediana de quem declara IRS (incluindo pensionistas e tempo parcial, depois do imposto) é mais baixa do que o salário médio bruto.' : ''}</p>`;
+}
+function olEurope(E) {
+  const pt = E.pt;
+  return `<h3>Portugal face à Europa ${info('europe')}</h3>
+    <p>Até ${qpt(E.period)}, os preços da habitação em Portugal subiram <b>${fmt.spct(pt.real_2015, 0)}</b> acima da inflação desde 2015 (${fmt.spct(pt.nominal_2015, 0)} sem descontar a inflação) — <b>${E.rank}.º</b> de ${E.n} países da UE com dados; a mediana dos países foi ${fmt.spct(E.median_real_2015, 0)}.
+      No último ano: ${fmt.spct(pt.real_1y)} acima da inflação${E.rank_1y ? ` (${E.rank_1y}.º de ${E.n_1y}; mediana ${fmt.spct(E.median_real_1y)})` : ''}.${pt.from_peak < -0.005 ? ` Está ${fmt.spct(pt.from_peak, 0)} abaixo do máximo real.` : ' Está no máximo da série, em termos reais.'}</p>
+    <div class="chart-cap"><span>Subida real desde 2015 por país (HPI ÷ IHPC)</span></div><div id="ol-eu-bars" class="chart" style="height:${Math.max(320, E.countries.length * 18 + 40)}px"></div>
+    <div class="chart-cap"><span>Preço real, 2015 = 100: Portugal e a mediana dos países da UE</span></div><div id="ol-eu-line" class="chart"></div>
+    <p class="muted">Compara ritmos de subida, não níveis de preço. A subida forte em Portugal partiu de preços muito baixos depois da crise de 2011–2013. Fonte: Eurostat (prc_hpi_q, prc_hicp_midx).</p>`;
+}
+function euBars(id, E) {
+  const txt = css('--muted'), line = css('--line');
+  const rows = E.countries.slice().reverse();
+  freshChart(id).setOption({
+    animation: false,
+    grid: { left: 8, right: 40, top: 8, bottom: 8, containLabel: true },
+    tooltip: { trigger: 'item', confine: true, formatter: (p) => { const r = rows[p.dataIndex]; return `<b>${esc(r.name)}</b><br>Real desde 2015: ${fmt.spct(r.real_2015, 0)}<br>Nominal: ${fmt.spct(r.nominal_2015, 0)}<br>Real no último ano: ${fmt.spct(r.real_1y)}`; } },
+    xAxis: { type: 'value', axisLabel: { color: txt, formatter: (v) => v + '%' }, splitLine: { lineStyle: { color: line } } },
+    yAxis: { type: 'category', data: rows.map((r) => r.name), axisLabel: { color: txt, fontSize: 11 }, axisLine: { lineStyle: { color: line } } },
+    series: [{ type: 'bar', barMaxWidth: 12, label: { show: true, position: 'right', color: txt, fontSize: 10, formatter: (p) => fmt.spct(p.value / 100, 0) },
+      data: rows.map((r) => ({ value: +(r.real_2015 * 100).toFixed(1), itemStyle: { color: r.geo === 'PT' ? css('--s2') : css('--s1'), borderRadius: r.real_2015 < 0 ? [4, 0, 0, 4] : [0, 4, 4, 0] } })) }],
+  }, true);
 }
 function renderOutlook() {
   const body = $('#outlook-body');
@@ -1239,6 +1364,7 @@ function renderOutlook() {
   if (OL.ripple) add('propagação', () => olRipple(OL.ripple));
   if (OL.fair_value) add('valor justo', () => olFair(OL.fair_value));
   if (OL.rates) add('juros', () => olRates(OL.rates));
+  if (OL.europe) add('europa', () => olEurope(OL.europe));
   if (OL.afford_hist) add('esforço no tempo', () => olAffHist(OL.afford_hist));
   if (OL.supply) add('oferta', () => olSupply(OL.supply));
   if (OL.cycle) add('ciclo', () => olCycle(OL.cycle));
@@ -1248,6 +1374,11 @@ function renderOutlook() {
   const chart = (name, fn) => { try { fn(); } catch (e) { console.error(`Falha no gráfico ${name}:`, e); } };
   if ($('#ol-regimes')) chart('regimes', () => regimesChart('ol-regimes', OL.regimes));
   if ($('#ol-cycle')) chart('ciclo', () => cycleChart('ol-cycle', OL.cycle));
+  if ($('#ol-eu-bars')) chart('europa barras', () => euBars('ol-eu-bars', OL.europe));
+  if ($('#ol-eu-line')) chart('europa linha', () => lineChart('ol-eu-line', 'Preço real', [
+    { name: 'Portugal', data: OL.europe.series.PT.map((r) => [qpt(r[0]), r[1]]), fmt: (v) => fmt.n(v, 0) },
+    { name: 'Mediana UE', data: OL.europe.series.median.map((r) => [qpt(r[0]), r[1]]), fmt: (v) => fmt.n(v, 0) },
+  ], { names: ['2015 = 100'], refs: [{ y: 100, label: '2015' }], notitle: true }));
   if ($('#ol-supply')) chart('oferta', () => lineChart('ol-supply', 'Fogos novos', [
     ...(OL.supply.series.licensed ? [{ name: 'Licenciados', data: OL.supply.series.licensed.map((r) => [r[0], r[1]]), fmt: (v) => fmt.n(v, 0) }] : []),
     ...(OL.supply.series.completed ? [{ name: 'Concluídos', data: OL.supply.series.completed.map((r) => [r[0], r[1]]), fmt: (v) => fmt.n(v, 0) }] : []),
@@ -1284,7 +1415,7 @@ function renderOutlook() {
 
 // ---------- ranking
 const COL_HELP = { price: 'price', price_growth_1y: 'g1y', rent: 'rent', gross_yield: 'yield', price_to_income_months: 'p2i',
-  rent_to_income: 'r2i', migration_balance: 'migration', aff_effort: 'effort', aff_pay_vs_rent: 'buy_rent', fc_growth_12m: 'fc12', score_overall: 'score_overall', band: 'band' };
+  rent_to_income: 'r2i', migration_balance: 'migration', aff_effort: 'effort', aff_pay_vs_rent: 'buy_rent', aff_rent_effort: 'rent_effort', fc_growth_12m: 'fc12', score_overall: 'score_overall', band: 'band' };
 const COLS = [
   ['name', 'Concelho', (m) => esc(m.name) + (m.volatile ? ' <span title="Preços muito voláteis (poucas transações): score atenuado">⚠</span>' : '')], ['price', '€/m²', (m) => fmt.eur(m.price)],
   ['price_growth_1y', 'Var. 12m', (m) => fmt.pct(m.price_growth_1y)], ['rent', 'Renda €/m²', (m) => (m.rent == null ? '—' : fmt.eur2(m.rent))],
@@ -1293,6 +1424,7 @@ const COLS = [
   ['rent_to_income', 'Renda/rend.', (m) => (m.rent_to_income == null ? '—' : fmt.pct(m.rent_to_income, 1))],
   ['aff_effort', 'Esforço', (m) => fmt.pct(m.aff_effort, 0)],
   ['aff_pay_vs_rent', 'Prest./renda', (m) => fmt.spct(m.aff_pay_vs_rent, 0)],
+  ['aff_rent_effort', 'Esforço arrend.', (m) => fmt.pct(m.aff_rent_effort, 0)],
   ['migration_balance', 'Saldo migrat.', (m) => (m.migration_balance == null ? '—' : (m.migration_balance >= 0 ? '+' : '') + fmt.n(m.migration_balance, 0))],
   ['fc_growth_12m', 'Prev. 12m', (m) => fmt.spct(m.fc_growth_12m)],
   ['score_overall', 'Score', (m) => fmt.n(m.score_overall)],
@@ -1362,6 +1494,7 @@ async function main() {
   try { OL = await j('data/outlook.json'); } catch { OL = null; }
   try { PAR = await j('data/freguesias.json'); } catch { PAR = null; }
   CH = OL && OL.changes ? OL.changes : null;
+  if (PAR) PARBY = Object.fromEntries(PAR.rows.map((r) => [r.code, r]));
   MUNIS.forEach((m) => (BY[m.dico] = m));
   $('#stamp').textContent = `Atualizado ${META.built_at.slice(0, 10)} · último período de preços: ${META.latest_price_period} · ${META.n_municipalities} concelhos`;
   $('#demo-banner').hidden = !META.demo;
@@ -1388,10 +1521,22 @@ async function main() {
   safe('painel nacional', renderNational);
   safe('comprar casa', initAfford);
   // indicadores do mapa sem nenhum valor nesta build (ex.: fonte que falhou) não aparecem na lista
-  safe('métricas vazias', () => [...$('#metric').options].forEach((o) => {
-    const g = METRIC_VAL[o.value];
-    if (g && !MUNIS.some((m) => g(m) != null)) o.remove();
-  }));
+  safe('métricas vazias', () => {
+    [...$('#metric').options].forEach((o) => {
+      const g = METRIC_VAL[o.value];
+      if (g && !MUNIS.some((m) => g(m) != null)) o.remove();
+    });
+    [...$('#metric-f').options].forEach((o) => {
+      const pm = PMETRICS[o.value];
+      if (pm && !(PAR && PAR.rows.some((r) => r[pm.prop] != null))) o.remove();
+    });
+  });
+  safe('seguidos', renderFollow);
+  $('#d-follow').addEventListener('click', () => selected && toggleFollow(selected));
+  $('#follow-body').addEventListener('click', (e) => {
+    const u = e.target.closest('[data-unfollow]'); if (u) { toggleFollow(u.dataset.unfollow); return; }
+    const a = e.target.closest('a[data-d]'); if (a) { e.preventDefault(); select(a.dataset.d); }
+  });
   safe('ranking', () => { renderTable(); renderRankingSummary(); });
   safe('backtest', renderBacktest);
   safe('perspetivas', renderOutlook);

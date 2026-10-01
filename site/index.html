@@ -86,6 +86,11 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     </div>
   </section>
 
+  <section id="follow" class="card" hidden>
+    <div class="row"><h2>Os teus concelhos <button type="button" class="info" data-k="follow" aria-label="Sobre os concelhos seguidos">ⓘ</button></h2></div>
+    <div id="follow-body"></div>
+  </section>
+
   <section id="changes" class="card" hidden>
     <div class="row"><h2 id="changes-title">O que mudou <button type="button" class="info" data-k="changes" aria-label="Sobre as mudanças">ⓘ</button></h2></div>
     <div id="changes-body"></div>
@@ -131,6 +136,8 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <option value="fp">Prémio pago por estrangeiros</option>
         <option value="ef">Esforço de compra</option>
         <option value="br">Prestação face à renda</option>
+        <option value="rf">Esforço de arrendar</option>
+        <option value="tg">Turismo: hóspedes num ano</option>
         <option value="al">Alojamento local</option>
         <option value="vac">Casas vagas (Censos 2021)</option>
         <option value="sec">Segunda habitação (Censos 2021)</option>
@@ -140,6 +147,10 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <option value="f_rel_muni">Preço face ao concelho</option>
         <option value="f_price">Preço €/m²</option>
         <option value="f_g1y">Variação preço 12 meses</option>
+        <option value="f_irs">Rendimento (IRS)</option>
+        <option value="f_ef">Esforço de compra</option>
+        <option value="f_vac">Casas vagas (Censos 2021)</option>
+        <option value="f_sec">Segunda habitação (Censos 2021)</option>
       </select>
     </div>
     <div id="map"></div>
@@ -151,10 +162,11 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
   <section id="detail" class="card" hidden>
     <div class="row">
       <h2 id="d-title"></h2>
-      <button id="d-compare" class="btn">Comparar</button>
+      <span><button id="d-follow" class="btn" type="button" aria-pressed="false">☆ Seguir</button> <button id="d-compare" class="btn">Comparar</button></span>
     </div>
     <div id="d-stats" class="stats"></div>
     <ul id="d-read" class="read"></ul>
+    <div id="d-why"></div>
     <div id="chart-detail" class="chart tall"></div>
     <p id="d-chart-note" class="muted">Preço: mediana de vendas dos últimos 12 meses, trimestral (eixo esquerdo). Renda: mediana de novos contratos, anual (eixo direito, pontos).</p>
     <div id="d-par" hidden>

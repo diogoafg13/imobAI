@@ -27,7 +27,54 @@ def _parish_rows(df: pd.DataFrame | None) -> pd.DataFrame | None:
     return d.assign(code=d["geocod"].astype(str).str[-6:]) if len(d) else None
 
 
-def table(sales: pd.DataFrame | None, rent: pd.DataFrame | None, muni_price: dict[str, float]) -> pd.DataFrame:
+def _census_rows(df: pd.DataFrame | None) -> pd.Series | None:
+    """Censos 2021: freguesia com geocod de 6 dígitos (DICOFRE)."""
+    if df is None or df.empty or "geocod" not in df:
+        return None
+    g = df["geocod"].astype(str).str.strip()
+    d = df[g.str.fullmatch(r"\d{6}")].dropna(subset=["value"])
+    return d.assign(code=d["geocod"].astype(str).str.strip()).drop_duplicates("code", keep="last").set_index("code") if len(d) else None
+
+
+def table(sales: pd.DataFrame | None, rent: pd.DataFrame | None, muni_price: dict[str, float],
+          irs: pd.DataFrame | None = None, census: dict[str, pd.DataFrame | None] | None = None) -> pd.DataFrame:
+    """Uma linha por freguesia com preço (INE publica ~400) OU rendimento do IRS / Censos (quase todas)."""
+    out = _price_table(sales, rent, muni_price)
+    period = out.attrs.get("period")
+    names = {} if out.empty else dict(zip(out.index, out["name"]))
+    extra = pd.DataFrame()
+    r = _parish_rows(irs)
+    if r is not None:
+        ly = int(r["sort_key"].max())
+        piv = r.pivot_table(index="code", columns="sort_key", values="value", aggfunc="last")
+        extra = pd.DataFrame({"irs_median": piv[ly], "irs_year": ly // 100})
+        prev = _shift_key(ly, "year", 1)
+        if prev in piv.columns:
+            extra["irs_growth_1y"] = piv[ly] / piv[prev] - 1
+        extra = extra.dropna(subset=["irs_median"])
+        names.update({c: n for c, n in r.drop_duplicates("code", keep="last").set_index("code")["geoname"].items() if c not in names})
+    c = {k: _census_rows((census or {}).get(k)) for k in ("total", "secondary", "vacant_market", "vacant_other")}
+    if c["total"] is not None:
+        tot = c["total"]["value"]
+        cen = pd.DataFrame({"census_total": tot})
+        if c["secondary"] is not None:
+            cen["secondary_share"] = c["secondary"]["value"].reindex(tot.index) / tot
+        if c["vacant_market"] is not None and c["vacant_other"] is not None:
+            cen["vacant_share"] = (c["vacant_market"]["value"].reindex(tot.index) + c["vacant_other"]["value"].reindex(tot.index)) / tot
+        cen = cen[cen["census_total"] > 0]
+        extra = cen if extra.empty else extra.join(cen, how="outer")
+        names.update({k: n for k, n in c["total"]["geoname"].items() if k not in names})
+    if not extra.empty:
+        out = extra if out.empty else out.join(extra, how="outer")
+    if out.empty:
+        return pd.DataFrame()
+    out["name"] = [names.get(k) for k in out.index]
+    out["dico"] = out.index.str[:4]
+    out.attrs["period"] = period
+    return out.rename_axis("code").reset_index()
+
+
+def _price_table(sales, rent, muni_price) -> pd.DataFrame:
     s = _parish_rows(sales)
     if s is None:
         return pd.DataFrame()
@@ -47,34 +94,45 @@ def table(sales: pd.DataFrame | None, rent: pd.DataFrame | None, muni_price: dic
         out["rent"] = rr.reindex(out.index)
         out["rent_year"] = ly // 100
     out.attrs["period"] = s.loc[s["sort_key"] == latest, "period"].iloc[0]
-    return out.rename_axis("code").reset_index()
+    return out.rename_axis("code")
 
 
 def add_neighbours(t: pd.DataFrame, parish_geo: dict | None) -> pd.DataFrame:
     """Preço face à mediana das freguesias vizinhas com dados (pelo menos MIN_NEIGHBOURS)."""
     if t.empty or not parish_geo:
         return t
-    codes = set(t["code"])
+    t = t.copy()
+    codes = set(t.loc[t["price"].notna(), "code"]) if "price" in t else set()
     sub = {"type": "FeatureCollection",
            "features": [f for f in parish_geo.get("features", []) if (f.get("properties") or {}).get("code") in codes]}
     _, nbrs = geo.spatial_index(sub, key="code", touch_deg=0.003)
-    price = t.set_index("code")["price"]
+    price = t.set_index("code")["price"].dropna()
     rel, n_nb = [], []
-    for c, v in price.items():
+    for c in t["code"]:
+        if c not in price.index:
+            rel.append(np.nan)
+            n_nb.append(0)
+            continue
         vals = [price[n] for n in nbrs.get(c, []) if n in price.index]
         n_nb.append(len(vals))
-        rel.append(v / float(np.median(vals)) - 1 if len(vals) >= MIN_NEIGHBOURS else np.nan)
+        rel.append(price[c] / float(np.median(vals)) - 1 if len(vals) >= MIN_NEIGHBOURS else np.nan)
     return t.assign(rel_nb=rel, n_nb=n_nb)
 
 
 def geojson_out(t: pd.DataFrame, parish_geo: dict | None) -> dict | None:
     if t.empty or not parish_geo:
         return None
-    keep = {r.code: {"name": r.name, "price": _r(r.price), "g1y": _r(r.g1y), "rel_muni": _r(r.rel_muni),
-                     "rel_nb": _r(getattr(r, "rel_nb", None))} for r in t.itertuples()}
-    gj = geo.slim_geojson(parish_geo, keep, tolerance=0.0008, key="code", only_kept=True)
-    return gj if gj["features"] else None
+    g = lambda r, k: _r(getattr(r, k, None))  # noqa: E731
+    keep = {r.code: {"name": r.name, "price": g(r, "price"), "g1y": g(r, "g1y"), "rel_muni": g(r, "rel_muni"),
+                     "rel_nb": g(r, "rel_nb"), "irs": g(r, "irs_median"), "vac": g(r, "vacant_share"),
+                     "sec": g(r, "secondary_share")} for r in t.itertuples()}
+    # todas as freguesias (as que não têm dados ficam a cinzento em vez de buracos no mapa)
+    gj = geo.slim_geojson(parish_geo, keep, tolerance=0.0008, key="code", only_kept=False)
+    return gj if any(f["properties"]["code"] in keep for f in gj["features"]) else None
 
 
 def _r(v):
-    return None if v is None or (isinstance(v, float) and not np.isfinite(v)) else round(float(v), 4)
+    if v is None:
+        return None
+    v = float(v)
+    return None if not np.isfinite(v) else round(v, 4)

@@ -25,3 +25,28 @@ def test_parse_jsonstat_panel_rejects_unfiltered():
     js["size"][0] = 2
     with pytest.raises(ValueError):
         macro.parse_jsonstat_panel(js)
+
+
+def _panel(rates, years=range(2014, 2026), infl=0.0):
+    rows_h, rows_c = [], []
+    for g, r in rates.items():
+        for y in years:
+            for q in range(1, 5):
+                k = (y - 2015) + (q - 1) / 4
+                rows_h.append((g, f"{y}Q{q}", 100 * (1 + r) ** k))
+                rows_c.append((g, f"{y}Q{q}", 100 * (1 + infl) ** k))
+    return pd.DataFrame(rows_h, columns=["geo", "period", "value"]), pd.DataFrame(rows_c, columns=["geo", "period", "value"])
+
+
+def test_compare_ranks_portugal_and_deflates():
+    from imopt import europe
+    rates = {g: 0.01 * i for i, g in enumerate(["DE", "FR", "IT", "AT", "BE", "NL", "ES", "IE", "PL", "LT", "EE"])}
+    rates["PT"] = 0.20
+    h, c = _panel(rates, infl=0.02)
+    e = europe.compare(h, c)
+    assert e["period"] == "2025Q4" and e["rank"] == 1 and e["n"] == 12
+    # 2015 = 100 nos dois índices: real = (1,2/1,02)^(anos) - 1, com a média de 2015 como base
+    pt = e["pt"]
+    assert pt["real_1y"] == pytest.approx(1.20 / 1.02 - 1, rel=1e-6) and pt["from_peak"] == pytest.approx(0.0)
+    assert e["series"]["PT"][0][0] == "2014Q1" or e["series"]["PT"][0][0] >= "2010Q1"
+    assert europe.compare(h[h["geo"] != "PT"], c) is None

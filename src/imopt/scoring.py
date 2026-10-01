@@ -128,6 +128,8 @@ def municipal_features(sales: pd.DataFrame, rent: pd.DataFrame | None,
 
     # Sub-score de valorização: crescimento recente + rendibilidade baixa.
     parts = [pct_rank(s["price_growth_1y"]), pct_rank(s["price_growth_3y"]), 100 - pct_rank(s["gross_yield"])]
+    # as três peças ficam visíveis no site ("porque é este o score"); não mudam o cálculo
+    s["score_part_g1y"], s["score_part_g3y"], s["score_part_yield"] = parts
     s["score_valuation"] = pd.concat(parts, axis=1).mean(axis=1, skipna=True)
     s.loc[pd.concat(parts, axis=1).isna().all(axis=1), "score_valuation"] = np.nan
 

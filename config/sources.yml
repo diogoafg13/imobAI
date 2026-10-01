@@ -297,17 +297,25 @@ ine:
       level: national
       dims: {dim_3: "4"}
       optional: true
-    # Turismo: hóspedes e taxa de ocupação-cama (catálogo do INE). Dimensões ainda não confirmadas: sem
-    # `dims`, falham alto e de forma não-fatal se houver categorias; o snapshot bruto mostra as opções.
+    # Turismo (dimensões confirmadas no snapshot bruto): dim_3 T = Total, 01 = Hotelaria, 02 = Alojamento local,
+    # 03 = Turismo no espaço rural e de habitação (a ocupação tem ainda subcategorias da hotelaria).
     tourism_guests:
-      varcd: "0012089"          # Hóspedes (N.º) nos estabelecimentos de alojamento turístico
+      varcd: "0012089"          # Hóspedes (N.º) nos estabelecimentos de alojamento turístico, MENSAL desde 2022, concelho
       description: Hóspedes em alojamento turístico (N.º)
       level: municipality
+      dims: {dim_3: "T"}
+      optional: true
+    tourism_guests_al:
+      varcd: "0012089"
+      description: Hóspedes em alojamento local (N.º)
+      level: municipality
+      dims: {dim_3: "02"}
       optional: true
     tourism_occupancy:
-      varcd: "0013288"          # Taxa líquida de ocupação cama (%) nos estabelecimentos de alojamento turístico
+      varcd: "0013288"          # Taxa líquida de ocupação-cama (%), anual desde 2022, concelho
       description: Taxa líquida de ocupação-cama (%)
       level: municipality
+      dims: {dim_3: "T"}
       optional: true
     # Não usados: 0012786 (Transações em €, só até NUTS II, sem número de vendas), 0012748 e 0012742
     # (rendimento bruto médio e agregados fiscais por escalão) — ver README.

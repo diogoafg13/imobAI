@@ -69,5 +69,37 @@ def test_build_outputs_supply_and_history(tmp_path):
     m = json.loads((tmp_path / "municipalities.json").read_text(encoding="utf-8"))[0]
     assert m["irs_median"] and m["vacant_share"] is not None and m["al_beds_per_100"] is not None
     assert ol["supply"]["series"]["licensed"] and ol["supply"]["recent"]["completed"]["change"] is not None
+    assert m["guests_12m"] and m["guests_growth_1y"] == pytest.approx(0.04, abs=0.02) and m["guests_al_share"] == pytest.approx(0.3, abs=0.01)
+    assert 0.3 <= m["occupancy"] <= 0.7 and "europe" in ol
     # contexto não mexe nos scores
     assert "score_supply" in m and m["score_supply"] is None
+
+
+def test_typology_mix_shares_and_price_growth():
+    def lic(vals):
+        keys = [y * 100 + m for y in range(2019, 2026) for m in range(1, 13)]
+        return pd.DataFrame(_rows("PT", "month", keys, [v for v in vals for _ in range(12)], "national"))
+    by_type = {"t01": lic([1, 1, 1, 1, 1, 2, 2]), "t2": lic([1] * 7), "t3": lic([2] * 7), "t4": lic([1] * 7)}
+    prices = {"t2": pd.DataFrame(_rows("PT", "quarter", [202501, 202502, 202503, 202504, 202601], [100, 1, 1, 1, 110.0], "national"))}
+    m = housing.typology_mix(by_type, prices)
+    assert m["year"] == 2025 and m["year_before"] == 2020
+    r = {x["key"]: x for x in m["rows"]}
+    assert r["t01"]["share_before"] == pytest.approx(0.2) and r["t01"]["share_now"] == pytest.approx(2 / 6)
+    assert r["t2"]["price_growth_1y"] == pytest.approx(0.1) and r["t3"]["price_growth_1y"] is None
+    assert housing.typology_mix({}, {}) is None
+
+
+def test_score_parts_average_to_valuation_score():
+    from imopt import scoring
+    frames, _ = demo.demo_frames()
+    f = scoring.municipal_features(pipeline.municipal(frames["sales_price_12m"]), pipeline.municipal(frames["rent_new_contracts"]))
+    parts = f[["score_part_g1y", "score_part_g3y", "score_part_yield"]].mean(axis=1)
+    assert (parts - f["score_valuation"]).abs().max() < 1e-9
+
+
+def test_last12_needs_full_years():
+    keys = [y * 100 + m for y in (2024, 2025) for m in range(1, 13)]
+    df = pd.DataFrame(_rows("0001", "month", keys, [1.0] * 12 + [2.0] * 12))
+    r = housing.last12(df).iloc[0]
+    assert r["now"] == 24.0 and r["growth"] == pytest.approx(1.0) and r["until"] == "2025-12"
+    assert pd.isna(housing.last12(df[df["sort_key"] >= 202403]).iloc[0]["growth"])

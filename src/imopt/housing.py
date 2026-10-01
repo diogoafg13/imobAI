@@ -44,6 +44,24 @@ def dico4(df: pd.DataFrame | None) -> pd.DataFrame | None:
     return df
 
 
+def last12(df: pd.DataFrame | None) -> pd.DataFrame | None:
+    """Série mensal por concelho -> soma dos últimos 12 meses publicados e variação face aos 12 anteriores."""
+    if df is None or df.empty:
+        return None
+    k = df["sort_key"].astype(int)
+    idx = (k // 100) * 12 + (k % 100) - 1
+    end = int(idx.max())
+    d = df.assign(i=idx)
+    now = d[d["i"] > end - 12].groupby("dico")["value"].agg(["sum", "count"])
+    prev = d[(d["i"] <= end - 12) & (d["i"] > end - 24)].groupby("dico")["value"].agg(["sum", "count"])
+    now = now[now["count"] == 12]["sum"]
+    if now.empty:
+        return None
+    prev = prev[prev["count"] == 12]["sum"].reindex(now.index)
+    return pd.DataFrame({"dico": now.index, "now": now.to_numpy(), "growth": (now / prev - 1).where(prev > 0).to_numpy(),
+                         "until": f"{end // 12}-{end % 12 + 1:02d}"})
+
+
 def context_features(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame:
     """Uma linha por concelho (municipais já filtrados). Colunas só aparecem se houver dados."""
     out = pd.DataFrame(columns=["dico"])
@@ -66,6 +84,15 @@ def context_features(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame:
     for key, name in (("tourism_beds", "tourism_beds"), ("tourism_beds_al", "al_beds")):
         if (d := latest(key)) is not None:
             add(pd.DataFrame({"dico": d["dico"], name: d["latest"], f"{name}_year": d["latest_key"] // 100}))
+    g = last12(frames.get("tourism_guests"))
+    if g is not None:
+        add(g.rename(columns={"now": "guests_12m", "growth": "guests_growth_1y", "until": "guests_until"}))
+        ga = last12(frames.get("tourism_guests_al"))
+        if ga is not None:
+            add(ga[["dico", "now"]].rename(columns={"now": "guests_al_12m"}))
+    if (d := latest("tourism_occupancy", lags={"y1": 1})) is not None:
+        add(pd.DataFrame({"dico": d["dico"], "occupancy": d["latest"] / 100, "occupancy_year": d["latest_key"] // 100,
+                          "occupancy_chg": (d["latest"] - d["y1"]) / 100}))
     census = {k: latest(f"census_{k}") for k in ("total", "secondary", "vacant_market", "vacant_other")}
     if census["total"] is not None:
         c = census["total"][["dico", "latest", "latest_key"]].rename(columns={"latest": "census_total"})
@@ -81,6 +108,8 @@ def context_features(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame:
         add(c.drop(columns=[k for k in ("secondary", "vacant_market", "vacant_other") if k in c]))
     if out.empty:
         return out
+    if "guests_al_12m" in out:
+        out["guests_al_share"] = (out["guests_al_12m"] / out["guests_12m"]).where(out["guests_12m"] > 0)
     if "dwellings" in out:
         for name, col in (("tourism_beds", "beds_per_100"), ("al_beds", "al_beds_per_100")):
             if name in out:
@@ -88,8 +117,44 @@ def context_features(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame:
     return out
 
 
+TYPOLOGIES = (("t01", "T0/T1"), ("t2", "T2"), ("t3", "T3"), ("t4", "T4+"))
+
+
+def typology_mix(by_type: dict[str, pd.DataFrame | None], prices: dict[str, pd.DataFrame | None]) -> dict | None:
+    """Que casas se licenciam (peso de cada tipologia nas licenças do país) face à subida do preço de cada uma."""
+    ann = {}
+    for k, _ in TYPOLOGIES:
+        df = by_type.get(k)
+        if df is None or df.empty:
+            return None
+        d = df[df["level"] == "national"] if "level" in df else df
+        a = to_annual(d.assign(dico="PT"), "sum")
+        if a is None or a.empty:
+            return None
+        ann[k] = a.set_index(a["sort_key"] // 100)["value"].astype(float)
+    tab = pd.DataFrame(ann).dropna()
+    if len(tab) < 6:
+        return None
+    share = tab.div(tab.sum(axis=1), axis=0)
+    y1, y0 = int(share.index.max()), int(share.index.max()) - 5
+    if y0 not in share.index:
+        return None
+    rows = []
+    for k, label in TYPOLOGIES:
+        g = None
+        pdf = prices.get(k)
+        if pdf is not None and not pdf.empty and "level" in pdf:
+            n = pdf[pdf["level"] == "national"].sort_values("sort_key")
+            if len(n) >= 5:
+                g = float(n["value"].iloc[-1] / n["value"].iloc[-5] - 1)
+        rows.append({"key": k, "label": label, "share_now": float(share.at[y1, k]), "share_before": float(share.at[y0, k]),
+                     "price_growth_1y": g})
+    return {"year": y1, "year_before": y0, "rows": rows,
+            "series": {k: [[str(y), round(float(v), 4)] for y, v in share[k].items()] for k, _ in TYPOLOGIES}}
+
+
 def supply(licensed: pd.DataFrame | None, completed: pd.DataFrame | None,
-           stock: pd.DataFrame | None = None) -> dict | None:
+           stock: pd.DataFrame | None = None, by_type: dict | None = None, prices: dict | None = None) -> dict | None:
     """Construção nova no país: o INE publica licenças (mensal) e conclusões (trimestral) só até às regiões, não por
     concelho. Série anual (anos completos), por 1000 alojamentos, e os últimos 12 meses face aos 12 anteriores."""
     def nat(df):
@@ -120,6 +185,9 @@ def supply(licensed: pd.DataFrame | None, completed: pd.DataFrame | None,
                                   "change": float(last / prev - 1) if prev > 0 else None}
     if not out["series"]:
         return None
+    mix = typology_mix(by_type or {}, prices or {})
+    if mix:
+        out["mix"] = mix
     if stock_a is not None:
         out["stock"] = {"year": int(stock_a.index[-1]), "value": float(stock_a.iloc[-1])}
     return out

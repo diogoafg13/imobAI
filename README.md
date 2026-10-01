@@ -319,6 +319,34 @@ no snapshot bruto do build de 2026-10-01 (ver `config/sources.yml`). Nenhum entr
   transações em €, e só até NUTS II; 0012748 e 0012742 (rendimento bruto médio, agregados fiscais por
   escalão) também ficaram de fora por não acrescentarem ao que já está.
 
+### Ronda 3: freguesias, arrendar, Europa, explicação do score, turismo e mais
+
+- **Freguesias com rendimento e Censos** (`imopt/parishes.py`): a tabela de freguesias passa a incluir todas as
+  freguesias com preço (INE, ~350), rendimento do IRS (0012757, ~790 — o INE não publica as que têm poucos
+  declarantes) ou Censos 2021 (~3080: vagos e residência secundária). Mapa com todas as fronteiras (sem dados
+  = cinzento) e quatro indicadores novos: rendimento, esforço de compra (preço da freguesia ÷ IRS de quem lá
+  vive, com a casa e o crédito da calculadora), vagos e 2.ª habitação.
+- **Esforço de arrendar**: renda da mesma casa ÷ rendimento escolhido, na calculadora, no mapa, no ranking,
+  no detalhe e na comparação. Com o salário de quem trabalha: 39% no concelho típico; 116 de 247 concelhos
+  acima de 40% (referência do Eurostat para sobrecarga com a habitação).
+- **Porque é este o score**: no detalhe de cada concelho, as três peças do score de valorização (percentis
+  da subida a 12 meses, a 3 anos e da rendibilidade baixa), a média e, nos concelhos voláteis, a atenuação.
+  As peças saem do mesmo cálculo (`score_part_*` em `scoring.py`); o score não muda.
+- **Portugal face à Europa** (`imopt/europe.py`): HPI do Eurostat ÷ IHPC de cada país (2015 = 100), num
+  pedido para os 27 países. Até 2025T4, Portugal subiu +123% acima da inflação desde 2015, 1.º de 26 países
+  (empatado com a Hungria; mediana +42%); +16% no último ano (2.º). O IHPC com base 2015 do Eurostat termina
+  em 2025T4 (o Eurostat mudou a base), por isso as contas reais param aí.
+- **Turismo** (0012089 mensal e 0013288 anual, por concelho): hóspedes nos últimos 12 meses e variação, parte
+  em alojamento local, taxa de ocupação-cama. Mapa "Turismo: hóspedes num ano".
+- **Licenças por tipologia** (0012097, só nacional): peso de T0/T1, T2, T3 e T4+ nos fogos licenciados (2020
+  vs 2025) ao lado da subida do preço de cada tipologia. Em 2025, 50% das licenças foram T0–T2 (36% em 2020).
+- **Seguir concelhos**: botão ☆ no detalhe; secção "Os teus concelhos" com o que mudou no trimestre, score,
+  previsão, esforço e fase do ciclo. Guardado só no browser.
+- **Previsão vs ponto de equilíbrio**: no detalhe, a previsão do preço a 12 meses (e o intervalo de 80%) ao
+  lado da valorização a partir da qual comprar compensa face a arrendar, dizendo se o intervalo fica todo
+  acima, todo abaixo ou se não decide. Com aviso: uma previsão a 12 meses não diz nada sobre os anos
+  seguintes e não é aconselhamento.
+
 ### Freguesias
 
 `imopt/parishes.py`. O preço mediano de venda por freguesia vem do mesmo indicador do INE (0012234,

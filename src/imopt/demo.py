@@ -110,6 +110,14 @@ def demo_frames(seed: int = 7):
         value=lambda d: [stock[x] * (1 + 0.004 * (int(p) - 2016)) for x, p in zip(d["dico"], d["period"])])
     frames["tourism_beds"] = ydf[ydf["period"].astype(int) >= 2023].assign(value=lambda d: [round(stock[x] * rng.uniform(0.01, 0.2)) for x in d["dico"]])
     frames["tourism_beds_al"] = frames["tourism_beds"].assign(value=lambda d: (d["value"] * 0.3).round())
+    gm = pd.period_range("2022-01", "2026-07", freq="M")
+    base_g = {d: rng.uniform(500, 50000) for d in dicos}
+    ref = yearly.drop_duplicates("dico").set_index("dico")
+    frames["tourism_guests"] = pd.DataFrame([_row(d, names[d], ref.at[d, "geocod"], str(m), "month", m.year * 100 + m.month,
+                                                  round(base_g[d] * (1 + 0.04 * (m.year - 2022)) * (1.5 if m.month in (7, 8) else 1)))
+                                             for d in dicos for m in gm])
+    frames["tourism_guests_al"] = frames["tourism_guests"].assign(value=lambda d: (d["value"] * 0.3).round())
+    frames["tourism_occupancy"] = ydf[ydf["period"].astype(int) >= 2022].assign(value=lambda d: rng.uniform(30, 70, len(d)).round(1))
     shares = {d: (rng.uniform(0.05, 0.25), rng.uniform(0.04, 0.12), rng.uniform(0.02, 0.06)) for d in dicos}
     for key, j in (("census_total", None), ("census_secondary", 0), ("census_vacant_market", 2), ("census_vacant_other", 1)):
         # Censos: o INE usa geocod de 4 dígitos (o DICO) e o parser não lhe atribui concelho
@@ -158,6 +166,15 @@ def demo_frames(seed: int = 7):
                                        "value": [100 * 1.005 ** (i - 24) for i in range(len(hq))]}),
         "bis_credit_gap": pd.DataFrame({"period": [p.label for p in hq], "value": rng.normal(-5, 6, len(hq))}),
     }
+    # UE (sintético): HPI e IHPC trimestrais de 12 países, PT a subir mais depressa
+    eu_h, eu_c = [], []
+    for j, g in enumerate(("PT", "ES", "FR", "DE", "IT", "NL", "IE", "AT", "BE", "PL", "LT", "EE")):
+        speed = 0.03 if g == "PT" else rng.uniform(0.0, 0.02)
+        for i, q in enumerate(hq):
+            eu_h.append((g, q.label, 100 * np.exp(speed * (i - 24) / 4 + rng.normal(0, 0.005))))
+            eu_c.append((g, q.label, 100 * 1.005 ** (i - 24)))
+    macro_frames["eurostat_hpi_eu"] = pd.DataFrame(eu_h, columns=["geo", "period", "value"])
+    macro_frames["eurostat_hicp_eu"] = pd.DataFrame(eu_c, columns=["geo", "period", "value"])
     return frames, macro_frames
 
 

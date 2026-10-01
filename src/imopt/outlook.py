@@ -506,7 +506,7 @@ LIMITS = [
 def build(frames: dict, macro_frames: dict, feats: pd.DataFrame | None, geojson: dict | None,
           hpi: pd.DataFrame | None, hpi_real: pd.DataFrame | None, today: dt.date | None = None,
           demo: bool = False) -> tuple[dict, dict[str, dict]]:
-    from . import geo, housing, market
+    from . import europe, geo, housing, market
     today = today or dt.date.today()
 
     def muni(df):
@@ -557,8 +557,11 @@ def build(frames: dict, macro_frames: dict, feats: pd.DataFrame | None, geojson:
         frames.get("sales_price_12m"), valuation, names,
         None if feats is None or "val_count" not in feats else feats.set_index(feats["dico"].astype(str))["val_count"]))
     part("cycle", lambda: market.price_volume_cycle(feats, valuation, frames.get("valuation_count")))
-    part("supply", lambda: housing.supply(frames.get("dwellings_licensed"), frames.get("dwellings_completed"),
-                                          frames.get("dwellings_stock")))
+    part("supply", lambda: housing.supply(
+        frames.get("dwellings_licensed"), frames.get("dwellings_completed"), frames.get("dwellings_stock"),
+        {k: frames.get(f"dwellings_licensed_{k}") for k, _ in housing.TYPOLOGIES},
+        {k: frames.get(f"sales_price_{k}") for k, _ in housing.TYPOLOGIES}))
+    part("europe", lambda: europe.compare(macro_frames.get("eurostat_hpi_eu"), macro_frames.get("eurostat_hicp_eu")))
     part("afford_hist", lambda: housing.affordability_history(valuation, macro_frames.get("mortgage_rate_pt"),
                                                               frames.get("income"), frames.get("irs_median")))
     # O volume de avaliações (variação anual) entra só nas previsões por tipo: no backtest melhorou-as em todos os

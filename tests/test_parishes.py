@@ -64,9 +64,25 @@ def test_build_outputs_writes_parishes(tmp_path):
     fr = json.loads((tmp_path / "freguesias.json").read_text(encoding="utf-8"))
     assert fr["with_map"] and len(fr["rows"]) == 144 and meta["parishes"].startswith("144 freguesias")
     gj = json.loads((tmp_path / "freguesias.geojson").read_text(encoding="utf-8"))
-    assert len(gj["features"]) == 144 and {"price", "rel_nb", "rel_muni"} <= set(gj["features"][0]["properties"])
+    # todas as fronteiras vão para o mapa (sem dados = cinzento); 144 com preço
+    assert len(gj["features"]) == 192 and sum(f["properties"].get("price") is not None for f in gj["features"]) == 144
+    assert {"price", "rel_nb", "rel_muni", "irs", "vac"} <= set(gj["features"][0]["properties"])
     munis = json.loads((tmp_path / "municipalities.json").read_text(encoding="utf-8"))
     assert len(munis) == 48                              # freguesias não entram no ranking de concelhos
     pipeline.build_outputs(frames, macro_frames, {}, {}, tmp_path / "b", None, demo=True)
     fr2 = json.loads((tmp_path / "b" / "freguesias.json").read_text(encoding="utf-8"))
     assert not fr2["with_map"] and len(fr2["rows"]) == 144 and not (tmp_path / "b" / "freguesias.geojson").exists()
+
+
+def test_table_adds_irs_and_census_parishes_without_price():
+    sales = pd.DataFrame([dict(geocod="1A0110601", level="parish", period="2026Q1", sort_key=202601, value=2000.0, geoname="A")])
+    irs = pd.DataFrame([dict(geocod=g, level="parish", period=str(y), sort_key=y * 100, value=v, geoname=n)
+                        for g, n in (("1A0110601", "A"), ("1A0110602", "B")) for y, v in ((2023, 10000.0), (2024, 11000.0))])
+    cen = lambda v: pd.DataFrame([dict(geocod="110602", level="other", period="2021", sort_key=202100, value=v, geoname="B")])  # noqa: E731
+    t = parishes.table(sales, None, {"1106": 2500.0}, irs,
+                       {"total": cen(1000.0), "secondary": cen(100.0), "vacant_market": cen(50.0), "vacant_other": cen(30.0)})
+    t = t.set_index("code")
+    assert t.at["110601", "price"] == 2000.0 and t.at["110601", "irs_median"] == 11000.0
+    assert pd.isna(t.at["110602", "price"]) and t.at["110602", "irs_growth_1y"] == pytest.approx(0.1)
+    assert t.at["110602", "vacant_share"] == pytest.approx(0.08) and t.at["110602", "name"] == "B"
+    assert t.at["110602", "dico"] == "1106"
