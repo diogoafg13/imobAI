@@ -77,6 +77,8 @@ def demo_frames(seed: int = 7):
     has_new = sales["dico"].astype(int) % 2 == 0
     frames["sales_price_new"] = sales[has_new].assign(value=lambda d: d["value"] * 1.25)
     frames["sales_price_existing"] = sales.assign(value=lambda d: d["value"] * 0.95)
+    for k, f in (("t01", 1.15), ("t2", 1.0), ("t3", 0.95), ("t4", 0.85)):
+        frames[f"sales_price_{k}"] = sales.assign(value=lambda d, f=f: d["value"] * f)
     frames["valuation_apartments"] = muni_val.assign(value=lambda d: d["value"] * 1.05)
     frames["valuation_houses"] = muni_val[muni_val["dico"].astype(int) % 3 != 0].assign(value=lambda d: d["value"] * 0.9)
     frames["rent_q1"] = rent.assign(value=lambda d: d["value"] * 0.75)

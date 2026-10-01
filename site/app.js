@@ -1588,7 +1588,7 @@ function renderRankingSummary() {
 const IM_KEY = 'imopt.imovel.v1';
 let histP = null, HIST = null;
 function ensureHist() {
-  if (!histP) histP = j('data/history.json').then((d) => { HIST = d; }).catch(() => { HIST = { parish: {}, val: {}, hicp: [] }; });
+  if (!histP) histP = j('data/history.json').then((d) => { HIST = d; }).catch(() => { HIST = { parish: {}, val: {}, typ: {}, hicp: [] }; });
   return histP;
 }
 const qOfMonth = (ym) => {
@@ -1612,7 +1612,7 @@ function imRead() {
   const f = $('#im-form'), num = (k) => { const v = parseFloat(String(f[k].value).replace(/\s/g, '').replace(',', '.')); return Number.isFinite(v) ? v : null; };
   const name = f.conc.value.trim().toLowerCase();
   const m = MUNIS.find((x) => x.name.toLowerCase() === name);
-  return { conc: f.conc.value.trim(), dico: m ? m.dico : null, par: f.par.value || '', date: f.year.value && f.month.value ? `${f.year.value}-${f.month.value}` : '', price: num('price'), area: num('area'), kind: f.kind.value,
+  return { conc: f.conc.value.trim(), dico: m ? m.dico : null, par: f.par.value || '', date: f.year.value && f.month.value ? `${f.year.value}-${f.month.value}` : '', price: num('price'), area: num('area'), kind: f.kind.value, typ: f.typ.value,
     loan: num('loan'), rate: num('rate'), years: num('years'), income: num('income'), rent: num('rent'),
     imi: num('imi'), condo: num('condo'), ins: num('ins'), vac: num('vac'), maint: num('maint'), tax: num('tax') };
 }
@@ -1622,7 +1622,7 @@ function imLoad() {
   try { v = JSON.parse(localStorage.getItem(IM_KEY) || 'null'); } catch { v = null; }
   if (!v) return;
   const f = $('#im-form');
-  ['conc', 'price', 'area', 'kind', 'loan', 'rate', 'years', 'income', 'rent', 'imi', 'condo', 'ins', 'vac', 'maint', 'tax']
+  ['conc', 'price', 'area', 'kind', 'typ', 'loan', 'rate', 'years', 'income', 'rent', 'imi', 'condo', 'ins', 'vac', 'maint', 'tax']
     .forEach((k) => { if (v[k] != null && f[k]) f[k].value = v[k]; });
   // datas antigas guardadas noutro formato (ex.: "4" de um browser sem seletor de mês) são ignoradas
   if (qOfMonth(v.date)) { const [y, m] = v.date.split('-'); f.year.value = y; f.month.value = m; }
@@ -1655,11 +1655,15 @@ async function imAnalyse() {
   const m = BY[v.dico], pr = v.par && PARBY[v.par] ? PARBY[v.par] : null;
   const q0 = qOfMonth(v.date), ppm = v.price / v.area;
   const kindKey = v.kind === 'apt' ? 'apt' : v.kind === 'house' ? 'house' : null;
-  // índices disponíveis, por ordem de preferência
+  // índices disponíveis, por ordem de preferência: com a tipologia indicada, a mediana de venda dessa tipologia no
+  // concelho vem primeiro (o €/m² e a sua evolução variam muito com o tamanho da casa)
   const idx = [];
+  const typName = TYP_NAMES[v.typ], typSer = typName && HIST.typ && HIST.typ[v.typ] ? HIST.typ[v.typ][v.dico] : null;
+  if (typSer) idx.push(['typ', `preço mediano de venda de ${typName} em ${m.name} (INE)`, typSer]);
   if (kindKey && HIST.val[kindKey] && HIST.val[kindKey][v.dico]) idx.push(['type', `avaliação bancária de ${kindKey === 'apt' ? 'apartamentos' : 'moradias'} em ${m.name}`, HIST.val[kindKey][v.dico]]);
   if (HIST.val.all && HIST.val.all[v.dico]) idx.push(['all', `avaliação bancária (todas as casas) em ${m.name}`, HIST.val.all[v.dico]]);
   if (m.series && m.series.price && m.series.price.length) idx.push(['ine', `preço mediano de venda em ${m.name} (INE)`, m.series.price]);
+  if (HIST.exist && HIST.exist[v.dico]) idx.push(['exist', `preço mediano de venda de casas existentes em ${m.name} (INE)`, HIST.exist[v.dico]]);
   if (pr && HIST.parish[v.par]) idx.push(['par', `preço mediano de venda na freguesia ${pr.name} (INE)`, HIST.parish[v.par]]);
   if (NAT && NAT.series && NAT.series.hpi) idx.push(['nat', 'índice nacional de preços da habitação', NAT.series.hpi]);
   const res = idx.map(([k, label, ser]) => ({ k, label, ...(serGrowth(ser, q0) || {}) })).filter((r) => r.g != null);
@@ -1674,11 +1678,12 @@ async function imAnalyse() {
   const cmp = [];
   const at = (ser) => { if (!ser || !ser.length) return null; const last = ser[ser.length - 1]; return q0 > last[0] ? [last[1], last[0]] : (serVal(ser, q0) ? [serVal(ser, q0), q0] : null); };
   const addCmp = (label, ser) => { const r = at(ser); if (r) cmp.push([r[1] === q0 ? label : `${label} (último publicado, ${qpt(r[1])})`, r[0]]); };
+  if (typSer) addCmp(`mediana de venda de ${typName} no concelho`, typSer);
   addCmp('mediana de venda do concelho', m.series.price);
   if (pr) addCmp(`mediana da freguesia ${pr.name}`, HIST.parish[v.par]);
   if (kindKey && HIST.val[kindKey]) addCmp(`avaliação bancária de ${kindKey === 'apt' ? 'apartamentos' : 'moradias'}`, HIST.val[kindKey][v.dico]);
   tiles.push(tile('Preço pago', `${fmt.eur(ppm)}/m²`, `${fmt.eur(v.price)} por ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m², ${qpt(q0)}`));
-  const ref = cmp.find((c) => c[0].startsWith('mediana da freguesia')) || cmp[0];
+  const ref = cmp.find((c) => typSer && c[0].startsWith(`mediana de venda de ${typName}`)) || cmp.find((c) => c[0].startsWith('mediana da freguesia')) || cmp[0];
   const verdict = ref ? imVerdict(ppm / ref[1] - 1, 'pagaste', ref[0]) : null;
   const strips = [];
   if (cmp.length) strips.push(['Preço pago face às medianas da altura (€/m²)', imStrip(cmp.map(([l, x]) => ({ label: imShort(l), value: x })), { label: 'tu', value: ppm }, null, (x) => fmt.eur(x))]);
@@ -1694,10 +1699,11 @@ async function imAnalyse() {
     const hl = H.length ? H[H.length - 1] : null, h0 = avg4(q0), h1 = hl ? avg4(hl[0]) : null;
     const infl = h0 && h1 && q0 <= hl[0] ? h1 / h0 - 1 : null;
     const multi = use.length > 1 && !main.recent;
-    chartData = { q0, ppm, main, idx: idx.filter(([k]) => k !== 'nat'), mainSer: (idx.find(([k]) => k === main.k) || [])[2], val };
+    chartData = { q0, ppm, main, typName, idx: idx.filter(([k]) => k !== 'nat'), mainSer: (idx.find(([k]) => k === main.k) || [])[2], val };
     tiles.push(tile(main.recent ? 'Valor estimado' : `Valor estimado (${qpt(main.to)})`, fmt.eur(val), main.recent ? 'compra recente: ainda sem variação medida' : `${fmt.spct(main.g, 0)} desde a compra${multi ? ` · ${fmt.eur(lo)} a ${fmt.eur(hi)} conforme o índice` : ''}`));
     li.push(main.recent ? `A compra é tão recente como os últimos dados publicados (${qpt(main.to)}): ainda não há valorização medida, por isso o valor estimado é o preço pago.`
-      : `Aplicando ao preço pago a variação da ${main.label} entre ${qpt(main.from)} e ${qpt(main.to)} (${fmt.spct(main.g, 0)}), o valor estimado é ${fmt.eur(val)}${multi ? `; com os outros índices locais fica entre ${fmt.eur(lo)} e ${fmt.eur(hi)} (${use.filter((r) => r !== main).map((r) => `${r.label}, até ${qpt(r.to)}: ${fmt.spct(r.g, 0)}`).join('; ')})` : ''}.${main.k === 'nat' ? ' Não há índice local que cubra a data da compra: usou-se o índice nacional, que pode estar longe do teu concelho.' : ''}${infl != null ? ` Descontada a inflação até ${qpt(hl[0])} (${fmt.spct(infl, 0)}), a valorização real é de ${fmt.spct((1 + main.g) / (1 + infl) - 1, 0)}${hl[0] < main.to ? ` (o índice de preços no consumidor publicado só vai até ${qpt(hl[0])}, por isso este valor real fica um pouco acima do verdadeiro)` : ''}.` : ''}`);
+      : `Aplicando ao preço pago a variação ${main.label.startsWith('preço') ? 'do' : 'da'} ${main.label} entre ${qpt(main.from)} e ${qpt(main.to)} (${fmt.spct(main.g, 0)}), o valor estimado é ${fmt.eur(val)}${multi ? `; com os outros índices locais fica entre ${fmt.eur(lo)} e ${fmt.eur(hi)} (${use.filter((r) => r !== main).map((r) => `${r.label}, até ${qpt(r.to)}: ${fmt.spct(r.g, 0)}`).join('; ')})` : ''}.${main.k === 'nat' ? ' Não há índice local que cubra a data da compra: usou-se o índice nacional, que pode estar longe do teu concelho.' : ''}${infl != null ? ` Descontada a inflação até ${qpt(hl[0])} (${fmt.spct(infl, 0)}), a valorização real é de ${fmt.spct((1 + main.g) / (1 + infl) - 1, 0)}${hl[0] < main.to ? ` (o índice de preços no consumidor publicado só vai até ${qpt(hl[0])}, por isso este valor real fica um pouco acima do verdadeiro)` : ''}.` : ''}`);
+    if (!main.recent) li.push(`Os índices são medianas do que se vendeu ou avaliou em cada trimestre, não a mesma casa: se mudar o tipo de casas transacionadas (mais pequenas, mais novas, noutra zona do concelho), a mediana mexe-se mais ou menos do que uma casa concreta. ${typSer ? `Por isso se usa a mediana de ${typName}: casas grandes e pequenas valorizaram de forma diferente.` : 'Indicar a tipologia (T0/T1 … T4+) torna a estimativa mais próxima da tua casa: casas grandes e pequenas valorizaram de forma diferente.'} Vendas recentes de casas parecidas na tua rua são a melhor referência.`);
     const fcg = kindKey && m[`${kindKey}_fc_growth_12m`] != null ? [m[`${kindKey}_fc_growth_12m`], m[`${kindKey}_fc_lo80`], m[`${kindKey}_fc_hi80`], kindKey === 'apt' ? 'a avaliação bancária de apartamentos' : 'a avaliação bancária de moradias', m[kindKey === 'apt' ? 'val_apt' : 'val_house']]
       : m.fc_growth_12m != null ? [m.fc_growth_12m, m.fc_lo80, m.fc_hi80, 'o preço mediano de venda', m.nowcast_price ?? m.price] : null;
     if (fcg) {
@@ -1722,7 +1728,12 @@ async function imAnalyse() {
     // 4) arrendamento
     const rm2 = pr && pr.rent != null ? pr.rent : m.rent;
     if (rm2 != null) {
-      const rentHome = rm2 * v.area, rLo = m.rent_q1 != null ? m.rent_q1 * v.area : null, rHi = m.rent_q3 != null ? m.rent_q3 * v.area : null;
+      // o INE não publica rendas por tipologia: com a tipologia indicada, ajusta-se a renda por m² pela diferença de
+      // €/m² entre essa tipologia e o total nas vendas do concelho (aproximação, dita no texto)
+      const tLast = typSer && typSer.length ? typSer[typSer.length - 1] : null, tTot = tLast ? serVal(m.series.price, tLast[0]) : null;
+      const tf = tLast && tTot ? tLast[1] / tTot : 1;
+      const rentHome = rm2 * v.area * tf, rLo = m.rent_q1 != null ? m.rent_q1 * v.area * tf : null, rHi = m.rent_q3 != null ? m.rent_q3 * v.area * tf : null;
+      const tfTxt = tf !== 1 ? ` O INE não publica rendas por tipologia: como nas vendas do concelho o €/m² de ${typName} está ${rel(tf - 1)} do total (${qpt(tLast[0])}), a renda por m² foi ajustada na mesma proporção — é uma aproximação.` : '';
       const rent = v.rent || rentHome;
       const months = 12 - (v.vac ?? 1);
       const gross = rent * months;
@@ -1731,9 +1742,9 @@ async function imAnalyse() {
       if (rLo && rHi) strips.push([`Renda para ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m²: faixa central dos novos contratos no concelho (€/mês)`,
         imStrip([{ label: 'mediana', value: rentHome }], v.rent ? { label: 'a tua', value: v.rent } : null, [rLo, rHi], (x) => fmt.eur(x))]);
       if (v.rent) rentVerdict = imVerdict(v.rent / rentHome - 1, 'a tua renda está', 'renda mediana de novos contratos');
-      tiles.push(tile('Renda de mercado (estimada)', `${fmt.eur(rentHome)}/mês`, `${pr && pr.rent != null ? `freguesia ${esc(pr.name)}` : `concelho`}, novos contratos${rLo ? ` · 25%–75% do concelho: ${fmt.eur(rLo)}–${fmt.eur(rHi)}` : ''}`));
+      tiles.push(tile('Renda de mercado (estimada)', `${fmt.eur(rentHome)}/mês`, `${pr && pr.rent != null ? `freguesia ${esc(pr.name)}` : `concelho`}, novos contratos${tf !== 1 ? `, ajustada a ${typName}` : ''}${rLo ? ` · 25%–75% do concelho: ${fmt.eur(rLo)}–${fmt.eur(rHi)}` : ''}`));
       tiles.push(tile('Rendibilidade', `${fmt.pct(gross / val, 1)} bruta`, `${fmt.pct(net / val, 1)} líquida de custos e IRS · ${fmt.pct(net / v.price, 1)} sobre o preço pago`));
-      li.push(`${v.rent ? `A renda que indicaste (${fmt.eur(v.rent)}/mês) está ${rel(v.rent / rentHome - 1)} da renda mediana de novos contratos para ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m² (${fmt.eur(rentHome)}).` : `Arrendada, a casa renderia cerca de ${fmt.eur(rentHome)}/mês (renda mediana de novos contratos${pr && pr.rent != null ? ' da freguesia' : ' do concelho'} × área${rLo ? `; no concelho, 25% dos novos contratos ficam abaixo de ${fmt.eur(rLo)} e 25% acima de ${fmt.eur(rHi)} para esta área` : ''}).`} Com ${fmt.n(v.vac ?? 1, 0)} ${(v.vac ?? 1) === 1 ? 'mês' : 'meses'} vazio por ano, custos de ${fmt.eur(costs)}/ano (IMI, condomínio, seguro, manutenção) e IRS de ${fmt.n(v.tax ?? 25, 0)}% sobre o rendimento depois de custos, ficam ${fmt.eur(net)}/ano líquidos (${fmt.pct(net / val, 1)} do valor estimado).${pay ? ` Face à prestação, o saldo mensal seria de ${net / 12 - pay < 0 ? '−' : '+'}${fmt.eur(Math.abs(net / 12 - pay))} (${net / 12 - pay >= 0 ? 'a renda paga a prestação' : 'a renda não chega para a prestação'}).` : ''} A taxa do IRS sobre rendas depende do contrato e das opções fiscais: confirma com as Finanças ou um contabilista.`);
+      li.push(`${v.rent ? `A renda que indicaste (${fmt.eur(v.rent)}/mês) está ${rel(v.rent / rentHome - 1)} da renda mediana de novos contratos para ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m² (${fmt.eur(rentHome)}).` : `Arrendada, a casa renderia cerca de ${fmt.eur(rentHome)}/mês (renda mediana de novos contratos${pr && pr.rent != null ? ' da freguesia' : ' do concelho'} × área${rLo ? `; no concelho, 25% dos novos contratos ficam abaixo de ${fmt.eur(rLo)} e 25% acima de ${fmt.eur(rHi)} para esta área` : ''}).`} Com ${fmt.n(v.vac ?? 1, 0)} ${(v.vac ?? 1) === 1 ? 'mês' : 'meses'} vazio por ano, custos de ${fmt.eur(costs)}/ano (IMI, condomínio, seguro, manutenção) e IRS de ${fmt.n(v.tax ?? 25, 0)}% sobre o rendimento depois de custos, ficam ${fmt.eur(net)}/ano líquidos (${fmt.pct(net / val, 1)} do valor estimado).${pay ? ` Face à prestação, o saldo mensal seria de ${net / 12 - pay < 0 ? '−' : '+'}${fmt.eur(Math.abs(net / 12 - pay))} (${net / 12 - pay >= 0 ? 'a renda paga a prestação' : 'a renda não chega para a prestação'}).` : ''} A taxa do IRS sobre rendas depende do contrato e das opções fiscais: confirma com as Finanças ou um contabilista.${tfTxt} A renda estimada é proporcional à área: anexos, garagem ou arrumos contados como área habitável inflacionam-na, e casas grandes costumam ter renda por m² mais baixa do que a mediana.`);
       tenant = imTenants(v.rent || rentHome, !!v.rent, m, pr);
       const be = (rate / 100 + 0.013) - (rentHome * 12) / val;
       const own = rate / 100 + 0.013, ry = (rentHome * 12) / val;
@@ -1743,12 +1754,12 @@ async function imAnalyse() {
     } else li.push(`Não há renda publicada para ${m.name}: sem estimativa de arrendamento.`);
   } else li.push(`Não há índices de preços para ${m.name} que cubram ${qpt(q0)}: sem estimativa de valor.`);
   const inputs = [`${esc(m.name)}${pr ? `, ${esc(pr.name)}` : ''}`, `compra em ${esc(monthTxt(v.date))}`, `${fmt.eur(v.price)}`, `${fmt.n(v.area, v.area % 1 ? 1 : 0)} m²`,
-    v.kind === 'apt' ? 'apartamento' : v.kind === 'house' ? 'moradia' : null].filter(Boolean).join(' · ');
+    v.kind === 'apt' ? 'apartamento' : v.kind === 'house' ? 'moradia' : null, typName || null].filter(Boolean).join(' · ');
   out.innerHTML = `<p class="muted">Dados: ${inputs}. Calculado em ${new Date().toISOString().slice(0, 10)} com os dados do painel de ${META.built_at.slice(0, 10)}.</p>
     ${verdict || rentVerdict ? `<div class="im-verdicts">${[verdict, rentVerdict].filter(Boolean).join('')}</div>` : ''}
     <div class="stats">${tiles.join('')}</div>
     ${chartData ? `<div class="chart-cap"><span>Onde estava e onde está: o teu imóvel face às medianas locais (€/m²)</span></div><div id="im-chart" class="chart tall"></div>
-      <p class="muted">Linha laranja: o teu €/m² na compra, atualizado com a ${esc(chartData.main.label)} — uma estimativa, não o valor real da casa. Linhas azul e cinzentas: medianas do mercado local.</p>` : ''}
+      <p class="muted">Linha laranja: o teu €/m² na compra, atualizado com ${chartData.main.label.startsWith('preço') ? 'o' : 'a'} ${esc(chartData.main.label)} — uma estimativa, não o valor real da casa. Linhas azul e cinzentas: medianas do mercado local.</p>` : ''}
     ${strips.map(([t, h]) => `<p class="muted" style="margin:14px 0 0"><b>${esc(t)}</b></p>${h}`).join('')}
     ${tenant || ''}
     <ul class="read">${li.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
@@ -1816,7 +1827,8 @@ function imVerdict(d, who, refLabel) {
   const arrow = a <= 0.10 ? '≈' : d > 0 ? '▲' : '▼';
   return `<p class="im-verdict">${pill(band, `${arrow} ${txt}`)} <span>${esc(who.charAt(0).toUpperCase() + who.slice(1))} ${fmt.spct(d, 0)} face à ${esc(refLabel)}.</span></p>`;
 }
-const imShort = (l) => l.replace('mediana de venda do concelho', 'concelho').replace(/^mediana da freguesia .*?(\(|$)/, 'freguesia $1')
+const TYP_NAMES = { t01: 'T0/T1', t2: 'T2', t3: 'T3', t4: 'T4+' };
+const imShort = (l) => l.replace('mediana de venda do concelho', 'concelho').replace(/^mediana de venda de (T\S+) no concelho/, '$1 concelho').replace(/^mediana da freguesia .*?(\(|$)/, 'freguesia $1')
   .replace(/^avaliação bancária de /, 'aval. ').replace(/\s*\(último publicado, (.*)\)/, ' ($1)').replace(/\s+\($/, '').trim();
 // faixa horizontal: pontos de referência (traço + etiqueta em baixo), o teu valor (círculo + etiqueta em cima), banda opcional
 function imStrip(refs, you, band, f) {
@@ -1837,7 +1849,7 @@ function imChart(id, D) {
   const txt = css('--muted'), line = css('--line');
   const qi = (q) => +q.slice(0, 4) * 4 + +q.slice(-1) - 1;
   const start = qi(D.q0) - 12;
-  const names = { type: 'Avaliação bancária do tipo de casa (concelho)', all: 'Avaliação bancária, todas as casas (concelho)', ine: 'Mediana de venda (concelho, INE)', par: 'Mediana de venda (freguesia, INE)' };
+  const names = { typ: `Mediana de venda, ${D.typName || 'tipologia'} (concelho, INE)`, exist: 'Mediana de venda, casas existentes (concelho, INE)', type: 'Avaliação bancária do tipo de casa (concelho)', all: 'Avaliação bancária, todas as casas (concelho)', ine: 'Mediana de venda (concelho, INE)', par: 'Mediana de venda (freguesia, INE)' };
   const mk = D.idx.filter(([, , ser]) => ser && ser.length).map(([k, , ser]) => ({ k, name: names[k] || k, data: ser.filter((r) => qi(r[0]) >= start) }));
   const ms = D.mainSer || [], b0 = (ms.find((r) => r[0] === D.q0) || [])[1];
   const yours = b0 ? ms.filter((r) => r[0] >= D.q0).map((r) => [r[0], Math.round(D.ppm * r[1] / b0)]) : [[D.q0, Math.round(D.ppm)]];

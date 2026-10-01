@@ -387,10 +387,13 @@ def construction_costs(cost: dict[str, pd.DataFrame | None], price_new: pd.DataF
 
 
 def history_export(sales: pd.DataFrame | None, val_apt: pd.DataFrame | None, val_house: pd.DataFrame | None,
-                   hicp: pd.DataFrame | None, val_all: pd.DataFrame | None = None) -> dict:
+                   hicp: pd.DataFrame | None, val_all: pd.DataFrame | None = None,
+                   sales_typ: dict[str, pd.DataFrame | None] | None = None,
+                   sales_existing: pd.DataFrame | None = None) -> dict:
     """Séries para a análise "O meu imóvel" (carregadas pelo site só quando é usada): preço mediano de venda por
-    freguesia (INE, trimestral desde 2019), avaliação bancária trimestral por concelho e tipo de casa (desde 2011)
-    e IHPC trimestral (para descontar a inflação)."""
+    freguesia (INE, trimestral desde 2019), avaliação bancária trimestral por concelho e tipo de casa (desde 2011),
+    preço mediano de venda por concelho e tipologia (T0/T1 … T4+) e de casas existentes, e IHPC trimestral (para
+    descontar a inflação)."""
     from . import parishes
     from .outlook import monthly_to_quarterly_muni
     out: dict = {"parish": {}, "val": {}, "hicp": []}
@@ -404,6 +407,17 @@ def history_export(sales: pd.DataFrame | None, val_apt: pd.DataFrame | None, val
         if q is not None:
             out["val"][key] = {str(dico): [[str(a), round(float(b))] for a, b in zip(g["period"], g["value"])]
                                for dico, g in q.sort_values("sort_key").groupby("dico")}
+    def muni(df):
+        d = None if df is None or df.empty else df[df["level"] == "municipality"].dropna(subset=["dico", "value"])
+        if d is None or d.empty:
+            return None
+        return {str(dico): [[str(a), round(float(b))] for a, b in zip(g["period"], g["value"])]
+                for dico, g in d.sort_values("sort_key").groupby("dico")}
+    typ = {k: m for k, _ in TYPOLOGIES if (m := muni((sales_typ or {}).get(k))) is not None}
+    if typ:
+        out["typ"] = typ
+    if (ex := muni(sales_existing)) is not None:
+        out["exist"] = ex
     if hicp is not None and not hicp.empty:
         out["hicp"] = [[str(a), round(float(b), 2)] for a, b in zip(hicp["period"], hicp["value"])]
     return out

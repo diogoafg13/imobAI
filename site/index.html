@@ -105,8 +105,9 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       <label>Mês da compra <select name="month" required></select></label>
       <label>Ano da compra <select name="year" required></select></label>
       <label>Preço pago (€) <input name="price" type="number" min="1000" step="any" inputmode="numeric" required></label>
-      <label>Área (m²) <input name="area" type="number" min="10" max="2000" step="any" inputmode="numeric" required></label>
+      <label>Área habitável (m²) <input name="area" type="number" min="10" max="2000" step="any" inputmode="numeric" placeholder="sem anexos nem garagem" required></label>
       <label>Tipo <select name="kind"><option value="">Não sei</option><option value="apt">Apartamento</option><option value="house">Moradia</option></select></label>
+      <label>Tipologia <select name="typ"><option value="">Não sei</option><option value="t01">T0 ou T1</option><option value="t2">T2</option><option value="t3">T3</option><option value="t4">T4 ou mais</option></select></label>
       <label>Crédito em dívida (€) <input name="loan" type="number" min="0" step="any" inputmode="numeric"></label>
       <label>Taxa do crédito (%) <input name="rate" type="number" min="0" max="15" step="any" inputmode="decimal" placeholder="média atual"></label>
       <label>Prazo restante (anos) <input name="years" type="number" min="1" max="50" step="any" inputmode="numeric"></label>

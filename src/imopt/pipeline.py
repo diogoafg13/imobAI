@@ -287,7 +287,9 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     try:
         geo.dump(housing.history_export(frames.get("sales_price_12m"), frames.get("valuation_apartments"),
                                         frames.get("valuation_houses"), macro_frames.get("eurostat_hicp"),
-                                        frames.get("bank_valuation")),
+                                        frames.get("bank_valuation"),
+                                        {k: frames.get(f"sales_price_{k}") for k, _ in housing.TYPOLOGIES},
+                                        frames.get("sales_price_existing")),
                  str(out_dir / "history.json"))
     except Exception as e:  # noqa: BLE001
         log.warning("histórico para \"O meu imóvel\" falhou: %s", e)
