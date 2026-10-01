@@ -265,3 +265,14 @@ def test_build_outputs_exports_real_hpi(tmp_path):
     pipeline.build_outputs(frames, macro_frames, {}, {}, tmp_path, None, demo=True)
     nat = json.loads((tmp_path / "national.json").read_text(encoding="utf-8"))
     assert len(nat["series"]["hpi_real"]) > 50
+
+
+def test_ine_live_summary_drives_workflow_retries(tmp_path):
+    import json
+    from imopt import pipeline
+    st = {"a": "ok (10 linhas, 2026Q1)", "b": "ERRO: dims", "c": "sem código (config)", "geo": "CACHE (download falhou)"}
+    assert pipeline.ine_live(st) == {"live": True, "n_ok": 1, "n_cache": 0, "n_error": 1}
+    st["d"] = "CACHE (INE indisponível)"
+    assert pipeline.ine_live(st)["live"] is False
+    pipeline.write_ine_status(st, tmp_path)
+    assert json.loads((tmp_path / "clean" / "ine_status.json").read_text())["live"] is False

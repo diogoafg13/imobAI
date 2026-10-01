@@ -317,6 +317,11 @@ ine:
       level: municipality
       dims: {dim_3: "T"}
       optional: true
+    construction_cost:
+      varcd: "0011748"          # Índice de custo de construção de habitação nova (Base 2021), catálogo do INE
+      description: Índice de custo de construção de habitação nova (2021 = 100)
+      level: national
+      optional: true            # dimensões por confirmar no snapshot bruto
     # Não usados: 0012786 (Transações em €, só até NUTS II, sem número de vendas), 0012748 e 0012742
     # (rendimento bruto médio e agregados fiscais por escalão) — ver README.
     income:
@@ -384,6 +389,17 @@ macro:
     # BCE, estatísticas MIR: taxa acordada dos NOVOS empréstimos à habitação em Portugal (%), mensal.
     # Chave não confirmada ao vivo nesta sessão: se falhar, os cenários de juros usam o spread de 1 p.p.
     url: https://data-api.ecb.europa.eu/service/data/MIR/M.PT.B.A2C.A.R.A.2250.EUR.N
+    params: {format: csvdata}
+    optional: true
+  # BCE, estatísticas MIR: volume de NOVOS empréstimos à habitação em Portugal (M€/mês). DATA_TYPE_MIR = B (volume),
+  # o mesmo resto da chave da taxa acima. IR_BUS_COV: N = novas operações (inclui renegociações), P = só crédito
+  # novo "puro". Chaves não confirmadas ao vivo: opcionais, o build mostra se respondem.
+  mortgage_volume_pt:
+    url: https://data-api.ecb.europa.eu/service/data/MIR/M.PT.B.A2C.A.B.A.2250.EUR.N
+    params: {format: csvdata}
+    optional: true
+  mortgage_volume_pure_pt:
+    url: https://data-api.ecb.europa.eu/service/data/MIR/M.PT.B.A2C.A.B.A.2250.EUR.P
     params: {format: csvdata}
     optional: true
   eurostat_hpi:

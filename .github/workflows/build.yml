@@ -2,7 +2,11 @@ name: build-and-deploy
 
 on:
   schedule:
-    - cron: "17 6 * * 1"   # segundas, 06:17 UTC
+    - cron: "17 6 * * 1"   # segundas, 06:17 UTC: build semanal
+    # Tentativas extra (todos os dias): só fazem alguma coisa se o último build não chegou ao INE
+    # (o INE recusa às vezes os runners do GitHub). Ver o passo "Decidir se é preciso tentar outra vez".
+    - cron: "47 10 * * *"
+    - cron: "47 16 * * *"
   workflow_dispatch:
     inputs:
       backtest:
@@ -24,17 +28,41 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.gate.outputs.run }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Decidir se é preciso tentar outra vez
+        id: gate
+        env:
+          EVENT: ${{ github.event_name }}
+          CRON: ${{ github.event.schedule }}
+        run: |
+          run=true
+          if [ "$EVENT" = "schedule" ] && [ "$CRON" != "17 6 * * 1" ]; then
+            git fetch origin data || true
+            if git show origin/data:data/clean/ine_status.json > /tmp/ine_status.json 2>/dev/null \
+               && python3 -c "import json,sys; sys.exit(0 if json.load(open('/tmp/ine_status.json')).get('live') else 1)"; then
+              run=false
+              echo "o último build já chegou ao INE: nada a repetir"
+            else
+              echo "o último build não chegou ao INE (ou sem estado): a tentar outra vez"
+            fi
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-python@v5
+        if: steps.gate.outputs.run == 'true'
         with:
           python-version: "3.12"
           cache: pip
       - run: pip install -e ".[dev]"
+        if: steps.gate.outputs.run == 'true'
       - run: pytest -q
+        if: steps.gate.outputs.run == 'true'
       - name: Restaurar último snapshot (fallback se o INE falhar)
+        if: steps.gate.outputs.run == 'true'
         run: |
           # O fallback usa o snapshot MAIS RECENTE entre: data/clean versionado em main (commit manual)
           # e data/clean do branch `data` (último run que alterou dados).
@@ -52,6 +80,7 @@ jobs:
             echo "fallback: sem branch data, a usar data/clean de main (se existir)"
           fi
       - name: Restaurar arquivo de previsões (branch data)
+        if: steps.gate.outputs.run == 'true'
         # O arquivo só cresce no branch `data`. O passo anterior pode escolher o data/clean de main
         # (se for mais recente) e perder o histórico: por isso é sempre reposto a partir do branch data.
         run: |
@@ -63,10 +92,12 @@ jobs:
             echo "ainda sem arquivo de previsões (é criado neste build)"
           fi
       - name: Construir dados (INE, BCE, Eurostat, BIS)
+        if: steps.gate.outputs.run == 'true'
         env:
           IMOPT_INE_MODE: auto   # o INE pode não aceitar ligações dos runners: usa data/clean
         run: python -m imopt build
       - name: Restaurar backtest.json em cache (se existir)
+        if: steps.gate.outputs.run == 'true'
         # site/data/ nunca fica no repositório: cada build parte do zero. Sem isto, um deploy
         # normal (sem a flag abaixo) publicava um site SEM secção de backtest, apagando o
         # resultado do último "Also run the backtest" até alguém voltar a correr manualmente.
@@ -83,13 +114,14 @@ jobs:
         # tornariam o workflow semanal mais lento e frágil. Ver README, secção "Backtest".
         # Atualiza site/data/backtest.json E a cópia em cache (data/clean), para o passo acima
         # continuar a servir este resultado nos deploys seguintes até ser corrido de novo.
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.backtest == 'true'
+        if: steps.gate.outputs.run == 'true' && (github.event_name == 'workflow_dispatch' && github.event.inputs.backtest == 'true')
         continue-on-error: true
         run: |
           python -m imopt backtest
           mkdir -p data/clean
           cp site/data/backtest.json data/clean/backtest.json
       - name: Guardar snapshots no branch data
+        if: steps.gate.outputs.run == 'true'
         run: |
           # Trabalha num worktree separado: não mexe no checkout do build (que tem data/ alterado).
           tmp=$(mktemp -d)
@@ -109,11 +141,14 @@ jobs:
           git commit -m "snapshot $(date -u +%F)" || echo "sem alterações"
           git push origin data
       - uses: actions/configure-pages@v5
+        if: steps.gate.outputs.run == 'true'
       - uses: actions/upload-pages-artifact@v3
+        if: steps.gate.outputs.run == 'true'
         with:
           path: site
   deploy:
     needs: build
+    if: needs.build.outputs.run == 'true'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

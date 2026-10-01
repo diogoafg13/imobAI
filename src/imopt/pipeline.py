@@ -309,6 +309,7 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
     today = dt.date.today().strftime("%Y%m%d")
     frames, ine_status = ingest_ine(cfg, data_dir, today)
     macro_frames, macro_status = ingest_macro(cfg, data_dir)
+    write_ine_status(ine_status, data_dir)
 
     geojson, unmatched = None, []
     if not skip_geo:
@@ -338,6 +339,23 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
     parish_gj = None if skip_geo else load_parish_geojson(cfg, data_dir, ine_status)
     return build_outputs(frames, macro_frames, ine_status, macro_status, out_dir, geojson, geo_unmatched=unmatched,
                          forecast_log=data_dir / "clean" / "forecast_log.parquet", parish_geojson=parish_gj)
+
+
+def ine_live(status: dict) -> dict:
+    """Resumo do contacto com o INE neste build: ao vivo se pelo menos um indicador veio do INE e nenhum da cache."""
+    vals = [str(v) for k, v in status.items() if k != "geo" and not str(v).startswith("sem código")]
+    n_ok = sum(v.startswith("ok") for v in vals)
+    n_cache = sum(v.startswith("CACHE") for v in vals)
+    return {"live": n_ok > 0 and n_cache == 0, "n_ok": n_ok, "n_cache": n_cache,
+            "n_error": sum(v.startswith("ERRO") for v in vals)}
+
+
+def write_ine_status(status: dict, data_dir: Path) -> None:
+    """data/clean/ine_status.json: o workflow só repete o build (tentativas extra) se o último não chegou ao INE."""
+    import json as _json
+    out = {"date": dt.date.today().isoformat(), **ine_live(status)}
+    (data_dir / "clean").mkdir(parents=True, exist_ok=True)
+    (data_dir / "clean" / "ine_status.json").write_text(_json.dumps(out), encoding="utf-8")
 
 
 def load_parish_geojson(cfg: dict, data_dir: Path, status: dict) -> dict | None:
