@@ -7,7 +7,7 @@ import logging
 import sys
 from pathlib import Path
 
-from . import backtest, demo, geo, ine, pipeline
+from . import backtest, catalog, demo, geo, ine, pipeline
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -19,6 +19,10 @@ def main(argv: list[str] | None = None) -> int:
     b.add_argument("--out", default=None)
     i = sub.add_parser("inspect", help="mostra dimensões e primeiras linhas de um indicador INE")
     i.add_argument("varcd")
+    s = sub.add_parser("search", help="procura indicadores do INE por palavras (título ou fonte)")
+    s.add_argument("terms", nargs="+", help="palavras a procurar (todas têm de aparecer; sem acentos também serve)")
+    s.add_argument("--file", default=None, help="ficheiro XML do catálogo já descarregado")
+    s.add_argument("--range", default=None, help="varrer códigos, ex.: 0012220-0012260 (um pedido por código)")
     t = sub.add_parser("backtest", help="backtest multi-país do score nacional (ver README)")
     t.add_argument("--countries", default=None, help="códigos ISO2 separados por vírgula (default: todos)")
     t.add_argument("--out", default=None, help="default: site/data/backtest.json")
@@ -35,6 +39,25 @@ def main(argv: list[str] | None = None) -> int:
         for c in dims:
             print(c, sorted(df[c].dropna().astype(str).unique())[:15])
         print(df.head(10).to_string())
+        return 0
+
+    if args.cmd == "search":
+        if args.file:
+            items, where = catalog.load_file(args.file), args.file
+        elif args.range:
+            a, b = (int(x) for x in args.range.split("-"))
+            items = catalog.scan_range(a, b, progress=lambda i, n: print(f"\r{i}/{n}", end="", file=sys.stderr))
+            print(file=sys.stderr)
+            where = f"códigos {args.range}"
+        else:
+            items, where = catalog.fetch_main_catalog(), "catálogo de indicadores principais do INE (opc=3)"
+        found = catalog.matches(items, args.terms)
+        print(f"{len(found)} de {len(items)} indicadores em {where}:")
+        for i in found:
+            print(f"  {i['varcd']}  {i['title']}  [{i['geo']} · {i['periodicity']} · último {i['last']}]")
+        if not found and not args.range:
+            print("Nada. O catálogo principal não tem todos os indicadores: experimenta --range à volta de códigos "
+                  "conhecidos (ex.: 0012220-0012260 para preços da habitação ao nível local).")
         return 0
 
     if args.cmd == "backtest":

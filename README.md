@@ -32,6 +32,9 @@ python -m imopt build --demo          # dados SINTÉTICOS, offline
 python -m http.server -d site 8000    # http://localhost:8000
 
 python -m imopt inspect 0012234       # ver dimensões reais de um indicador INE
+python -m imopt search vendas domicilio                   # procura no catálogo de indicadores principais
+python -m imopt search vendas --range 0012220-0012260     # varre códigos (um pedido por código)
+python -m imopt search vagos --file catalogo.xml          # procura num catálogo XML já descarregado
 python -m imopt build                 # dados reais
 
 python -m imopt backtest --demo       # backtest com dados SINTÉTICOS, offline
@@ -214,7 +217,11 @@ mesmo quando é usado com várias categorias.
 **Não incluídos por falta de código confirmado**: número de vendas por concelho (o 0012786 do
 catálogo é em € e só por NUTS II), preço por domicílio fiscal do comprador e Censos 2021 (casas
 vagas/segunda habitação). Quando houver um código confirmado com `imopt inspect`, entram como os
-de cima.
+de cima. Para os procurar: `python -m imopt search …` (ver "Primeiros passos"). O catálogo
+descarregável do INE (`opc=3`) só tem os ~260 indicadores principais — estes três não estão lá; o
+`--range` consulta a ficha de cada código, e indicadores da mesma operação estatística costumam ter
+códigos próximos (os preços locais da habitação andam pelos 0012230–0012260; as rendas da
+Metodologia 2026 pelos 0014700).
 
 ### Arquivo de previsões e avaliação contra a realidade
 
