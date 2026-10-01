@@ -243,6 +243,32 @@ Metodologia 2026 pelos 0014700).
   bancária desde 2011) melhorou em todos os horizontes (12 meses: 18,5% → 22,1% e 37,4% → 39,4%), sem
   piorar a cobertura dos intervalos, e **entrou**.
 
+### Comprar casa: esforço e comprar ou arrendar
+
+Calculadora no site (secção "Comprar casa"), feita no browser: área, entrada, prazo, taxa e número de
+salários são escolhidos pelo utilizador (por omissão 90 m², 10% de entrada, 30 anos, 1 salário) e
+ficam guardados só nesse browser. A taxa por omissão é a mesma dos cenários de juros: Euribor 12M do
+último mês + a diferença observada entre a taxa média dos novos créditos à habitação (BCE) e a Euribor.
+Por concelho:
+
+- **Esforço de compra** = prestação (crédito a prestação constante sobre preço mediano × área × (1 − entrada))
+  ÷ ganho médio mensal bruto do concelho (INE 0012653). Também em anos de salário bruto (14 meses).
+  Referência: o Banco de Portugal limita a prestação a 50% do rendimento **líquido**, cerca de 40% do
+  bruto para um salário médio.
+- **Comprar ou arrendar**: prestação vs renda da mesma casa (renda mediana de novos contratos × área) e o
+  **ponto de equilíbrio** = (taxa + ~1,3% de IMI, manutenção e seguros − renda anual ÷ preço): a
+  valorização anual a partir da qual comprar sai mais barato do que arrendar. A prestação inclui
+  amortização (poupança), por isso o ponto de equilíbrio é a comparação mais justa; assume que a entrada
+  renderia a mesma taxa.
+- Mapa ("Esforço de compra", "Prestação face à renda"), colunas do ranking, detalhe, leitura e comparação.
+  Não entra em nenhum score.
+
+Limites: o preço é a mediana de todas as vendas (casas muito diferentes); o salário é de quem **trabalha**
+no concelho, não de quem lá vive (exagera o esforço nos concelhos-dormitório, como Odivelas ou Cascais),
+é individual, bruto e de um ano antes do preço; nos concelhos baratos do interior muitas casas vendidas
+precisam de obras e as arrendadas não, o que favorece artificialmente a compra; ficam de fora IMT, imposto
+do selo, escritura, seguros do crédito e mudanças de taxa ao longo do empréstimo.
+
 ### Freguesias
 
 `imopt/parishes.py`. O preço mediano de venda por freguesia vem do mesmo indicador do INE (0012234,

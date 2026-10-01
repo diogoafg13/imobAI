@@ -21,6 +21,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
   <div class="topnav-inner">
     <a href="#national">Visão nacional</a>
     <a href="#changes">O que mudou</a>
+    <a href="#afford">Comprar casa</a>
     <a href="#mapsec">Mapa</a>
     <a href="#ranking">Ranking</a>
     <a href="#outlook">Perspetivas</a>
@@ -90,6 +91,21 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     <div id="changes-body"></div>
   </section>
 
+  <section id="afford" class="card">
+    <div class="row"><h2>Comprar casa: esforço e comprar ou arrendar <button type="button" class="info" data-k="effort" aria-label="Sobre o esforço de compra">ⓘ</button></h2></div>
+    <p class="muted">Muda a casa e o crédito: as contas, o mapa, o ranking e o detalhe de cada concelho atualizam-se. Os valores ficam guardados só neste browser.</p>
+    <form id="aff-form" class="aff-form" autocomplete="off">
+      <label>Área (m²) <input name="area" type="number" min="20" max="400" step="5" inputmode="numeric"></label>
+      <label>Entrada (%) <input name="down" type="number" min="0" max="90" step="5" inputmode="decimal"></label>
+      <label>Prazo (anos) <input name="years" type="number" min="5" max="40" step="1" inputmode="numeric"></label>
+      <label>Taxa (%) <input name="rate" type="number" min="0" max="15" step="0.05" inputmode="decimal"></label>
+      <label>Salários <select name="earners"><option value="1">1</option><option value="2">2</option></select></label>
+      <button type="button" id="aff-reset" class="btn">Repor</button>
+    </form>
+    <p id="aff-rate-note" class="muted"></p>
+    <div id="aff-body"></div>
+  </section>
+
   <section id="mapsec" class="card">
     <div class="row">
       <h2>Mapa</h2>
@@ -111,6 +127,8 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <option value="fc">Previsão próximos 12 meses</option>
         <option value="fv">Preço face ao valor justo</option>
         <option value="fp">Prémio pago por estrangeiros</option>
+        <option value="ef">Esforço de compra (prestação ÷ salário)</option>
+        <option value="br">Prestação face à renda</option>
       </select>
       <select id="metric-f" aria-label="Indicador do mapa de freguesias" hidden>
         <option value="f_rel_nb">Preço face às freguesias vizinhas</option>

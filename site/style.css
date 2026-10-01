@@ -75,3 +75,8 @@ a.lnk{color:var(--fg);text-decoration:underline;text-decoration-color:var(--line
 .ol-table th{cursor:default;white-space:normal;vertical-align:bottom;font-size:.84rem}.ol-table tbody tr{cursor:default}
 #c-table th,#c-table tbody tr{cursor:default}
 @media (max-width:700px){.ol-cols{grid-template-columns:1fr}}
+.aff-form{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end;margin:8px 0}
+.aff-form label{display:flex;flex-direction:column;gap:3px;font-size:.84rem;color:var(--muted)}
+.aff-form input,.aff-form select{width:100px}
+.aff-map{margin:10px 0}
+.aff-list .v{white-space:normal}

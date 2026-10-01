@@ -56,6 +56,8 @@ const GLOSS = {
   changes: ['O que mudou', 'Compara o trimestre mais recente publicado pelo INE com o anterior: variação do preço e do score de cada concelho, e quem mudou de faixa de risco. O score do trimestre anterior é recalculado com o mesmo método. As listas de maiores movimentos só incluem concelhos com mercado suficiente (pelo menos 20 avaliações bancárias em 3 meses), porque em concelhos pequenos o preço salta com poucas vendas.'],
   tracking: ['Previsões anteriores vs realidade', 'Cada build guarda as previsões que publicou. Quando o INE publica o valor real de um trimestre (ou ano, nas rendas) previsto, o erro é medido aqui — com os dados tal como saíram, sem revisões nem o benefício da retrospetiva. É a avaliação mais honesta, mas precisa de tempo: a 12 meses, os primeiros resultados só aparecem um ano depois do arranque do arquivo.'],
   ol_backtest: ['Como se saiu no passado', 'Para cada trimestre desde 2021, o modelo foi treinado só com o que se sabia nessa data e previu os trimestres seguintes. Erro médio em pontos percentuais (p.p.) de variação do preço, comparado com «fica igual» e «continua o ritmo do último ano». Cobertura: % das vezes em que o valor real caiu dentro do intervalo de 80%.'],
+  effort: ['Esforço de compra', 'Prestação mensal do crédito para comprar uma casa ao preço mediano do concelho (área, entrada, prazo e taxa escolhidos na secção "Comprar casa"), a dividir pelo ganho médio mensal bruto de quem trabalha no concelho (INE). Não é o rendimento líquido nem o do agregado: com dois salários, escolhe "2". O Banco de Portugal limita a prestação a 50% do rendimento líquido, o que para um salário médio corresponde a cerca de 40% do bruto. O salário publicado é de um ano anterior ao preço, por isso o esforço real tende a ser um pouco menor.'],
+  buy_rent: ['Comprar ou arrendar', 'Compara a prestação do crédito com a renda da mesma casa (mesma área, renda mediana de novos contratos). A prestação inclui amortização, que é poupança, por isso não é um custo puro. A medida mais justa é o ponto de equilíbrio: custo anual de ser dono (juros à taxa escolhida sobre o preço todo — assume que a entrada renderia o mesmo —, mais cerca de 1,3% do preço para IMI, manutenção e seguros) menos a renda que se deixa de pagar, em % do preço. Comprar só sai mais barato do que arrendar se a casa valorizar mais do que isso por ano. Não inclui IMT, imposto do selo e escritura (pesam mais em quem fica poucos anos), nem impostos sobre mais-valias ou benefícios fiscais.'],
   migration: ['Saldo migratório', 'Diferença entre quem chegou e quem saiu do concelho num ano (INE). Positivo = mais gente a chegar do que a sair. Só contexto demográfico — não entra em nenhum score.'],
   score_valuation: ['Score de valorização', 'Percentil entre concelhos: mistura crescimento do preço a 12 meses e a 3 anos com rendibilidade baixa. 0 = menos esticado, 100 = mais. É relativo, não uma probabilidade de bolha.'],
   score_overall: ['Score global', 'Igual ao de valorização enquanto não houver dados de oferta (licenças, conclusões). Concelhos voláteis (⚠) são atenuados para o meio (50).'],
@@ -101,6 +103,7 @@ async function j(path) {
 // ---------- paleta / escalas
 const PAL = ['#2e9e6b', '#8bc16a', '#e0c34b', '#e08a3b', '#d1493f'];
 const SEQ = ['#d7ecf3', '#9fd0e0', '#5bb3d0', '#2b86a8', '#155a78'];
+const DIV_PAL = ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'];
 const METRICS = {
   score: { prop: 'score', pal: PAL, fixed: [0, 100], f: (v) => fmt.n(v), label: 'Score',
     help: 'Quão "esticado" está cada concelho face aos outros: preço a subir depressa e rendibilidade baixa = mais vermelho. Verde < 40 (baixo), amarelo/laranja 40–69 (moderado), vermelho ≥ 70 (elevado). É relativo, não uma probabilidade de bolha. Cinzento = sem dados.' },
@@ -119,8 +122,12 @@ const METRICS = {
 };
 METRICS.fp = { prop: 'fp', pal: ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'], diverge: true, f: (v) => fmt.spct(v, 0), label: 'Prémio de estrangeiros',
   help: 'Quanto mais (laranja) ou menos (azul) pagam por m² os compradores com domicílio no estrangeiro face aos residentes em Portugal. Cinzento = INE não publica (poucas vendas a estrangeiros).' };
+METRICS.ef = { prop: 'ef', pal: PAL, fixed: [0.1, 0.7], f: (v) => fmt.pct(v, 0), label: 'Esforço de compra',
+  help: 'Prestação do crédito ÷ ganho médio mensal bruto do concelho, para a casa e o crédito escolhidos em "Comprar casa" (muda lá a área, a entrada, o prazo, a taxa e o número de salários). Verde = prestação leve; amarelo ≈ 40%, perto do limite do Banco de Portugal para um salário médio; laranja e vermelho = acima de 55%. Cinzento = sem salário ou preço publicado.' };
+METRICS.br = { prop: 'br', pal: DIV_PAL, diverge: true, f: (v) => fmt.spct(v, 0), label: 'Prestação face à renda',
+  help: 'Prestação do crédito face à renda da mesma casa (renda mediana de novos contratos). Azul = a prestação é mais baixa do que a renda; laranja = mais alta. A prestação inclui amortização (poupança): ver o ponto de equilíbrio em "Comprar casa". Cinzento = sem renda publicada.' };
 const METRIC_VAL = { score: (x) => x.score_overall, price: (x) => x.price, yield: (x) => x.gross_yield, g1y: (x) => x.price_growth_1y, g1yr: (x) => x.price_growth_1y_real,
-  fc: (x) => x.fc_growth_12m, fv: (x) => x.fv_gap, fp: (x) => x.foreign_premium };
+  fc: (x) => x.fc_growth_12m, fv: (x) => x.fv_gap, fp: (x) => x.foreign_premium, ef: (x) => x.aff_effort, br: (x) => x.aff_pay_vs_rent };
 const DIV = ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'];
 const PMETRICS = {
   f_rel_nb: { prop: 'rel_nb', src: 'par', pal: DIV, diverge: true, f: (v) => fmt.spct(v, 0), label: 'Face às freguesias vizinhas',
@@ -396,6 +403,7 @@ function readList(m) {
   if (m.gross_yield != null && my != null) {
     li.push(`Rendibilidade bruta de ${fmt.pct(m.gross_yield, 2)} (mediana ${fmt.pct(my, 2)}): ${m.gross_yield < my ? 'o preço está esticado face à renda, pois cada € investido rende menos do que no concelho típico' : 'a renda paga melhor o preço do que no concelho típico'}.`);
   } else li.push('Sem renda publicada pelo INE para este concelho (poucos contratos): não há rendibilidade nem preço/renda, e o score assenta só no ritmo de subida dos preços.');
+  if (m.aff_pay != null) li.push(affReadTxt(m));
   const sc = m.score_overall;
   if (sc != null) li.push(`Score ${fmt.n(sc)}: ${sc >= 70 ? 'entre os concelhos mais "esticados"' : sc >= 40 ? 'a meio do pelotão de concelhos' : 'entre os concelhos menos "esticados"'}. É uma posição relativa, não uma previsão de queda.`);
   const demoBits = [];
@@ -527,6 +535,10 @@ function select(dico, scroll = true) {
     tile('p2r', 'Preço/renda (anos)', fmt.n(m.price_to_rent_years, 1), ctx((x) => x.price_to_rent_years, m.price_to_rent_years, (v) => fmt.n(v, 1))),
     tile('p2i', 'Preço/rendimento (meses)', fmt.n(m.price_to_income_months, 1), ctx((x) => x.price_to_income_months, m.price_to_income_months, (v) => fmt.n(v, 1))),
     tile('r2i', 'Renda/rendimento', fmt.pct(m.rent_to_income, 1), ctx((x) => x.rent_to_income, m.rent_to_income, (v) => fmt.pct(v, 1))),
+    ...(m.aff_effort != null ? [tile('effort', `Esforço de compra (${AFF.area} m²)`, fmt.pct(m.aff_effort, 0),
+      `<span class="ctx">prestação ${fmt.eur(m.aff_pay)}/mês · ${fmt.n(m.aff_years_salary, 1)} anos de salário bruto · ${ctx((x) => x.aff_effort, m.aff_effort, (v) => fmt.pct(v, 0)).replace(/<[^>]+>/g, '')}</span>`)] : []),
+    ...(m.aff_rent_home != null ? [tile('buy_rent', 'Prestação vs renda', `${fmt.eur(m.aff_pay)} vs ${fmt.eur(m.aff_rent_home)}`,
+      `<span class="ctx">${breakevenTxt(m.aff_breakeven)}</span>`)] : []),
     tile('score_valuation', 'Score valorização', fmt.n(m.score_valuation)),
     tile('score_overall', 'Score global', fmt.n(m.score_overall)),
     ...(m.nowcast_price != null ? [tile('nowcast', `Estimativa hoje (${qpt(m.nowcast_period)})`, fmt.eur(m.nowcast_price) + '/m²',
@@ -585,6 +597,9 @@ const COMPARE_ROWS = [
   ['p2r', 'Preço/renda (anos)', (m) => fmt.n(m.price_to_rent_years, 1)],
   ['p2i', 'Preço/rendimento (meses)', (m) => fmt.n(m.price_to_income_months, 1)],
   ['r2i', 'Renda/rendimento', (m) => (m.rent_to_income == null ? '—' : fmt.pct(m.rent_to_income, 1))],
+  ['effort', 'Esforço de compra (prestação/salário)', (m) => (m.aff_effort == null ? '—' : `${fmt.pct(m.aff_effort, 0)} (${fmt.eur(m.aff_pay)}/mês)`)],
+  ['buy_rent', 'Prestação vs renda da mesma casa', (m) => (m.aff_rent_home == null ? '—' : `${fmt.eur(m.aff_pay)} vs ${fmt.eur(m.aff_rent_home)}`)],
+  ['buy_rent', 'Valorização para comprar compensar', (m) => (m.aff_breakeven == null ? '—' : fmt.spct(m.aff_breakeven) + '/ano')],
   ['migration', 'Saldo migratório', (m) => (m.migration_balance == null ? '—' : (m.migration_balance >= 0 ? '+' : '') + fmt.n(m.migration_balance, 0))],
   ['score_overall', 'Score global', (m) => fmt.n(m.score_overall)],
   ['nowcast', 'Estimativa hoje', (m) => (m.nowcast_price == null ? '—' : fmt.eur(m.nowcast_price) + '/m²')],
@@ -731,6 +746,131 @@ function renderChanges() {
     <p class="muted">O preço do INE é uma mediana dos últimos 12 meses: a variação trimestral é suave e chega com atraso.${CH.min_volume ? ` As listas de preço e score só incluem concelhos com pelo menos ${CH.min_volume} avaliações bancárias em 3 meses (mercado com dimensão suficiente) e sem dados voláteis.` : ''} As mudanças de faixa incluem todos os concelhos. A renda é a mesma nos dois trimestres, por isso as mudanças de score vêm dos preços.</p>`;
 }
 const BAND_ORDER_JS = { green: 0, amber: 1, red: 2 };
+
+// ---------- comprar casa: esforço e comprar ou arrendar
+// Calculado no browser com os parâmetros escolhidos; não entra em nenhum score.
+const AFF_KEY = 'imopt.afford.v1';
+const OWN_COST = 0.013;     // IMI (~0,3%) + manutenção e seguros (~1%) por ano, em % do preço
+const PRUDENT = 0.40;       // ≈ 50% do rendimento líquido (limite do Banco de Portugal) para um salário médio
+const AFF_FALLBACK_RATE = 3.5;
+const affDefaults = () => ({ area: 90, down: 10, years: 30, rate: null, earners: 1 });
+let AFF = affDefaults();
+const affRateNow = () => (OL && OL.rates && OL.rates.rate_now != null ? +OL.rates.rate_now.toFixed(2) : AFF_FALLBACK_RATE);
+const affRate = () => (AFF.rate != null ? AFF.rate : affRateNow());
+function annuity(loan, ratePct, years) {
+  const r = ratePct / 100 / 12, n = years * 12;
+  return Math.abs(r) < 1e-12 ? loan / n : (loan * r) / (1 - (1 + r) ** -n);
+}
+function affordOf(m) {
+  if (m.price == null) return {};
+  const rate = affRate(), P = m.price * AFF.area, loan = P * (1 - AFF.down / 100);
+  const pay = annuity(loan, rate, AFF.years), inc = m.income != null ? m.income * AFF.earners : null;
+  const rentHome = m.rent != null ? m.rent * AFF.area : null;
+  return {
+    aff_home: P, aff_down: P - loan, aff_pay: pay,
+    aff_effort: inc ? pay / inc : null,
+    aff_years_salary: inc ? P / (inc * 14) : null,
+    aff_rent_home: rentHome,
+    aff_pay_vs_rent: rentHome ? pay / rentHome - 1 : null,
+    // custo de ser dono no 1.º ano (juros sobre o preço todo + IMI/manutenção) menos a renda poupada, em % do preço
+    aff_breakeven: rentHome ? rate / 100 + OWN_COST - (rentHome * 12) / P : null,
+  };
+}
+function applyAfford() {
+  MUNIS.forEach((m) => Object.assign(m, affordOf(m)));
+  if (GEO) GEO.features.forEach((f) => { const m = BY[f.properties.dico]; f.properties.ef = m ? m.aff_effort ?? null : null; f.properties.br = m ? m.aff_pay_vs_rent ?? null : null; });
+  if (MAP && MAP.getSource('c')) MAP.getSource('c').setData(GEO);
+}
+const breakevenTxt = (g) => (g == null ? '' : g <= 0
+  ? 'comprar sai mais barato do que arrendar mesmo sem a casa valorizar'
+  : `comprar só compensa se a casa valorizar mais de ${fmt.pct(g, 1)}/ano`);
+function affReadTxt(m) {
+  const e = m.aff_effort, who = AFF.earners > 1 ? `${AFF.earners} salários médios` : 'ganho médio bruto de um trabalhador';
+  let t = `Comprar ${AFF.area} m² ao preço mediano custa ${fmt.eur(m.aff_home)}; com ${AFF.down}% de entrada (${fmt.eur(m.aff_down)}) e crédito a ${AFF.years} anos a ${fmt.n(affRate(), 2)}%, a prestação é ${fmt.eur(m.aff_pay)}/mês`;
+  if (e != null) t += ` — ${fmt.pct(e, 0)} d${AFF.earners > 1 ? 'e' : 'o'} ${who} no concelho (${m.income_year ? String(m.income_year).slice(0, 4) : 'n/d'})${e > PRUDENT ? ', acima do que o Banco de Portugal permite para um salário médio (prestação até 50% do rendimento líquido, cerca de 40% do bruto)' : ''}`;
+  t += '.';
+  if (m.aff_rent_home != null) t += ` Arrendar a mesma casa custa cerca de ${fmt.eur(m.aff_rent_home)}/mês (novos contratos): a prestação fica ${fmt.spct(m.aff_pay_vs_rent, 0)} face à renda, e ${breakevenTxt(m.aff_breakeven)} (já contando juros, IMI e manutenção; sem IMT e escritura).`;
+  return t;
+}
+function affLoad() {
+  try {
+    const v = JSON.parse(localStorage.getItem(AFF_KEY) || 'null');
+    if (v && typeof v === 'object') AFF = { ...affDefaults(), ...v };
+  } catch { AFF = affDefaults(); }
+}
+function affSave() { try { localStorage.setItem(AFF_KEY, JSON.stringify(AFF)); } catch { /* sem armazenamento: não faz mal */ } }
+function affForm() {
+  const f = $('#aff-form');
+  f.area.value = AFF.area; f.down.value = AFF.down; f.years.value = AFF.years; f.earners.value = AFF.earners;
+  f.rate.value = affRate().toFixed(2);
+  const R = OL && OL.rates;
+  $('#aff-rate-note').innerHTML = R && R.rate_now != null
+    ? `Taxa atual: ${fmt.n(R.rate_now, 2)}% = Euribor 12M de ${esc(R.euribor_month)} (${fmt.n(R.euribor_now, 2)}%) + ${fmt.n(R.spread, 2)} p.p.${R.spread_source && R.spread_source !== 'assumed' ? ` (diferença observada nos novos créditos à habitação, ${esc(R.spread_source)}${R.mortgage_rate_now != null ? `, quando a taxa média foi ${fmt.n(R.mortgage_rate_now, 2)}%` : ''})` : ' (margem assumida)'}.`
+    : `Sem taxa atual nesta build: usa-se ${fmt.n(AFF_FALLBACK_RATE, 1)}%.`;
+}
+function affReadForm() {
+  const f = $('#aff-form'), num = (el, lo, hi, d) => { const v = parseFloat(String(el.value).replace(',', '.')); return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d; };
+  const def = affDefaults();
+  AFF.area = Math.round(num(f.area, 20, 400, def.area));
+  AFF.down = num(f.down, 0, 90, def.down);
+  AFF.years = Math.round(num(f.years, 5, 40, def.years));
+  AFF.earners = f.earners.value === '2' ? 2 : 1;
+  const r = num(f.rate, 0, 15, affRateNow());
+  AFF.rate = Math.abs(r - affRateNow()) < 0.005 ? null : r;      // igual à atual: segue a taxa das próximas builds
+}
+function renderAfford() {
+  const body = $('#aff-body');
+  const ok = MUNIS.filter((m) => m.aff_effort != null);
+  if (!ok.length) { body.innerHTML = '<p class="muted">Sem preços e salários suficientes nesta build.</p>'; return; }
+  const P = median(col((x) => x.price)), payTyp = annuity(P * AFF.area * (1 - AFF.down / 100), affRate(), AFF.years);
+  const eMed = median(ok.map((m) => m.aff_effort)), over = ok.filter((m) => m.aff_effort > PRUDENT).length;
+  const wr = MUNIS.filter((m) => m.aff_pay_vs_rent != null), cheaper = wr.filter((m) => m.aff_pay_vs_rent < 0).length;
+  const be = median(wr.map((m) => m.aff_breakeven)), beNeg = wr.filter((m) => m.aff_breakeven <= 0).length;
+  // listas só com mercado suficiente (como em "O que mudou"): sem dados voláteis e com >= 20 avaliações em 3 meses
+  const hasVol = MUNIS.filter((m) => m.val_count != null).length >= 10;
+  const stable = (arr) => arr.filter((m) => !m.volatile && (!hasVol || (m.val_count ?? 0) >= 20));
+  const top = (arr, k, asc, n = 10) => stable(arr).sort((a, b) => (a[k] - b[k]) * (asc ? 1 : -1)).slice(0, n);
+  const itE = (m) => `<li><span>${lnk(m.dico, m.name)}</span><span class="v">${fmt.pct(m.aff_effort, 0)} <span class="muted">${fmt.eur(m.aff_pay)}/mês · salário ${fmt.eur(m.income * AFF.earners)}</span></span></li>`;
+  const itR = (m) => `<li><span>${lnk(m.dico, m.name)}</span><span class="v">${fmt.spct(m.aff_pay_vs_rent, 0)} <span class="muted">${fmt.eur(m.aff_pay)} vs ${fmt.eur(m.aff_rent_home)} · ${m.aff_breakeven <= 0 ? 'compensa sem valorizar' : `precisa de ${fmt.spct(m.aff_breakeven)}/ano`}</span></span></li>`;
+  const who = AFF.earners > 1 ? `${AFF.earners} salários médios` : 'um salário médio';
+  body.innerHTML = `
+    <p class="verdict">No concelho típico (${fmt.eur(P)}/m²), ${AFF.area} m² custam <b>${fmt.eur(P * AFF.area)}</b>: com ${fmt.n(AFF.down, 0)}% de entrada e ${AFF.years} anos a ${fmt.n(affRate(), 2)}%, a prestação é <b>${fmt.eur(payTyp)}/mês</b>.
+      A prestação leva, a meio dos concelhos, <b>${fmt.pct(eMed, 0)}</b> de ${who} (bruto); em <b>${over} de ${ok.length}</b> passa de ${fmt.pct(PRUDENT, 0)}, perto do limite do Banco de Portugal.
+      ${wr.length ? `Nos ${wr.length} concelhos com renda publicada, a prestação é mais baixa do que a renda da mesma casa em <b>${cheaper}</b>; contando juros, IMI e manutenção, ${be <= 0 ? 'no concelho típico comprar sai mais barato do que arrendar mesmo sem a casa valorizar' : `no concelho típico comprar só sai mais barato do que arrendar se a casa valorizar mais de <b>${fmt.pct(be, 1)}/ano</b>`} — em <b>${beNeg} dos ${wr.length}</b> compensa mesmo sem valorizar.` : ''}</p>
+    <div class="ol-cols">
+      <div><p class="muted"><b>Menor esforço</b> (prestação ÷ salário)</p><ul class="ol-list aff-list">${top(ok, 'aff_effort', true).map(itE).join('')}</ul></div>
+      <div><p class="muted"><b>Maior esforço</b></p><ul class="ol-list aff-list">${top(ok, 'aff_effort', false).map(itE).join('')}</ul></div>
+    </div>
+    ${wr.length ? `<div class="ol-cols">
+      <div><p class="muted"><b>Prestação mais abaixo da renda</b> ${info('buy_rent')}</p><ul class="ol-list aff-list">${top(wr, 'aff_pay_vs_rent', true).map(itR).join('')}</ul></div>
+      <div><p class="muted"><b>Prestação mais acima da renda</b></p><ul class="ol-list aff-list">${top(wr, 'aff_pay_vs_rent', false).map(itR).join('')}</ul></div>
+    </div>` : ''}
+    <p class="aff-map"><button type="button" class="btn" data-m="ef">Ver esforço no mapa</button> <button type="button" class="btn" data-m="br">Ver prestação vs renda no mapa</button></p>
+    <ul class="read muted">
+      <li>Preço: mediana de todas as vendas do concelho (INE, 12 meses), casas grandes e pequenas, novas e usadas. A casa que procuras pode custar bem mais ou menos por m².</li>
+      <li>Salário: ganho médio mensal bruto por trabalhador por conta de outrem (INE, ${esc(String((ok.find((m) => m.income_year) || {}).income_year || '').slice(0, 4) || 'ano n/d')}), não o rendimento líquido nem o do agregado. É o salário de quem trabalha no concelho, não de quem lá vive: nos concelhos-dormitório (por exemplo à volta de Lisboa) muitos residentes ganham mais noutro concelho, e o esforço aparece exagerado. Os anos de salário usam 14 meses.</li>
+      <li>Renda: mediana de novos contratos (€/m²) × a mesma área. A prestação inclui amortização, que é poupança: por isso o ponto de equilíbrio é a medida mais justa. Nos concelhos baratos do interior, muitas casas vendidas são antigas ou precisam de obras, enquanto as arrendadas estão prontas a habitar: aí comprar parece mais vantajoso do que é.</li>
+      <li>Fora das contas: IMT, imposto do selo, escritura e comissões (vários milhares de euros, pesam mais em quem fica poucos anos), seguros obrigatórios do crédito, e mudanças de taxa ao longo do empréstimo. As listas só incluem concelhos sem dados voláteis${hasVol ? ' e com pelo menos 20 avaliações bancárias em 3 meses' : ''}.</li>
+    </ul>`;
+}
+function initAfford() {
+  affLoad(); affForm(); applyAfford(); renderAfford();
+  const update = () => {
+    affReadForm(); affSave(); applyAfford(); renderAfford();
+    try { renderTable(); } catch (e) { console.error(e); }
+    if (['ef', 'br'].includes($('#metric').value)) updateMetric();
+    if (selected) select(selected, false);
+    if (compare.length) renderCompare();
+  };
+  $('#aff-form').addEventListener('change', update);
+  $('#aff-form').addEventListener('submit', (e) => { e.preventDefault(); update(); });
+  $('#aff-reset').addEventListener('click', () => { AFF = affDefaults(); affForm(); update(); });
+  $('#aff-body').addEventListener('click', (e) => {
+    const a = e.target.closest('a[data-d]'); if (a) { e.preventDefault(); select(a.dataset.d); return; }
+    const b = e.target.closest('[data-m]');
+    if (b) { if (LEVEL !== 'c') setLevel('c'); $('#metric').value = b.dataset.m; updateMetric(); $('#mapsec').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+}
 
 // ---------- perspetivas
 function freshChart(id) {
@@ -981,13 +1121,15 @@ function renderOutlook() {
 
 // ---------- ranking
 const COL_HELP = { price: 'price', price_growth_1y: 'g1y', rent: 'rent', gross_yield: 'yield', price_to_income_months: 'p2i',
-  rent_to_income: 'r2i', migration_balance: 'migration', fc_growth_12m: 'fc12', score_overall: 'score_overall', band: 'band' };
+  rent_to_income: 'r2i', migration_balance: 'migration', aff_effort: 'effort', aff_pay_vs_rent: 'buy_rent', fc_growth_12m: 'fc12', score_overall: 'score_overall', band: 'band' };
 const COLS = [
   ['name', 'Concelho', (m) => esc(m.name) + (m.volatile ? ' <span title="Preços muito voláteis (poucas transações): score atenuado">⚠</span>' : '')], ['price', '€/m²', (m) => fmt.eur(m.price)],
   ['price_growth_1y', 'Var. 12m', (m) => fmt.pct(m.price_growth_1y)], ['rent', 'Renda €/m²', (m) => (m.rent == null ? '—' : fmt.eur2(m.rent))],
   ['gross_yield', 'Rendib.', (m) => fmt.pct(m.gross_yield, 2)],
   ['price_to_income_months', 'Preço/rend. (m)', (m) => fmt.n(m.price_to_income_months, 1)],
   ['rent_to_income', 'Renda/rend.', (m) => (m.rent_to_income == null ? '—' : fmt.pct(m.rent_to_income, 1))],
+  ['aff_effort', 'Esforço', (m) => fmt.pct(m.aff_effort, 0)],
+  ['aff_pay_vs_rent', 'Prest./renda', (m) => fmt.spct(m.aff_pay_vs_rent, 0)],
   ['migration_balance', 'Saldo migrat.', (m) => (m.migration_balance == null ? '—' : (m.migration_balance >= 0 ? '+' : '') + fmt.n(m.migration_balance, 0))],
   ['fc_growth_12m', 'Prev. 12m', (m) => fmt.spct(m.fc_growth_12m)],
   ['score_overall', 'Score', (m) => fmt.n(m.score_overall)],
@@ -1081,6 +1223,7 @@ async function main() {
   // Cada parte é isolada: uma falha (por exemplo o mapa/WebGL no Safari) não impede as restantes.
   const safe = (name, fn) => { try { fn(); } catch (e) { console.error(`Falha em ${name}:`, e); return e; } };
   safe('painel nacional', renderNational);
+  safe('comprar casa', initAfford);
   safe('ranking', () => { renderTable(); renderRankingSummary(); });
   safe('backtest', renderBacktest);
   safe('perspetivas', renderOutlook);
