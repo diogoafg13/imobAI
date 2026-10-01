@@ -372,6 +372,33 @@ no snapshot bruto do build de 2026-10-01 (ver `config/sources.yml`). Nenhum entr
 - **Ficha para imprimir**: botão "Imprimir ficha" no detalhe; a impressão (ou "guardar como PDF") mostra só o
   concelho, com data e fontes.
 
+### Ronda 5: validação, resumo e site mais leve
+
+- **Que sinais ajudam a prever o preço** (`imopt/signals.py`): seis sinais candidatos (crédito novo, custo de
+  construção, licenças, avaliação face ao preço, esforço de compra do concelho, dormidas turísticas) são
+  acrescentados um a um à previsão de vendas do INE e testados no mesmo backtest sem ver o futuro. Regra
+  fixada antes de ver os resultados: entra se reduzir o erro a 12 meses em pelo menos 1% sem piorar o
+  trimestre seguinte em mais de 1%. **Resultado (2026-10-01): nenhum passa** (de −0,0% a −4,5%); a previsão não
+  muda (`PRODUCTION = ()`). Exploratório com a avaliação bancária de apartamentos e moradias (15 anos): as
+  licenças melhoram os apartamentos +1,2% mas pioram as moradias −6,3%, e o esforço faz o inverso (+2,8% e
+  −4,5%) — sinais trocados, lido como ruído. O teste é refeito em cada build e mostrado em "Perspetivas"
+  (custa cerca de 1 minuto a mais por build).
+- **Valor justo com dados novos**: IRS de quem vive, alojamento local, casas vagas e 2.ª habitação testados com
+  validação cruzada de 10 partes repetida 5 vezes; entra se o R² subir pelo menos 0,005 em média e em todas
+  as repetições (regra aplicada em cada build). Entraram o IRS (0,837 → 0,849) e a 2.ª habitação
+  (0,840 → 0,846); R² final 0,849. Concelhos sem IRS publicado (7) ficam sem valor justo. Rendimento e 2.ª
+  habitação também são consequência dos preços: os efeitos descrevem, não provam causa.
+- **Resumo** no topo: seis números (preço real, esforço, crédito novo, concelhos em fase de fim de ciclo,
+  previsão a 12 meses e posição na UE), cada um com ligação para a secção.
+- **Site mais leve**: `municipalities.json` passa de 1,4 MB para 0,8 MB — as séries, previsões e esforço por
+  concelho vão para `series.json` (0,6 MB), descarregado em segundo plano depois de a página aparecer; as
+  freguesias (1 MB + mapa) só quando se abre o mapa de freguesias ou um concelho; os ficheiros iniciais são
+  pedidos em paralelo; os gráficos de "Perspetivas" só são desenhados quando a secção se aproxima do ecrã.
+  O código do site continua num ficheiro (`app.js`): partir em módulos não o tornava mais rápido — o peso
+  estava nos dados.
+- **População e desemprego por concelho**: os códigos do catálogo (0004163, 0004350) só têm país e regiões;
+  ficaram de fora. A tentar 0008273 para a população residente por concelho.
+
 ### Freguesias
 
 `imopt/parishes.py`. O preço mediano de venda por freguesia vem do mesmo indicador do INE (0012234,

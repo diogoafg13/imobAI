@@ -275,6 +275,14 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
                        "relativos (percentis entre concelhos) e não foram validados por backtest."),
     }
     out_dir.mkdir(parents=True, exist_ok=True)
+    # Séries e previsões por concelho num ficheiro à parte (carregado pelo site só quando é preciso): o
+    # municipalities.json fica com os números do ranking, do mapa e do detalhe, e abre mais depressa.
+    heavy = {}
+    for item in munis:
+        rent_s = item.get("series", {}).get("rent") or []
+        item["rent_first"] = int(str(rent_s[0][0])[:4]) if rent_s else None
+        heavy[item["dico"]] = {k: item.pop(k) for k in ("series", "fc", "effort_hist") if k in item}
+    geo.dump(heavy, str(out_dir / "series.json"))
     geo.dump(munis, str(out_dir / "municipalities.json"))
     geo.dump(national, str(out_dir / "national.json"))
     geo.dump(meta, str(out_dir / "meta.json"))

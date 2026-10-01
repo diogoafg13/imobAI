@@ -77,3 +77,33 @@ def test_credit_flow_rolling_sum_and_renegotiation_share():
     assert c["until"] == "2025-12" and c["last12"] == 1440.0 and c["change"] == pytest.approx(0.2)
     assert c["reneg_share"] == pytest.approx(1 - 1080 / 1440) and c["series"][-1] == ["2025-12", 1440.0]
     assert market.credit_flow(vol.head(10)) is None
+
+
+def test_signals_and_fair_value_candidates_in_demo_build(tmp_path, monkeypatch):
+    monkeypatch.setenv("IMOPT_SIGNALS", "1")
+    frames, macro_frames = demo.demo_frames()
+    pipeline.build_outputs(frames, macro_frames, {}, {}, tmp_path, None, demo=True)
+    ol = json.loads((tmp_path / "outlook.json").read_text(encoding="utf-8"))
+    g = ol["signals"]
+    assert g["rows"] and all({"signal", "status"} <= set(r) for r in g["rows"])
+    assert all(("gain_fc" not in r) or (r["passes"] == (r["gain_fc"] >= 0.01 and r["gain_h1"] >= -0.01)) for r in g["rows"])
+    fv = ol["fair_value"]
+    assert {t["feature"] for t in fv["candidate_tests"]} >= {"log_irs", "vacant_share", "secondary_share"}
+    chosen = {t["feature"] for t in fv["candidate_tests"] if t["passes"]}
+    assert chosen <= {e["feature"] for e in fv["effects"]}
+    ser = json.loads((tmp_path / "series.json").read_text(encoding="utf-8"))
+    assert len(ser) == 48 and "series" in next(iter(ser.values()))
+
+
+def test_signal_candidates_respect_publication_lag():
+    from imopt import signals
+    import numpy as np
+    rows = [dict(dico="0001", level="municipality", sort_key=y * 100, period=str(y), value=v)
+            for y, v in ((2020, 100.0), (2021, 200.0), (2022, 400.0))]
+    c = signals.candidates({"tourism_nights": pd.DataFrame(rows)}, {}, None)
+    idx = pd.Index(["0001"])
+    # em março de 2023 (mês 2023*12+2) só há 2021 publicado: variação 2021 vs 2020
+    assert c["x_tourism"](0, 2023 * 12 + 2, idx, None).iloc[0] == pytest.approx(np.log(2))
+    # em julho de 2023 já há 2022: variação 2022 vs 2021
+    assert c["x_tourism"](0, 2023 * 12 + 6, idx, None).iloc[0] == pytest.approx(np.log(2))
+    assert c["x_tourism"](0, 2021 * 12 + 2, idx, None).isna().all()

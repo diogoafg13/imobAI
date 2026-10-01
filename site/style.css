@@ -96,3 +96,4 @@ a.lnk{color:var(--fg);text-decoration:underline;text-decoration-color:var(--line
   .print-only{display:block}.chart{break-inside:avoid;page-break-inside:avoid}.stats{grid-template-columns:repeat(4,1fr)}
   .stat,.why-row,tr{break-inside:avoid}
 }
+.sum-tile{text-decoration:none;color:inherit}.sum-tile:hover{outline:1px solid var(--accent)}

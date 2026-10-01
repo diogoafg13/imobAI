@@ -61,4 +61,5 @@ def test_build_outputs_real_prices_changes_and_volume_in_type_forecasts(tmp_path
     assert "vol_chg" in ol["fc_apt"]["features"] and "vol_chg" not in ol["sales"]["features"]
     m = json.loads((tmp_path / "municipalities.json").read_text(encoding="utf-8"))[0]
     assert m["price_growth_1y_real"] is not None and m["hicp_period"] and m["price_qoq"] is not None
-    assert len(m["series"]["price_real"]) == len(m["series"]["price"])
+    ser = json.loads((tmp_path / "series.json").read_text(encoding="utf-8"))[m["dico"]]["series"]
+    assert len(ser["price_real"]) == len(ser["price"]) and "series" not in m and "rent_first" in m

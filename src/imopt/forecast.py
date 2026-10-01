@@ -226,7 +226,7 @@ def _usable(panel: pd.DataFrame, feats: list[str]) -> list[str]:
 
 
 # ---------------------------------------------------------------- venda
-def _sales_features(s, v3, nat3, eur, a, q, lead, vol=None) -> pd.DataFrame:
+def _sales_features(s, v3, nat3, eur, a, q, lead, vol=None, extra=None) -> pd.DataFrame:
     me = q_end_month(q)
     idx = s.index
     s0 = _c(s, q)
@@ -252,6 +252,11 @@ def _sales_features(s, v3, nat3, eur, a, q, lead, vol=None) -> pd.DataFrame:
         # volume (avaliações bancárias, já somadas a 3 meses pelo INE): o volume costuma mexer antes dos preços
         f["vol_chg"] = _c(vol, me + lead, idx) - _c(vol, me + lead - 12, idx)
         f["vol_chg"] = f["vol_chg"].fillna(f["vol_chg"].median())
+    # sinais candidatos (imopt/signals.py): cada um é uma função (q, mês de referência, índice, preço) -> valores
+    for name, fn in (extra or {}).items():
+        v = fn(q, me + lead, idx, s0)
+        f[name] = v if isinstance(v, pd.Series) else pd.Series(v, index=idx, dtype=float)
+        f[name] = f[name].fillna(f[name].median())
     f["sigma"] = robust_sigma(s, q)
     return f
 
@@ -264,8 +269,8 @@ def _kind(qi: int, today: dt.date) -> str:
 def forecast_sales(sales: pd.DataFrame, valuation: pd.DataFrame | None = None,
                    euribor: pd.DataFrame | None = None, nbrs: dict[str, list[str]] | None = None,
                    regions: dict[str, str] | None = None, today: dt.date | None = None,
-                   volume: pd.DataFrame | None = None) -> tuple[dict | None, dict]:
-    """Devolve (resumo para outlook.json, {dico: previsão})."""
+                   volume: pd.DataFrame | None = None, extra: dict | None = None) -> tuple[dict | None, dict]:
+    """Devolve (resumo para outlook.json, {dico: previsão}). `extra`: sinais candidatos (ver imopt/signals.py)."""
     today = today or dt.date.today()
     s = log_grid(sales, q_index)
     if s is None or s.shape[1] < 12:
@@ -289,13 +294,13 @@ def forecast_sales(sales: pd.DataFrame, valuation: pd.DataFrame | None = None,
     origins = [q for q in range(int(s.columns.min()) + 4, qmax + 1)]
     parts = []
     for q in origins:
-        f = _sales_features(s, v3, nat3, eur, a, q, lead, vol)
+        f = _sales_features(s, v3, nat3, eur, a, q, lead, vol, extra)
         f["origin"] = q
         for h in horizons:
             f[f"y{h}"] = _c(s, q + h) - _c(s, q)
         parts.append(f.rename_axis("dico").reset_index())
     panel = pd.concat(parts, ignore_index=True)
-    feats = _usable(panel, SALES_FEATURES)
+    feats = _usable(panel, SALES_FEATURES + list(extra or {}))
     panel = panel.dropna(subset=feats + ["sigma"])
 
     rows, finals, models = [], {}, {}

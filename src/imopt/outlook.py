@@ -25,6 +25,7 @@ from __future__ import annotations
 import datetime as dt
 import logging
 import math
+import os
 
 import numpy as np
 import pandas as pd
@@ -338,7 +339,32 @@ def fair_value(feats: pd.DataFrame | None, spatial: pd.DataFrame | None, dist: p
     dummies = pd.get_dummies(reg, prefix="r", dtype=float)
     if dummies.shape[1] > 1:
         dummies = dummies.drop(columns=dummies.sum().idxmax())
-    data = x.join(dummies).assign(y=np.log(df["price"].where(df["price"] > 0))).dropna()
+    # Candidatos novos (ver FV_RULE): só entram se melhorarem a explicação fora da amostra.
+    cand = pd.DataFrame(index=df.index)
+    if "irs_median" in df and df["irs_median"].notna().sum() >= 30:
+        cand["log_irs"] = np.log(df["irs_median"].where(df["irs_median"] > 0))
+    if "al_beds_per_100" in df and df["al_beds_per_100"].notna().sum() >= 30:
+        cand["log_al"] = np.log1p(df["al_beds_per_100"].fillna(0).clip(lower=0))   # sem AL publicado = pouco AL
+    for c in ("vacant_share", "secondary_share"):
+        if c in df and df[c].notna().sum() >= 30:
+            cand[c] = df[c]
+    base = x.join(dummies).assign(y=np.log(df["price"].where(df["price"] > 0)))
+    tests, chosen = [], []
+    for c in cand.columns:
+        b = base.dropna()
+        w = base.join(cand[[c]]).dropna()
+        common = b.index.intersection(w.index)
+        if len(common) < 30:
+            continue
+        r_b = _cv_r2(b.loc[common], n_folds)
+        r_w = _cv_r2(w.loc[common], n_folds)
+        gains = [rw - rb for rw, rb in zip(r_w, r_b)]
+        ok = float(np.mean(gains)) >= FV_RULE["min_gain"] and min(gains) > 0
+        tests.append({"feature": c, "label": FV_LABELS.get(c, c), "r2_base": float(np.mean(r_b)), "r2_with": float(np.mean(r_w)),
+                      "gain": float(np.mean(gains)), "n": int(len(common)), "passes": bool(ok)})
+        if ok:
+            chosen.append(c)
+    data = base.join(cand[chosen]).dropna() if chosen else base.dropna()
     if len(data) < 30:
         return None, {}
     cols = [c for c in data.columns if c != "y"]
@@ -359,7 +385,11 @@ def fair_value(feats: pd.DataFrame | None, spatial: pd.DataFrame | None, dist: p
                            ("mig_rate", "saldo migratório (+1 por mil habitantes)", "per_unit"),
                            ("coastal", "estar no litoral", "per_unit"),
                            ("log_tourism", "dormidas turísticas por habitante (+1, em log)", "per_unit"),
-                           ("log_dist", "distância a Lisboa/Porto", "elasticity")):
+                           ("log_dist", "distância a Lisboa/Porto", "elasticity"),
+                           ("log_irs", "rendimento de quem vive (IRS)", "elasticity"),
+                           ("log_al", "alojamento local (camas por 100 alojamentos, +1 em log)", "per_unit"),
+                           ("vacant_share", "casas vagas (+100% = todas)", "per_unit"),
+                           ("secondary_share", "2.ª habitação (+100% = todas)", "per_unit")):
         if c in raw_b:
             b = float(raw_b[c])
             effects.append({"feature": c, "label": label, "kind": kind,
@@ -377,8 +407,31 @@ def fair_value(feats: pd.DataFrame | None, spatial: pd.DataFrame | None, dist: p
 
     summary = {"n": int(len(data)), "r2_in": r2_in, "r2_cv": r2_cv, "effects": effects,
                "regions_as_controls": dummies.shape[1] > 0, "top_above": top(False), "top_below": top(True),
-               "share_within_20pct": float((gap.abs() <= 0.2).mean())}
+               "share_within_20pct": float((gap.abs() <= 0.2).mean()),
+               "candidate_tests": tests, "rule": FV_RULE["text"]}
     return summary, per
+
+
+FV_RULE = {"min_gain": 0.005, "seeds": 5,
+           "text": "entra se o R² com validação cruzada (10 partes, repetida 5 vezes) subir pelo menos 0,005 em média e "
+                   "subir em todas as repetições"}
+FV_LABELS = {"log_irs": "rendimento de quem vive (IRS)", "log_al": "alojamento local por 100 alojamentos",
+             "vacant_share": "casas vagas (Censos 2021)", "secondary_share": "residência secundária (Censos 2021)"}
+
+
+def _cv_r2(data: pd.DataFrame, n_folds: int = 10) -> list[float]:
+    cols = [c for c in data.columns if c != "y"]
+    xm, y = data[cols].to_numpy(float), data["y"].to_numpy(float)
+    sst = float(((y - y.mean()) ** 2).sum())
+    out = []
+    for seed in range(FV_RULE["seeds"]):
+        oof = np.empty(len(y))
+        folds = np.random.default_rng(100 + seed).permutation(len(y)) % n_folds
+        for k in range(n_folds):
+            m = fc.ridge_fit(xm[folds != k], y[folds != k], lam=0.01)
+            oof[folds == k] = fc.ridge_predict(m, xm[folds == k])
+        out.append(1 - float(((y - oof) ** 2).sum()) / sst)
+    return out
 
 
 # ---------------------------------------------------------------- procura
@@ -506,7 +559,7 @@ LIMITS = [
 def build(frames: dict, macro_frames: dict, feats: pd.DataFrame | None, geojson: dict | None,
           hpi: pd.DataFrame | None, hpi_real: pd.DataFrame | None, today: dt.date | None = None,
           demo: bool = False) -> tuple[dict, dict[str, dict]]:
-    from . import europe, geo, housing, market
+    from . import europe, geo, housing, market, signals
     today = today or dt.date.today()
 
     def muni(df):
@@ -567,6 +620,13 @@ def build(frames: dict, macro_frames: dict, feats: pd.DataFrame | None, geojson:
     part("costs", lambda: housing.construction_costs(
         {"total": frames.get("construction_cost"), "materials": frames.get("construction_cost_materials"),
          "labour": frames.get("construction_cost_labour")}, frames.get("sales_price_new"), frames.get("sales_price_existing")))
+    # O teste de sinais refaz a previsão ~17 vezes (cerca de 1 minuto): corre nos builds reais; nos de demonstração
+    # só se IMOPT_SIGNALS=1 (os testes que o verificam ligam-no), para os restantes testes não ficarem lentos.
+    if sales is not None and (not demo or os.environ.get("IMOPT_SIGNALS") == "1"):
+        part("signals", lambda: signals.evaluate_all(
+            sales, valuation, euribor, nbrs, signals.candidates(frames, macro_frames, valuation),
+            {k: (monthly_to_quarterly_muni(muni(frames.get(f"valuation_{t}"))), muni(frames.get(f"valuation_count_{t}")))
+             for k, t in (("apt", "apartments"), ("house", "houses"))}))
     part("credit", lambda: market.credit_flow(macro_frames.get("mortgage_volume_pt"), macro_frames.get("mortgage_volume_pure_pt")))
     part("europe", lambda: europe.compare(macro_frames.get("eurostat_hpi_eu"), macro_frames.get("eurostat_hicp_eu")))
     part("afford_hist", lambda: housing.affordability_history(valuation, macro_frames.get("mortgage_rate_pt"),
