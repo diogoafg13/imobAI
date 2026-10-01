@@ -11,7 +11,6 @@ import pandas as pd
 from .scoring import latest_with_lags
 
 AREA_M2, LTV, YEARS = 90, 0.9, 30          # casa e crédito de referência (os mesmos da calculadora do site)
-TOP = 10
 
 
 def to_annual(df: pd.DataFrame | None, how: str = "sum") -> pd.DataFrame | None:
@@ -32,6 +31,19 @@ def to_annual(df: pd.DataFrame | None, how: str = "sum") -> pd.DataFrame | None:
     return out
 
 
+def dico4(df: pd.DataFrame | None) -> pd.DataFrame | None:
+    """Censos 2021: o concelho vem com geocod de 4 dígitos (o próprio DICO), que o parser classifica como 'other'."""
+    if df is None or df.empty or "geocod" not in df:
+        return df
+    g = df["geocod"].astype(str).str.strip()
+    m = g.str.fullmatch(r"\d{4}") & df["dico"].isna()
+    if not m.any():
+        return df
+    df = df.copy()
+    df.loc[m, "dico"], df.loc[m, "level"] = g[m], "municipality"
+    return df
+
+
 def context_features(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame:
     """Uma linha por concelho (municipais já filtrados). Colunas só aparecem se houver dados."""
     out = pd.DataFrame(columns=["dico"])
@@ -40,79 +52,76 @@ def context_features(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame:
         nonlocal out
         out = df if out.empty else out.merge(df, on="dico", how="outer")
 
-    irs = frames.get("irs_median")
-    if irs is not None and not irs.empty:
-        d = latest_with_lags(to_annual(irs, "mean"), "year", {"y1": 1})
+    def latest(key, how="mean", lags=None):
+        df = frames.get(key)
+        if df is None or df.empty:
+            return None
+        return latest_with_lags(to_annual(df, how), "year", lags or {})
+
+    if (d := latest("irs_median", lags={"y1": 1})) is not None:
         add(pd.DataFrame({"dico": d["dico"], "irs_median": d["latest"], "irs_year": d["latest_key"] // 100,
                           "irs_growth_1y": d["latest"] / d["y1"] - 1}))
-    for key, name in (("dwellings_licensed", "lic"), ("dwellings_completed", "comp")):
-        a = to_annual(frames.get(key), "sum")
-        if a is None or a.empty:
-            continue
-        d = latest_with_lags(a, "year", {"p1": 1, "p2": 2, "p3": 3, "p4": 4, "p5": 5})
-        avg3 = d[["latest", "p1", "p2"]].mean(axis=1, skipna=False)
-        prev3 = d[["p3", "p4", "p5"]].mean(axis=1, skipna=False)
-        add(pd.DataFrame({"dico": d["dico"], f"{name}_avg3": avg3, f"{name}_year": d["latest_key"] // 100,
-                          f"{name}_growth_3y": (avg3 / prev3 - 1).where(prev3 > 0)}))
-    stock = frames.get("dwellings_stock")
-    if stock is not None and not stock.empty:
-        d = latest_with_lags(to_annual(stock, "mean"), "year", {})
+    if (d := latest("dwellings_stock")) is not None:
         add(pd.DataFrame({"dico": d["dico"], "dwellings": d["latest"], "dwellings_year": d["latest_key"] // 100}))
-    beds = frames.get("tourism_beds")
-    if beds is not None and not beds.empty:
-        d = latest_with_lags(to_annual(beds, "mean"), "year", {})
-        add(pd.DataFrame({"dico": d["dico"], "tourism_beds": d["latest"], "tourism_beds_year": d["latest_key"] // 100}))
+    for key, name in (("tourism_beds", "tourism_beds"), ("tourism_beds_al", "al_beds")):
+        if (d := latest(key)) is not None:
+            add(pd.DataFrame({"dico": d["dico"], name: d["latest"], f"{name}_year": d["latest_key"] // 100}))
+    census = {k: latest(f"census_{k}") for k in ("total", "secondary", "vacant_market", "vacant_other")}
+    if census["total"] is not None:
+        c = census["total"][["dico", "latest", "latest_key"]].rename(columns={"latest": "census_total"})
+        c["census_year"] = c.pop("latest_key") // 100
+        for k in ("secondary", "vacant_market", "vacant_other"):
+            if census[k] is not None:
+                c = c.merge(census[k][["dico", "latest"]].rename(columns={"latest": k}), on="dico", how="left")
+        if "secondary" in c:
+            c["secondary_share"] = c["secondary"] / c["census_total"]
+        if "vacant_market" in c and "vacant_other" in c:
+            c["vacant_share"] = (c["vacant_market"] + c["vacant_other"]) / c["census_total"]
+            c["vacant_market_share"] = c["vacant_market"] / c["census_total"]
+        add(c.drop(columns=[k for k in ("secondary", "vacant_market", "vacant_other") if k in c]))
     if out.empty:
         return out
     if "dwellings" in out:
-        for name in ("lic", "comp"):
-            if f"{name}_avg3" in out:
-                out[f"{name}_per_1000"] = out[f"{name}_avg3"] / out["dwellings"] * 1000
-        if "tourism_beds" in out:
-            out["beds_per_100"] = out["tourism_beds"] / out["dwellings"] * 100
+        for name, col in (("tourism_beds", "beds_per_100"), ("al_beds", "al_beds_per_100")):
+            if name in out:
+                out[col] = out[name] / out["dwellings"] * 100
     return out
 
 
-def supply(feats: pd.DataFrame | None, licensed: pd.DataFrame | None = None,
-           completed: pd.DataFrame | None = None) -> dict | None:
-    """Construção nova: série nacional (soma dos concelhos com ano completo), relação com os preços e listas."""
-    if feats is None or "lic_per_1000" not in feats:
-        return None
-    f = feats.dropna(subset=["lic_per_1000"])
-    if len(f) < 10:
-        return None
-    out: dict = {"n": int(len(f)), "year": int(f["lic_year"].max()),
-                 "median_lic_per_1000": float(f["lic_per_1000"].median())}
-    if "comp_per_1000" in f:
-        out["median_comp_per_1000"] = float(f["comp_per_1000"].median())
-    series = {}
-    for key, df in (("licensed", licensed), ("completed", completed)):
+def supply(licensed: pd.DataFrame | None, completed: pd.DataFrame | None,
+           stock: pd.DataFrame | None = None) -> dict | None:
+    """Construção nova no país: o INE publica licenças (mensal) e conclusões (trimestral) só até às regiões, não por
+    concelho. Série anual (anos completos), por 1000 alojamentos, e os últimos 12 meses face aos 12 anteriores."""
+    def nat(df):
+        if df is None or df.empty:
+            return None
+        d = df[df["level"] == "national"].dropna(subset=["value"]) if "level" in df else df
+        return None if d.empty else d.assign(dico="PT").sort_values("sort_key")
+
+    stock_a = _national_annual(stock)
+    out: dict = {"series": {}, "recent": {}}
+    for key, df in (("licensed", nat(licensed)), ("completed", nat(completed))):
+        if df is None:
+            continue
         a = to_annual(df, "sum")
         if a is not None and not a.empty:
-            # só anos em que pelo menos 90% dos concelhos do ano mais completo têm valor (evita anos parciais)
-            cnt = a.groupby("sort_key")["dico"].nunique()
-            ok = cnt[cnt >= 0.9 * cnt.max()].index
-            s = a[a["sort_key"].isin(ok)].groupby("sort_key")["value"].sum()
-            series[key] = [[str(k // 100), float(v)] for k, v in s.items()]
-    if series:
-        out["series"] = series
-    if "price_growth_3y" in f:
-        g = f.dropna(subset=["price_growth_3y"])
-        if len(g) >= 20:
-            out["spearman_price_3y"] = float(g["lic_per_1000"].rank().corr(g["price_growth_3y"].rank()))
-            # preço a subir muito (quartil de cima) com pouca construção nova (quartil de baixo)
-            hi_p, lo_l = g["price_growth_3y"].quantile(0.75), g["lic_per_1000"].quantile(0.25)
-            tight = g[(g["price_growth_3y"] >= hi_p) & (g["lic_per_1000"] <= lo_l)]
-            if "val_count" in tight:
-                tight = tight[tight["val_count"].fillna(0) >= 20]
-            out["tight"] = [{"dico": str(r.dico), "name": str(r.name), "lic": float(r.lic_per_1000),
-                             "g3": float(r.price_growth_3y)} for r in tight.sort_values("price_growth_3y", ascending=False).head(TOP).itertuples()]
-    top = f.sort_values("lic_per_1000", ascending=False)
-    if "dwellings" in top:
-        top = top[top["dwellings"] >= 2000]     # concelhos muito pequenos saltam com um só empreendimento
-    out["top"] = [{"dico": str(r.dico), "name": str(r.name), "lic": float(r.lic_per_1000),
-                   "g3": None if pd.isna(getattr(r, "price_growth_3y", np.nan)) else float(r.price_growth_3y)}
-                  for r in top.head(TOP).itertuples()]
+            rows = []
+            for k, v in zip(a["sort_key"], a["value"]):
+                y = int(k) // 100
+                st = None
+                if stock_a is not None and len(stock_a[stock_a.index <= y]):
+                    st = float(stock_a[stock_a.index <= y].iloc[-1])
+                rows.append([str(y), float(v), float(v) / st * 1000 if st else None])
+            out["series"][key] = rows
+        n = 12 if str(df["period_kind"].iloc[0]) == "month" else 4
+        if len(df) >= 2 * n:
+            last, prev = df["value"].iloc[-n:].sum(), df["value"].iloc[-2 * n:-n].sum()
+            out["recent"][key] = {"until": str(df["period"].iloc[-1]), "last12": float(last),
+                                  "change": float(last / prev - 1) if prev > 0 else None}
+    if not out["series"]:
+        return None
+    if stock_a is not None:
+        out["stock"] = {"year": int(stock_a.index[-1]), "value": float(stock_a.iloc[-1])}
     return out
 
 

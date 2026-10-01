@@ -102,14 +102,31 @@ def demo_frames(seed: int = 7):
     frames["rent_contracts"] = yearly.assign(value=lambda d: (d["value"] * rng.uniform(0.5, 2, len(d))).round())
     frames["tourism_nights"] = yearly.assign(value=lambda d: d["value"] * rng.uniform(200, 4000, len(d)))
     frames["housing_credit_pc"] = yearly.assign(value=lambda d: rng.uniform(3000, 15000, len(d)))
-    # oferta, parque, IRS e camas turísticas (anuais; licenças desde 2016 para haver médias de 3 anos)
+    # parque, Censos 2021, camas turísticas e IRS (concelho); licenças e conclusões só nacionais (como no INE)
     ydf = pd.DataFrame([_row(r.dico, names[r.dico], r.geocod, str(y), "year", y * 100, 1.0)
                         for r in yearly.drop_duplicates("dico").itertuples() for y in range(2016, 2026)])
     stock = {d: rng.uniform(3000, 60000) for d in dicos}
-    frames["dwellings_stock"] = ydf.assign(value=lambda d: [stock[x] * (1 + 0.004 * (int(p) - 2016)) for x, p in zip(d["dico"], d["period"])])
-    frames["dwellings_licensed"] = ydf.assign(value=lambda d: [round(stock[x] * rng.uniform(0.001, 0.008)) for x in d["dico"]])
-    frames["dwellings_completed"] = ydf.assign(value=lambda d: [round(stock[x] * rng.uniform(0.001, 0.006)) for x in d["dico"]])
-    frames["tourism_beds"] = ydf.assign(value=lambda d: [round(stock[x] * rng.uniform(0.0, 0.2)) for x in d["dico"]])
+    frames["dwellings_stock"] = ydf[ydf["period"].astype(int) <= 2022].assign(
+        value=lambda d: [stock[x] * (1 + 0.004 * (int(p) - 2016)) for x, p in zip(d["dico"], d["period"])])
+    frames["tourism_beds"] = ydf[ydf["period"].astype(int) >= 2023].assign(value=lambda d: [round(stock[x] * rng.uniform(0.01, 0.2)) for x in d["dico"]])
+    frames["tourism_beds_al"] = frames["tourism_beds"].assign(value=lambda d: (d["value"] * 0.3).round())
+    shares = {d: (rng.uniform(0.05, 0.25), rng.uniform(0.04, 0.12), rng.uniform(0.02, 0.06)) for d in dicos}
+    for key, j in (("census_total", None), ("census_secondary", 0), ("census_vacant_market", 2), ("census_vacant_other", 1)):
+        # Censos: o INE usa geocod de 4 dígitos (o DICO) e o parser não lhe atribui concelho
+        frames[key] = pd.DataFrame([dict(_row(None, names[d], d, "2021", "year", 202100,
+                                             stock[d] * (1 if j is None else shares[d][j])), level="other") for d in dicos])
+    months_n = pd.period_range("2007-01", "2026-07", freq="M")
+    frames["dwellings_licensed"] = pd.DataFrame([_row("PT", "Portugal", "PT", str(m), "month", m.year * 100 + m.month,
+                                                      round(3000 * (0.4 + 0.6 * abs(np.sin(i / 60)))), "national")
+                                                 for i, m in enumerate(months_n)])
+    qn = _quarters("2004Q1", "2026Q2")
+    frames["dwellings_completed"] = pd.DataFrame([_row("PT", "Portugal", "PT", q.label, "quarter", q.sort_key,
+                                                       round(7000 * (0.4 + 0.6 * abs(np.cos(i / 20)))), "national")
+                                                  for i, q in enumerate(qn)])
+    stock_nat = frames["dwellings_stock"].groupby(["period", "sort_key"])["value"].sum().reset_index()
+    frames["dwellings_stock"] = pd.concat([frames["dwellings_stock"], pd.DataFrame(
+        [_row("PT", "Portugal", "PT", r.period, "year", r.sort_key, r.value, "national") for r in stock_nat.itertuples()])],
+        ignore_index=True)
     inc_m = frames["income"].groupby("dico")["value"].first()
     frames["irs_median"] = ydf[ydf["period"].astype(int) >= 2016].assign(
         value=lambda d: [inc_m[x] * 10.5 * 1.03 ** (int(p) - 2016) for x, p in zip(d["dico"], d["period"])])

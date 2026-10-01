@@ -61,9 +61,10 @@ const GLOSS = {
   val_gap: ['Avaliação bancária vs preço pago', 'Avaliação bancária média dos 12 meses que o preço de venda do INE cobre, face a esse preço. O nível da diferença é sobretudo composição: a avaliação só cobre casas compradas com crédito, e o preço mediano inclui todas as vendas. O sinal é a VARIAÇÃO num ano: se a avaliação fica para trás do preço pago, os bancos estão mais cautelosos ou há mais compras sem crédito; se a avaliação avança mais depressa, a banca acompanha (ou puxa) a subida.'],
   cycle: ['Ciclo preço–volume', 'Cruza a variação do preço a 12 meses com a variação do número de avaliações bancárias (compras com crédito) num ano. Preço a subir com menos compras é a fase típica de fim de ciclo: a procura já arrefece mas os preços, que reagem mais devagar, ainda sobem. Não diz quando, nem se, os preços vão cair. Só concelhos com pelo menos 20 avaliações em 3 meses.'],
   stress: ['Teste de juros', 'Prestação e esforço se a taxa subir os pontos escolhidos, mantendo o mesmo empréstimo. A maioria dos créditos em Portugal tem taxa variável ou mista: uma subida da Euribor passa para a prestação. O Banco de Portugal também pede aos bancos que testem a prestação com uma subida de juros antes de conceder o crédito.'],
-  irs: ['Rendimento declarado (IRS)', 'Mediana do rendimento bruto declarado no IRS, depois de pago o imposto, por sujeito passivo (cada pessoa que declara; num casal com declaração conjunta contam os dois), no concelho onde a pessoa vive (INE, a partir dos dados da Autoridade Tributária). Inclui salários, pensões e outros rendimentos declarados; não desconta a Segurança Social. Valor anual; a calculadora usa ÷ 12. Sai com cerca de 2 anos de atraso.'],
-  supply_new: ['Construção nova', 'Fogos licenciados e concluídos em construções novas para habitação familiar (INE), média anual dos últimos 3 anos, por 1000 alojamentos existentes no concelho. Licenciado = aprovado pela câmara (oferta futura, 2 a 3 anos); concluído = pronto. Mede a oferta NOVA, não as casas usadas à venda. Concelhos pequenos saltam muito com um só empreendimento.'],
-  beds: ['Alojamento turístico', 'Camas em estabelecimentos de alojamento turístico (hotéis, turismo rural e alojamento local com 10 ou mais camas — INE) por 100 alojamentos familiares do concelho. Não inclui o alojamento local mais pequeno (a maioria dos registos), por isso subestima o peso do alojamento local.'],
+  irs: ['Rendimento declarado (IRS)', 'Mediana do rendimento bruto declarado no IRS, depois de pago o imposto, por sujeito passivo (cada pessoa que declara; num casal com declaração conjunta contam os dois), no concelho onde a pessoa VIVE (INE, dados da Autoridade Tributária). Inclui salários, pensões e outros rendimentos; não desconta a Segurança Social. Por ser a mediana de todas as pessoas que declaram (incluindo pensionistas e quem trabalha a tempo parcial), fica bem abaixo do salário médio de quem trabalha a tempo inteiro. Valor anual; a calculadora usa ÷ 12. Sai com cerca de 2 anos de atraso.'],
+  supply_new: ['Construção nova', 'Fogos licenciados (aprovados pela câmara, mensal) e concluídos (prontos, trimestral) em construções novas para habitação familiar (INE), somados por ano, e por 1000 alojamentos existentes no país. O INE só publica estas séries até às regiões (NUTS), não por concelho. Licenças são oferta futura: a conclusão chega 2 a 3 anos depois, e nem todas são construídas. Não conta as casas usadas que chegam ao mercado.'],
+  census: ['Censos 2021: vagos e 2.ª habitação', 'Parte dos alojamentos familiares clássicos do concelho que estavam vagos (para venda ou arrendamento, ou por outros motivos: obras, heranças, abandono) ou eram de residência secundária (férias, fim de semana) no dia dos Censos 2021 (INE). Fotografia de 2021: o mercado mudou desde então. Muitas casas vagas não estão em condições de ser habitadas.'],
+  beds: ['Alojamento turístico', 'Camas em alojamento turístico por 100 alojamentos familiares do concelho (INE): alojamento local e total (hotelaria, alojamento local e turismo rural). O alojamento local é o que mais compete com a habitação, porque usa casas. O INE só conta estabelecimentos com 10 ou mais camas, por isso o alojamento local pequeno (a maioria dos registos) fica de fora: o valor subestima o peso real. O parque habitacional usado é a estimativa mais recente do INE (2022).'],
   afford_hist: ['Esforço ao longo do tempo', 'Prestação de uma casa de 90 m² à avaliação bancária mediana do país, 90% financiada a 30 anos à taxa média dos novos créditos à habitação em cada trimestre (BCE), a dividir pelo rendimento nacional desse ano: salário médio bruto (INE) e mediana do rendimento declarado no IRS após imposto (÷ 12). Nos trimestres depois do último ano de rendimento publicado usa-se esse último ano (até 2 anos), o que exagera um pouco o esforço mais recente.'],
   migration: ['Saldo migratório', 'Diferença entre quem chegou e quem saiu do concelho num ano (INE). Positivo = mais gente a chegar do que a sair. Só contexto demográfico — não entra em nenhum score.'],
   score_valuation: ['Score de valorização', 'Percentil entre concelhos: mistura crescimento do preço a 12 meses e a 3 anos com rendibilidade baixa. 0 = menos esticado, 100 = mais. É relativo, não uma probabilidade de bolha.'],
@@ -133,13 +134,15 @@ METRICS.ef = { prop: 'ef', pal: PAL, fixed: [0.1, 0.7], f: (v) => fmt.pct(v, 0),
   help: 'Prestação do crédito ÷ rendimento mensal do concelho, para a casa, o crédito e o rendimento escolhidos em "Comprar casa". Verde = prestação leve; amarelo ≈ 40%, perto do limite do Banco de Portugal; laranja e vermelho = acima de 55%. Cinzento = sem rendimento ou preço publicado.' };
 METRICS.br = { prop: 'br', pal: DIV_PAL, diverge: true, f: (v) => fmt.spct(v, 0), label: 'Prestação face à renda',
   help: 'Prestação do crédito face à renda da mesma casa (renda mediana de novos contratos). Azul = a prestação é mais baixa do que a renda; laranja = mais alta. A prestação inclui amortização (poupança): ver o ponto de equilíbrio em "Comprar casa". Cinzento = sem renda publicada.' };
-METRICS.lic = { prop: 'lic', pal: SEQ, f: (v) => fmt.n(v, 1), label: 'Fogos licenciados por 1000 alojamentos',
-  help: 'Fogos licenciados em construções novas para habitação (média anual dos últimos 3 anos) por 1000 alojamentos existentes. Mais escuro = mais oferta nova a caminho. Cinzento = sem dados.' };
-METRICS.beds = { prop: 'beds', pal: SEQ, f: (v) => fmt.n(v, 1), label: 'Camas turísticas por 100 alojamentos',
-  help: 'Camas em alojamento turístico (hotelaria, turismo rural e alojamento local com 10+ camas) por 100 alojamentos familiares. Mais escuro = mais peso do turismo no parque habitacional. Não inclui o alojamento local pequeno.' };
+METRICS.al = { prop: 'al', pal: SEQ, f: (v) => fmt.n(v, 1), label: 'Camas de alojamento local por 100 alojamentos',
+  help: 'Camas em alojamento local (estabelecimentos com 10+ camas, INE) por 100 alojamentos familiares. Mais escuro = mais casas a servir turistas. Não inclui o alojamento local pequeno, que é a maioria: o peso real é maior. Cinzento = sem alojamento local publicado.' };
+METRICS.vac = { prop: 'vac', pal: SEQ, f: (v) => fmt.pct(v, 0), label: 'Alojamentos vagos (Censos 2021)',
+  help: 'Parte dos alojamentos vagos no Censos 2021 (para venda ou arrendamento, ou por outros motivos). Mais escuro = mais casas vazias. Muitas precisam de obras; é uma fotografia de 2021.' };
+METRICS.sec = { prop: 'sec', pal: SEQ, f: (v) => fmt.pct(v, 0), label: 'Residência secundária (Censos 2021)',
+  help: 'Parte dos alojamentos de residência secundária (férias, fim de semana) no Censos 2021. Mais escuro = mais casas que não servem quem vive no concelho.' };
 const METRIC_VAL = { score: (x) => x.score_overall, price: (x) => x.price, yield: (x) => x.gross_yield, g1y: (x) => x.price_growth_1y, g1yr: (x) => x.price_growth_1y_real,
   fc: (x) => x.fc_growth_12m, fv: (x) => x.fv_gap, fp: (x) => x.foreign_premium, ef: (x) => x.aff_effort, br: (x) => x.aff_pay_vs_rent,
-  lic: (x) => x.lic_per_1000, beds: (x) => x.beds_per_100 };
+  al: (x) => x.al_beds_per_100, vac: (x) => x.vacant_share, sec: (x) => x.secondary_share };
 const DIV = ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'];
 const PMETRICS = {
   f_rel_nb: { prop: 'rel_nb', src: 'par', pal: DIV, diverge: true, f: (v) => fmt.spct(v, 0), label: 'Face às freguesias vizinhas',
@@ -416,11 +419,11 @@ function readList(m) {
     li.push(`Rendibilidade bruta de ${fmt.pct(m.gross_yield, 2)} (mediana ${fmt.pct(my, 2)}): ${m.gross_yield < my ? 'o preço está esticado face à renda, pois cada € investido rende menos do que no concelho típico' : 'a renda paga melhor o preço do que no concelho típico'}.`);
   } else li.push('Sem renda publicada pelo INE para este concelho (poucos contratos): não há rendibilidade nem preço/renda, e o score assenta só no ritmo de subida dos preços.');
   if (m.aff_pay != null) li.push(affReadTxt(m));
-  if (m.lic_per_1000 != null) {
-    const ml = median(col((x) => x.lic_per_1000));
-    li.push(`Construção nova: ${fmt.n(m.lic_per_1000, 1)} fogos licenciados por 1000 alojamentos por ano (mediana dos concelhos ${fmt.n(ml, 1)})${m.comp_per_1000 != null ? ` e ${fmt.n(m.comp_per_1000, 1)} concluídos` : ''}, média ${m.lic_year - 2}–${m.lic_year}${m.lic_per_1000 < ml * 0.5 && m.price_growth_3y > median(col((x) => x.price_growth_3y)) ? ' — pouca oferta nova para preços a subir acima da mediana' : ''}.`);
+  if (m.vacant_share != null) {
+    const mv = median(col((x) => x.vacant_share)), ms = median(col((x) => x.secondary_share));
+    li.push(`Censos 2021: ${fmt.pct(m.vacant_share, 0)} dos alojamentos estavam vagos (mediana dos concelhos ${fmt.pct(mv, 0)}; ${fmt.pct(m.vacant_market_share, 1)} para venda ou arrendamento) e ${fmt.pct(m.secondary_share, 0)} eram de residência secundária (mediana ${fmt.pct(ms, 0)}).`);
   }
-  if (m.beds_per_100 != null) li.push(`Alojamento turístico: ${fmt.n(m.beds_per_100, 1)} camas por 100 alojamentos (mediana ${fmt.n(median(col((x) => x.beds_per_100)), 1)}; sem o alojamento local pequeno).`);
+  if (m.beds_per_100 != null) li.push(`Alojamento turístico (${m.tourism_beds_year}): ${fmt.n(m.beds_per_100, 1)} camas por 100 alojamentos${m.al_beds_per_100 != null ? `, ${fmt.n(m.al_beds_per_100, 1)} delas em alojamento local` : ''} (mediana dos concelhos ${fmt.n(median(col((x) => x.beds_per_100)), 1)}; sem o alojamento local com menos de 10 camas).`);
   if (m.cycle_phase) li.push(`Ciclo: preço ${fmt.spct(m.price_growth_1y)} e compras com crédito ${fmt.spct(m.val_count_growth_1y, 0)} num ano — «${CYCLE_SHORT[m.cycle_phase]}»${m.cycle_phase === 'up_down' ? ', a fase típica de fim de ciclo (a procura arrefece antes dos preços)' : ''}.`);
   if (m.val_gap_chg != null) li.push(`A avaliação bancária está ${fmt.spct(m.val_gap, 0)} face ao preço pago e ${Math.abs(m.val_gap_chg) < 0.03 ? 'acompanhou os preços' : m.val_gap_chg < 0 ? `ficou ${fmt.n(-m.val_gap_chg * 100, 0)} p.p. mais para trás num ano (bancos mais cautelosos ou mais compras sem crédito)` : `avançou ${fmt.n(m.val_gap_chg * 100, 0)} p.p. mais do que o preço num ano`}.`);
   const sc = m.score_overall;
@@ -564,10 +567,10 @@ function select(dico, scroll = true) {
       `<span class="ctx">${m.val_gap_chg != null ? `${m.val_gap_chg >= 0 ? '+' : '−'}${fmt.n(Math.abs(m.val_gap_chg) * 100, 1)} p.p. num ano` : 'sem comparação a um ano'}</span>`)] : []),
     ...(m.irs_median != null ? [tile('irs', `Rendimento IRS (${m.irs_year})`, fmt.eur(m.irs_median / 12) + '/mês',
       `<span class="ctx">${fmt.eur(m.irs_median)}/ano por pessoa, após imposto${m.irs_growth_1y != null ? ` · ${fmt.spct(m.irs_growth_1y)} num ano` : ''}</span>`)] : []),
-    ...(m.lic_per_1000 != null ? [tile('supply_new', 'Construção nova /1000 aloj.', `${fmt.n(m.lic_per_1000, 1)} lic. · ${fmt.n(m.comp_per_1000, 1)} concl.`,
-      `<span class="ctx">média ${m.lic_year - 2}–${m.lic_year}: ${fmt.n(m.lic_avg3, 0)} fogos licenciados/ano${m.lic_growth_3y != null ? ` (${fmt.spct(m.lic_growth_3y, 0)} face aos 3 anos antes)` : ''}</span>`)] : []),
-    ...(m.beds_per_100 != null ? [tile('beds', 'Camas turísticas /100 aloj.', fmt.n(m.beds_per_100, 1),
-      ctx((x) => x.beds_per_100, m.beds_per_100, (v) => fmt.n(v, 1)))] : []),
+    ...(m.vacant_share != null ? [tile('census', 'Vagos / 2.ª habitação (2021)', `${fmt.pct(m.vacant_share, 0)} / ${fmt.pct(m.secondary_share, 0)}`,
+      `<span class="ctx">vagos para venda ou arrendamento: ${fmt.pct(m.vacant_market_share, 1)} · ${fmt.n(m.census_total, 0)} alojamentos</span>`)] : []),
+    ...(m.beds_per_100 != null ? [tile('beds', 'Camas turísticas /100 aloj.', `${m.al_beds_per_100 != null ? fmt.n(m.al_beds_per_100, 1) + ' AL · ' : ''}${fmt.n(m.beds_per_100, 1)} total`,
+      `<span class="ctx">${m.tourism_beds_year}; AL = alojamento local com 10+ camas</span>`)] : []),
     tile('score_valuation', 'Score valorização', fmt.n(m.score_valuation)),
     tile('score_overall', 'Score global', fmt.n(m.score_overall)),
     ...(m.nowcast_price != null ? [tile('nowcast', `Estimativa hoje (${qpt(m.nowcast_period)})`, fmt.eur(m.nowcast_price) + '/m²',
@@ -630,8 +633,8 @@ const COMPARE_ROWS = [
   ['buy_rent', 'Prestação vs renda da mesma casa', (m) => (m.aff_rent_home == null ? '—' : `${fmt.eur(m.aff_pay)} vs ${fmt.eur(m.aff_rent_home)}`)],
   ['buy_rent', 'Valorização para comprar compensar', (m) => (m.aff_breakeven == null ? '—' : fmt.spct(m.aff_breakeven) + '/ano')],
   ['irs', 'Rendimento IRS (mediana, após imposto)', (m) => (m.irs_median == null ? '—' : `${fmt.eur(m.irs_median / 12)}/mês (${m.irs_year})`)],
-  ['supply_new', 'Fogos licenciados / concluídos por 1000 aloj.', (m) => (m.lic_per_1000 == null ? '—' : `${fmt.n(m.lic_per_1000, 1)} / ${fmt.n(m.comp_per_1000, 1)}`)],
-  ['beds', 'Camas turísticas por 100 aloj.', (m) => fmt.n(m.beds_per_100, 1)],
+  ['census', 'Vagos / 2.ª habitação (Censos 2021)', (m) => (m.vacant_share == null ? '—' : `${fmt.pct(m.vacant_share, 0)} / ${fmt.pct(m.secondary_share, 0)}`)],
+  ['beds', 'Camas turísticas por 100 aloj. (AL / total)', (m) => (m.beds_per_100 == null ? '—' : `${fmt.n(m.al_beds_per_100, 1)} / ${fmt.n(m.beds_per_100, 1)}`)],
   ['stress', 'Esforço com subida de juros', (m) => (m.aff_effort_stress == null ? '—' : `${fmt.pct(m.aff_effort_stress, 0)} (+${fmt.n(AFF.shock, 0)} p.p.)`)],
   ['cycle', 'Ciclo preço–volume', (m) => esc(m.cycle_phase ? CYCLE_SHORT[m.cycle_phase] : '—')],
   ['val_gap', 'Avaliação vs preço pago', (m) => (m.val_gap == null ? '—' : `${fmt.spct(m.val_gap, 0)}${m.val_gap_chg != null ? ` (${m.val_gap_chg >= 0 ? '+' : '−'}${fmt.n(Math.abs(m.val_gap_chg) * 100, 1)} p.p.)` : ''}`)],
@@ -791,6 +794,7 @@ const OWN_COST = 0.013;     // IMI (~0,3%) + manutenção e seguros (~1%) por an
 const LIMIT = { wage: 0.40, irs: 0.45 };
 const hasIrs = () => MUNIS.some((m) => m.irs_median != null);
 const affBase = () => (AFF.base === 'irs' && hasIrs() ? 'irs' : 'wage');
+const IRS_NOTE = 'O IRS é a mediana por pessoa que declara, incluindo pensionistas e tempo parcial: fica abaixo do salário médio, e o esforço sobe. Com um casal, escolhe 2.';
 let PRUDENT = LIMIT.wage;
 const incOf = (m) => (affBase() === 'irs' ? (m.irs_median != null ? m.irs_median / 12 : null) : m.income);
 const incYear = (m) => (affBase() === 'irs' ? m.irs_year : (m.income_year ? String(m.income_year).slice(0, 4) : null));
@@ -800,7 +804,7 @@ const INC_TXT = {
 };
 const incTxt = () => INC_TXT[affBase()];
 const AFF_FALLBACK_RATE = 3.5;
-const affDefaults = () => ({ area: 90, down: 10, years: 30, rate: null, earners: 1, shock: 2, base: 'irs' });
+const affDefaults = () => ({ area: 90, down: 10, years: 30, rate: null, earners: 1, shock: 2, base: 'wage' });
 let AFF = affDefaults();
 const affRateNow = () => (OL && OL.rates && OL.rates.rate_now != null ? +OL.rates.rate_now.toFixed(2) : AFF_FALLBACK_RATE);
 const affRate = () => (AFF.rate != null ? AFF.rate : affRateNow());
@@ -831,7 +835,7 @@ function applyAfford() {
   MUNIS.forEach((m) => Object.assign(m, affordOf(m)));
   if (GEO) GEO.features.forEach((f) => {
     const m = BY[f.properties.dico];
-    ['ef', 'br', 'lic', 'beds'].forEach((k) => { f.properties[k] = m ? METRIC_VAL[k](m) ?? null : null; });
+    ['ef', 'br', 'al', 'vac', 'sec'].forEach((k) => { f.properties[k] = m ? METRIC_VAL[k](m) ?? null : null; });
   });
   if (MAP && MAP.getSource('c')) MAP.getSource('c').setData(GEO);
 }
@@ -870,7 +874,7 @@ function affReadForm() {
   AFF.down = num(f.down, 0, 90, def.down);
   AFF.years = Math.round(num(f.years, 5, 40, def.years));
   AFF.earners = f.earners.value === '2' ? 2 : 1;
-  AFF.base = f.base.value === 'wage' ? 'wage' : 'irs';
+  AFF.base = f.base.value === 'irs' ? 'irs' : 'wage';
   AFF.shock = num(f.shock, 0, 5, def.shock);
   const r = num(f.rate, 0, 15, affRateNow());
   AFF.rate = Math.abs(r - affRateNow()) < 0.005 ? null : r;      // igual à atual: segue a taxa das próximas builds
@@ -908,8 +912,8 @@ function renderAfford() {
     <ul class="read muted">
       <li>Preço: mediana de todas as vendas do concelho (INE, 12 meses), casas grandes e pequenas, novas e usadas. A casa que procuras pode custar bem mais ou menos por m².</li>
       ${affBase() === 'irs'
-        ? `<li>Rendimento: mediana do rendimento bruto declarado no IRS, após imposto, por pessoa que declara, no concelho onde vive (INE/AT, ${esc(String((ok.find((m) => m.irs_year) || {}).irs_year || 'ano n/d'))}), anual ÷ 12. Inclui pensões e outros rendimentos; não desconta a Segurança Social. É de há cerca de 2 anos: com os rendimentos a subir, o esforço real é um pouco menor. Os anos de rendimento usam o valor anual.</li>`
-        : `<li>Salário: ganho médio mensal bruto por trabalhador por conta de outrem (INE, ${esc(String((ok.find((m) => m.income_year) || {}).income_year || '').slice(0, 4) || 'ano n/d')}), não o rendimento líquido nem o do agregado. É o salário de quem trabalha no concelho, não de quem lá vive: nos concelhos-dormitório (por exemplo à volta de Lisboa) muitos residentes ganham mais noutro concelho, e o esforço aparece exagerado.${hasIrs() ? ' Escolhe "IRS de quem vive" para corrigir isto.' : ''} Os anos de salário usam 14 meses.</li>`}
+        ? `<li>Rendimento: mediana do rendimento bruto declarado no IRS, após imposto, por pessoa que declara, no concelho onde vive (INE/AT, ${esc(String((ok.find((m) => m.irs_year) || {}).irs_year || 'ano n/d'))}), anual ÷ 12. Inclui pensões e outros rendimentos; não desconta a Segurança Social. ${IRS_NOTE} É de há cerca de 2 anos: com os rendimentos a subir, o esforço real é um pouco menor. Corrige o problema dos concelhos-dormitório (conta quem lá vive). Os anos de rendimento usam o valor anual.</li>`
+        : `<li>Salário: ganho médio mensal bruto por trabalhador por conta de outrem (INE, ${esc(String((ok.find((m) => m.income_year) || {}).income_year || '').slice(0, 4) || 'ano n/d')}), não o rendimento líquido nem o do agregado. É o salário de quem trabalha no concelho, não de quem lá vive: nos concelhos-dormitório (por exemplo à volta de Lisboa) muitos residentes ganham mais noutro concelho, e o esforço aparece exagerado.${hasIrs() ? ' Escolhe "IRS de quem vive" para ver o rendimento de quem lá mora (mais baixo, por ser mediano e incluir pensionistas).' : ''} Os anos de salário usam 14 meses.</li>`}
       <li>Renda: mediana de novos contratos (€/m²) × a mesma área. A prestação inclui amortização, que é poupança: por isso o ponto de equilíbrio é a medida mais justa. Nos concelhos baratos do interior, muitas casas vendidas são antigas ou precisam de obras, enquanto as arrendadas estão prontas a habitar: aí comprar parece mais vantajoso do que é.</li>
       <li>Fora das contas: IMT, imposto do selo, escritura e comissões (vários milhares de euros, pesam mais em quem fica poucos anos), seguros obrigatórios do crédito, e mudanças de taxa ao longo do empréstimo. As listas só incluem concelhos sem dados voláteis${hasVol ? ' e com pelo menos 20 avaliações bancárias em 3 meses' : ''}.</li>
     </ul>`;
@@ -1188,17 +1192,17 @@ function olValGap(V) {
     <p class="muted">O nível da diferença reflete sobretudo casas diferentes (a avaliação só cobre compras com crédito). ${V.min_volume ? `As listas só incluem concelhos com pelo menos ${V.min_volume} avaliações em 3 meses.` : ''} Concelhos com avaliação publicada em pelo menos 9 dos 12 meses.</p>`;
 }
 function olSupply(S) {
-  const it = (x) => `<li><span>${lnk(x.dico, x.name)}</span><span class="v">${fmt.n(x.lic, 1)}/1000 <span class="muted">preço 3 anos ${fmt.spct(x.g3, 0)}</span></span></li>`;
-  const sp = S.spearman_price_3y;
+  const L = S.series.licensed || [], C = S.series.completed || [];
+  const ll = L[L.length - 1], lc = C[C.length - 1];
+  const peak = (arr) => arr.reduce((a, b) => (b[1] > a[1] ? b : a), arr[0]);
+  const low = (arr) => arr.reduce((a, b) => (b[1] < a[1] ? b : a), arr[0]);
+  const rl = S.recent.licensed, rc = S.recent.completed;
   return `<h3>Construção nova ${info('supply_new')}</h3>
-    <p>No concelho típico licenciam-se <b>${fmt.n(S.median_lic_per_1000, 1)}</b> fogos novos por 1000 alojamentos por ano${S.median_comp_per_1000 != null ? ` e concluem-se ${fmt.n(S.median_comp_per_1000, 1)}` : ''} (média até ${S.year}, ${S.n} concelhos).
-      ${sp != null ? `Entre concelhos, mais licenças ${Math.abs(sp) < 0.15 ? 'quase não se relacionam com' : sp > 0 ? 'andam a par de' : 'andam ao contrário de'} subidas de preço a 3 anos (correlação de ordem ${fmt.n(sp, 2)}): ${sp > 0.15 ? 'constrói-se onde a procura puxa, mas não o suficiente para travar os preços' : 'a construção nova não explica as diferenças de preço'}.` : ''}</p>
-    ${S.series ? '<div class="chart-cap"><span>País: fogos novos por ano (soma dos concelhos)</span></div><div id="ol-supply" class="chart"></div>' : ''}
-    <div class="ol-cols">
-      ${S.tight && S.tight.length ? `<div><p class="muted"><b>Preço a subir muito, pouca construção nova</b></p><ul class="ol-list wrap-list">${S.tight.map(it).join('')}</ul></div>` : ''}
-      <div><p class="muted"><b>Mais construção nova</b> (concelhos com 2000+ alojamentos)</p><ul class="ol-list wrap-list">${S.top.map(it).join('')}</ul></div>
-    </div>
-    <p class="muted">Licenças são oferta futura (2 a 3 anos até à conclusão) e nem todas são construídas. Mede só a construção nova, não as casas usadas que chegam ao mercado. Só contexto: não entra no score.</p>`;
+    <p>${ll ? `Em ${ll[0]} licenciaram-se <b>${fmt.n(ll[1], 0)}</b> fogos novos${ll[2] != null ? ` (${fmt.n(ll[2], 1)} por 1000 alojamentos)` : ''}, contra ${fmt.n(low(L)[1], 0)} no mínimo de ${low(L)[0]} e ${fmt.n(peak(L)[1], 0)} em ${peak(L)[0]}.` : ''}
+      ${lc ? ` Concluíram-se ${fmt.n(lc[1], 0)} em ${lc[0]}${lc[2] != null ? ` (${fmt.n(lc[2], 1)} por 1000)` : ''}, longe dos ${fmt.n(peak(C)[1], 0)} de ${peak(C)[0]}.` : ''}
+      ${rl && rl.change != null ? ` Nos 12 meses até ${esc(rl.until)}: ${fmt.n(rl.last12, 0)} licenciados (${fmt.spct(rl.change, 0)} face aos 12 meses anteriores)` : ''}${rc && rc.change != null ? `; nos 4 trimestres até ${qpt(rc.until)}: ${fmt.n(rc.last12, 0)} concluídos (${fmt.spct(rc.change, 0)})` : ''}.</p>
+    <div class="chart-cap"><span>País: fogos novos por ano (anos completos)</span></div><div id="ol-supply" class="chart"></div>
+    <p class="muted">O INE só publica licenças e conclusões até às regiões, não por concelho. Licenças são oferta futura (2 a 3 anos até à conclusão) e nem todas são construídas. Só contexto: não entra no score.</p>`;
 }
 function olAffHist(A) {
   const s = A.series, last = A.last, first = A.first;
@@ -1213,7 +1217,7 @@ function olAffHist(A) {
       A prestação mais baixa da série foi ${fmt.eur(A.payment_min.value)} em ${qpt(A.payment_min.period)}, quando os juros estavam no mínimo.</p>
     <div class="chart-cap"><span>Prestação mensal da mesma casa (€)</span></div><div id="ol-ah-pay" class="chart"></div>
     ${s.some((r) => eff(r) != null) ? '<div class="chart-cap"><span>Prestação em % do rendimento do país</span></div><div id="ol-ah-eff" class="chart"></div>' : ''}
-    <p class="muted">A avaliação bancária só cobre casas compradas com crédito. Rendimentos nacionais: ${s.some((r) => r.irs_year) ? 'mediana do IRS após imposto (÷ 12)' : ''}${s.some((r) => r.irs_year) && s.some((r) => r.wage_year) ? ' e ' : ''}${s.some((r) => r.wage_year) ? 'salário médio bruto' : ''}; depois do último ano publicado repete-se esse ano (no máximo 2 anos), o que exagera um pouco o esforço recente.</p>`;
+    <p class="muted">A avaliação bancária só cobre casas compradas com crédito. Rendimentos nacionais: ${s.some((r) => r.irs_year) ? 'mediana do IRS após imposto (÷ 12)' : ''}${s.some((r) => r.irs_year) && s.some((r) => r.wage_year) ? ' e ' : ''}${s.some((r) => r.wage_year) ? 'salário médio bruto' : ''}; depois do último ano publicado repete-se esse ano (no máximo 2 anos), o que exagera um pouco o esforço recente.${s.some((r) => r.irs_year) ? ' A linha do IRS fica acima da do salário porque a mediana de quem declara IRS (incluindo pensionistas e tempo parcial, depois do imposto) é mais baixa do que o salário médio bruto.' : ''}</p>`;
 }
 function renderOutlook() {
   const body = $('#outlook-body');
@@ -1245,8 +1249,8 @@ function renderOutlook() {
   if ($('#ol-regimes')) chart('regimes', () => regimesChart('ol-regimes', OL.regimes));
   if ($('#ol-cycle')) chart('ciclo', () => cycleChart('ol-cycle', OL.cycle));
   if ($('#ol-supply')) chart('oferta', () => lineChart('ol-supply', 'Fogos novos', [
-    ...(OL.supply.series.licensed ? [{ name: 'Licenciados', data: OL.supply.series.licensed, fmt: (v) => fmt.n(v, 0) }] : []),
-    ...(OL.supply.series.completed ? [{ name: 'Concluídos', data: OL.supply.series.completed, fmt: (v) => fmt.n(v, 0) }] : []),
+    ...(OL.supply.series.licensed ? [{ name: 'Licenciados', data: OL.supply.series.licensed.map((r) => [r[0], r[1]]), fmt: (v) => fmt.n(v, 0) }] : []),
+    ...(OL.supply.series.completed ? [{ name: 'Concluídos', data: OL.supply.series.completed.map((r) => [r[0], r[1]]), fmt: (v) => fmt.n(v, 0) }] : []),
   ], { names: ['Fogos por ano'], notitle: true }));
   if ($('#ol-ah-pay')) chart('esforço €', () => lineChart('ol-ah-pay', 'Prestação', [
     { name: 'Prestação', data: OL.afford_hist.series.map((r) => [qpt(r.period), Math.round(r.payment)]), fmt: (v) => fmt.eur(v) + '/mês' },
@@ -1383,6 +1387,11 @@ async function main() {
   const safe = (name, fn) => { try { fn(); } catch (e) { console.error(`Falha em ${name}:`, e); return e; } };
   safe('painel nacional', renderNational);
   safe('comprar casa', initAfford);
+  // indicadores do mapa sem nenhum valor nesta build (ex.: fonte que falhou) não aparecem na lista
+  safe('métricas vazias', () => [...$('#metric').options].forEach((o) => {
+    const g = METRIC_VAL[o.value];
+    if (g && !MUNIS.some((m) => g(m) != null)) o.remove();
+  }));
   safe('ranking', () => { renderTable(); renderRankingSummary(); });
   safe('backtest', renderBacktest);
   safe('perspetivas', renderOutlook);
