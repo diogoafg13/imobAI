@@ -83,6 +83,13 @@ def demo_frames(seed: int = 7):
     frames["rent_q3"] = rent.assign(value=lambda d: d["value"] * 1.3)
     frames["sales_price_domestic"] = sales.assign(value=lambda d: d["value"] * 0.97)
     frames["sales_price_foreign"] = sales[sales["dico"].astype(int) % 4 == 0].assign(value=lambda d: d["value"] * 1.4)
+    # freguesias: 4 por concelho (só 3 com dados, como no INE), código DICOFRE = dico + 01..04
+    par = []
+    for r in sales.itertuples():
+        for k, f in ((1, 1.3), (2, 0.85), (3, 1.0)):
+            par.append(_row(r.dico, f"Freguesia {r.dico}-{k}", f"{r.geocod[:3]}{r.dico}{k:02d}", r.period, "quarter",
+                            r.sort_key, r.value * f * (1 + 0.02 * np.sin(int(r.dico) * k)), "parish"))
+    frames["sales_price_12m"] = pd.concat([sales, pd.DataFrame(par)], ignore_index=True)
     frames["sales_price_households"] = sales.assign(value=lambda d: d["value"] * 0.98)
     frames["sales_price_companies"] = sales[sales["dico"].astype(int) % 3 == 0].assign(value=lambda d: d["value"] * 1.2)
     frames["sales_price_apartments"] = sales.assign(value=lambda d: d["value"] * 1.08)
@@ -116,6 +123,20 @@ def demo_frames(seed: int = 7):
         "bis_credit_gap": pd.DataFrame({"period": [p.label for p in hq], "value": rng.normal(-5, 6, len(hq))}),
     }
     return frames, macro_frames
+
+
+def demo_parish_geojson() -> dict:
+    """Cada quadrado de concelho dividido em 4 freguesias (código DICOFRE = dico + 01..04)."""
+    feats = []
+    for i in range(GRID_W * GRID_H):
+        r, c = divmod(i, GRID_W)
+        x0, y0 = -9.0 + c * 0.5, 41.5 - r * 0.4
+        for k, (dx, dy) in enumerate(((0, 0), (0.25, 0), (0, -0.2), (0.25, -0.2)), start=1):
+            a, b = x0 + dx, y0 + dy
+            ring = [[a, b], [a + 0.25, b], [a + 0.25, b - 0.2], [a, b - 0.2], [a, b]]
+            feats.append({"type": "Feature", "properties": {"fre_code": f"{i + 1:04d}{k:02d}"},
+                          "geometry": {"type": "Polygon", "coordinates": [ring]}})
+    return {"type": "FeatureCollection", "features": feats}
 
 
 def demo_geojson() -> dict:

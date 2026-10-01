@@ -227,6 +227,24 @@ descarregável do INE (`opc=3`) só tem os ~260 indicadores principais — estes
 códigos próximos (os preços locais da habitação andam pelos 0012230–0012260; as rendas da
 Metodologia 2026 pelos 0014700).
 
+### Freguesias
+
+`imopt/parishes.py`. O preço mediano de venda por freguesia vem do mesmo indicador do INE (0012234,
+nível freguesia/união de freguesias; código DICOFRE = últimos 6 dígitos do `geocod`), e a renda por
+freguesia do 0012600 (Metodologia 2021, anual; dimensões não confirmadas ao vivo). O INE só publica
+~400 das ~3000 freguesias (quase todas urbanas). Para cada uma: preço, variação a 12 meses, preço
+face ao concelho e face à mediana das freguesias vizinhas com dados (mínimo 2).
+
+- **Detalhe de cada concelho**: tabela das suas freguesias (funciona mesmo sem fronteiras).
+- **Mapa**: botão "Freguesias", com 4 métricas, e lista das mais baratas do que as vizinhas.
+  Precisa das fronteiras: `geo.parishes_geojson` em `config/sources.yml` (o URL do "georef" do
+  OpenDataSoft **não foi confirmado ao vivo**). A primeira que funcionar fica em
+  `data/clean/geo_parishes.json` e é reutilizada; também podes pôr lá um GeoJSON teu (ex.: CAOP da
+  DGT) com o código DICOFRE numa das propriedades de `geo.parish_props`. Sem fronteiras, o mapa
+  avisa e a tabela continua.
+- Limites: medianas de poucas vendas (uma freguesia "barata" pode ter vendido casas mais pequenas ou
+  a precisar de obras); uniões de freguesias desagregadas depois de 2013 podem não ligar às fronteiras.
+
 ### Arquivo de previsões e avaliação contra a realidade
 
 `imopt/tracking.py`. Cada build real (não o demo) guarda as previsões publicadas em

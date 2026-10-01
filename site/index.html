@@ -86,7 +86,11 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
 
   <section id="mapsec" class="card">
     <div class="row">
-      <h2>Mapa por concelho</h2>
+      <h2>Mapa</h2>
+      <div class="mapnav" role="group" aria-label="Nível do mapa" id="lvlnav">
+        <button type="button" class="btn on" data-lvl="c">Concelhos</button>
+        <button type="button" class="btn" data-lvl="f">Freguesias</button>
+      </div>
       <div class="mapnav" role="group" aria-label="Ir para">
         <button type="button" class="btn" data-b="pt">Continente</button>
         <button type="button" class="btn" data-b="az">Açores</button>
@@ -101,10 +105,17 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <option value="fv">Preço face ao valor justo</option>
         <option value="fp">Prémio pago por estrangeiros</option>
       </select>
+      <select id="metric-f" aria-label="Indicador do mapa de freguesias" hidden>
+        <option value="f_rel_nb">Preço face às freguesias vizinhas</option>
+        <option value="f_rel_muni">Preço face ao concelho</option>
+        <option value="f_price">Preço €/m²</option>
+        <option value="f_g1y">Variação preço 12 meses</option>
+      </select>
     </div>
     <div id="map"></div>
     <div id="legend" class="legend"></div>
     <p id="map-help" class="muted"></p>
+    <div id="par-list" hidden></div>
   </section>
 
   <section id="detail" class="card" hidden>
@@ -116,6 +127,11 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     <ul id="d-read" class="read"></ul>
     <div id="chart-detail" class="chart tall"></div>
     <p class="muted">Preço: mediana de vendas dos últimos 12 meses, trimestral (eixo esquerdo). Renda: mediana de novos contratos, anual (eixo direito, pontos).</p>
+    <div id="d-par" hidden>
+      <h3>Freguesias <button type="button" class="info" data-k="parishes" aria-label="Sobre as freguesias">ⓘ</button></h3>
+      <div class="table-wrap"><table id="d-par-table" class="ol-table"></table></div>
+      <p id="d-par-note" class="muted"></p>
+    </div>
     <div id="d-fc-wrap" hidden>
       <div class="chart-cap"><span>Previsão do preço de venda <button type="button" class="info" data-k="fc_chart" aria-label="Sobre a previsão">ⓘ</button></span></div>
       <div id="chart-fc" class="chart tall"></div>

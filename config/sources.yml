@@ -127,6 +127,12 @@ ine:
       dims: {dim_3: "3"}
       period_kind: year
       optional: true
+    rent_parish:
+      varcd: "0012600"          # Renda mediana de novos contratos por freguesia (Metodologia 2021, €/m²), anual
+      description: Renda mediana de novos contratos por freguesia (€/m²)
+      level: parish
+      period_kind: year
+      optional: true
     rent_contracts:
       varcd: "0012601"          # Novos contratos de arrendamento (Metodologia 2021 - N.º), anual, até freguesia
       description: Novos contratos de arrendamento (N.º)
@@ -280,6 +286,12 @@ macro:
 geo:
   # Fronteiras dos concelhos (E-REDES / OpenDataSoft, licença aberta).
   municipalities_geojson: https://e-redes.opendatasoft.com/api/explore/v2.1/catalog/datasets/municipalities-portugal/exports/geojson
+  # Fronteiras das freguesias. URLs tentados por ordem; NENHUM foi confirmado ao vivo (sem rede ao
+  # escrever isto) — o primeiro que funcionar é guardado em data/clean/geo_parishes.json e reutilizado.
+  # Também podes pôr lá um GeoJSON teu (ex.: CAOP da DGT convertido) com o código DICOFRE de 6 dígitos.
+  parishes_geojson:
+    - https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/georef-portugal-freguesia/exports/geojson
+  parish_props: [fre_code, dicofre, DICOFRE, Dicofre, cod_freguesia, codigo, code]
   # Candidatos a propriedade com o código DICO (4 dígitos) e com o nome.
   dico_props: [con_code, dico, DICO, codigo, code, cod_concelho]
   name_props: [con_name, concelho, municipality, name, nome, dtmn]

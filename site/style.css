@@ -53,6 +53,8 @@ footer{padding-bottom:30px}
 .stat .ctx{display:block;font-size:.72rem;color:var(--muted);margin-top:2px;font-weight:400}
 .read{margin:0 0 10px;padding-left:18px}.read li{margin:3px 0}
 .mapnav{display:flex;gap:6px}.mapnav .btn{padding:4px 10px;font-size:.8rem}
+.mapnav .btn.on{border-color:var(--accent);color:var(--accent);font-weight:600}
+#d-par-table tbody tr{cursor:default}
 .gloss{margin:10px 0 0}.gloss dt{font-weight:600;margin-top:10px}.gloss dd{margin:2px 0 0;color:var(--muted)}
 details#howto summary{cursor:pointer}
 #detail{border-left:4px solid var(--none)}

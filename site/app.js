@@ -51,6 +51,7 @@ const GLOSS = {
   companies: ['Famílias vs empresas', 'Preço mediano (€/m², 12 meses) pago por famílias e por empresas e outras entidades (bancos, fundos, Estado…) — o INE chama-lhes "restantes setores institucionais". Empresas a pagar mais costuma indicar compras para investimento, reabilitação ou alojamento local, muitas vezes em casas diferentes das que as famílias compram. O INE só publica onde há vendas suficientes.'],
   tipologia: ['Preço por tipologia', 'Preço mediano de venda por m² (INE, 12 meses) por número de quartos. Casas pequenas costumam custar mais por m².'],
   val_count: ['Volume de avaliações bancárias', 'Número de avaliações bancárias nos últimos 3 meses (INE): mede quantas compras com crédito estão a acontecer. O volume costuma cair antes dos preços — uma queda forte e generalizada é um sinal clássico de arrefecimento.'],
+  parishes: ['Freguesias', 'Preço mediano de venda por freguesia (INE, últimos 12 meses), comparado com a mediana do concelho e com a mediana das freguesias vizinhas que têm dados. O INE só publica cerca de 400 das ~3000 freguesias (onde há vendas suficientes), quase todas urbanas. Com poucas vendas, a mediana depende muito do tipo de casas vendidas nesse período.'],
   tracking: ['Previsões anteriores vs realidade', 'Cada build guarda as previsões que publicou. Quando o INE publica o valor real de um trimestre (ou ano, nas rendas) previsto, o erro é medido aqui — com os dados tal como saíram, sem revisões nem o benefício da retrospetiva. É a avaliação mais honesta, mas precisa de tempo: a 12 meses, os primeiros resultados só aparecem um ano depois do arranque do arquivo.'],
   ol_backtest: ['Como se saiu no passado', 'Para cada trimestre desde 2021, o modelo foi treinado só com o que se sabia nessa data e previu os trimestres seguintes. Erro médio em pontos percentuais (p.p.) de variação do preço, comparado com «fica igual» e «continua o ritmo do último ano». Cobertura: % das vezes em que o valor real caiu dentro do intervalo de 80%.'],
   migration: ['Saldo migratório', 'Diferença entre quem chegou e quem saiu do concelho num ano (INE). Positivo = mais gente a chegar do que a sair. Só contexto demográfico — não entra em nenhum score.'],
@@ -116,10 +117,24 @@ METRICS.fp = { prop: 'fp', pal: ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c
   help: 'Quanto mais (laranja) ou menos (azul) pagam por m² os compradores com domicílio no estrangeiro face aos residentes em Portugal. Cinzento = INE não publica (poucas vendas a estrangeiros).' };
 const METRIC_VAL = { score: (x) => x.score_overall, price: (x) => x.price, yield: (x) => x.gross_yield, g1y: (x) => x.price_growth_1y,
   fc: (x) => x.fc_growth_12m, fv: (x) => x.fv_gap, fp: (x) => x.foreign_premium };
+const DIV = ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'];
+const PMETRICS = {
+  f_rel_nb: { prop: 'rel_nb', src: 'par', pal: DIV, diverge: true, f: (v) => fmt.spct(v, 0), label: 'Face às freguesias vizinhas',
+    help: 'Azul = mais barata do que a mediana das freguesias vizinhas com dados; laranja = mais cara. Cinzento = INE não publica a freguesia ou sem vizinhas suficientes com dados. As medianas de freguesia assentam em poucas vendas: confirma a tendência no detalhe do concelho.' },
+  f_rel_muni: { prop: 'rel_muni', src: 'par', pal: DIV, diverge: true, f: (v) => fmt.spct(v, 0), label: 'Face ao concelho',
+    help: 'Preço mediano da freguesia face à mediana do concelho. Azul = mais barata do que o concelho; laranja = mais cara.' },
+  f_price: { prop: 'price', src: 'par', pal: SEQ, f: fmt.eur, label: '€/m² (freguesia)',
+    help: 'Preço mediano de venda da freguesia (INE, últimos 12 meses). O INE só publica cerca de 400 freguesias, quase todas urbanas.' },
+  f_g1y: { prop: 'g1y', src: 'par', pal: SEQ, f: (v) => fmt.pct(v), label: 'Var. 12m (freguesia)',
+    help: 'Variação do preço mediano da freguesia face a um ano antes. Com poucas vendas, salta muito: lê com cautela.' },
+};
+let LEVEL = 'c', PAR = null;
+const curMetric = () => (LEVEL === 'f' ? PMETRICS[$('#metric-f').value] : METRICS[$('#metric').value]);
 function quantile(sorted, q) { const i = (sorted.length - 1) * q, lo = Math.floor(i), hi = Math.ceil(i); return sorted[lo] + (sorted[hi] - sorted[lo]) * (i - lo); }
 function domain(m) {
   if (m.fixed) return m.fixed;
-  const v = MUNIS.map(METRIC_VAL[m.prop]).filter((x) => x != null).sort((a, b) => a - b);
+  const src = m.src === 'par' ? (PAR ? PAR.rows.map((r) => r[m.prop]) : []) : MUNIS.map(METRIC_VAL[m.prop]);
+  const v = src.filter((x) => x != null).sort((a, b) => a - b);
   if (v.length < 2) return [0, 1];
   const lo = quantile(v, 0.05), hi = quantile(v, 0.95);
   if (m.diverge) { const a = Math.max(Math.abs(lo), Math.abs(hi)) || 1; return [-a, a]; }
@@ -289,9 +304,70 @@ function initMap() {
   renderLegend(m);
 }
 function updateMetric() {
-  const m = METRICS[$('#metric').value];
-  if (MAP && MAP.getLayer('fill')) MAP.setPaintProperty('fill', 'fill-color', metricExpr(m));
+  const m = curMetric();
+  const layer = LEVEL === 'f' ? 'f-fill' : 'fill';
+  if (MAP && MAP.getLayer(layer)) MAP.setPaintProperty(layer, 'fill-color', metricExpr(m));
   renderLegend(m);
+}
+async function addParishLayer() {
+  if (MAP.getSource('f')) return true;
+  let gj;
+  try { gj = await j('data/freguesias.geojson'); } catch { return false; }
+  MAP.addSource('f', { type: 'geojson', data: gj, promoteId: 'code' });
+  MAP.addLayer({ id: 'f-fill', type: 'fill', source: 'f', paint: { 'fill-color': metricExpr(curMetric()), 'fill-opacity': 0.92 } }, 'line');
+  MAP.addLayer({ id: 'f-line', type: 'line', source: 'f', paint: { 'line-color': css('--card'), 'line-width': 0.4 } }, 'line');
+  const pop = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 8 });
+  const nz = (x) => (x == null || x === 'null' || x === '' ? null : Number(x));
+  MAP.on('mousemove', 'f-fill', (e) => {
+    const f = e.features[0]; if (!f) return;
+    const p = f.properties, m = curMetric(), conc = BY[String(p.code).slice(0, 4)];
+    pop.setLngLat(e.lngLat).setHTML(`<b>${esc(p.name)}</b>${conc ? ` <span style="color:#555">(${esc(conc.name)})</span>` : ''}<br>${esc(m.label)}: ${esc(m.f(nz(p[m.prop])))}<br>€/m²: ${esc(fmt.eur(nz(p.price)))}<br><span style="color:#555">clica para o concelho</span>`).addTo(MAP);
+  });
+  MAP.on('mouseleave', 'f-fill', () => pop.remove());
+  MAP.on('click', 'f-fill', (e) => { const f = e.features[0]; if (f) select(String(f.properties.code).slice(0, 4)); });
+  MAP.on('mouseenter', 'f-fill', () => (MAP.getCanvas().style.cursor = 'pointer'));
+  MAP.on('mouseleave', 'f-fill', () => (MAP.getCanvas().style.cursor = ''));
+  return true;
+}
+async function setLevel(lvl) {
+  if (lvl === 'f' && !(PAR && PAR.with_map)) {
+    $('#map-help').textContent = PAR && PAR.rows.length
+      ? 'As fronteiras das freguesias não estão disponíveis nesta build. A lista de freguesias por concelho continua no detalhe de cada concelho, e as mais baratas do que as vizinhas aparecem abaixo quando houver fronteiras.'
+      : 'Sem dados de freguesias nesta build.';
+    return;
+  }
+  LEVEL = lvl;
+  document.querySelectorAll('#lvlnav .btn').forEach((b) => b.classList.toggle('on', b.dataset.lvl === lvl));
+  $('#metric').hidden = lvl === 'f';
+  $('#metric-f').hidden = lvl !== 'f';
+  $('#par-list').hidden = lvl !== 'f';
+  if (MAP && MAP.getLayer('fill')) {
+    if (lvl === 'f' && !(await addParishLayer())) { LEVEL = 'c'; return setLevel('c'); }
+    MAP.setLayoutProperty('fill', 'visibility', lvl === 'f' ? 'none' : 'visible');
+    ['f-fill', 'f-line'].forEach((id) => MAP.getLayer(id) && MAP.setLayoutProperty(id, 'visibility', lvl === 'f' ? 'visible' : 'none'));
+  }
+  updateMetric();
+}
+function renderParList() {
+  const el = $('#par-list');
+  if (!PAR) return;
+  const ok = PAR.rows.filter((r) => r.rel_nb != null);
+  if (!ok.length) { el.innerHTML = ''; return; }
+  const item = (r) => `<li><span>${lnk(r.dico, r.name)} <span class="muted">(${esc((BY[r.dico] || {}).name || r.dico)})</span></span><span class="v">${fmt.spct(r.rel_nb, 0)} <span class="muted">${fmt.eur(r.price)}/m² · ${fmt.spct(r.rel_muni, 0)} vs concelho</span></span></li>`;
+  const cheap = ok.slice().sort((a, b) => a.rel_nb - b.rel_nb).slice(0, 12).map(item).join('');
+  el.innerHTML = `<h3>Freguesias mais baratas do que as vizinhas ${info('parishes')}</h3>
+    <p class="muted">Preço mediano de venda (${qpt(PAR.period)}) face à mediana das freguesias vizinhas com dados. Pode ser oportunidade, ou só casas diferentes (mais pequenas, mais antigas, a precisar de obras): confirma no terreno.</p>
+    <ul class="ol-list">${cheap}</ul>`;
+}
+function renderParTable(dico) {
+  const rows = PAR ? PAR.rows.filter((r) => r.dico === dico).sort((a, b) => a.price - b.price) : [];
+  $('#d-par').hidden = !rows.length;
+  if (!rows.length) return;
+  const hasRent = rows.some((r) => r.rent != null), hasNb = rows.some((r) => r.rel_nb != null);
+  $('#d-par-table').innerHTML = `<thead><tr><th>Freguesia</th><th>€/m²</th><th>Face ao concelho</th>${hasNb ? '<th>Face às vizinhas</th>' : ''}<th>Var. 12m</th>${hasRent ? '<th>Renda €/m²</th>' : ''}</tr></thead><tbody>` +
+    rows.map((r) => `<tr><td>${esc(r.name)}</td><td>${fmt.eur(r.price)}</td><td>${fmt.spct(r.rel_muni, 0)}</td>${hasNb ? `<td>${fmt.spct(r.rel_nb, 0)}</td>` : ''}<td>${fmt.pct(r.g1y)}</td>${hasRent ? `<td>${r.rent == null ? '—' : fmt.eur2(r.rent)}</td>` : ''}</tr>`).join('') + '</tbody>';
+  const total = rows.length;
+  $('#d-par-note').textContent = `${total} ${total === 1 ? 'freguesia publicada' : 'freguesias publicadas'} pelo INE (${qpt(PAR.period)}, últimos 12 meses); as restantes têm poucas vendas.${hasRent ? ` Renda: novos contratos em ${rows.find((r) => r.rent_year)?.rent_year ?? '—'}.` : ''} Medianas de freguesia assentam em poucas vendas — diferenças grandes podem ser só o tipo de casas vendidas.`;
 }
 
 // ---------- detalhe / comparação
@@ -476,6 +552,7 @@ function select(dico, scroll = true) {
       ctx((x) => x.housing_credit_pc, m.housing_credit_pc, fmt.eur))] : []),
   ].join('');
   $('#d-read').innerHTML = readList(m);
+  try { renderParTable(dico); } catch (e) { console.error('Falha nas freguesias:', e); }
   const s = [{ name: 'Preço', data: m.series.price, fmt: (v) => fmt.eur(v) + '/m²' }];
   const q4 = (p) => (p.length === 4 ? p + 'Q4' : p);
   if (m.series.rent.length) s.push({ name: 'Renda', data: m.series.rent.map(([p, v]) => [q4(p), v]), axis: 1, dots: true, fmt: (v) => fmt.eur2(v) + '/m²/mês' });
@@ -946,11 +1023,15 @@ async function main() {
   try { GEO = await j('data/concelhos.geojson'); } catch { GEO = null; }
   try { BT = await j('data/backtest.json'); } catch { BT = null; }
   try { OL = await j('data/outlook.json'); } catch { OL = null; }
+  try { PAR = await j('data/freguesias.json'); } catch { PAR = null; }
   MUNIS.forEach((m) => (BY[m.dico] = m));
   $('#stamp').textContent = `Atualizado ${META.built_at.slice(0, 10)} · último período de preços: ${META.latest_price_period} · ${META.n_municipalities} concelhos`;
   $('#demo-banner').hidden = !META.demo;
   $('#disclaimer').textContent = META.disclaimer;
   $('#metric').addEventListener('change', updateMetric);
+  $('#metric-f').addEventListener('change', updateMetric);
+  $('#lvlnav').addEventListener('click', (e) => { const b = e.target.closest('[data-lvl]'); if (b) setLevel(b.dataset.lvl); });
+  $('#par-list').addEventListener('click', (e) => { const a = e.target.closest('a[data-d]'); if (a) { e.preventDefault(); select(a.dataset.d); } });
   document.querySelector('.mapnav').addEventListener('click', (e) => { const b = e.target.closest('[data-b]'); if (b) fitTo(b.dataset.b); });
   $('#euribor-sel').addEventListener('change', renderEuribor);
   $('#search').addEventListener('input', renderTable);
@@ -970,6 +1051,7 @@ async function main() {
   safe('ranking', () => { renderTable(); renderRankingSummary(); });
   safe('backtest', renderBacktest);
   safe('perspetivas', renderOutlook);
+  safe('freguesias', renderParList);
   $('#outlook-body').addEventListener('click', (e) => {
     const a = e.target.closest('a[data-d]');
     if (a) { e.preventDefault(); select(a.dataset.d); }

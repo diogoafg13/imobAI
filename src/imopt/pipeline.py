@@ -11,7 +11,7 @@ import duckdb
 import pandas as pd
 import yaml
 
-from . import geo, ine, macro, outlook, scoring, tracking
+from . import geo, ine, macro, outlook, parishes, scoring, tracking
 
 log = logging.getLogger("imopt")
 ROOT = Path(__file__).resolve().parents[2]
@@ -152,7 +152,7 @@ def real_index(nominal: pd.DataFrame | None, hicp: pd.DataFrame | None) -> pd.Da
 def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.DataFrame],
                   ine_status: dict, macro_status: dict, out_dir: Path,
                   geojson: dict | None, demo: bool = False, geo_unmatched: list[str] | None = None,
-                  forecast_log: Path | None = None) -> dict:
+                  forecast_log: Path | None = None, parish_geojson: dict | None = None) -> dict:
     sales = municipal(frames.get("sales_price_12m"))
     if sales is None or sales.empty:
         raise RuntimeError("sem dados de preços por concelho: nada para calcular")
@@ -242,6 +242,22 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     geo.dump(national, str(out_dir / "national.json"))
     geo.dump(meta, str(out_dir / "meta.json"))
     geo.dump(outlook_data, str(out_dir / "outlook.json"))
+    # Freguesias: tabela sempre que o INE as publique; mapa só se houver fronteiras.
+    try:
+        ptab = parishes.table(frames.get("sales_price_12m"), frames.get("rent_parish"),
+                              dict(zip(feats["dico"].astype(str), feats["price"])))
+        ptab = parishes.add_neighbours(ptab, parish_geojson)
+        rows = [{k: _clean(v) for k, v in r.items()} for r in ptab.to_dict("records")]
+        geo.dump({"period": ptab.attrs.get("period"), "with_map": False, "rows": rows}, str(out_dir / "freguesias.json"))
+        pgj = parishes.geojson_out(ptab, parish_geojson)
+        if pgj is not None:
+            geo.dump(pgj, str(out_dir / "freguesias.geojson"))
+            geo.dump({"period": ptab.attrs.get("period"), "with_map": True, "rows": rows}, str(out_dir / "freguesias.json"))
+        meta["parishes"] = f"{len(rows)} freguesias" + (f", {len(pgj['features'])} no mapa" if pgj else ", sem mapa")
+    except Exception as e:  # noqa: BLE001
+        log.warning("freguesias falharam: %s", e)
+        meta["parishes"] = f"ERRO: {str(e)[:150]}"
+    geo.dump(meta, str(out_dir / "meta.json"))
     if geojson is not None:
         keep = {m["dico"]: {"name": m["name"], "band": m["band"], "score": m["score_overall"], "price": m["price"],
                             "yield": m["gross_yield"], "g1y": m["price_growth_1y"], "fc": m.get("fc_growth_12m"),
@@ -283,5 +299,32 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
             else:
                 log.warning("geometrias indisponíveis: %s", e)
                 ine_status["geo"] = f"ERRO: {e}"
+    parish_gj = None if skip_geo else load_parish_geojson(cfg, data_dir, ine_status)
     return build_outputs(frames, macro_frames, ine_status, macro_status, out_dir, geojson, geo_unmatched=unmatched,
-                         forecast_log=data_dir / "clean" / "forecast_log.parquet")
+                         forecast_log=data_dir / "clean" / "forecast_log.parquet", parish_geojson=parish_gj)
+
+
+def load_parish_geojson(cfg: dict, data_dir: Path, status: dict) -> dict | None:
+    """Fronteiras das freguesias: tenta os URLs configurados; guarda a primeira que funcionar; senão usa a cache."""
+    import json as _json
+    cached = data_dir / "clean" / "geo_parishes.json"
+    errors = []
+    for url in cfg["geo"].get("parishes_geojson") or []:
+        try:
+            gj, n = geo.attach_code(geo.download_geojson(url), cfg["geo"].get("parish_props", []))
+            if n < 100:
+                raise ValueError(f"só {n} freguesias com código DICOFRE; propriedades de exemplo: "
+                                 f"{(gj.get('features') or [{}])[0].get('properties')}")
+            slim = geo.slim_geojson(gj, {}, tolerance=0.0008, key="code")
+            cached.parent.mkdir(parents=True, exist_ok=True)
+            geo.dump(slim, str(cached))
+            status["geo_parishes"] = f"ok ({n} freguesias, {url})"
+            return slim
+        except Exception as e:  # noqa: BLE001
+            errors.append(f"{url}: {str(e)[:150]}")
+    if cached.exists():
+        status["geo_parishes"] = "CACHE" + (f" (download falhou: {errors[0]})" if errors else "")
+        return _json.loads(cached.read_text(encoding="utf-8"))
+    status["geo_parishes"] = "ERRO: " + ("; ".join(errors) or "sem URL configurado")
+    log.warning("fronteiras das freguesias indisponíveis: %s", status["geo_parishes"])
+    return None

@@ -51,6 +51,21 @@ def attach_dico(geojson: dict, dico_props: list[str], name_props: list[str],
     return geojson, unmatched
 
 
+def attach_code(geojson: dict, props: list[str], digits: int = 6, key: str = "code") -> tuple[dict, int]:
+    """Garante `properties[key]` com um código numérico de `digits` dígitos (ex.: DICOFRE). Devolve (geojson, ligados)."""
+    n = 0
+    for f in geojson.get("features", []):
+        p = f.setdefault("properties", {})
+        v = _first(p, props)
+        if isinstance(v, list):
+            v = v[0] if v else None
+        s = str(v).strip() if v is not None else ""
+        if re.fullmatch(rf"\d{{{digits - 1},{digits}}}", s):
+            p[key] = s.zfill(digits)
+            n += 1
+    return geojson, n
+
+
 def _round(coords: Any, nd: int) -> Any:
     if isinstance(coords, (int, float)):
         return round(coords, nd)
@@ -58,7 +73,7 @@ def _round(coords: Any, nd: int) -> Any:
 
 
 def slim_geojson(geojson: dict, keep_props: dict[str, dict], tolerance: float = 0.002,
-                 ndigits: int = 4) -> dict:
+                 ndigits: int = 4, key: str = "dico", only_kept: bool = False) -> dict:
     """Reduz tamanho: simplifica geometrias (se shapely existir), arredonda e limita propriedades."""
     try:
         from shapely.geometry import mapping, shape
@@ -66,15 +81,15 @@ def slim_geojson(geojson: dict, keep_props: dict[str, dict], tolerance: float = 
         shape = None
     feats = []
     for f in geojson["features"]:
-        d = f.get("properties", {}).get("dico")
-        if not d:
+        d = f.get("properties", {}).get(key)
+        if not d or (only_kept and d not in keep_props):
             continue
         geom = f["geometry"]
         if shape is not None:
             g = shape(geom).simplify(tolerance, preserve_topology=True)
             geom = mapping(g)
         geom = {"type": geom["type"], "coordinates": _round(geom["coordinates"], ndigits)}
-        feats.append({"type": "Feature", "properties": {"dico": d, **keep_props.get(d, {})}, "geometry": geom})
+        feats.append({"type": "Feature", "properties": {key: d, **keep_props.get(d, {})}, "geometry": geom})
     return {"type": "FeatureCollection", "features": feats}
 
 
@@ -89,7 +104,8 @@ def haversine_km(lon1, lat1, lon2, lat2):
     return 6371.0 * 2 * np.arcsin(np.sqrt(a))
 
 
-def spatial_index(geojson: dict | None, touch_deg: float = 0.01) -> tuple[pd.DataFrame, dict[str, list[str]]]:
+def spatial_index(geojson: dict | None, touch_deg: float = 0.01,
+                  key: str = "dico") -> tuple[pd.DataFrame, dict[str, list[str]]]:
     """Centróide (lon, lat), área (km²), extensão de costa e vizinhos de cada concelho.
 
     Vizinhos = polígonos a menos de `touch_deg` graus (~1 km): as geometrias publicadas são
@@ -105,7 +121,7 @@ def spatial_index(geojson: dict | None, touch_deg: float = 0.01) -> tuple[pd.Dat
 
     parts: dict[str, list] = {}
     for f in geojson["features"]:
-        d = (f.get("properties") or {}).get("dico")
+        d = (f.get("properties") or {}).get(key)
         if not d or not f.get("geometry"):
             continue
         g = shape(f["geometry"])
