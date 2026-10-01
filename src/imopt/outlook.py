@@ -381,6 +381,33 @@ def fair_value(feats: pd.DataFrame | None, spatial: pd.DataFrame | None, dist: p
     return summary, per
 
 
+# ---------------------------------------------------------------- procura
+def demand(feats: pd.DataFrame | None) -> dict | None:
+    """Procura externa (prémio pago por compradores com domicílio no estrangeiro) e volume (avaliações bancárias)."""
+    if feats is None:
+        return None
+    out: dict = {}
+    if "foreign_premium" in feats:
+        fp = feats.dropna(subset=["foreign_premium"])
+        if len(fp) >= 5:
+            top = fp.sort_values("foreign_premium", ascending=False).head(10)
+            out["foreign"] = {"n": int(len(fp)), "median_premium": float(fp["foreign_premium"].median()),
+                              "share_above": float((fp["foreign_premium"] > 0).mean()),
+                              "top": [{"dico": str(r.dico), "name": str(r.name), "premium": float(r.foreign_premium),
+                                       "price_foreign": float(r.price_foreign), "price_domestic": float(r.price_domestic)}
+                                      for r in top.itertuples()]}
+    if "val_count" in feats:
+        vc = feats.dropna(subset=["val_count", "val_count_growth_1y"])
+        vc = vc[np.isfinite(vc["val_count_growth_1y"])]
+        if len(vc) >= 5:
+            now = float(vc["val_count"].sum())
+            ago = float((vc["val_count"] / (1 + vc["val_count_growth_1y"])).sum())
+            out["volume"] = {"n": int(len(vc)), "total": now, "total_growth_1y": now / ago - 1 if ago > 0 else None,
+                             "median_growth_1y": float(vc["val_count_growth_1y"].median()),
+                             "share_falling": float((vc["val_count_growth_1y"] < 0).mean())}
+    return out or None
+
+
 # ---------------------------------------------------------------- juros
 def _annuity_capacity(rate: float, years: int) -> float:
     n, r = years * 12, rate / 12
@@ -506,6 +533,7 @@ def build(frames: dict, macro_frames: dict, feats: pd.DataFrame | None, geojson:
     part("regimes", lambda: regimes(hpi, hpi_real))
     part("ripple", lambda: ripple(valuation, sales, dist))
     part("fair_value", lambda: fair_value(feats, spatial, dist, regions))
+    part("demand", lambda: demand(feats))
     part("rates", lambda: rate_scenarios(euribor, hpi, mortgage=macro_frames.get("mortgage_rate_pt")))
     for key, prefix in (("valuation_apartments", "apt"), ("valuation_houses", "house")):
         q = monthly_to_quarterly_muni(muni(frames.get(key)))

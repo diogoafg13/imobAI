@@ -32,6 +32,57 @@ ine:
       dims: {dim_3: "H12"}
       period_kind: quarter
       optional: true
+    # Domicílio fiscal do comprador (confirmado com `imopt inspect 0012246`): 1 = Território nacional,
+    # 2 = Estrangeiro (21 = UE, 22 = restantes países), T = Total. Freguesia/município, 12 meses, trimestral.
+    sales_price_domestic:
+      varcd: "0012246"
+      description: Preço mediano de venda, compradores com domicílio em Portugal (€/m²)
+      level: municipality
+      dims: {dim_3: "1"}
+      period_kind: quarter
+      optional: true
+    sales_price_foreign:
+      varcd: "0012246"
+      description: Preço mediano de venda, compradores com domicílio no estrangeiro (€/m²)
+      level: municipality
+      dims: {dim_3: "2"}
+      period_kind: quarter
+      optional: true
+    # Apartamentos (0012235, sem dimensões extra) e tipologia (0012241: 1 = T0/T1, 2 = T2, 3 = T3, 4 = T4+).
+    sales_price_apartments:
+      varcd: "0012235"
+      description: Preço mediano de venda de apartamentos (€/m²), 12 meses
+      level: municipality
+      period_kind: quarter
+      optional: true
+    sales_price_t01:
+      varcd: "0012241"
+      description: Preço mediano de venda T0/T1 (€/m²)
+      level: municipality
+      dims: {dim_3: "1"}
+      period_kind: quarter
+      optional: true
+    sales_price_t2:
+      varcd: "0012241"
+      description: Preço mediano de venda T2 (€/m²)
+      level: municipality
+      dims: {dim_3: "2"}
+      period_kind: quarter
+      optional: true
+    sales_price_t3:
+      varcd: "0012241"
+      description: Preço mediano de venda T3 (€/m²)
+      level: municipality
+      dims: {dim_3: "3"}
+      period_kind: quarter
+      optional: true
+    sales_price_t4:
+      varcd: "0012241"
+      description: Preço mediano de venda T4 ou mais (€/m²)
+      level: municipality
+      dims: {dim_3: "4"}
+      period_kind: quarter
+      optional: true
     # sales_price_annual (0013042): redundante com o indicador de 12 meses acima; desligado.
     sales_price_annual:
       varcd: null
@@ -78,6 +129,14 @@ ine:
       description: Avaliação bancária mediana (€/m²)
       level: municipality
       # dim_3: T = Total, 1 = Apartamentos, 2 = Moradias.
+      dims: {dim_3: "T"}
+      period_kind: month
+      optional: true
+    valuation_count:
+      varcd: "0012247"          # Avaliações bancárias (N.º) nos últimos 3 meses, município, mensal
+      description: Número de avaliações bancárias, últimos 3 meses (volume de compras com crédito)
+      level: municipality
+      # dim_3 = T por analogia com o 0012248 (mesma operação); não confirmado ao vivo.
       dims: {dim_3: "T"}
       period_kind: month
       optional: true

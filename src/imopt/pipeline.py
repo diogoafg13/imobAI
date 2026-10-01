@@ -97,7 +97,9 @@ def ingest_macro(cfg: dict, data_dir: Path) -> tuple[dict[str, pd.DataFrame], di
 
 # ---------------------------------------------------------------- análise
 EXTRA_KEYS = ("sales_price_new", "sales_price_existing", "valuation_apartments", "valuation_houses", "rent_q1",
-              "rent_q3", "rent_contracts", "tourism_nights", "housing_credit_pc")
+              "rent_q3", "rent_contracts", "tourism_nights", "housing_credit_pc", "sales_price_domestic",
+              "sales_price_foreign", "sales_price_apartments", "sales_price_t01", "sales_price_t2", "sales_price_t3",
+              "sales_price_t4", "valuation_count")
 
 
 def municipal(df: pd.DataFrame | None) -> pd.DataFrame | None:
@@ -192,7 +194,8 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
             "volatility", "volatile", "price_new", "price_existing", "new_premium", "val_apt", "val_apt_growth_1y",
             "val_house", "val_house_growth_1y", "rent_q1", "rent_q3", "rent_spread", "rent_contracts",
             "rent_contracts_year", "rent_contracts_growth", "tourism_nights", "tourism_nights_year",
-            "housing_credit_pc", "housing_credit_pc_year"]
+            "housing_credit_pc", "housing_credit_pc_year", "price_domestic", "price_foreign", "foreign_premium",
+            "price_apt_sales", "price_t01", "price_t2", "price_t3", "price_t4", "val_count", "val_count_growth_1y"]
     # Perspetivas (previsões e padrões): só leitura, não mexe nos scores; falha de forma não-fatal.
     try:
         outlook_data, per = outlook.build(frames, macro_frames, feats, geojson, hpi, hpi_real, demo=demo)
@@ -239,7 +242,7 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     if geojson is not None:
         keep = {m["dico"]: {"name": m["name"], "band": m["band"], "score": m["score_overall"], "price": m["price"],
                             "yield": m["gross_yield"], "g1y": m["price_growth_1y"], "fc": m.get("fc_growth_12m"),
-                            "fv": m.get("fv_gap")} for m in munis}
+                            "fv": m.get("fv_gap"), "fp": m.get("foreign_premium")} for m in munis}
         geo.dump(geo.slim_geojson(geojson, keep), str(out_dir / "concelhos.geojson"))
     return meta
 

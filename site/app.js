@@ -47,6 +47,9 @@ const GLOSS = {
   rent_contracts: ['Novos contratos de arrendamento', 'Número de novos contratos de arrendamento registados no ano (INE). Mede o tamanho do mercado de arrendamento: poucos contratos = renda mediana menos fiável.'],
   tourism: ['Pressão turística', 'Dormidas em alojamento turístico por habitante, no ano (INE). Mede o peso do turismo no concelho — uma das razões para preços acima do que os rendimentos locais explicam. Entra no modelo de valor justo.'],
   credit_pc: ['Crédito à habitação por habitante', 'Stock de crédito à habitação a dividir pela população (INE, anual). Mostra o endividamento das famílias para comprar casa; acompanha naturalmente os preços, por isso não entra no valor justo.'],
+  foreign: ['Compradores estrangeiros', 'Preço mediano (€/m², 12 meses) pago por compradores com domicílio fiscal no estrangeiro, comparado com o dos compradores com domicílio em Portugal (INE). Um prémio alto indica procura externa a puxar pelos preços — muitas vezes em casas diferentes (localização, tamanho). O INE só publica onde há vendas suficientes a estrangeiros.'],
+  tipologia: ['Preço por tipologia', 'Preço mediano de venda por m² (INE, 12 meses) por número de quartos. Casas pequenas costumam custar mais por m².'],
+  val_count: ['Volume de avaliações bancárias', 'Número de avaliações bancárias nos últimos 3 meses (INE): mede quantas compras com crédito estão a acontecer. O volume costuma cair antes dos preços — uma queda forte e generalizada é um sinal clássico de arrefecimento.'],
   tracking: ['Previsões anteriores vs realidade', 'Cada build guarda as previsões que publicou. Quando o INE publica o valor real de um trimestre (ou ano, nas rendas) previsto, o erro é medido aqui — com os dados tal como saíram, sem revisões nem o benefício da retrospetiva. É a avaliação mais honesta, mas precisa de tempo: a 12 meses, os primeiros resultados só aparecem um ano depois do arranque do arquivo.'],
   ol_backtest: ['Como se saiu no passado', 'Para cada trimestre desde 2021, o modelo foi treinado só com o que se sabia nessa data e previu os trimestres seguintes. Erro médio em pontos percentuais (p.p.) de variação do preço, comparado com «fica igual» e «continua o ritmo do último ano». Cobertura: % das vezes em que o valor real caiu dentro do intervalo de 80%.'],
   migration: ['Saldo migratório', 'Diferença entre quem chegou e quem saiu do concelho num ano (INE). Positivo = mais gente a chegar do que a sair. Só contexto demográfico — não entra em nenhum score.'],
@@ -108,8 +111,10 @@ const METRICS = {
   fv: { prop: 'fv', pal: ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'], diverge: true, f: (v) => fmt.spct(v, 0), label: 'Face ao valor justo',
     help: 'Laranja = preço acima do que rendimento, demografia, litoral, distância e região explicam; azul = abaixo; cinzento claro = em linha. Não é prova de bolha: pode ser praia, turismo ou qualidade das casas, que o modelo não vê. Cinzento escuro = sem dados.' },
 };
+METRICS.fp = { prop: 'fp', pal: ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'], diverge: true, f: (v) => fmt.spct(v, 0), label: 'Prémio de estrangeiros',
+  help: 'Quanto mais (laranja) ou menos (azul) pagam por m² os compradores com domicílio no estrangeiro face aos residentes em Portugal. Cinzento = INE não publica (poucas vendas a estrangeiros).' };
 const METRIC_VAL = { score: (x) => x.score_overall, price: (x) => x.price, yield: (x) => x.gross_yield, g1y: (x) => x.price_growth_1y,
-  fc: (x) => x.fc_growth_12m, fv: (x) => x.fv_gap };
+  fc: (x) => x.fc_growth_12m, fv: (x) => x.fv_gap, fp: (x) => x.foreign_premium };
 function quantile(sorted, q) { const i = (sorted.length - 1) * q, lo = Math.floor(i), hi = Math.ceil(i); return sorted[lo] + (sorted[hi] - sorted[lo]) * (i - lo); }
 function domain(m) {
   if (m.fixed) return m.fixed;
@@ -339,6 +344,10 @@ function readList(m) {
     .filter((x) => x[1] != null)
     .map(([n, v, g, lo, hi]) => `${n} ${fmt.eur(v)}/m²${g != null ? ` (previsão ${fmt.spct(g)} em 12 meses${lo != null ? `, 80% entre ${fmt.eur(lo)} e ${fmt.eur(hi)}` : ''})` : ''}`);
   if (tp.length) li.push(`Avaliação bancária: ${tp.join('; ')}.`);
+  if (m.foreign_premium != null) li.push(`Compradores com domicílio no estrangeiro pagam ${fmt.eur(m.price_foreign)}/m², ${fmt.spct(m.foreign_premium, 0)} face aos residentes em Portugal (${fmt.eur(m.price_domestic)}/m²)${m.foreign_premium > 0.3 ? ' — sinal de procura externa forte' : ''}.`);
+  const tps = [['T0/T1', m.price_t01], ['T2', m.price_t2], ['T3', m.price_t3], ['T4+', m.price_t4]].filter((x) => x[1] != null);
+  if (tps.length >= 2) li.push(`Preço por tipologia: ${tps.map(([k, v]) => `${k} ${fmt.eur(v)}/m²`).join(', ')}${m.price_apt_sales != null ? `; apartamentos ${fmt.eur(m.price_apt_sales)}/m²` : ''}.`);
+  if (m.val_count != null && m.val_count_growth_1y != null) li.push(`Volume: ${fmt.n(m.val_count, 0)} avaliações bancárias nos últimos 3 meses, ${fmt.spct(m.val_count_growth_1y, 0)} num ano${m.val_count_growth_1y < -0.15 ? ' — queda forte do volume, que costuma anteceder abrandamento de preços' : m.val_count_growth_1y > 0.15 ? ' — mais compras com crédito' : ''}.`);
   if (m.rent_q1 != null && m.rent_q3 != null) li.push(`Renda de novos contratos: 25% abaixo de ${fmt.eur2(m.rent_q1)}/m² e 25% acima de ${fmt.eur2(m.rent_q3)}/m²${m.rent_contracts != null ? `, em ${fmt.n(m.rent_contracts, 0)} contratos em ${m.rent_contracts_year}` : ''}.`);
   if (m.tourism_pc != null) {
     const mt = median(col((x) => x.tourism_pc));
@@ -446,6 +455,12 @@ function select(dico, scroll = true) {
         `<span class="ctx">${fmt.spct(m[k + '_growth_1y'])} num ano${m[p + '_fc_growth_12m'] != null ? ` · prev. ${fmt.spct(m[p + '_fc_growth_12m'])}` : ''}</span>`)),
     ...(m.rent_q1 != null ? [tile('rent_q', 'Renda 1.º–3.º quartil', `${fmt.eur2(m.rent_q1)}–${fmt.eur2(m.rent_q3)}`,
       m.rent_contracts != null ? `<span class="ctx">${fmt.n(m.rent_contracts, 0)} contratos em ${m.rent_contracts_year}</span>` : '')] : []),
+    ...(m.foreign_premium != null ? [tile('foreign', 'Estrangeiros vs residentes', fmt.spct(m.foreign_premium, 0),
+      `<span class="ctx">${fmt.eur(m.price_foreign)} vs ${fmt.eur(m.price_domestic)}/m²</span>`)] : []),
+    ...(m.price_t2 != null || m.price_t3 != null ? [tile('tipologia', 'T2 / T3 (€/m²)', `${fmt.eur(m.price_t2)} / ${fmt.eur(m.price_t3)}`,
+      `<span class="ctx">T0/T1 ${fmt.eur(m.price_t01)} · T4+ ${fmt.eur(m.price_t4)}</span>`)] : []),
+    ...(m.val_count != null ? [tile('val_count', 'Avaliações (3 meses)', fmt.n(m.val_count, 0),
+      `<span class="ctx">${fmt.spct(m.val_count_growth_1y, 0)} num ano</span>`)] : []),
     ...(m.tourism_pc != null ? [tile('tourism', 'Dormidas por habitante', fmt.n(m.tourism_pc, 1),
       ctx((x) => x.tourism_pc, m.tourism_pc, (v) => fmt.n(v, 1)))] : []),
     ...(m.housing_credit_pc != null ? [tile('credit_pc', 'Crédito habitação/hab.', fmt.eur(m.housing_credit_pc),
@@ -484,6 +499,9 @@ const COMPARE_ROWS = [
   ['val_type', 'Apartamentos: avaliação e previsão', (m) => (m.val_apt == null ? '—' : `${fmt.eur(m.val_apt)} (${fmt.spct(m.apt_fc_growth_12m)})`)],
   ['val_type', 'Moradias: avaliação e previsão', (m) => (m.val_house == null ? '—' : `${fmt.eur(m.val_house)} (${fmt.spct(m.house_fc_growth_12m)})`)],
   ['rent_q', 'Renda 1.º–3.º quartil', (m) => (m.rent_q1 == null ? '—' : `${fmt.eur2(m.rent_q1)}–${fmt.eur2(m.rent_q3)}`)],
+  ['foreign', 'Estrangeiros vs residentes', (m) => (m.foreign_premium == null ? '—' : `${fmt.spct(m.foreign_premium, 0)} (${fmt.eur(m.price_foreign)})`)],
+  ['tipologia', 'T0-T1 / T2 / T3 / T4+ (€/m²)', (m) => [m.price_t01, m.price_t2, m.price_t3, m.price_t4].map(fmt.eur).join(' / ')],
+  ['val_count', 'Avaliações bancárias (3 meses)', (m) => (m.val_count == null ? '—' : `${fmt.n(m.val_count, 0)} (${fmt.spct(m.val_count_growth_1y, 0)})`)],
   ['tourism', 'Dormidas por habitante', (m) => fmt.n(m.tourism_pc, 1)],
   ['credit_pc', 'Crédito habitação/hab.', (m) => fmt.eur(m.housing_credit_pc)],
 ];
@@ -712,6 +730,20 @@ function olTypes(A, H) {
     <div class="table-wrap"><table class="ol-table"><thead><tr><th>Tipo</th><th>Concelhos</th><th>Avaliação mediana (€/m²)</th><th>Previsão mediana 12m</th><th>Metade dos concelhos entre</th><th>Origens no backtest</th><th>Menos erro que a melhor regra ingénua</th><th>Cobertura 80%</th></tr></thead><tbody>${tr}</tbody></table></div>
     ${rows.map(([label, S]) => `<p><b>${label}:</b> ${esc(S.verdict_pt)}</p>`).join('')}`;
 }
+function olDemand(D) {
+  const parts = [];
+  if (D.volume) {
+    const v = D.volume;
+    parts.push(`<p><b>Volume ${info('val_count')}:</b> ${fmt.n(v.total, 0)} avaliações bancárias nos últimos 3 meses nos ${v.n} concelhos com dados, ${fmt.spct(v.total_growth_1y, 0)} face a um ano antes; o volume caiu em ${Math.round(v.share_falling * 100)}% dos concelhos (variação mediana ${fmt.spct(v.median_growth_1y, 0)}). ${v.share_falling > 0.6 && v.total_growth_1y < -0.1 ? 'Queda generalizada — historicamente um sinal de arrefecimento que costuma chegar antes dos preços.' : v.total_growth_1y > 0 ? 'Sem sinal de arrefecimento pelo lado do volume.' : 'Ligeiro abrandamento do volume; a acompanhar.'}</p>`);
+  }
+  if (D.foreign) {
+    const f = D.foreign;
+    const item = (x) => `<li><span>${lnk(x.dico, x.name)}</span><span class="v">${fmt.spct(x.premium, 0)} <span class="muted">${fmt.eur(x.price_foreign)} vs ${fmt.eur(x.price_domestic)}</span></span></li>`;
+    parts.push(`<p><b>Compradores estrangeiros ${info('foreign')}:</b> em ${f.n} concelhos com dados, quem tem domicílio fiscal no estrangeiro paga em mediana ${fmt.spct(f.median_premium, 0)} por m² face a quem reside em Portugal; pagam mais em ${Math.round(f.share_above * 100)}% desses concelhos. O mapa tem este indicador ("Prémio pago por estrangeiros").</p>
+      <p class="muted"><b>Maior prémio pago por estrangeiros</b> (estrangeiros vs residentes, €/m²)</p><ul class="ol-list">${f.top.map(item).join('')}</ul>`);
+  }
+  return parts.length ? `<h3>Procura: volume e compradores estrangeiros</h3>${parts.join('')}` : '';
+}
 function olRent(R) {
   const m = R.backtest;
   const ok = MUNIS.filter((x) => x.rent_fc_growth != null);
@@ -788,6 +820,7 @@ function renderOutlook() {
   const add = (name, fn) => { try { parts.push(fn()); } catch (e) { console.error(`Falha em perspetivas/${name}:`, e); } };
   if (OL.sales) add('vendas', () => olSales(OL.sales));
   if (OL.tracking) add('arquivo', () => olTracking(OL.tracking));
+  if (OL.demand) add('procura', () => olDemand(OL.demand));
   if (OL.fc_apt || OL.fc_house) add('tipos', () => olTypes(OL.fc_apt, OL.fc_house));
   if (OL.rent) add('rendas', () => olRent(OL.rent));
   if (OL.regimes) add('regimes', () => `<h3>Regimes do mercado (HPI nacional) ${info('regimes')}</h3><div id="ol-regimes" class="chart tall"></div><ul class="read">${OL.regimes.segments.map((s, i) =>
