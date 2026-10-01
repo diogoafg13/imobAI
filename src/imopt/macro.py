@@ -82,6 +82,7 @@ FETCHERS = {
     "euribor_3m": fetch_euribor,
     "euribor_6m": fetch_euribor,
     "euribor_12m": fetch_euribor,
+    "mortgage_rate_pt": fetch_euribor,     # mesmo formato CSV da API de dados do BCE
     "eurostat_hpi": fetch_eurostat_hpi,
     "eurostat_hicp": fetch_eurostat_hicp,
     "bis_credit_gap": fetch_bis_credit_gap,

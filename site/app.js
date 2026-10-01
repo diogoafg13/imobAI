@@ -41,6 +41,12 @@ const GLOSS = {
   regimes: ['Regimes do mercado', 'O índice de preços nacional (HPI) dividido em fases com ritmo constante. Os pontos de quebra são escolhidos pelos dados (regressão por troços, critério BIC), não à mão.'],
   ripple: ['Distância a Lisboa e Porto', 'Testa se as subidas se propagam das metrópoles para fora: compara o ritmo de subida por distância e procura o desfasamento (em meses) que melhor liga cada concelho à metrópole mais próxima.'],
   rates: ['Cenários de juros', 'Prestação e capacidade de endividamento são aritmética pura (crédito a 30 anos, Euribor + 1 p.p.). O efeito nos preços só é mostrado se a relação histórica for estatisticamente clara.'],
+  new_old: ['Casas novas vs existentes', 'Preço mediano de venda (INE, 12 meses) de alojamentos novos e de existentes (usados). O prémio é quanto mais caras são as novas. Muitos concelhos não têm vendas de casas novas suficientes para o INE publicar.'],
+  val_type: ['Apartamentos vs moradias', 'Avaliação bancária mediana (€/m², média dos últimos 3 meses) por tipo de casa, e previsão a 12 meses feita com o mesmo método das vendas, mas com 15 anos de histórico (desde 2011). A avaliação bancária não é o preço de transação: só cobre casas com crédito.'],
+  rent_q: ['Quartis da renda', '1.º quartil: 25% dos novos contratos têm renda abaixo deste valor — a renda "barata" do concelho. 3.º quartil: 25% acima. Quanto maior a distância entre os dois, mais variado é o mercado de arrendamento.'],
+  rent_contracts: ['Novos contratos de arrendamento', 'Número de novos contratos de arrendamento registados no ano (INE). Mede o tamanho do mercado de arrendamento: poucos contratos = renda mediana menos fiável.'],
+  tourism: ['Pressão turística', 'Dormidas em alojamento turístico por habitante, no ano (INE). Mede o peso do turismo no concelho — uma das razões para preços acima do que os rendimentos locais explicam. Entra no modelo de valor justo.'],
+  credit_pc: ['Crédito à habitação por habitante', 'Stock de crédito à habitação a dividir pela população (INE, anual). Mostra o endividamento das famílias para comprar casa; acompanha naturalmente os preços, por isso não entra no valor justo.'],
   tracking: ['Previsões anteriores vs realidade', 'Cada build guarda as previsões que publicou. Quando o INE publica o valor real de um trimestre (ou ano, nas rendas) previsto, o erro é medido aqui — com os dados tal como saíram, sem revisões nem o benefício da retrospetiva. É a avaliação mais honesta, mas precisa de tempo: a 12 meses, os primeiros resultados só aparecem um ano depois do arranque do arquivo.'],
   ol_backtest: ['Como se saiu no passado', 'Para cada trimestre desde 2021, o modelo foi treinado só com o que se sabia nessa data e previu os trimestres seguintes. Erro médio em pontos percentuais (p.p.) de variação do preço, comparado com «fica igual» e «continua o ritmo do último ano». Cobertura: % das vezes em que o valor real caiu dentro do intervalo de 80%.'],
   migration: ['Saldo migratório', 'Diferença entre quem chegou e quem saiu do concelho num ano (INE). Positivo = mais gente a chegar do que a sair. Só contexto demográfico — não entra em nenhum score.'],
@@ -328,6 +334,16 @@ function readList(m) {
     li.push(`Face ao valor justo (${fmt.eur(m.fv_price)}/m²): ${Math.abs(g) <= 0.15 ? 'em linha com concelhos de fundamentos parecidos' : `${fmt.spct(g, 0)} — ${g > 0 ? 'mais caro' : 'mais barato'} do que rendimento, demografia, litoral e região explicam`}.${g > 0.15 ? ' Pode ser sobrevalorização ou algo que o modelo não vê (praia, turismo, universidade, qualidade das casas).' : ''}`);
   }
   if (m.typology_name) li.push(`Tipologia: «${m.typology_name}» (ver "Perspetivas").`);
+  if (m.new_premium != null) li.push(`Casas novas a ${fmt.eur(m.price_new)}/m² e existentes a ${fmt.eur(m.price_existing)}/m²: as novas custam ${fmt.spct(m.new_premium, 0)}${m.new_premium > 0.3 ? ' — um prémio alto, comum onde a construção nova é de gama alta' : ''}.`);
+  const tp = [['apartamentos', m.val_apt, m.apt_fc_growth_12m, m.apt_fc_lo80, m.apt_fc_hi80], ['moradias', m.val_house, m.house_fc_growth_12m, m.house_fc_lo80, m.house_fc_hi80]]
+    .filter((x) => x[1] != null)
+    .map(([n, v, g, lo, hi]) => `${n} ${fmt.eur(v)}/m²${g != null ? ` (previsão ${fmt.spct(g)} em 12 meses${lo != null ? `, 80% entre ${fmt.eur(lo)} e ${fmt.eur(hi)}` : ''})` : ''}`);
+  if (tp.length) li.push(`Avaliação bancária: ${tp.join('; ')}.`);
+  if (m.rent_q1 != null && m.rent_q3 != null) li.push(`Renda de novos contratos: 25% abaixo de ${fmt.eur2(m.rent_q1)}/m² e 25% acima de ${fmt.eur2(m.rent_q3)}/m²${m.rent_contracts != null ? `, em ${fmt.n(m.rent_contracts, 0)} contratos em ${m.rent_contracts_year}` : ''}.`);
+  if (m.tourism_pc != null) {
+    const mt = median(col((x) => x.tourism_pc));
+    li.push(`Pressão turística: ${fmt.n(m.tourism_pc, 1)} dormidas por habitante no ano${mt != null ? ` (mediana dos concelhos ${fmt.n(mt, 1)})` : ''}.`);
+  }
   if (m.volatile) li.push('⚠ Poucos negócios: o preço é muito volátil e o score foi atenuado. Lê estes números com cautela.');
   return li.map((t) => `<li>${esc(t)}</li>`).join('');
 }
@@ -423,6 +439,17 @@ function select(dico, scroll = true) {
       `<span class="ctx">${fmt.spct(m.rent_fc_growth)} · 80%: ${fmt.eur2(m.rent_fc_lo80)}–${fmt.eur2(m.rent_fc_hi80)}</span>`)] : []),
     ...(m.fv_gap != null ? [tile('fv', 'Face ao valor justo', fmt.spct(m.fv_gap, 0),
       `<span class="ctx">valor justo ${fmt.eur(m.fv_price)}/m²</span>`)] : []),
+    ...(m.price_new != null || m.price_existing != null ? [tile('new_old', 'Novas / existentes', `${fmt.eur(m.price_new)} / ${fmt.eur(m.price_existing)}`,
+      m.new_premium != null ? `<span class="ctx">novas ${fmt.spct(m.new_premium, 0)} face às existentes</span>` : '')] : []),
+    ...[['val_apt', 'apt', 'Apartamentos'], ['val_house', 'house', 'Moradias']].filter(([k]) => m[k] != null).map(([k, p, label]) =>
+      tile('val_type', `${label} (avaliação)`, fmt.eur(m[k]) + '/m²',
+        `<span class="ctx">${fmt.spct(m[k + '_growth_1y'])} num ano${m[p + '_fc_growth_12m'] != null ? ` · prev. ${fmt.spct(m[p + '_fc_growth_12m'])}` : ''}</span>`)),
+    ...(m.rent_q1 != null ? [tile('rent_q', 'Renda 1.º–3.º quartil', `${fmt.eur2(m.rent_q1)}–${fmt.eur2(m.rent_q3)}`,
+      m.rent_contracts != null ? `<span class="ctx">${fmt.n(m.rent_contracts, 0)} contratos em ${m.rent_contracts_year}</span>` : '')] : []),
+    ...(m.tourism_pc != null ? [tile('tourism', 'Dormidas por habitante', fmt.n(m.tourism_pc, 1),
+      ctx((x) => x.tourism_pc, m.tourism_pc, (v) => fmt.n(v, 1)))] : []),
+    ...(m.housing_credit_pc != null ? [tile('credit_pc', 'Crédito habitação/hab.', fmt.eur(m.housing_credit_pc),
+      ctx((x) => x.housing_credit_pc, m.housing_credit_pc, fmt.eur))] : []),
   ].join('');
   $('#d-read').innerHTML = readList(m);
   const s = [{ name: 'Preço', data: m.series.price, fmt: (v) => fmt.eur(v) + '/m²' }];
@@ -453,6 +480,12 @@ const COMPARE_ROWS = [
   ['rent_fc', 'Renda prevista', (m) => (m.rent_fc == null ? '—' : `${fmt.eur2(m.rent_fc)}/m² (${fmt.spct(m.rent_fc_growth)})`)],
   ['fv', 'Face ao valor justo', (m) => fmt.spct(m.fv_gap, 0)],
   ['typology', 'Tipologia', (m) => esc(m.typology_name || '—')],
+  ['new_old', 'Novas / existentes (€/m²)', (m) => (m.price_new == null && m.price_existing == null ? '—' : `${fmt.eur(m.price_new)} / ${fmt.eur(m.price_existing)}`)],
+  ['val_type', 'Apartamentos: avaliação e previsão', (m) => (m.val_apt == null ? '—' : `${fmt.eur(m.val_apt)} (${fmt.spct(m.apt_fc_growth_12m)})`)],
+  ['val_type', 'Moradias: avaliação e previsão', (m) => (m.val_house == null ? '—' : `${fmt.eur(m.val_house)} (${fmt.spct(m.house_fc_growth_12m)})`)],
+  ['rent_q', 'Renda 1.º–3.º quartil', (m) => (m.rent_q1 == null ? '—' : `${fmt.eur2(m.rent_q1)}–${fmt.eur2(m.rent_q3)}`)],
+  ['tourism', 'Dormidas por habitante', (m) => fmt.n(m.tourism_pc, 1)],
+  ['credit_pc', 'Crédito habitação/hab.', (m) => fmt.eur(m.housing_credit_pc)],
 ];
 let compareMetric = 'price';
 function renderCompare() {
@@ -663,6 +696,22 @@ function olTracking(T) {
     <div class="table-wrap"><table class="ol-table"><thead><tr><th>Previsão</th><th>Conjuntos de dados</th><th>Casos</th><th>Erro médio: modelo</th><th>«Fica igual»</th><th>Menos erro</th><th>Cobertura 80%</th><th>Enviesamento</th></tr></thead><tbody>${rows}</tbody></table></div>
     <p class="muted">Enviesamento positivo = previsões acima do valor real. No detalhe de cada concelho, o leque mostra as previsões passadas (pontos laranja) ao lado do valor publicado.</p>`;
 }
+function olTypes(A, H) {
+  const rows = [['Apartamentos', A, 'apt_fc_growth_12m', 'val_apt'], ['Moradias', H, 'house_fc_growth_12m', 'val_house']].filter(([, S]) => S && S.n_concelhos);
+  if (!rows.length) return '';
+  const tr = rows.map(([label, S, gk, vk]) => {
+    const m = (S.backtest || {})[String(S.horizons[S.horizons.length - 1].h)] || {};
+    const vals = col((x) => x[vk]);
+    return `<tr><td>${label}</td><td>${S.n_concelhos}</td><td>${fmt.eur(median(vals))}</td><td><b>${fmt.spct(S.median_growth_12m)}</b></td>` +
+      `<td>${fmt.spct(S.p25_growth_12m)} a ${fmt.spct(S.p75_growth_12m)}</td><td>${m.n_origins ?? '—'}</td>` +
+      `<td>${m.skill == null ? '—' : fmt.spct(m.skill, 0)}</td><td>${m.coverage80 == null ? '—' : fmt.pct(m.coverage80, 0)}</td></tr>`;
+  }).join('');
+  const S0 = rows[0][1];
+  return `<h3>Apartamentos e moradias ${info('val_type')}</h3>
+    <p>Previsão a 12 meses (até ${qpt(S0.target_period)}) da avaliação bancária por tipo de casa. Usa 15 anos de dados mensais (desde 2011, crise incluída), por isso o backtest é muito mais longo do que o das vendas.</p>
+    <div class="table-wrap"><table class="ol-table"><thead><tr><th>Tipo</th><th>Concelhos</th><th>Avaliação mediana (€/m²)</th><th>Previsão mediana 12m</th><th>Metade dos concelhos entre</th><th>Origens no backtest</th><th>Menos erro que a melhor regra ingénua</th><th>Cobertura 80%</th></tr></thead><tbody>${tr}</tbody></table></div>
+    ${rows.map(([label, S]) => `<p><b>${label}:</b> ${esc(S.verdict_pt)}</p>`).join('')}`;
+}
 function olRent(R) {
   const m = R.backtest;
   const ok = MUNIS.filter((x) => x.rent_fc_growth != null);
@@ -723,7 +772,8 @@ function olRates(R) {
       : `A relação histórica entre Euribor e preços (HPI ${qpt(R.hpi_start)}–${qpt(R.hpi_end)}) aponta para ${fmt.spct(e)} por cada +1 p.p., mas o intervalo de 90% (${fmt.spct(lo)} a ${fmt.spct(hi)}) inclui zero: em Portugal, a subida de 2022 coincidiu com inflação alta e procura externa forte, e os dados não isolam o efeito. Por isso não mostramos um efeito nos preços — só a aritmética, que é certa.`;
   }
   return `<h3>Juros: e se a Euribor mudar 1 p.p.? ${info('rates')}</h3>
-    <p>Hoje: Euribor 12M de ${fmt.n(R.euribor_now, 2)}% (${esc(R.euribor_month)}); taxa típica de ${fmt.n(R.rate_now, 2)}% (Euribor + ${fmt.n(R.spread, 1)} p.p.), crédito a ${R.years} anos.</p>
+    <p>Hoje: Euribor 12M de ${fmt.n(R.euribor_now, 2)}% (${esc(R.euribor_month)}); taxa típica de ${fmt.n(R.rate_now, 2)}% (Euribor + ${fmt.n(R.spread, 2)} p.p.${R.spread_source && R.spread_source !== 'assumed'
+      ? `: diferença real entre a taxa média dos novos créditos à habitação em Portugal e a Euribor, ${esc(R.spread_source)}` : ', valor assumido'}), crédito a ${R.years} anos.</p>
     <div class="table-wrap"><table class="ol-table"><thead><tr><th>Cenário</th><th>Prestação (mesmo empréstimo)</th><th>Quanto se pode pedir (mesma prestação)</th><th>Efeito histórico no preço (12m)</th></tr></thead><tbody>${rows}</tbody></table></div>
     <p>${hist}</p>`;
 }
@@ -738,6 +788,7 @@ function renderOutlook() {
   const add = (name, fn) => { try { parts.push(fn()); } catch (e) { console.error(`Falha em perspetivas/${name}:`, e); } };
   if (OL.sales) add('vendas', () => olSales(OL.sales));
   if (OL.tracking) add('arquivo', () => olTracking(OL.tracking));
+  if (OL.fc_apt || OL.fc_house) add('tipos', () => olTypes(OL.fc_apt, OL.fc_house));
   if (OL.rent) add('rendas', () => olRent(OL.rent));
   if (OL.regimes) add('regimes', () => `<h3>Regimes do mercado (HPI nacional) ${info('regimes')}</h3><div id="ol-regimes" class="chart tall"></div><ul class="read">${OL.regimes.segments.map((s, i) =>
     `<li>${qpt(s.start)} a ${qpt(s.end)}: ${fmt.spct(s.growth_ann)}/ano${s.growth_ann_real != null ? ` (${fmt.spct(s.growth_ann_real)} descontada a inflação)` : ''}${i === OL.regimes.segments.length - 1 ? ' — <b>fase atual</b>' : ''}</li>`).join('')}</ul>`);

@@ -71,6 +71,20 @@ def demo_frames(seed: int = 7):
               "bank_valuation": pd.DataFrame(rows["val"]), "income": pd.DataFrame(rows["income"]),
               "population_density": pd.DataFrame(rows["density"]), "ageing_index": pd.DataFrame(rows["ageing"]),
               "migration_balance": pd.DataFrame(rows["migration"])}
+    # categorias e indicadores de contexto (sintéticos, derivados dos de cima)
+    sales, rent = frames["sales_price_12m"], frames["rent_new_contracts"]
+    muni_val = frames["bank_valuation"][frames["bank_valuation"]["level"] == "municipality"]
+    has_new = sales["dico"].astype(int) % 2 == 0
+    frames["sales_price_new"] = sales[has_new].assign(value=lambda d: d["value"] * 1.25)
+    frames["sales_price_existing"] = sales.assign(value=lambda d: d["value"] * 0.95)
+    frames["valuation_apartments"] = muni_val.assign(value=lambda d: d["value"] * 1.05)
+    frames["valuation_houses"] = muni_val[muni_val["dico"].astype(int) % 3 != 0].assign(value=lambda d: d["value"] * 0.9)
+    frames["rent_q1"] = rent.assign(value=lambda d: d["value"] * 0.75)
+    frames["rent_q3"] = rent.assign(value=lambda d: d["value"] * 1.3)
+    yearly = frames["population_density"]
+    frames["rent_contracts"] = yearly.assign(value=lambda d: (d["value"] * rng.uniform(0.5, 2, len(d))).round())
+    frames["tourism_nights"] = yearly.assign(value=lambda d: d["value"] * rng.uniform(200, 4000, len(d)))
+    frames["housing_credit_pc"] = yearly.assign(value=lambda d: rng.uniform(3000, 15000, len(d)))
 
     hq = _quarters("2009Q1", "2026Q2")
     h, hv = 90.0, []
@@ -86,6 +100,7 @@ def demo_frames(seed: int = 7):
         "euribor_3m": pd.DataFrame({"period": months, "value": np.clip(e - 0.35, -0.7, None)}),
         "euribor_6m": pd.DataFrame({"period": months, "value": np.clip(e - 0.15, -0.7, None)}),
         "euribor_12m": pd.DataFrame({"period": months, "value": e}),
+        "mortgage_rate_pt": pd.DataFrame({"period": months, "value": e + 1.1}),
         "eurostat_hicp": pd.DataFrame({"period": [p.label for p in hq],
                                        "value": [100 * 1.005 ** (i - 24) for i in range(len(hq))]}),
         "bis_credit_gap": pd.DataFrame({"period": [p.label for p in hq], "value": rng.normal(-5, 6, len(hq))}),

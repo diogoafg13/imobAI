@@ -329,6 +329,11 @@ def fair_value(feats: pd.DataFrame | None, spatial: pd.DataFrame | None, dist: p
         x["log_dist"] = np.log1p(dist["dist_km"].reindex(df.index))
     if spatial is not None and not spatial.empty and spatial["coastal"].any():
         x["coastal"] = spatial.set_index("dico")["coastal"].reindex(df.index).astype(float)
+    if (spatial is not None and not spatial.empty and "tourism_nights" in df
+            and df["tourism_nights"].notna().sum() >= 30):
+        pop = df["density"] * spatial.set_index("dico")["area_km2"].reindex(df.index)
+        # concelhos sem dormidas publicadas (sigilo/sem oferta) contam como 0: quase sempre é pouco turismo
+        x["log_tourism"] = np.log1p((df["tourism_nights"].fillna(0) / pop).clip(lower=0))
     reg = pd.Series({d: regions.get(d, "?") for d in df.index})
     dummies = pd.get_dummies(reg, prefix="r", dtype=float)
     if dummies.shape[1] > 1:
@@ -353,6 +358,7 @@ def fair_value(feats: pd.DataFrame | None, spatial: pd.DataFrame | None, dist: p
                            ("log_ageing", "índice de envelhecimento", "elasticity"),
                            ("mig_rate", "saldo migratório (+1 por mil habitantes)", "per_unit"),
                            ("coastal", "estar no litoral", "per_unit"),
+                           ("log_tourism", "dormidas turísticas por habitante (+1, em log)", "per_unit"),
                            ("log_dist", "distância a Lisboa/Porto", "elasticity")):
         if c in raw_b:
             b = float(raw_b[c])
@@ -383,14 +389,22 @@ def _annuity_capacity(rate: float, years: int) -> float:
 
 def rate_scenarios(euribor: pd.DataFrame | None, hpi: pd.DataFrame | None, shocks=(-1.0, 1.0),
                    spread: float = MORTGAGE_SPREAD, years: int = MORTGAGE_YEARS, n_boot: int = 1000,
-                   block: int = 8, seed: int = 0) -> dict | None:
+                   block: int = 8, seed: int = 0, mortgage: pd.DataFrame | None = None) -> dict | None:
     e = fc.euribor_series(euribor)
     if e is None or e.empty:
         return None
     e_now, e_month = float(e.iloc[-1]), fc.m_label(int(e.index[-1]))
+    source = "assumed"
+    m = fc.euribor_series(mortgage)
+    if m is not None and len(m) and int(m.index[-1]) in e.index:
+        obs = float(m.iloc[-1]) - float(e[int(m.index[-1])])
+        if 0 <= obs <= 4:          # sanidade: se a série não for o que se espera, mantém o pressuposto
+            spread, source = obs, f"BCE ({fc.m_label(int(m.index[-1]))})"
     r0 = (e_now + spread) / 100
-    out = {"euribor_now": e_now, "euribor_month": e_month, "spread": spread, "years": years, "rate_now": r0 * 100,
-           "shocks": []}
+    out = {"euribor_now": e_now, "euribor_month": e_month, "spread": spread, "spread_source": source,
+           "years": years, "rate_now": r0 * 100, "shocks": []}
+    if source != "assumed":
+        out["mortgage_rate_now"] = float(m.iloc[-1])
     beta = ci = None
     if hpi is not None and len(hpi) >= 32:
         h = hpi.dropna(subset=["value"]).assign(qi=lambda d: [int(str(p)[:4]) * 4 + int(str(p)[-1]) - 1 for p in d["period"]])
@@ -492,13 +506,44 @@ def build(frames: dict, macro_frames: dict, feats: pd.DataFrame | None, geojson:
     part("regimes", lambda: regimes(hpi, hpi_real))
     part("ripple", lambda: ripple(valuation, sales, dist))
     part("fair_value", lambda: fair_value(feats, spatial, dist, regions))
-    part("rates", lambda: rate_scenarios(euribor, hpi))
+    part("rates", lambda: rate_scenarios(euribor, hpi, mortgage=macro_frames.get("mortgage_rate_pt")))
+    for key, prefix in (("valuation_apartments", "apt"), ("valuation_houses", "house")):
+        q = monthly_to_quarterly_muni(muni(frames.get(key)))
+        if q is not None:
+            part(f"fc_{prefix}", lambda q=q, prefix=prefix: _prefixed(
+                fc.forecast_sales(q, None, euribor, nbrs, region_names, today), prefix))
     if dist is not None:
         merge({d: {"dist_metro_km": round(float(r["dist_km"]), 1), "metro": r["metro"]}
                for d, r in dist.iterrows() if not r["island"]})
     if not spatial.empty:
         merge({str(d): {"coastal": bool(c)} for d, c in zip(spatial["dico"], spatial["coastal"])})
+        if feats is not None and "tourism_nights" in feats:
+            area = spatial.set_index("dico")["area_km2"]
+            pop = feats.set_index(feats["dico"].astype(str))["density"] * area
+            tpc = (feats.set_index(feats["dico"].astype(str))["tourism_nights"] / pop).dropna()
+            merge({d: {"tourism_pc": round(float(v), 2)} for d, v in tpc.items() if np.isfinite(v)})
     return sanitize(out), sanitize(per)
+
+
+def monthly_to_quarterly_muni(df: pd.DataFrame | None) -> pd.DataFrame | None:
+    """Mensal por concelho -> média trimestral (pelo menos 2 dos 3 meses), no formato das vendas."""
+    if df is None or df.empty:
+        return None
+    y, mth = df["sort_key"] // 100, df["sort_key"] % 100
+    d = df.assign(q=y * 100 + (mth - 1) // 3 + 1)
+    g = d.groupby(["dico", "q"])["value"].agg(["mean", "count"]).reset_index()
+    g = g[g["count"] >= 2]
+    if g.empty:
+        return None
+    return pd.DataFrame({"dico": g["dico"], "sort_key": g["q"], "period": [f"{k // 100}Q{k % 100}" for k in g["q"]],
+                         "value": g["mean"], "level": "municipality"})
+
+
+def _prefixed(res: tuple[dict | None, dict], prefix: str) -> tuple[dict | None, dict]:
+    """Previsão por tipo de casa: só os campos de resumo, com prefixo (ex.: apt_fc_growth_12m)."""
+    summary, per = res
+    keep = ("fc_period", "fc_price", "fc_lo80", "fc_hi80", "fc_growth_12m", "fc_mae")
+    return summary, {d: {f"{prefix}_{k}": v[k] for k in keep if k in v} for d, v in per.items()}
 
 
 def sanitize(obj):

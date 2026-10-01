@@ -36,6 +36,7 @@ def ingest_ine(cfg: dict, data_dir: Path, today: str) -> tuple[dict[str, pd.Data
     # responder, usa data/clean e não insiste nos restantes), cache (nunca usa a rede).
     mode = os.environ.get("IMOPT_INE_MODE", "live").lower()
     ine_down = mode == "cache"
+    fetched: dict[tuple, pd.DataFrame] = {}   # o mesmo indicador com outras categorias: um só pedido
     for key, spec in cfg["ine"]["indicators"].items():
         varcd = spec.get("varcd")
         if not varcd:
@@ -45,16 +46,20 @@ def ingest_ine(cfg: dict, data_dir: Path, today: str) -> tuple[dict[str, pd.Data
             if ine_down:
                 raise ConnectionError("INE não contactado (modo cache ou já indisponível nesta execução)")
             fetch_kw = {"retries": 1, "timeout": (10, 180)} if mode == "auto" else {}
-            try:
-                payload = ine.fetch(base, varcd, lang, spec.get("dims"), **fetch_kw)
-            except RuntimeError:
-                if mode == "auto":
-                    ine_down = True
-                raise
-            raw = ine.parse_response(payload, varcd)
-            if raw.empty:
-                raise ValueError("resposta vazia")
-            _write_parquet(raw, data_dir / "raw" / "ine" / varcd / f"{today}.parquet")
+            ckey = (varcd, tuple(sorted((k, v) for k, v in (spec.get("dims") or {}).items() if k.startswith("api_"))))
+            if ckey not in fetched:
+                try:
+                    payload = ine.fetch(base, varcd, lang, spec.get("dims"), **fetch_kw)
+                except RuntimeError:
+                    if mode == "auto":
+                        ine_down = True
+                    raise
+                raw = ine.parse_response(payload, varcd)
+                if raw.empty:
+                    raise ValueError("resposta vazia")
+                _write_parquet(raw, data_dir / "raw" / "ine" / varcd / f"{today}.parquet")
+                fetched[ckey] = raw
+            raw = fetched[ckey]
             filt = {k: v for k, v in (spec.get("dims") or {}).items() if not k.startswith("api_")}
             df = ine.apply_dim_filters(raw, filt, varcd)
             _write_parquet(df, data_dir / "clean" / f"ine_{key}.parquet")
@@ -91,6 +96,10 @@ def ingest_macro(cfg: dict, data_dir: Path) -> tuple[dict[str, pd.DataFrame], di
 
 
 # ---------------------------------------------------------------- análise
+EXTRA_KEYS = ("sales_price_new", "sales_price_existing", "valuation_apartments", "valuation_houses", "rent_q1",
+              "rent_q3", "rent_contracts", "tourism_nights", "housing_credit_pc")
+
+
 def municipal(df: pd.DataFrame | None) -> pd.DataFrame | None:
     if df is None or df.empty:
         return None
@@ -153,6 +162,9 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     migration = municipal(frames.get("migration_balance"))
 
     feats = scoring.municipal_features(sales, rent, permits, completed, income, density, ageing, migration)
+    extras = scoring.extra_features({k: municipal(frames.get(k)) for k in EXTRA_KEYS})
+    if not extras.empty:
+        feats = feats.merge(extras, on="dico", how="left")
     price_series = series_by_dico(sales)
     rent_series = series_by_dico(rent)
 
@@ -177,7 +189,10 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
             "price_to_income_months", "rent_to_income", "density", "ageing_index", "migration_balance",
             "permits", "permits_growth",
             "completed", "completed_growth", "score_valuation", "score_supply", "score_overall", "band",
-            "volatility", "volatile"]
+            "volatility", "volatile", "price_new", "price_existing", "new_premium", "val_apt", "val_apt_growth_1y",
+            "val_house", "val_house_growth_1y", "rent_q1", "rent_q3", "rent_spread", "rent_contracts",
+            "rent_contracts_year", "rent_contracts_growth", "tourism_nights", "tourism_nights_year",
+            "housing_credit_pc", "housing_credit_pc_year"]
     # Perspetivas (previsões e padrões): só leitura, não mexe nos scores; falha de forma não-fatal.
     try:
         outlook_data, per = outlook.build(frames, macro_frames, feats, geojson, hpi, hpi_real, demo=demo)

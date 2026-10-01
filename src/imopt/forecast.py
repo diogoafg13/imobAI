@@ -244,7 +244,9 @@ def _sales_features(s, v3, nat3, eur, a, q, lead) -> pd.DataFrame:
     f["nb_mom4"] = nb_mean(f["s_mom4"], a).fillna(f["s_mom4"])
     f["rel_level"] = s0 - s0.median()
     if eur is not None:
-        f["eur_chg"] = _g(eur, me + lead) - _g(eur, me + lead - 12)
+        # último valor publicado até essa data (o trimestre mais recente pode acabar depois da última Euribor)
+        asof = lambda k: float(eur[eur.index <= k].iloc[-1]) if (eur.index <= k).any() else np.nan  # noqa: E731
+        f["eur_chg"] = asof(me + lead) - asof(me + lead - 12)
     f["sigma"] = robust_sigma(s, q)
     return f
 
@@ -466,7 +468,7 @@ def _sales_summary(per, regions, metrics, models, feats, horizons, h_now, qmax, 
         "n_nowcast": int(len(nowcast_growth)),
         "by_region": by_region, "backtest": metrics,
         "verdict_nowcast_pt": _verdict(metrics.get(str(h_now)), "para o presente") if h_now else None,
-        "verdict_pt": _verdict(metrics.get(str(hf)), f"a {hf} trimestres do último preço publicado"),
+        "verdict_pt": _verdict(metrics.get(str(hf)), f"a {hf} trimestres do último valor publicado"),
     }
 
 

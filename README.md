@@ -192,6 +192,30 @@ Resultados com os dados em cache (vendas até 2026T1, avaliação bancária até
 
 Previsão mediana entre concelhos para os próximos 12 meses: +12% (metade entre +9% e +14%).
 
+### Indicadores de contexto e previsões por tipo de casa
+
+Todos opcionais (falham de forma não-fatal) e só leitura — nenhum entra nos scores.
+
+| Indicador | Fonte | Uso |
+|---|---|---|
+| Preço de casas novas vs existentes | INE 0012234, `dim_3` H11/H12 (confirmado no snapshot bruto: 186/305 concelhos) | Detalhe, comparação, "prémio" das novas |
+| Avaliação bancária de apartamentos vs moradias | INE 0012248, `dim_3` 1/2 (116/152 concelhos) | Detalhe e **previsão a 12 meses por tipo** (mesmo motor das vendas, 15 anos de histórico mensal: backtest de 30–40 origens desde 2015, 19% menos erro nos apartamentos e 37% nas moradias que a melhor regra ingénua, cobertura de 80% em 78%) |
+| 1.º e 3.º quartil da renda | INE 0014711, `dim_3` 1/3 (255 concelhos) | Renda "barata" e dispersão do concelho |
+| Novos contratos de arrendamento (N.º) | INE 0012601 | Tamanho do mercado de arrendamento |
+| Dormidas em alojamento turístico | INE 0009183 | Pressão turística por habitante; entra no **valor justo** |
+| Crédito à habitação por habitante | INE 0013048 | Contexto (não entra no valor justo: acompanha os preços) |
+| Taxa dos novos créditos à habitação em PT | BCE MIR `M.PT.B.A2C.A.R.A.2250.EUR.N` | Spread real nos cenários de juros (em vez de 1 p.p. assumido) |
+
+Os códigos do INE vêm do catálogo do INE; para 0012601, 0009183 e 0013048 as dimensões não foram
+confirmadas ao vivo, e a chave do BCE também não (se não existir ou devolver valores fora do
+plausível, os cenários usam o spread de 1 p.p.). O pedido ao INE é feito uma só vez por indicador,
+mesmo quando é usado com várias categorias.
+
+**Não incluídos por falta de código confirmado**: número de vendas por concelho (o 0012786 do
+catálogo é em € e só por NUTS II), preço por domicílio fiscal do comprador e Censos 2021 (casas
+vagas/segunda habitação). Quando houver um código confirmado com `imopt inspect`, entram como os
+de cima.
+
 ### Arquivo de previsões e avaliação contra a realidade
 
 `imopt/tracking.py`. Cada build real (não o demo) guarda as previsões publicadas em

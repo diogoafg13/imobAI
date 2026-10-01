@@ -16,6 +16,22 @@ ine:
       # dim_3: H1 = Total (confirmado no build real), H11/H12 = restantes categorias.
       dims: {dim_3: "H1"}
       period_kind: quarter
+    # Mesmo indicador, outras categorias (o pedido ao INE é feito uma só vez e reutilizado).
+    # Categorias confirmadas no snapshot bruto: H11 = Novos (186 concelhos), H12 = Existentes (305).
+    sales_price_new:
+      varcd: "0012234"
+      description: Preço mediano de venda de alojamentos NOVOS (€/m²), 12 meses
+      level: municipality
+      dims: {dim_3: "H11"}
+      period_kind: quarter
+      optional: true
+    sales_price_existing:
+      varcd: "0012234"
+      description: Preço mediano de venda de alojamentos EXISTENTES (€/m²), 12 meses
+      level: municipality
+      dims: {dim_3: "H12"}
+      period_kind: quarter
+      optional: true
     # sales_price_annual (0013042): redundante com o indicador de 12 meses acima; desligado.
     sales_price_annual:
       varcd: null
@@ -30,6 +46,26 @@ ine:
       # dim_3 = quartil (1, 2, 3). O 2.º quartil é a mediana.
       dims: {dim_3: "2"}
       period_kind: year
+    rent_q1:
+      varcd: "0014711"          # 1.º quartil (confirmado no snapshot bruto, 255 concelhos)
+      description: Renda de novos contratos, 1.º quartil (€/m²/mês)
+      level: municipality
+      dims: {dim_3: "1"}
+      period_kind: year
+      optional: true
+    rent_q3:
+      varcd: "0014711"          # 3.º quartil
+      description: Renda de novos contratos, 3.º quartil (€/m²/mês)
+      level: municipality
+      dims: {dim_3: "3"}
+      period_kind: year
+      optional: true
+    rent_contracts:
+      varcd: "0012601"          # Novos contratos de arrendamento (Metodologia 2021 - N.º), anual, até freguesia
+      description: Novos contratos de arrendamento (N.º)
+      level: municipality
+      period_kind: year
+      optional: true
     hpi:
       varcd: "0009201"          # Índice de Preços da Habitação (base 2015), trimestral
       description: Índice de preços da habitação (nacional)
@@ -43,6 +79,20 @@ ine:
       level: municipality
       # dim_3: T = Total, 1 = Apartamentos, 2 = Moradias.
       dims: {dim_3: "T"}
+      period_kind: month
+      optional: true
+    valuation_apartments:
+      varcd: "0012248"          # dim_3 = 1 (confirmado no snapshot bruto: 116 concelhos)
+      description: Avaliação bancária mediana de APARTAMENTOS (€/m²)
+      level: municipality
+      dims: {dim_3: "1"}
+      period_kind: month
+      optional: true
+    valuation_houses:
+      varcd: "0012248"          # dim_3 = 2 (152 concelhos)
+      description: Avaliação bancária mediana de MORADIAS (€/m²)
+      level: municipality
+      dims: {dim_3: "2"}
       period_kind: month
       optional: true
     # Por preencher (códigos não confirmados). Quando souberes o varcd, define-o
@@ -91,6 +141,20 @@ ine:
       level: municipality
       period_kind: year
       optional: true
+    # Pressão turística e crédito (códigos do catálogo do INE; `dims` não confirmado ao vivo: se houver
+    # dimensões extra, falha alto e de forma não-fatal com as opções no meta.json).
+    tourism_nights:
+      varcd: "0009183"          # Dormidas (N.º) nos estabelecimentos de alojamento turístico, município, anual
+      description: Dormidas em alojamento turístico (N.º)
+      level: municipality
+      period_kind: year
+      optional: true
+    housing_credit_pc:
+      varcd: "0013048"          # Crédito à habitação por habitante (€), município, anual
+      description: Crédito à habitação por habitante (€)
+      level: municipality
+      period_kind: year
+      optional: true
 
 macro:
   euribor_3m:
@@ -104,6 +168,12 @@ macro:
   euribor_12m:
     url: https://data-api.ecb.europa.eu/service/data/FM/M.U2.EUR.RT.MM.EURIBOR1YD_.HSTA
     params: {format: csvdata}
+  mortgage_rate_pt:
+    # BCE, estatísticas MIR: taxa acordada dos NOVOS empréstimos à habitação em Portugal (%), mensal.
+    # Chave não confirmada ao vivo nesta sessão: se falhar, os cenários de juros usam o spread de 1 p.p.
+    url: https://data-api.ecb.europa.eu/service/data/MIR/M.PT.B.A2C.A.R.A.2250.EUR.N
+    params: {format: csvdata}
+    optional: true
   eurostat_hpi:
     url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hpi_q
     params: {geo: PT, purchase: TOTAL, unit: I15_Q, format: JSON, lang: EN}

@@ -154,6 +154,49 @@ def municipal_features(sales: pd.DataFrame, rent: pd.DataFrame | None,
     return s.drop(columns=["p_1y", "p_3y", "p_5y", "r_1y"], errors="ignore")
 
 
+def extra_features(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame:
+    """Indicadores de contexto por concelho (só leitura, não entram em nenhum score). Cada um é opcional."""
+    out = pd.DataFrame(columns=["dico"])
+
+    def add(df: pd.DataFrame) -> None:
+        nonlocal out
+        out = df if out.empty else out.merge(df, on="dico", how="outer")
+
+    def latest(key, kind, name, lags=None):
+        df = frames.get(key)
+        if df is None or df.empty:
+            return None
+        return latest_with_lags(df, kind, lags or {}).rename(columns={"latest": name, "latest_key": f"{name}_key"})
+
+    new, old = latest("sales_price_new", "quarter", "price_new"), latest("sales_price_existing", "quarter", "price_existing")
+    for d in (new, old):
+        if d is not None:
+            add(d[["dico", d.columns[1]]])
+    if new is not None and old is not None:
+        out["new_premium"] = out["price_new"] / out["price_existing"] - 1
+    for key, name in (("valuation_apartments", "val_apt"), ("valuation_houses", "val_house")):
+        d = latest(key, "month", name, {"m1": 1, "m2": 2, "y0": 12, "y1": 13, "y2": 14})
+        if d is not None:
+            now, ago = d[[name, "m1", "m2"]].mean(axis=1), d[["y0", "y1", "y2"]].mean(axis=1)
+            add(pd.DataFrame({"dico": d["dico"], name: now, f"{name}_growth_1y": now / ago - 1}))
+    for key, name in (("rent_q1", "rent_q1"), ("rent_q3", "rent_q3")):
+        d = latest(key, "year", name)
+        if d is not None:
+            add(d[["dico", name]])
+    if "rent_q1" in out and "rent_q3" in out:
+        out["rent_spread"] = out["rent_q3"] / out["rent_q1"]
+    d = latest("rent_contracts", "year", "rent_contracts", {"prev": 1})
+    if d is not None:
+        add(pd.DataFrame({"dico": d["dico"], "rent_contracts": d["rent_contracts"],
+                          "rent_contracts_year": d["rent_contracts_key"] // 100,
+                          "rent_contracts_growth": d["rent_contracts"] / d["prev"] - 1}))
+    for key, name in (("tourism_nights", "tourism_nights"), ("housing_credit_pc", "housing_credit_pc")):
+        d = latest(key, "year", name)
+        if d is not None:
+            add(pd.DataFrame({"dico": d["dico"], name: d[name], f"{name}_year": d[f"{name}_key"] // 100}))
+    return out
+
+
 def _yoy(series: pd.Series, periods: int) -> pd.Series:
     return series / series.shift(periods) - 1
 
