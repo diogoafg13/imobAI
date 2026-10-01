@@ -1754,6 +1754,7 @@ async function imAnalyse() {
     <ul class="read">${li.map((t) => `<li>${esc(t)}</li>`).join('')}</ul>
     <div class="disclaimer">${IM_DISCLAIMER}</div>
     <p class="noprint"><button type="button" class="btn" id="im-print">Imprimir análise</button></p>`;
+  imLast = chartData;
   if (chartData) try { imChart('im-chart', chartData); } catch (e) { console.error('gráfico do imóvel:', e); }
 }
 // Quem consegue pagar esta renda? Perfis com rendimentos locais e parte dos agregados fiscais do concelho com
@@ -1831,6 +1832,7 @@ function imStrip(refs, you, band, f) {
     ${you ? `<span class="pt you" style="left:${pos(you.value)}%"></span><span class="lab top" style="left:${clamp(pos(you.value))}%"><b>${esc(you.label)}: ${esc(f(you.value))}</b></span>` : ''}
   </div>`;
 }
+let imLast = null;
 function imChart(id, D) {
   const txt = css('--muted'), line = css('--line');
   const qi = (q) => +q.slice(0, 4) * 4 + +q.slice(-1) - 1;
@@ -1876,6 +1878,14 @@ function initImovel() {
     if (e.target.id === 'im-print') { document.body.classList.add('print-imovel'); window.print(); setTimeout(() => document.body.classList.remove('print-imovel'), 500); }
   });
   imLoad();
+}
+// Os gráficos são imagens (canvas) com as cores lidas ao desenhar: com o sistema em modo escuro sairiam com
+// texto claro no papel branco. Antes de imprimir, redesenha os gráficos visíveis com as cores do modo claro.
+function printColors(on) {
+  if (!matchMedia('(prefers-color-scheme: dark)').matches) return;
+  document.documentElement.classList.toggle('print-light', on);
+  if (TAB === 'imovel' && imLast && $('#im-chart')) try { imChart('im-chart', imLast); } catch (e) { console.error(e); }
+  if (TAB === 'mercado' && selected && SER) try { select(selected, false); } catch (e) { console.error(e); }
 }
 function renderSummary() {
   const t = [], n = NAT && NAT.series && NAT.series.hpi_real;
@@ -1998,8 +2008,8 @@ async function main() {
   safe('seguidos', renderFollow);
   $('#d-follow').addEventListener('click', () => selected && toggleFollow(selected));
   $('#d-print').addEventListener('click', () => { document.body.classList.add('print-ficha'); window.print(); setTimeout(() => document.body.classList.remove('print-ficha'), 500); });
-  window.addEventListener('beforeprint', () => { document.body.classList.add('printing'); Object.values(charts).forEach((c) => c.resize()); });
-  window.addEventListener('afterprint', () => { document.body.classList.remove('printing'); Object.values(charts).forEach((c) => c.resize()); });
+  window.addEventListener('beforeprint', () => { document.body.classList.add('printing'); printColors(true); Object.values(charts).forEach((c) => c.resize()); });
+  window.addEventListener('afterprint', () => { document.body.classList.remove('printing'); printColors(false); Object.values(charts).forEach((c) => c.resize()); });
   $('#follow-body').addEventListener('click', (e) => {
     const u = e.target.closest('[data-unfollow]'); if (u) { toggleFollow(u.dataset.unfollow); return; }
     const a = e.target.closest('a[data-d]'); if (a) { e.preventDefault(); select(a.dataset.d); }

@@ -120,3 +120,19 @@ a.lnk{color:var(--fg);text-decoration:underline;text-decoration-color:var(--line
 .off{display:none!important}
 #topnav a[data-tab]{font-size:.92rem;padding:8px 12px}
 #topnav a.active{box-shadow:inset 0 -2px 0 var(--accent);border-radius:8px 8px 0 0}
+/* Cores claras para redesenhar os gráficos antes de imprimir (ver printColors em app.js) */
+:root.print-light{--bg:#fff;--card:#fff;--fg:#1c2430;--muted:#4a5562;--line:#c9ced4;--accent:#1f6f8b;
+--green:#2e9e6b;--amber:#e0a02b;--red:#d1493f;--none:#c9ced4;--s1:#2a78d6;--s2:#eb6834}
+/* Impressão: os browsers não imprimem cores de fundo por omissão, por isso as faixas e os pontos são
+   desenhados com contornos (imprimem sempre) e as cores são as do modo claro, mesmo com o sistema em modo escuro. */
+@media print{
+  :root{--bg:#fff;--card:#fff;--fg:#1c2430;--muted:#4a5562;--line:#c9ced4;--s1:#2a78d6;--s2:#eb6834}
+  .strip,.strip *,.pill,.disclaimer{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .strip .track{background:none;height:0;border-top:3px solid #9aa3ad}
+  .strip .band{background:none;border:2px solid #2a78d6;top:25px}
+  .strip .pt{background:none;width:0;border-left:2px solid #4a5562}
+  .strip .pt.you{width:0;height:0;margin-left:-8px;border:8px solid #eb6834;border-radius:50%;top:24px}
+  .strip .lab{color:#1c2430}
+  .pill{border:1px solid #4a5562}
+  .disclaimer{border:1px solid #c98a00;border-left-width:4px}
+}
