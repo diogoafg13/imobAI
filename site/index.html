@@ -128,7 +128,8 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       <label>Concelho <input name="conc" list="im-conc" placeholder="ex.: Lisboa" required></label>
       <datalist id="im-conc"></datalist>
       <label>Freguesia <select name="par"><option value="">— (usar o concelho)</option></select></label>
-      <label>Mês da compra <input name="date" type="month" min="2008-01" required></label>
+      <label>Mês da compra <select name="month" required></select></label>
+      <label>Ano da compra <select name="year" required></select></label>
       <label>Preço pago (€) <input name="price" type="number" min="1000" step="500" inputmode="numeric" required></label>
       <label>Área (m²) <input name="area" type="number" min="10" max="2000" step="1" inputmode="numeric" required></label>
       <label>Tipo <select name="kind"><option value="">Não sei</option><option value="apt">Apartamento</option><option value="house">Moradia</option></select></label>

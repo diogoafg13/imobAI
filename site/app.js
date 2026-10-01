@@ -1589,7 +1589,14 @@ function ensureHist() {
   if (!histP) histP = j('data/history.json').then((d) => { HIST = d; }).catch(() => { HIST = { parish: {}, val: {}, hicp: [] }; });
   return histP;
 }
-const qOfMonth = (ym) => { const [y, m] = String(ym).split('-').map(Number); return y && m ? `${y}Q${Math.floor((m - 1) / 3) + 1}` : null; };
+const qOfMonth = (ym) => {
+  const mt = /^(\d{4})-(\d{2})$/.exec(String(ym || ''));
+  if (!mt) return null;
+  const y = +mt[1], m = +mt[2];
+  return y >= 2000 && m >= 1 && m <= 12 ? `${y}Q${Math.floor((m - 1) / 3) + 1}` : null;
+};
+const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+const monthTxt = (ym) => { const [y, m] = String(ym).split('-').map(Number); return MESES[m - 1] ? `${MESES[m - 1]} de ${y}` : String(ym); };
 function serVal(ser, q) { const r = (ser || []).find((x) => x[0] === q); return r ? r[1] : null; }
 function serGrowth(ser, q0) {
   if (!ser || !ser.length) return null;
@@ -1603,7 +1610,7 @@ function imRead() {
   const f = $('#im-form'), num = (k) => { const v = parseFloat(String(f[k].value).replace(/\s/g, '').replace(',', '.')); return Number.isFinite(v) ? v : null; };
   const name = f.conc.value.trim().toLowerCase();
   const m = MUNIS.find((x) => x.name.toLowerCase() === name);
-  return { conc: f.conc.value.trim(), dico: m ? m.dico : null, par: f.par.value || '', date: f.date.value, price: num('price'), area: num('area'), kind: f.kind.value,
+  return { conc: f.conc.value.trim(), dico: m ? m.dico : null, par: f.par.value || '', date: f.year.value && f.month.value ? `${f.year.value}-${f.month.value}` : '', price: num('price'), area: num('area'), kind: f.kind.value,
     loan: num('loan'), rate: num('rate'), years: num('years'), income: num('income'), rent: num('rent'),
     imi: num('imi'), condo: num('condo'), ins: num('ins'), vac: num('vac'), maint: num('maint'), tax: num('tax') };
 }
@@ -1613,8 +1620,10 @@ function imLoad() {
   try { v = JSON.parse(localStorage.getItem(IM_KEY) || 'null'); } catch { v = null; }
   if (!v) return;
   const f = $('#im-form');
-  ['conc', 'date', 'price', 'area', 'kind', 'loan', 'rate', 'years', 'income', 'rent', 'imi', 'condo', 'ins', 'vac', 'maint', 'tax']
+  ['conc', 'price', 'area', 'kind', 'loan', 'rate', 'years', 'income', 'rent', 'imi', 'condo', 'ins', 'vac', 'maint', 'tax']
     .forEach((k) => { if (v[k] != null && f[k]) f[k].value = v[k]; });
+  // datas antigas guardadas noutro formato (ex.: "4" de um browser sem seletor de mês) são ignoradas
+  if (qOfMonth(v.date)) { const [y, m] = v.date.split('-'); f.year.value = y; f.month.value = m; }
   imParishes(v.par);
 }
 let imParDico = null;
@@ -1633,7 +1642,8 @@ async function imAnalyse() {
   const v = imRead(), out = $('#im-out');
   const err = [];
   if (!v.dico) err.push('escolhe um concelho da lista');
-  if (!v.date) err.push('indica o mês da compra');
+  if (!qOfMonth(v.date)) err.push('escolhe o mês e o ano da compra');
+  else if (v.date > new Date().toISOString().slice(0, 7)) err.push('a data da compra não pode ser no futuro');
   if (!v.price || v.price <= 0) err.push('indica o preço pago');
   if (!v.area || v.area <= 0) err.push('indica a área em m²');
   if (err.length) { out.innerHTML = `<p class="banner">Falta: ${esc(err.join('; '))}.</p>`; return; }
@@ -1672,12 +1682,14 @@ async function imAnalyse() {
     const val = v.price * (1 + main.g);
     const vals = use.map((r) => v.price * (1 + r.g));
     const lo = Math.min(...vals), hi = Math.max(...vals);
-    const H = HIST.hicp || [], h0 = serVal(H, q0), hl = H.length ? H[H.length - 1] : null;
-    const infl = h0 && hl && q0 <= hl[0] ? hl[1] / h0 - 1 : null;
+    // IHPC com média dos últimos 4 trimestres: o índice tem sazonalidade forte (saldos), comparar trimestres soltos distorce
+    const H = HIST.hicp || [], avg4 = (q) => { const i = H.findIndex((x) => x[0] === q); return i >= 3 ? H.slice(i - 3, i + 1).reduce((a, x) => a + x[1], 0) / 4 : null; };
+    const hl = H.length ? H[H.length - 1] : null, h0 = avg4(q0), h1 = hl ? avg4(hl[0]) : null;
+    const infl = h0 && h1 && q0 <= hl[0] ? h1 / h0 - 1 : null;
     const multi = use.length > 1 && !main.recent;
     tiles.push(tile(main.recent ? 'Valor estimado' : `Valor estimado (${qpt(main.to)})`, fmt.eur(val), main.recent ? 'compra recente: ainda sem variação medida' : `${fmt.spct(main.g, 0)} desde a compra${multi ? ` · ${fmt.eur(lo)} a ${fmt.eur(hi)} conforme o índice` : ''}`));
     li.push(main.recent ? `A compra é tão recente como os últimos dados publicados (${qpt(main.to)}): ainda não há valorização medida, por isso o valor estimado é o preço pago.`
-      : `Aplicando ao preço pago a variação da ${main.label} entre ${qpt(main.from)} e ${qpt(main.to)} (${fmt.spct(main.g, 0)}), o valor estimado é ${fmt.eur(val)}${multi ? `; com os outros índices locais fica entre ${fmt.eur(lo)} e ${fmt.eur(hi)} (${use.filter((r) => r !== main).map((r) => `${r.label}: ${fmt.spct(r.g, 0)}`).join('; ')})` : ''}.${main.k === 'nat' ? ' Não há índice local que cubra a data da compra: usou-se o índice nacional, que pode estar longe do teu concelho.' : ''}${infl != null ? ` Descontada a inflação até ${qpt(hl[0])} (${fmt.spct(infl, 0)}), a valorização real é de ${fmt.spct((1 + main.g) / (1 + infl) - 1, 0)}.` : ''}`);
+      : `Aplicando ao preço pago a variação da ${main.label} entre ${qpt(main.from)} e ${qpt(main.to)} (${fmt.spct(main.g, 0)}), o valor estimado é ${fmt.eur(val)}${multi ? `; com os outros índices locais fica entre ${fmt.eur(lo)} e ${fmt.eur(hi)} (${use.filter((r) => r !== main).map((r) => `${r.label}, até ${qpt(r.to)}: ${fmt.spct(r.g, 0)}`).join('; ')})` : ''}.${main.k === 'nat' ? ' Não há índice local que cubra a data da compra: usou-se o índice nacional, que pode estar longe do teu concelho.' : ''}${infl != null ? ` Descontada a inflação até ${qpt(hl[0])} (${fmt.spct(infl, 0)}), a valorização real é de ${fmt.spct((1 + main.g) / (1 + infl) - 1, 0)}${hl[0] < main.to ? ` (o índice de preços no consumidor publicado só vai até ${qpt(hl[0])}, por isso este valor real fica um pouco acima do verdadeiro)` : ''}.` : ''}`);
     const fcg = kindKey && m[`${kindKey}_fc_growth_12m`] != null ? [m[`${kindKey}_fc_growth_12m`], m[`${kindKey}_fc_lo80`], m[`${kindKey}_fc_hi80`], kindKey === 'apt' ? 'a avaliação bancária de apartamentos' : 'a avaliação bancária de moradias', m[kindKey === 'apt' ? 'val_apt' : 'val_house']]
       : m.fc_growth_12m != null ? [m.fc_growth_12m, m.fc_lo80, m.fc_hi80, 'o preço mediano de venda', m.nowcast_price ?? m.price] : null;
     if (fcg) {
@@ -1715,7 +1727,7 @@ async function imAnalyse() {
       li.push(`Comprar vs arrendar hoje, para esta casa: com juros de ${fmt.n(rate, 2)}% e ~1,3%/ano de IMI e manutenção, ser dono só sai mais barato do que arrendar a mesma casa se ela valorizar mais de ${fmt.spct(be)}/ano.`);
     } else li.push(`Não há renda publicada para ${m.name}: sem estimativa de arrendamento.`);
   } else li.push(`Não há índices de preços para ${m.name} que cubram ${qpt(q0)}: sem estimativa de valor.`);
-  const inputs = [`${esc(m.name)}${pr ? `, ${esc(pr.name)}` : ''}`, `compra em ${esc(v.date)}`, `${fmt.eur(v.price)}`, `${fmt.n(v.area, 0)} m²`,
+  const inputs = [`${esc(m.name)}${pr ? `, ${esc(pr.name)}` : ''}`, `compra em ${esc(monthTxt(v.date))}`, `${fmt.eur(v.price)}`, `${fmt.n(v.area, 0)} m²`,
     v.kind === 'apt' ? 'apartamento' : v.kind === 'house' ? 'moradia' : null].filter(Boolean).join(' · ');
   out.innerHTML = `<p class="muted">Dados: ${inputs}. Calculado em ${new Date().toISOString().slice(0, 10)} com os dados do painel de ${META.built_at.slice(0, 10)}.</p>
     <div class="stats">${tiles.join('')}</div>
@@ -1728,7 +1740,9 @@ function initImovel() {
   $('#im-disclaimer').innerHTML = IM_DISCLAIMER;
   $('#im-conc').innerHTML = MUNIS.map((m) => `<option value="${esc(m.name)}"></option>`).join('');
   const f = $('#im-form');
-  f.date.max = new Date().toISOString().slice(0, 7);
+  const yNow = new Date().getFullYear();
+  f.year.innerHTML = '<option value="">ano</option>' + Array.from({ length: yNow - 2007 }, (_, i) => yNow - i).map((y) => `<option>${y}</option>`).join('');
+  f.month.innerHTML = '<option value="">mês</option>' + MESES.map((n, i) => `<option value="${String(i + 1).padStart(2, '0')}">${n}</option>`).join('');
   f.conc.addEventListener('change', () => imParishes(''));
   f.addEventListener('submit', (e) => { e.preventDefault(); imAnalyse().catch((x) => { console.error(x); $('#im-out').innerHTML = '<p class="banner">Não foi possível calcular a análise.</p>'; }); });
   $('#im-clear').addEventListener('click', () => { f.reset(); $('#im-out').innerHTML = ''; try { localStorage.removeItem(IM_KEY); } catch { /* */ } imParishes(''); });
