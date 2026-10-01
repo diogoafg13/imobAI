@@ -204,8 +204,59 @@ ine:
       level: municipality
       period_kind: year
       optional: true
+    # Oferta, rendimento de quem vive no concelho, parque habitacional e alojamento turístico: códigos do
+    # catálogo de indicadores principais do INE (xml_indic.jsp?opc=3). Dimensões ainda não confirmadas ao
+    # vivo: sem `dims`, falham alto e de forma não-fatal se houver categorias, e o snapshot bruto
+    # (data/raw/ine/<varcd>/ no branch data) mostra as opções. NÃO entram em nenhum score (só contexto):
+    # os campos building_permits/completed_dwellings acima, que alimentariam o sub-score de oferta,
+    # continuam vazios de propósito.
+    dwellings_licensed:
+      varcd: "0012097"          # Fogos licenciados (N.º) em construções novas para habitação familiar
+      description: Fogos licenciados em construções novas para habitação familiar (N.º)
+      level: municipality
+      optional: true
+    dwellings_completed:
+      varcd: "0012778"          # Fogos concluídos (N.º) em construções novas para habitação familiar
+      description: Fogos concluídos em construções novas para habitação familiar (N.º)
+      level: municipality
+      optional: true
+    dwellings_stock:
+      varcd: "0008329"          # Alojamentos familiares clássicos (Parque habitacional - N.º), estimativas anuais
+      description: Alojamentos familiares clássicos, parque habitacional (N.º)
+      level: municipality
+      optional: true
+    dwellings_census:
+      varcd: "0012502"          # Alojamentos familiares clássicos (N.º) — Censos (forma de ocupação?)
+      description: Alojamentos familiares clássicos, Censos (N.º)
+      level: municipality
+      optional: true
+    irs_median:
+      varcd: "0012757"          # Valor mediano do rendimento bruto declarado deduzido do IRS liquidado por sujeito passivo (€), anual
+      description: Rendimento declarado mediano após IRS, por sujeito passivo (€/ano)
+      level: municipality
+      optional: true
+    irs_gross_mean:
+      varcd: "0012748"          # Rendimento bruto declarado por sujeito passivo (€), anual
+      description: Rendimento bruto declarado por sujeito passivo (€/ano)
+      level: municipality
+      optional: true
+    tax_households:
+      varcd: "0012742"          # Agregados fiscais (N.º)
+      description: Agregados fiscais (N.º)
+      level: municipality
+      optional: true
+    transactions_value:
+      varcd: "0012786"          # Transações (€) de alojamentos familiares
+      description: Valor das transações de alojamentos familiares (€)
+      level: municipality
+      optional: true
+    tourism_beds:
+      varcd: "0013366"          # Capacidade de alojamento (N.º) nos estabelecimentos de alojamento turístico
+      description: Capacidade de alojamento turístico (camas, N.º)
+      level: municipality
+      optional: true
     income:
-      varcd: "0012653"          # Ganho médio mensal (€), por concelho, anual (MTSSS/GEP, Quadros de Pessoal)
+      varcd: "0012653"         # Ganho médio mensal (€), por concelho, anual (MTSSS/GEP, Quadros de Pessoal)
       description: Ganho médio mensal dos trabalhadores por conta de outrem (€)
       level: municipality
       # dim_3: T = Total (confirmado com `imopt inspect 0012653`); restantes valores são níveis de
