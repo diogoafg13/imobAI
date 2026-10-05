@@ -4,21 +4,21 @@
   "sales_price_12m": "ok (24206 linhas, 2026Q1) [dim_3=H1 'Total']",
   "sales_price_new": "ok (24206 linhas, 2026Q1) [dim_3=H11 'Novos']",
   "sales_price_existing": "ok (24206 linhas, 2026Q1) [dim_3=H12 'Existentes']",
-  "sales_price_domestic": "ok (24206 linhas, 2026Q1) [dim_3=1 'Território nacional']",
-  "sales_price_foreign": "ok (24206 linhas, 2026Q1) [dim_3=2 'Estrangeiro']",
-  "sales_price_households": "ok (24206 linhas, 2026Q1) [dim_3=S1400000 'Famílias']",
-  "sales_price_companies": "ok (24206 linhas, 2026Q1) [dim_3=S3000000 'Restantes setores institucionais']",
-  "sales_price_apartments": "ok (17706 linhas, 2026Q1)",
-  "sales_price_t01": "ok (17706 linhas, 2026Q1) [dim_3=1 'T0 ou T1']",
-  "sales_price_t2": "ok (17706 linhas, 2026Q1) [dim_3=2 'T2']",
-  "sales_price_t3": "ok (17706 linhas, 2026Q1) [dim_3=3 'T3']",
-  "sales_price_t4": "ok (17706 linhas, 2026Q1) [dim_3=4 'T4 ou mais']",
+  "sales_price_domestic": "CACHE (INE indisponível, dados do último snapshot): falha a obter 0012246 do INE: HTTPSConnectionPool(host='www.ine.pt', port=443): Max retries exceeded with url: /ine/json",
+  "sales_price_foreign": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
+  "sales_price_households": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
+  "sales_price_companies": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
+  "sales_price_apartments": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
+  "sales_price_t01": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
+  "sales_price_t2": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
+  "sales_price_t3": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
+  "sales_price_t4": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
   "sales_price_annual": "sem código (config)",
-  "rent_new_contracts": "ok (2082 linhas, 2025) [dim_3=2 '2.º quartil']",
-  "rent_q1": "ok (2082 linhas, 2025) [dim_3=1 '1.º quartil']",
-  "rent_q3": "ok (2082 linhas, 2025) [dim_3=3 '3.º quartil']",
-  "rent_parish": "ok (3190 linhas, 2024)",
-  "rent_contracts": "CACHE (INE indisponível, dados do último snapshot): falha a obter 0012601 do INE: HTTPSConnectionPool(host='www.ine.pt', port=443): Max retries exceeded with url: /ine/json",
+  "rent_new_contracts": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
+  "rent_q1": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
+  "rent_q3": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
+  "rent_parish": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
+  "rent_contracts": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
   "hpi": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
   "bank_valuation": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
   "valuation_count": "CACHE (INE indisponível, dados do último snapshot): INE não contactado (modo cache ou já indisponível nesta execução)",
@@ -76,6 +76,6 @@
   "bis_credit_gap": "ok (222 pontos, 2026Q1)"
  },
  "at": {
-  "imi_rates": "ok (306 concelhos, taxas de 2025)"
+  "imi_rates": "ok (cache: taxas de 2025; 2026 ainda incompleto)"
  }
 }
