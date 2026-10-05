@@ -1,0 +1,635 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"  lang="pt">
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="author" content="DGITA / Opensoft">
+    <meta name="description" content = "PORTAL DAS FINANÇAS">
+    <meta name="keywords" content = "AT Autoridade Tributária Aduaneira Finanças">
+    <meta name="language" content = "PT">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        
+        <title>Portal das Finanças - Taxas</title>
+    
+    <script >
+
+        function post(body) {
+
+            document.dummyForm.body.value = body;
+            document.dummyForm.submit();
+            return false;
+        }
+
+        function postExternal(body) {
+            document.dummyForm.action.value = body;
+            document.dummyForm.submit();
+            return false;
+        }
+
+        function doThePFLoad() {
+            window.name = 'PortalFinancas';
+            if (typeof onLoadBody == "function") {
+                onLoadBody();
+            }
+        }
+
+
+    </script>
+
+
+    <link rel="stylesheet" type="text/css" href="/pf/styles/external.css" />
+    <link rel="stylesheet" type="text/css" href="/pf/styles/dgci.css" />
+    <link rel="stylesheet" type="text/css" href="/pf/styles/print.css" media="print" />
+    <link rel="stylesheet" type="text/css" href="/pf/styles/pf.css" />
+    <link rel="stylesheet" type="text/css" href="/pf/styles/aural.css" media="aural" />
+
+    <!--[if IE 7]>
+    <style type="text/css" media="all">
+        select { height: 21px !important; }
+        #paginacaoPG  td.paginas { text-align: center !important; }
+        .goldButton { font-size: 10px !important; font-family: Trebuchet MS; line-height: 12px; height: 18px; background: url(/pf/img/btn1_middle.gif) left top repeat-x !important; padding-top: 3px; color: #ffffff !important; font-weight: bold; vertical-align: middle; text-transform: uppercase; border: none; float: left; display: inline;	cursor: pointer; }
+    </style>
+    <![endif]-->
+
+    <!--[if  lt IE 9]>
+    <style type="text/css" media="all">
+        #agendaDiv{
+            width: 179px;
+        }
+    </style>
+
+    <![endif]-->
+
+    <!--[if lt IE 7]>
+    <script defer type="text/javascript" src="/pf/js/pngfix.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/pf/js/janelas.js"></script>
+    <script type="text/javascript" src="/pf/js/images.js"></script>
+    <script type="text/javascript" src="/pf/js/validation.js"></script>
+    <script type="text/javascript" src="/pf/js/prototype.js"></script>
+    <script type="text/javascript" src="/pf/js/auto-validation.js"></script>
+    <script type="text/javascript" src="/pf/js/overlib.js"></script>
+    <script type="text/javascript" src="/pf/js/functions.js"></script>
+    <script type="text/javascript" src="/pf/js/search-input-validations.js"></script>
+</head>
+
+<body onload="doThePFLoad()">
+
+
+<form name="dummyForm" method="post" action="main.jsp"><input type="hidden" name="body" value="" /></form>
+<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
+
+<div class="skip-link">
+    <a href="#menu">Ir para o conteúdo principal</a>
+    <a href="#footer">Ir para o rodapé</a>
+</div>
+
+<table id="main_Table" cellpadding="0" cellspacing="0">
+    <tr>
+        <td class="left_margin"><img src="/pf/img/pixel.gif" height="500" width="2" alt="" title="" /></td>
+        <td class="conteudo" valign="top">
+            <!-- HEADER-->
+            <script type="text/javascript">
+
+    /**
+     * Mensagem de Welcome a utilizador
+     */
+
+    function getWelcomeMessage(){
+        var currentdate = new Date();
+        var currentHour = currentdate.getHours();
+
+        var cumprimento = '';
+
+        if (currentHour >= 19 || currentHour < 6) {
+            cumprimento = 'Boa noite, ';
+        }
+        else if (currentHour >= 12 && currentHour < 19) {
+            cumprimento = 'Boa tarde, ';
+        }
+        else {
+            // currentHour >= 6 && currentHour < 12
+            cumprimento = 'Bom dia, ';
+        }
+        document.write(cumprimento);
+    }
+
+    /**
+     * Data
+     */
+
+    function getFormatedYar(number) {
+        return (number < 1000) ? number + 1900 : number;
+    }
+
+    function getFormatedDate() {
+        var now = new Date();
+        var days = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+        var months = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+        var date = now.getDate();
+        var today = days[now.getDay()] + ", " + date + " " + months[now.getMonth()] + " " + (getFormatedYar(now.getYear()));
+        document.write(today);
+    }
+
+</script>
+
+<table cellpadding="0" cellspacing="0" id="header">
+    <tr>
+                    <td class="left">
+                <script>getFormatedDate()</script>
+            </td>
+
+            <td class="header-middle-center logout-header">
+                <a href="https://www.acesso.gov.pt/unauthed/novoUtilizadorForm?partID=PFIN&path=/at/html/index.html" class="btn-outline" style="text-transform: none;">Registar-se</a>
+                <a href="//sitfiscal.portaldasfinancas.gov.pt/geral/dashboard" class="btn-default">Iniciar Sessão</a>
+            </td>
+        
+    </tr>
+</table>
+
+            <!-- CONTEUDO -->
+            <table cellpadding="0" cellspacing="0" id="main_area">
+                <tr>
+                    <td class="logoAT">
+                        <a href="/">
+                            <img src="/pf/img/logo-at.svg"onerror="this.onerror=null; this.src='/pf/img/logo-at.png'" alt="Autoridade Tributária e Aduaneira" title="Autoridade Tributária e Aduaneira" width="170" />
+                        </a>
+                    </td>
+                    <td colspan="2" id="main-search-td">
+                        <div class="main-search">
+                            <form action="//sitfiscal.portaldasfinancas.gov.pt/geral/search" method="get" name="pesquisa" accept-charset="UTF-8">
+                                <input type="search" name="query" id="query" class="main-search-input" placeholder="Indique aqui o que pretende efetuar (ex: Entregar IRS)"  >
+                                <input type="hidden" name="e" value="?">
+                                <input type="submit" class="main-search-submit" tabindex="-1" value="Pesquisar" onClick="return inputEmpty()">
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr style="height: 6px;"></tr>
+                <tr>
+                    <td class="top_left">
+                        <!-- MENU -->
+                        <table cellpadding="0" cellspacing="0" id="menu">
+                            <tr>
+                                <td class="margin">&nbsp;</td>
+                                <td class="left" align="left">
+                                    <!-- menu -->
+                                    <table cellpadding="0" cellspacing="0" class="menu" border="0">
+	
+		<tr><td class="top"><a href="http://info.portaldasfinancas.gov.pt/pt/at">A AT</a></td></tr>
+
+	<tr><td><a href="http://info.portaldasfinancas.gov.pt//pt/apoio_contribuinte/calendario_fiscal/Pages/obrigacoes.aspx">Agenda Fiscal</a></td></tr>
+
+		<tr><td><a href="//sitfiscal.portaldasfinancas.gov.pt/geral/siteMap">Serviços</a></td></tr>
+
+		<tr><td><a href="http://info.portaldasfinancas.gov.pt/pt/home">Informação Fiscal e Aduaneira</a></td></tr>
+
+		<tr><td><a href="http://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Pages/default.aspx">Apoio ao Contribuinte</a></td></tr>
+
+		<tr><td><a href="http://info.portaldasfinancas.gov.pt/pt/grandes_contribuintes">Grandes Contribuintes</a></td></tr>
+
+		<tr><td><a href="https://info.portaldasfinancas.gov.pt/pt/U-Tax/">U-TAX</a></td></tr>
+
+		<tr><td><a href="http://info.portaldasfinancas.gov.pt/pt/dgci/divulgacao/estatisticas/">Estatísticas</a></td></tr>
+
+		<tr><td><a href="http://info.portaldasfinancas.gov.pt/en/tax-information/Pages/default.aspx" >Tax information</a></td></tr>
+
+        <tr><td><a href="http://info.portaldasfinancas.gov.pt/pt/Cidadania/Paginas/default.aspx">Cidadania Fiscal</a></td></tr>
+
+</table>
+
+                                    <!-- proximos servicos -->
+                                    
+
+                                    <!-- banner -->
+                                    <!--
+<table cellpadding="0" cellspacing="0" id="banner">
+	<tr>
+		<td class="top_left"><img src="/pf/img/menuBox_cantoTopLeft.gif" alt="" title=""/></td>
+		<td class="middle"></td>
+		<td class="top_right"><img src="/pf/img/menuBox_cantoTopRight.gif" alt="" title="" /></td>
+	</tr>
+	<tr>
+		<td class="margin"><img src="/pf/img/pixel.gif" alt="" title="" /></td>
+		<td class="middle">
+			<a href="desconhecida.action"><img src="/pf/img/banner_educacaoFiscal.gif" alt="Educação Fiscal" title="Educação Fiscal" /></a>
+		</td>
+		<td class="margin"><img src="/pf/img/pixel.gif" alt="" title="" /></td>
+	</tr>
+	<tr>
+		<td class="bottom_left"><img src="/pf/img/menuBox_cantoBottomLeft.gif" alt="" title=""/></td>
+		<td class="middle"></td>
+		<td class="bottom_right"><img src="/pf/img/menuBox_cantoBottomRight.gif" alt="" title=""/></td>
+	</tr>
+</table>
+-->
+
+                                </td>
+                                <td class="margin">&nbsp;</td>
+                            </tr>
+
+                        </table>
+                    </td>
+                    <td id="main_middle_body" class="middle middle-correct" rowspan="2" valign="top">
+                        <!-- conteudo central -->
+                        <div class="bodyBox mainBody">
+
+                            <div class="inlineDivReset"></div>
+                            <div class="bodyBoxInnerElement">
+                                <!-- BREADCRUMBS -->
+<p>
+<table cellpadding="0" cellspacing="0" id="breadcrumbs">
+	<tr>
+		<td>
+			<span>Você está aqui</span>
+			
+			<span class="home"><a href="/home.action">Início</a></span>
+									
+			<!--  from here -->
+			
+			
+							
+									
+									
+                												<a href="/pt/menu.action?pai=27" title="Consultar">Consultar</a>
+							
+									
+									
+                												<a href="/pt/menu.action?pai=119" title="Taxas">Taxas</a>
+			
+		</td>
+	</tr>
+	
+	<tr><td class="hr"><img src="/pf/img/pixel.gif" width="1" height="1" alt="" title="" /></td></tr>
+	
+</table>
+</p>
+<script>
+	function getBreadCrumbsAditionalInfoParentId () {
+		return "27";
+    }
+
+	function getBreadCrumbsAditionalInfoParentSegmentId () {
+					return "$action.segId";
+		    }
+
+    function getBreadCrumbsAditionalInfoBreadCrumbSize() {
+     	return $action.breadCrumbsSize;   
+    }
+    
+</script>
+
+                                <div class="user_info_printable">
+
+                                </div>
+                            </div>
+                            <div class="bodyBoxInnerElement">
+                                <style>
+    .hTD {
+        margin-top: 0;
+        margin-bottom: 1px;
+        font-size: 12px;
+        font-weight: bold;
+        height: 30px;
+        line-height: 20px;
+    }
+
+    .rowFont {
+        font-size: 12px;
+        color: #333333;
+        font-weight: normal;
+    }
+
+    .bB, .body-button {
+        font-size: 12px;
+        line-height: 12px;
+        height: 25px;
+        margin-bottom: 0px;
+        margin-top: 0px;
+    }
+
+    input[type="text"] {
+        background: #ffffff;
+        border: 1px solid #c2cdcf;
+        height: 17px;
+        font-size: 12px;
+        color: #010101;
+        text-align: right;
+        padding: 2px 3px 0 3px;
+    }
+
+    .alert {
+        padding: 10px 15px;
+        margin-bottom: 20px;
+        border: 1px solid transparent;
+        border-radius: 2px;
+    }
+
+    .alert-danger {
+        background-color: #f2dede;
+        border-color: #ebccd1;
+        color: #a31707;
+    }
+
+    .alert-warning {
+        background-color: #fcf8e3;
+        border-color: #faebcc;
+        color: #c8680b;
+    }
+
+    select {
+        font-size: 12px;
+        height: 19px !important;
+    }
+
+
+</style>
+
+<link href="/pf/styles/jquery-ui/dialog-pf.css" rel="stylesheet" type="text/css"/>
+
+
+<div>
+
+    <h2>Consultar dedução fixa para agregados familiares</h2>
+
+    <br>
+
+    <div>
+        <table id="tabelaDeducoes" cellspacing="1" cellpadding="5" class="eT" align="center">
+            <tbody>
+            <tr class="eTR">
+                <td class="hTD">
+                    <b>Dedução Fixa para Agregados com Dependentes do Município de ALMADA para o ano 2025</b>
+                </td>
+            </tr>
+            <tr class="iTR">
+                <td class="rowFont">
+                    <table cellspacing="1" cellpadding="5" width="100%" class="iT">
+                        <tbody>
+                        <tr align="center" class="iTR">
+                            <th class="ccTD"><b>N.º de dependentes</b></th>
+                            <th class="ccTD" nowrap=""><b>Dedução fixa (em &euro;)</b></th>
+                            <th class="ccTD">Aplicar</th>
+                        </tr>
+
+                        <tr>
+                            <td align="center">1</td>
+                            <td align="center"><span>30</td>
+                            <td align="center">Não</td>
+                        </tr>
+
+                        <tr>
+                            <td align="center">2</td>
+                            <td align="center"><span>70</td>
+                            <td align="center">Não</td>
+                        </tr>
+
+                        <tr>
+                            <td align="center">3 ou mais</td>
+                            <td align="center"><span>140</td>
+                            <td align="center">Sim</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="display: none" id="mensagem">
+        <h3>Não existe deduções fixas para agregados familiares no Município para o ano de 2025.</h3>
+    </div>
+
+</div>
+
+<script type="text/javascript" src="/pf/js/jquery/jquery-1.6.1.min.js"></script>
+
+<script>
+
+
+    jQuery(document).ready(function () {
+
+        var anoConsulta = 2025;
+
+        if(anoConsulta != null){
+            jQuery("#anoConsulta").val(anoConsulta);
+        }
+
+        var existeDeducao = true;
+        if(!existeDeducao){
+            jQuery("#tabelaDeducoes").hide();
+            jQuery("#butaoAlterar").hide();
+            jQuery("#mensagem").show();
+        }
+    });
+
+
+
+
+</script>
+
+
+                            </div>
+                            <div style="clear:both"></div>
+                            <div class="bodyBoxInnerElement">
+                                
+                            </div>
+                            <div class="bodyBoxExpander"></div>
+                        </div>
+
+                    </td>
+                    <td class="right_body" rowspan="2" >
+                        <!-- o seu espaco -->
+                        <table cellpadding="0" cellspacing="0" id="seu_espaco_login">
+	<tr>
+		<td class="middle">
+			<table cellpadding="0" cellspacing="0" class="listagem">
+
+				<tr><td><span class="title">O Seu Espaço</span></td></tr>
+				
+				<tr><td><a href="//sitfiscal.portaldasfinancas.gov.pt/geral/dashboard" target="_top">A minha área</a></td></tr>
+
+								<tr><td nowrap="nowrap"><span class="title"><a href="https://sitfiscal.portaldasfinancas.gov.pt/integrada" target="_top">Situação fiscal integrada</a></span></td></tr>
+
+				<tr><td><a href="/pt/Ren/menu.action?pai=0" target="_top">Rendimentos (IR)</a></td></tr>
+
+				<tr><td><a href="/pt/IVA/menu.action?pai=0" target="_top">IVA</a></td></tr>
+
+				<tr><td><a href="/pt/Pat/menu.action?pai=0" target="_top">Património</a></td></tr>
+
+				<tr><td><a href="https://sitfiscal.portaldasfinancas.gov.pt/movfin" target="_top">Movimentos Financeiros</a></td></tr>
+
+				<tr><td><a href="https://sitfiscal.portaldasfinancas.gov.pt/movfin" target="_top">Alertas</a></td></tr>
+
+			</table>
+
+			<table cellpadding="0" cellspacing="0" class="listagem">
+				<tr><td>&nbsp;</td></tr>
+				<tr><td><span class="title">Notifica&ccedil;&otilde;es Eletr&oacute;nicas</span></td></tr>
+				<tr><td><a href="https://sitfiscal.portaldasfinancas.gov.pt/notificacoes/" target="_top">Aceder</a></td></tr>
+			</table>
+		</td>
+	</tr>
+
+</table>
+
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+        <td class="right_margin" ><img src="/pf/img/pixel.gif" height="500" width="2" alt="" title="" /></td>
+
+    </tr>
+    <tr class="footer_tr template_main">
+        <td class="left_margin" ><img src="/pf/img/pixel.gif"  width="2" alt="" title="" /></td>
+        <td class="middle">
+            <!-- FOOTER -->
+            <table  cellpadding="0" cellspacing="0" id="footer">
+                <tr>
+                    <td id="footer_template" class="footer">
+                        <!-- FOOTER -->
+<script src="https://static.portaldasfinancas.gov.pt/app/pfstatic_static/js/pf-footer.js"></script>
+<script type="text/javascript" src="/pf/js/footer.js"></script>
+
+<table cellpadding="0" cellspacing="0" class="footer">
+    <tr>
+        <td><img src="/pf/img/pixel.gif"  width="2" alt="" title="" /></td>
+        <td class="middle">
+            <table cellspacing="0" cellpadding="0">
+                <tr>
+                    <td id="footer_left_menu" class="left">
+                        <div class="col-width-35 pull-left">
+                            <h5>Links Úteis</h5>
+                            <ul>
+                                <li>
+                                                                        <a href="http://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/questoes_frequentes/" target="_top" title="Respostas às questões mais frequentes (FAQ)">Quest&otilde;es Frequentes</a>
+                                </li>
+                                <li>
+                                                                        <a href="http://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Folhetos_informativos/Pages/default.aspx" target="_top" title="Folhetos informativos de apoio ao contribuinte">Folhetos Informativos</a>
+                                </li>
+                                <li>
+                                                                        <a href="http://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Informacao/Paginas/default.aspx" target="_top" title="Manuais / guias">Manuais e guias</a>
+                                </li>
+                                <li>
+                                                                        <a href="http://info.portaldasfinancas.gov.pt/pt/dgci/divulgacao/estatisticas/" title="Estatísticas declarativas e relativas a Impostos sobre o Rendimento, a Despesa e o Património">Estatísticas</a>
+                                </li>
+                                <li>
+                                                                        <a href="http://info.portaldasfinancas.gov.pt/pt/quem_somos/privacidade/" target="_blank" title="Site da AT - Política de privacidade">Segurança e Privacidade</a>
+                                </li>
+                                <li>
+                                                                        <a href="http://info.portaldasfinancas.gov.pt/pt/divulgacao/Pages/outros-links.aspx" title="Hiperligações para sites Nacionais, da União Europeia e de outras Administrações Aduaneiras e Tributárias">Ligações</a>
+                                </li>
+                                <li>
+                                                                        <a href="https://vendas.portaldasfinancas.gov.pt/vendasat"  target="_blank"   title="Portal de Venda de Bens da Administração Tributária e Aduaneira">Venda de bens</a>
+                                </li>
+                                <li>
+                                                                        <a href="/menu.action?pai=100" target="_top" title="Listas de Devedores à AT e à Segurança Social">Lista de Devedores</a>
+                                </li>
+                                <li>
+                                                                        <a href="http://ec.europa.eu/taxation_customs/vies/?locale=pt"  target="_blank"  title="Sistema de Intercâmbio de Informações sobre o IVA (VIES) - Validação do n.º de  IVA">Transações Intracomunitárias</a>
+                                </li>
+                                <li>
+                                                                        <a href="http://info.portaldasfinancas.gov.pt/pt/informacao_fiscal/uniao_europeia/projetos/CBR/Pages/default.aspx" target="_top" title="Projeto Cross-Border Ruling (CBR)">Cross-Border Ruling (CBR)</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="col-width-25 pull-left">
+                            <h5>Área Pessoal</h5>
+                            <ul>
+                                <li>
+                                                                                                                                                                                    <a href="/menu.action?pai=660" target="_top" title="Visualização dos Dados Pessoais">Dados Pessoais</a>
+                                </li>
+                                <li>
+                                    <a href="consultarMensagens.action" target="_top" title="Visualização das Mensagens">Mensagens</a>
+                                </li>
+                                                            </ul>
+                        </div>
+
+                        <div id="footer-icons" class="col-width-40 pull-left">
+                            <ul>
+                                <li>
+                                    <a href="https://sitfiscal.portaldasfinancas.gov.pt/ebalcao/home" title="Contactos">
+                                        <img src="/pf/img/footer/AT56_contactos_iconografia-portal_ver01.png" height="40" alt="Logotipo Contactos">
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul id="footer-icons-social">
+                                <li>
+                                    <a href="https://www.facebook.com/AT.financas" target="_blank" rel="noopener noreferrer">
+                                        <img src="/pf/img/footer/AT56_facebook_iconografia-portal_ver01.png" width="32" alt="Facebook" title="Siga-nos no Facebook"/>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.instagram.com/at.financas" target="_blank" rel="noopener noreferrer">
+                                        <img src="/pf/img/footer/AT56_instagram_iconografia-portal_ver01.png" width="32" alt="Instagram" title="Siga-nos no Instagram"/>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.youtube.com/@AutoridadeTributariaAduaneira" target="_blank" rel="noopener noreferrer">
+                                        <img src="/pf/img/footer/AT56_youtube_iconografia-portal_ver01.png" width="32" alt="Youtube" title="Veja os nossos tutoriais no Youtube"/>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://x.com/Aut_Trib_Adua" target="_blank" rel="noopener noreferrer">
+                                        <img src="/pf/img/footer/AT56_twitter_iconografia-portal_ver01.png" width="32" alt="X" title="Siga-nos no X"/>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.linkedin.com/company/atfinancas" target="_blank" rel="noopener noreferrer">
+                                        <img src="/pf/img/footer/AT56_linkedin_iconografia-portal_ver01.png" width="32" alt="LinkedIn" title="Siga-nos no LinkedIn"/>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul id="footer-icons-apps">
+                                <li>
+                                    <a href="https://info.portaldasfinancas.gov.pt/pt/apoio_contribuinte/Apps/Pages/Apps_AT_.aspx" title="Aplica&ccedil;&otilde;es m&oacute;veis">
+                                        <img src="/pf/img/footer/AT56_apps-at_iconografia-portal_ver01.png" height="50" alt="Logotipo Aplica&ccedil;&otilde;es m&oacute;veis">
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul>
+                                <li>
+                                    <a href="https://info.portaldasfinancas.gov.pt/pt/direitos_dos_contribuintes/Paginas/default.aspx" title="Direitos dos Contribuintes">
+                                        <img src="/pf/img/footer/AT56_direitos-do-contribuinte_iconografia-portal_ver01.png" width="118" alt="Logotipo Direitos dos Contribuintes">
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul id="footer-icons-acessibilidade">
+                                <li>
+                                    <a href="http://www.w3.org/WAI/WCAG1AA-Conformance" target="_blank" rel="noopener noreferrer">
+                                        <img src="/pf/img/wcag1AA-blue.png" alt="Acessibilidade" title="Acessibilidade" height="32"/>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="footer-font footer-color-gray-darker" id="footer-rgpd-content"></td>
+                </tr>
+                <tr>
+                    <td class="footer-font footer-color-gray-dark">Última atualização em 2026-09-14 | 3.3.16-6697 | Autoridade Tributária e Aduaneira</td>
+                </tr>
+
+            </table>
+        </td>
+        <td class="right_margin"><img src="/pf/img/pixel.gif" height="20" width="2" alt="" title=""></td>
+    </tr>
+
+</table>
+
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td class="right_margin" ><img src="/pf/img/pixel.gif" width="2" alt="" title="" /></td>
+    </tr>
+
+</table>
+</body>
+</html>
