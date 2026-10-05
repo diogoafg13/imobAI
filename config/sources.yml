@@ -471,8 +471,10 @@ macro:
     # IHPC (inflação) de Portugal, 2015=100, mensal. Serve para deflacionar o HPI (preço real).
     url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_midx
     params: {geo: PT, coicop: CP00, unit: I15, format: JSON, lang: EN}
-    # A base 2015 = 100 deixou de ser publicada depois de dez/2025: a série é prolongada com a taxa de variação
-    # homóloga (não depende da base). Se este pedido falhar, a série fica até dez/2025, como antes.
+    # A base 2015 = 100 deixou de ser atualizada depois de dez/2025. Pede-se também a base 2025 = 100 (I25) e
+    # junta-se nos meses em comum; o que faltar ainda é prolongado com a taxa de variação homóloga (não depende
+    # da base). As bases que não responderem são ignoradas (ver data/clean/sources_status.json).
+    units: [I15, I25]
     rates:
       url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr
       params: {geo: PT, coicop: CP00, unit: RCH_A, format: JSON, lang: EN}
@@ -485,6 +487,7 @@ macro:
   eurostat_hicp_eu:
     url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_midx
     params: {geo: [AT, BE, BG, CY, CZ, DE, DK, EE, EL, ES, FI, FR, HR, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, RO, SE, SI, SK], coicop: CP00, unit: I15, format: JSON, lang: EN}
+    units: [I15, I25]
     rates:
       url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr
       params: {geo: [AT, BE, BG, CY, CZ, DE, DK, EE, EL, ES, FI, FR, HR, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, RO, SE, SI, SK], coicop: CP00, unit: RCH_A, format: JSON, lang: EN}

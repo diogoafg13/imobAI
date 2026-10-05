@@ -90,7 +90,12 @@ def ingest_macro(cfg: dict, data_dir: Path) -> tuple[dict[str, pd.DataFrame], di
             frames[key] = df
             status[key] = f"ok ({len(df)} pontos, {df['period'].iloc[-1]})"
         except Exception as e:  # noqa: BLE001
-            status[key] = f"ERRO: {e}"
+            cached = data_dir / "clean" / f"macro_{key}.parquet"
+            if cached.exists():      # como no INE: a série do último build que a obteve, em vez de nenhuma
+                frames[key] = pd.read_parquet(cached)
+                status[key] = f"CACHE ({str(e)[:150]})"
+            else:
+                status[key] = f"ERRO: {e}"
             log.warning("macro %s falhou: %s", key, e)
     return frames, status
 
@@ -339,6 +344,14 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
     except Exception:  # noqa: BLE001
         names = {}
     imi_rates, imi_status = imi.ingest(cfg.get("imi"), data_dir, today, names)
+    try:   # estado de todas as fontes no branch `data` (os logs do GitHub nem sempre estão à mão)
+        import json as _json
+        (data_dir / "clean").mkdir(parents=True, exist_ok=True)
+        (data_dir / "clean" / "sources_status.json").write_text(_json.dumps(
+            {"date": today, "ine": ine_status, "macro": macro_status, "at": {"imi_rates": imi_status}},
+            ensure_ascii=False, indent=1), encoding="utf-8")
+    except Exception as e:  # noqa: BLE001
+        log.warning("estado das fontes não gravado: %s", e)
     ine_summary = write_ine_status(ine_status, data_dir)
 
     geojson, unmatched = None, []

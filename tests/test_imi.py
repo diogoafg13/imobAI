@@ -1,6 +1,7 @@
 import json
 
 import pandas as pd
+import pytest
 
 from imopt import demo, imi, pipeline
 
@@ -46,3 +47,44 @@ def test_imi_rates_reach_municipalities(tmp_path):
     assert all(0.003 <= x["imi_rate"] <= 0.0045 and x["imi_year"] == 2025 for x in m)
     meta = json.loads((tmp_path / "meta.json").read_text(encoding="utf-8"))
     assert meta["sources"]["at"]["imi_rates"] == "sintético"
+
+
+def test_ingest_uses_district_select_and_falls_back_to_previous_year(tmp_path, monkeypatch):
+    calls = []
+    big = "<table><tr><th>Código</th><th>Município</th><th>Taxa Prédios Urbanos</th></tr>" + "".join(
+        f"<tr><td>{1000 + i}</td><td>M{i}</td><td>0,3</td></tr>" for i in range(300)) + "</table>"
+
+    def fake(url, params):
+        calls.append(dict(params))
+        if "ano" not in params:
+            return FORM
+        return big if params["ano"] == 2024 else "<table><tr><th>Município</th><th>Urbanos</th></tr></table>"
+    monkeypatch.setattr(imi, "_get", fake)
+    df, st = imi.ingest({"form_url": "f", "table_url": "t"}, tmp_path, "20261005", pause=0)
+    assert st.startswith("ok (300 concelhos, taxas de 2024") and len(df) == 300
+    # 2025 ainda vazio -> 2024; só os distritos do select "distrito", nunca os anos
+    assert {c["distrito"] for c in calls if "ano" in c} == {"01AVEIRO", "11LISBOA"}
+    assert (tmp_path / "raw" / "imi" / "2025" / "11LISBOA.html").exists()
+
+
+def test_chain_indices_across_base_change():
+    from imopt import macro
+    old = pd.DataFrame({"period": ["2025-10", "2025-11", "2025-12"], "value": [125.0, 126.0, 127.0]})
+    new = pd.DataFrame({"period": ["2025-11", "2025-12", "2026-01"], "value": [100.0, 100.8, 101.6]})
+    out = macro.chain_indices([old, new])
+    k = (126 / 100 + 127 / 100.8) / 2
+    assert list(out["period"]) == ["2025-10", "2025-11", "2025-12", "2026-01"]
+    assert out["value"].iloc[-1] == pytest.approx(101.6 * k) and out["value"].iloc[1] == 126.0
+
+
+def test_macro_failure_uses_previous_snapshot(tmp_path, monkeypatch):
+    from imopt import macro
+    (tmp_path / "clean").mkdir()
+    pd.DataFrame({"period": ["2025Q4"], "value": [1.0]}).to_parquet(tmp_path / "clean" / "macro_euribor_12m.parquet")
+    def boom(cfg):
+        raise ConnectionError("sem rede")
+    monkeypatch.setitem(macro.FETCHERS, "euribor_12m", boom)
+    monkeypatch.setitem(macro.FETCHERS, "euribor_3m", boom)
+    frames, st = pipeline.ingest_macro({"macro": {"euribor_12m": {}, "euribor_3m": {}}}, tmp_path)
+    assert st["euribor_12m"].startswith("CACHE") and len(frames["euribor_12m"]) == 1
+    assert st["euribor_3m"].startswith("ERRO") and "euribor_3m" not in frames

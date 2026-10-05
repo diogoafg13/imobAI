@@ -122,23 +122,33 @@ def ingest(cfg: dict | None, data_dir: Path, today: str, names: dict[str, str] |
         raw.mkdir(parents=True, exist_ok=True)
         (raw / f"form_{today}.html").write_text(form, encoding="utf-8")
         opts = select_options(form)
-        years = sorted({int(v) for vals in opts.values() for v in vals if re.fullmatch(r"20\d\d", v.strip())})
-        dists = next((vals for vals in opts.values() if vals and all(re.match(r"\d\d", v) for v in vals)), [])
+        # selects "ano" (2026, 2025, …) e "distrito" ("11LISBOA", "19ANGRA DO HEROISMO", …); sem esses nomes, procura
+        # pelo formato dos valores (o dos distritos tem letras depois dos 2 dígitos — os anos também começam por dígitos)
+        year_vals = opts.get("ano") or next((v for v in opts.values() if v and all(re.fullmatch(r"\d{4}", x.strip()) for x in v)), [])
+        dists = opts.get("distrito") or next((v for v in opts.values() if v and all(re.fullmatch(r"\d\d\D.*", x.strip()) for x in v)), [])
+        years = sorted({int(v) for v in year_vals if re.fullmatch(r"20\d\d", v.strip())}, reverse=True)
         if not years or not dists:
             raise ValueError(f"formulário sem anos/distritos reconhecíveis (selects: {list(opts)})")
-        year = years[-1]
-        if cached is not None and len(cached) >= 250 and int(cached["year"].max()) >= year:
-            return cached, f"ok (cache: taxas de {year} já recolhidas)"
-        rows = []
-        for i, d in enumerate(dists):
-            if i:
-                time.sleep(pause)
-            page = _get(cfg["table_url"], {**cfg.get("table_params", {}), "ano": year, "distrito": d})
-            (raw / str(year)).mkdir(parents=True, exist_ok=True)
-            (raw / str(year) / f"{re.sub(r'[^0-9A-Za-z]', '_', d)}.html").write_text(page, encoding="utf-8")
-            rows += [{**r, "district": d} for r in parse_district(page)]
-        if not rows:
-            raise ValueError("páginas dos distritos sem tabela reconhecível (ver data/raw/imi)")
+        if cached is not None and len(cached) >= 250 and int(cached["year"].max()) >= years[0]:
+            return cached, f"ok (cache: taxas de {int(cached['year'].max())} já recolhidas)"
+        # o ano mais recente pode ainda estar incompleto (as câmaras fixam as taxas até ao fim do ano): se tiver
+        # poucos concelhos, usa o anterior
+        rows, year = [], None
+        for year in years[:2]:
+            if cached is not None and len(cached) >= 250 and int(cached["year"].max()) >= year:
+                return cached, f"ok (cache: taxas de {int(cached['year'].max())}; {years[0]} ainda incompleto)"
+            rows = []
+            for i, d in enumerate(dists):
+                if i:
+                    time.sleep(pause)
+                page = _get(cfg["table_url"], {**cfg.get("table_params", {}), "ano": year, "distrito": d})
+                (raw / str(year)).mkdir(parents=True, exist_ok=True)
+                (raw / str(year) / f"{re.sub(r'[^0-9A-Za-z]', '_', d)}.html").write_text(page, encoding="utf-8")
+                rows += [{**r, "district": d} for r in parse_district(page)]
+            if len(rows) >= 250:
+                break
+        if len(rows) < 250:
+            raise ValueError(f"só {len(rows)} linhas reconhecidas para {year} (ver data/raw/imi)")
         df = pd.DataFrame(rows)
         df["year"] = year
         by_name = {geo.norm_name(n): d for d, n in (names or {}).items()}

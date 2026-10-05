@@ -233,8 +233,10 @@ Metodologia 2026 pelos 0014700).
   de cada concelho, o preço em € do último trimestre com IHPC. Também no mapa ("Variação 12 meses descontada
   a inflação"). A inflação é sempre de um período com o mesmo comprimento (4, 12 ou 20 trimestres); se o IHPC
   ainda não chegou ao trimestre do preço, usa a janela que acaba no último IHPC publicado. O Eurostat deixou
-  de publicar o IHPC com base 2015 = 100 depois de dez/2025: a série é prolongada com a taxa de variação
-  homóloga (`prc_hicp_manr`, que não depende da base), para Portugal e para os países da UE.
+  de atualizar o IHPC com base 2015 = 100 depois de dez/2025: pede-se também a base 2025 = 100, junta-se nos
+  meses em comum e o que faltar é prolongado com a taxa de variação homóloga (`prc_hicp_manr`, que não depende
+  da base), para Portugal e para os países da UE. Se uma série do BCE/Eurostat/BIS falhar, usa a do último
+  build que a obteve (como no INE). O estado de todas as fontes fica em `data/clean/sources_status.json`.
 - **O que mudou** (`imopt/changes.py`): trimestre mais recente vs anterior — variação do preço e do score,
   mudanças de faixa de risco. O score anterior é recalculado com o mesmo método e os dados cortados
   nesse trimestre (a renda é a mesma nos dois, por isso as mudanças vêm dos preços). As listas de

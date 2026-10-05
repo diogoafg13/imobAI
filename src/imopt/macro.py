@@ -85,6 +85,42 @@ def extend_with_annual_rates(idx: pd.DataFrame, rates: pd.DataFrame | None) -> p
     return out
 
 
+def chain_indices(series: list[pd.DataFrame]) -> pd.DataFrame:
+    """Junta índices mensais com bases diferentes (ex.: 2015 = 100 até dez/2025 e 2025 = 100 depois): o primeiro
+    define o nível; cada seguinte só acrescenta os meses depois do fim, reescalado pela média dos meses em comum."""
+    out = {}
+    for df in series:
+        cur = dict(zip(df["period"].astype(str), df["value"].astype(float)))
+        if not out:
+            out = cur
+            continue
+        common = [m for m in cur if m in out and cur[m]]
+        if not common:
+            continue
+        k = sum(out[m] / cur[m] for m in common) / len(common)
+        last = max(out)
+        out.update({m: v * k for m, v in cur.items() if m > last})
+    return pd.DataFrame({"period": sorted(out), "value": [out[m] for m in sorted(out)]})
+
+
+def _units(cfg: dict, panel: bool = False) -> list[pd.DataFrame]:
+    """Pede o índice em cada base configurada (`units`, por ordem); devolve as que responderem."""
+    params = cfg.get("params", {})
+    units = cfg.get("units") or [params.get("unit")]
+    got, errors = [], []
+    for u in units:
+        try:
+            js = _get(cfg["url"], {**params, "unit": u}).json()
+            got.append(parse_jsonstat_panel(js) if panel else parse_jsonstat_time_series(js))
+        except Exception as e:  # noqa: BLE001
+            errors.append(f"{u}: {str(e)[:120]}")
+    if errors:
+        log.warning("IHPC: bases sem resposta: %s", "; ".join(errors))
+    if not got:
+        raise RuntimeError("IHPC indisponível em todas as bases: " + "; ".join(errors))
+    return got
+
+
 def _rates(cfg: dict, panel: bool = False) -> pd.DataFrame | None:
     """Taxas de variação homóloga do IHPC (prc_hicp_manr), se configuradas; falha sem parar o resto."""
     rc = cfg.get("rates")
@@ -101,8 +137,8 @@ def _rates(cfg: dict, panel: bool = False) -> pd.DataFrame | None:
 def fetch_eurostat_hicp(cfg: dict) -> pd.DataFrame:
     """IHPC de Portugal (2015=100), mensal no Eurostat, prolongado com a taxa homóloga depois do fim da base 2015,
     devolvido em médias trimestrais."""
-    r = _get(cfg["url"], cfg.get("params", {}))
-    return monthly_to_quarterly(extend_with_annual_rates(parse_jsonstat_time_series(r.json()), _rates(cfg)))
+    monthly = chain_indices(_units(cfg))
+    return monthly_to_quarterly(extend_with_annual_rates(monthly, _rates(cfg)))
 
 
 def fetch_bis_credit_gap(cfg: dict) -> pd.DataFrame:
@@ -141,8 +177,12 @@ def parse_jsonstat_panel(js: dict, panel_dim: str = "geo") -> pd.DataFrame:
 
 def fetch_eurostat_panel(cfg: dict) -> pd.DataFrame:
     """Vários países num só pedido (parâmetro geo repetido). Séries mensais passam a médias trimestrais."""
-    r = _get(cfg["url"], cfg.get("params", {}))
-    df = parse_jsonstat_panel(r.json())
+    parts = _units(cfg, panel=True) if cfg.get("units") else [parse_jsonstat_panel(_get(cfg["url"], cfg.get("params", {})).json())]
+    if len(parts) > 1:
+        df = pd.concat([chain_indices([p[p["geo"] == geo][["period", "value"]] for p in parts]).assign(geo=geo)
+                        for geo in sorted(set().union(*[set(p["geo"]) for p in parts]))], ignore_index=True)
+    else:
+        df = parts[0]
     if df["period"].str.contains("-").any():          # mensal ('2024-01')
         rates = _rates(cfg, panel=True)
         rg = dict(tuple(rates.groupby("geo"))) if rates is not None else {}

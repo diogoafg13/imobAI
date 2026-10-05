@@ -2019,7 +2019,10 @@ function renderSources() {
   const day = META.built_at.slice(0, 10);
   let head;
   if (cache.length) head = `⚠ O INE não respondeu neste build (${day}): ${cache.length} ${cache.length === 1 ? 'indicador usa' : 'indicadores usam'} os dados do último build que chegou ao INE${sum && sum.last_live ? ` (${sum.last_live})` : ''}. Nova tentativa automática mais tarde.`;
-  else if (bad.length) head = `Fontes atualizadas em ${day}; ${bad.length} ${bad.length === 1 ? 'indicador opcional' : 'indicadores opcionais'} com erro (fora do painel).`;
+  else if (bad.length) {
+    const old = bad.filter((r) => r[2].startsWith('CACHE')).length, err = bad.length - old;
+    head = `Fontes atualizadas em ${day}${old ? `; ${old} ${old === 1 ? 'série usa' : 'séries usam'} os dados do último build que a obteve` : ''}${err ? `; ${err} ${err === 1 ? 'indicador opcional' : 'indicadores opcionais'} com erro (fora do painel)` : ''}.`;
+  }
   else head = `✓ Todas as fontes atualizadas em ${day}.`;
   $('#sources').hidden = false;
   $('#sources').classList.toggle('warn', cache.length > 0);
