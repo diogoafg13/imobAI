@@ -508,6 +508,13 @@ imi:
   table_url: https://www.portaldasfinancas.gov.pt/pt/main.jsp
   table_params: {body: /imi/consultarTaxasIMI.jsp}
 
+# Alojamento local: Registo Nacional (RNAL), Turismo de Portugal, dados abertos (continente). Um registo por
+# estabelecimento, com coordenadas; ligado à freguesia pelas fronteiras (ver imopt/al.py). Descarregado no máximo
+# uma vez por semana.
+al:
+  urls:
+    - https://dadosabertos.turismodeportugal.pt/api/download/v1/items/4e62eb1977564991bd01e61d7aa8266f/csv?layers=6
+
 geo:
   # Fronteiras dos concelhos (E-REDES / OpenDataSoft, licença aberta).
   municipalities_geojson: https://e-redes.opendatasoft.com/api/explore/v2.1/catalog/datasets/municipalities-portugal/exports/geojson

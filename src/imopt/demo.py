@@ -177,6 +177,12 @@ def demo_frames(seed: int = 7):
             eu_c.append((g, q.label, 100 * 1.005 ** (i - 24)))
     macro_frames["eurostat_hpi_eu"] = pd.DataFrame(eu_h, columns=["geo", "period", "value"])
     macro_frames["eurostat_hicp_eu"] = pd.DataFrame(eu_c, columns=["geo", "period", "value"])
+    # mediana nacional de vendas (sintética: mediana dos concelhos), como o INE publica para Portugal; acrescentada
+    # no fim porque as séries derivadas acima esperam só concelhos
+    s0 = frames["sales_price_12m"]
+    nat = s0[s0["level"] == "municipality"].groupby(["period", "sort_key"], as_index=False)["value"].median()
+    frames["sales_price_12m"] = pd.concat([s0, pd.DataFrame([_row("PT", "Portugal", "PT", r.period, "quarter", r.sort_key, r.value, "national")
+                                                            for r in nat.itertuples()])], ignore_index=True)
     return frames, macro_frames
 
 

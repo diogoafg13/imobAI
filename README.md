@@ -392,6 +392,47 @@ Aparece na ficha do concelho e no "O meu imóvel", onde o IMI é VPT × taxa qua
 sem VPT, a taxa sobre o preço pago, assinalada como estimativa por excesso (o VPT costuma ficar abaixo do
 preço de mercado).
 
+### Ronda 6: validações e acrescentos
+
+**Validações (com os dados reais):**
+- **Projeção das medianas no "O meu imóvel"** (`app.js`, `at12`): quando o trimestre da compra ainda não tem as
+  janelas de 12 meses centradas publicadas, a mediana é projetada. Teste com o histórico (cada trimestre publicado,
+  visto de 1–2 trimestres antes): sem projeção ficava ~4% abaixo do valor real; com a tendência do próprio concelho
+  o viés desaparece mas o erro sobe nos concelhos pequenos; com a **tendência nacional** (mediana de Portugal,
+  `history.json` → `nat`) o erro é o menor em todos os casos (compra no último trimestre publicado: concelho 5,6%,
+  freguesia 4,6%, T2 3,0%; viés ≈ 0). É a usada.
+- **Taxa atual estimada** (`outlook.rate_scenarios`): somar à última taxa média dos novos créditos (BCE) a variação
+  da Euribor por inteiro (1:1) errou mais do que repetir a última publicada (desde 2022: 0,106 vs 0,095 p.p.). A
+  passagem medida nas variações dos últimos 36 meses (hoje ~0,23: muitos créditos novos são a taxa mista ou fixa)
+  errou menos (0,068 p.p.). Taxa = última publicada + passagem × variação da Euribor desde então.
+- **INE intermitente nos runners do GitHub**: as recusas acontecem a meio de um build, não em builds inteiros. Em
+  modo `auto` já não se desiste à primeira falha: só depois de 3 seguidas, e os que falharam têm uma segunda volta
+  no fim, depois de 60 s.
+- **Definições de rendimento** confirmadas: a mediana do IRS "por sujeito passivo" reparte por igual o rendimento das
+  declarações conjuntas (INE), por isso "casal = 2 rendimentos medianos" é coerente; o ganho médio mensal só inclui
+  pagamentos regulares (exclui subsídios de férias e de Natal), por isso os anos de salário usam 14 meses.
+- **Freguesias voláteis**: desvio-padrão das variações trimestrais da mediana (12 trimestres); "volátil" = entre as
+  25% de freguesias que mais oscilam. Assinaladas na tabela; no "O meu imóvel", com freguesia volátil o veredicto
+  usa a tipologia ou o concelho.
+
+**Acrescentos:**
+- **IMT e Imposto do Selo 2026** (continente; OE 2026, Lei 73-A/2025): habitação própria e permanente e 2.ª
+  habitação, IMT Jovem (até 35 anos: isento até 330 539 €, só sobre o excesso até 660 982 €; o mesmo para o Imposto
+  do Selo da compra), Imposto do Selo de 0,8% na compra e 0,6% no crédito. Na calculadora: impostos e dinheiro à
+  cabeça (entrada + impostos). Nas regiões autónomas os escalões do IMT são diferentes (dito no texto).
+- **Regras do Banco de Portugal** (contratos avaliados desde 1/08/2026): prestação com a taxa +1,5 p.p. até 45% do
+  rendimento líquido (≈ 36% do salário bruto, ≈ 40% do rendimento após IRS), financiamento até 90% (habitação
+  própria e permanente) ou 80%, prazo até 40 anos (até aos 35 anos de idade) ou 35. A calculadora conta os concelhos
+  acima do limite e avisa se a entrada ou o prazo escolhidos passam as regras; o "O meu imóvel" compara o crédito
+  indicado com a regra atual.
+- **Alojamento local por freguesia** (`imopt/al.py`): RNAL do Turismo de Portugal (dados abertos, continente),
+  registos ligados à freguesia pelas coordenadas e as fronteiras do painel (sem coordenadas, pelo nome dentro do
+  concelho); registos por 100 alojamentos do Censos 2021 na tabela de freguesias, no mapa e no "O meu imóvel".
+  Registado não quer dizer ativo. Descarregado no máximo uma vez por semana.
+- **Dedução do IMI familiar**: lida das páginas "+Info" da AT (uma por concelho, só quando muda o ano).
+- **RSS por concelho** (`imopt/feeds.py`, `data/rss/<DICO>.xml`): preços por trimestre, rendas por ano, mudanças
+  de faixa e taxa de IMI, com identificadores fixos; ligação no separador "A seguir". `#c-<DICO>` abre a ficha.
+
 ### Organização do site em separadores
 
 O site passou a ter seis separadores: **Mercado** (resumo, visão nacional, o que mudou, mapa, detalhe,

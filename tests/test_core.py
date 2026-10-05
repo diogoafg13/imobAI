@@ -175,14 +175,14 @@ def test_ingest_falls_back_to_cached_snapshot(tmp_path, monkeypatch):
         pipeline.ingest_ine(cfg, tmp_path, "20260930")
 
 
-def test_ine_auto_mode_stops_after_first_failure(tmp_path, monkeypatch):
+def test_ine_auto_mode_gives_up_after_3_failures_and_retries_at_the_end(tmp_path, monkeypatch):
     from imopt import pipeline
     clean = tmp_path / "clean"
     clean.mkdir()
-    for k in ("a", "b"):
+    keys = list("abcde")
+    for k in keys:
         pd.DataFrame({"dico": ["1"], "value": [1.0]}).to_parquet(clean / f"ine_{k}.parquet")
-    cfg = {"ine": {"base_url": "http://x", "indicators": {
-        "a": {"varcd": "1", "optional": True}, "b": {"varcd": "2", "optional": True}}}}
+    cfg = {"ine": {"base_url": "http://x", "indicators": {k: {"varcd": str(i), "optional": True} for i, k in enumerate(keys)}}}
     calls = []
 
     def boom(*args, **kw):
@@ -190,13 +190,31 @@ def test_ine_auto_mode_stops_after_first_failure(tmp_path, monkeypatch):
         raise RuntimeError("connect timeout")
     monkeypatch.setattr(pipeline.ine, "fetch", boom)
     monkeypatch.setenv("IMOPT_INE_MODE", "auto")
-    frames, status = pipeline.ingest_ine(cfg, tmp_path, "d")
-    assert len(calls) == 1 and calls[0]["retries"] == 1      # só tenta uma vez, rápido
-    assert status["a"].startswith("CACHE") and status["b"].startswith("CACHE")
+    frames, status = pipeline.ingest_ine(cfg, tmp_path, "d", pause=0)
+    # 3 falhas seguidas e desiste; na segunda volta, outra vez no máximo 3; 1 tentativa rápida de cada vez
+    assert len(calls) == 6 and all(c["retries"] == 1 for c in calls)
+    assert all(status[k].startswith("CACHE") for k in keys)
     calls.clear()
     monkeypatch.setenv("IMOPT_INE_MODE", "cache")
-    pipeline.ingest_ine(cfg, tmp_path, "d")
+    pipeline.ingest_ine(cfg, tmp_path, "d", pause=0)
     assert calls == []                                        # nunca toca na rede
+
+
+def test_ine_intermittent_failure_recovers_in_second_pass(tmp_path, monkeypatch):
+    from imopt import pipeline
+    payload = [{"Dados": {"2026T1": [{"geocod": "1701106", "geodsg": "Lisboa", "valor": "5000"}]}}]
+    seen = {}
+
+    def flaky(base, varcd, *a, **kw):
+        seen[varcd] = seen.get(varcd, 0) + 1
+        if varcd == "2" and seen[varcd] == 1:
+            raise RuntimeError("connect timeout")
+        return payload
+    monkeypatch.setattr(pipeline.ine, "fetch", flaky)
+    monkeypatch.setenv("IMOPT_INE_MODE", "auto")
+    cfg = {"ine": {"base_url": "x", "indicators": {"a": {"varcd": "1"}, "b": {"varcd": "2"}, "c": {"varcd": "3"}}}}
+    frames, status = pipeline.ingest_ine(cfg, tmp_path, "d", pause=0)
+    assert all(status[k].startswith("ok") for k in "abc") and seen == {"1": 1, "2": 2, "3": 1}
 
 
 def test_geocod_with_letters_in_nuts3_is_municipality():

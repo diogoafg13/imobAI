@@ -123,6 +123,7 @@ def test_history_export_for_property_analysis(tmp_path):
     assert h["parish"] and all(len(v) > 4 for v in h["parish"].values())
     assert set(h["val"]) >= {"apt", "house", "all"} and h["hicp"]
     # mediana de venda por tipologia e de casas existentes, por concelho (para o valor de casas grandes/pequenas)
+    assert h["nat"] and h["nat"][0][0] <= h["nat"][-1][0]
     assert set(h["typ"]) == {"t01", "t2", "t3", "t4"} and all(len(k) == 4 for k in h["typ"]["t4"]) and h["exist"]
     code, ser = next(iter(h["parish"].items()))
     assert len(code) == 6 and ser[0][0] <= ser[-1][0]

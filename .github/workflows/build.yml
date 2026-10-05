@@ -95,6 +95,8 @@ jobs:
         if: steps.gate.outputs.run == 'true'
         env:
           IMOPT_INE_MODE: auto   # o INE pode não aceitar ligações dos runners: usa data/clean
+          # endereço do site (ligações dos feeds RSS por concelho)
+          IMOPT_SITE_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
         run: python -m imopt build
       - name: Restaurar backtest.json em cache (se existir)
         if: steps.gate.outputs.run == 'true'

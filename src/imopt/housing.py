@@ -413,6 +413,12 @@ def history_export(sales: pd.DataFrame | None, val_apt: pd.DataFrame | None, val
             return None
         return {str(dico): [[str(a), round(float(b))] for a, b in zip(g["period"], g["value"])]
                 for dico, g in d.sort_values("sort_key").groupby("dico")}
+    # mediana nacional (12 meses): tendência usada para projetar as medianas locais ainda não publicadas — no teste
+    # com o histórico errou menos do que a tendência do próprio concelho (ver README, "O meu imóvel")
+    if sales is not None and not sales.empty and "level" in sales:
+        n = sales[sales["level"] == "national"].dropna(subset=["value"]).sort_values("sort_key")
+        if not n.empty:
+            out["nat"] = [[str(a), round(float(b))] for a, b in zip(n["period"], n["value"])]
     typ = {k: m for k, _ in TYPOLOGIES if (m := muni((sales_typ or {}).get(k))) is not None}
     if typ:
         out["typ"] = typ

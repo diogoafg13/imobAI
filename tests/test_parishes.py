@@ -86,3 +86,19 @@ def test_table_adds_irs_and_census_parishes_without_price():
     assert pd.isna(t.at["110602", "price"]) and t.at["110602", "irs_growth_1y"] == pytest.approx(0.1)
     assert t.at["110602", "vacant_share"] == pytest.approx(0.08) and t.at["110602", "name"] == "B"
     assert t.at["110602", "dico"] == "1106"
+
+
+def test_parish_volatility_flags_top_quarter():
+    import numpy as np
+    from imopt import parishes
+    rows = []
+    rng = np.random.default_rng(1)
+    for i in range(40):
+        code = f"1107{i:02d}"
+        v = 2000.0
+        for q in range(16):
+            v *= 1 + (0.01 if i < 30 else rng.normal(0, 0.12))
+            y, qq = 2022 + q // 4, q % 4 + 1
+            rows.append(dict(geocod=f"170{code}", level="parish", period=f"{y}Q{qq}", sort_key=y * 100 + qq, value=v, geoname=f"F{i}"))
+    t = parishes._price_table(pd.DataFrame(rows), None, {"1107": 2000.0})
+    assert t["volatile"].sum() == 10 and t.loc[t["volatile"] == True].index.str[-2:].astype(int).min() >= 30  # noqa: E712

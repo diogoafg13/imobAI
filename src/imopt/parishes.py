@@ -56,9 +56,9 @@ def rent_table(rent: pd.DataFrame | None, contracts: pd.DataFrame | None = None)
 
 def table(sales: pd.DataFrame | None, rent: pd.DataFrame | None, muni_price: dict[str, float],
           irs: pd.DataFrame | None = None, census: dict[str, pd.DataFrame | None] | None = None,
-          contracts: pd.DataFrame | None = None) -> pd.DataFrame:
+          contracts: pd.DataFrame | None = None, vol_threshold: float | None = None) -> pd.DataFrame:
     """Uma linha por freguesia com preço (INE publica ~400), renda, rendimento do IRS ou Censos (quase todas)."""
-    out = _price_table(sales, None, muni_price)
+    out = _price_table(sales, None, muni_price, vol_threshold)
     period = out.attrs.get("period")
     rt = rent_table(rent, contracts)
     if rt is not None:
@@ -99,7 +99,7 @@ def table(sales: pd.DataFrame | None, rent: pd.DataFrame | None, muni_price: dic
     return out.rename_axis("code").reset_index()
 
 
-def _price_table(sales, rent, muni_price) -> pd.DataFrame:
+def _price_table(sales, rent, muni_price, vol_threshold: float | None = None) -> pd.DataFrame:
     s = _parish_rows(sales)
     if s is None:
         return pd.DataFrame()
@@ -112,6 +112,16 @@ def _price_table(sales, rent, muni_price) -> pd.DataFrame:
     out["name"] = names.reindex(out.index)
     out["dico"] = out.index.str[:4]
     out["rel_muni"] = out["price"] / out["dico"].map(muni_price) - 1
+    # volatilidade: desvio-padrão das variações trimestrais (log) nos últimos 12 trimestres, como nos concelhos;
+    # "volátil" = entre as 25% de freguesias cuja mediana mais oscila (poucas vendas: a mediana salta muito)
+    pp = p.where(p > 0)
+    lg = np.log(pp[list(pp.columns)[-13:]]).diff(axis=1).iloc[:, 1:]
+    vol = lg.std(axis=1, ddof=1).where(lg.notna().sum(axis=1) >= 6)
+    out["volatility"] = vol.reindex(out.index)
+    if vol_threshold is None and out["volatility"].notna().sum() >= 20:
+        vol_threshold = float(out["volatility"].quantile(0.75))
+    if vol_threshold is not None:
+        out["volatile"] = (out["volatility"] >= vol_threshold).where(out["volatility"].notna())
     rt = rent_table(rent)
     if rt is not None:
         out = out.join(rt, how="left")

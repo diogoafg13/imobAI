@@ -107,3 +107,14 @@ def test_build_outputs_has_type_forecasts_and_context(tmp_path):
     assert "house_fc_growth_12m" not in munis["0003"]          # sem dados de moradias neste concelho sintético
     assert munis["0004"]["foreign_premium"] == pytest.approx(1.4 / 0.97 - 1, abs=1e-3) and munis["0003"]["foreign_premium"] is None
     assert {"foreign", "volume"} <= set(ol["demand"])
+
+
+def test_rate_now_uses_measured_partial_passthrough():
+    months = [f"{y}-{m:02d}" for y in range(2022, 2027) for m in range(1, 13)][:-3]   # até 2026-09
+    rng = np.random.default_rng(0)
+    e = np.cumsum(rng.normal(0, 0.1, len(months))) + 2.0
+    mort = 3.0 + 0.4 * (e - e[0])                       # a taxa dos créditos passa 40% da Euribor
+    eur = pd.DataFrame({"period": months, "value": e})
+    r = outlook.rate_scenarios(eur, None, mortgage=pd.DataFrame({"period": months[:-1], "value": mort[:-1]}))
+    assert r["passthrough"] == pytest.approx(0.4, abs=1e-6) and r["mortgage_month"] == months[-2]
+    assert r["rate_now"] == pytest.approx(mort[-2] + 0.4 * (e[-1] - e[-2]))

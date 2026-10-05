@@ -502,15 +502,32 @@ def rate_scenarios(euribor: pd.DataFrame | None, hpi: pd.DataFrame | None, shock
     e_now, e_month = float(e.iloc[-1]), fc.m_label(int(e.index[-1]))
     source = "assumed"
     m = fc.euribor_series(mortgage)
+    passthrough = None
     if m is not None and len(m) and int(m.index[-1]) in e.index:
-        obs = float(m.iloc[-1]) - float(e[int(m.index[-1])])
+        mk = int(m.index[-1])
+        obs = float(m.iloc[-1]) - float(e[mk])
         if 0 <= obs <= 4:          # sanidade: se a série não for o que se espera, mantém o pressuposto
-            spread, source = obs, f"BCE ({fc.m_label(int(m.index[-1]))})"
-    r0 = (e_now + spread) / 100
+            spread, source = obs, f"BCE ({fc.m_label(mk)})"
+            # Quanto da variação mensal da Euribor 12M passa para a taxa média dos créditos novos (regressão das
+            # variações dos últimos 36 meses). Testado com o histórico: prever a taxa do mês seguinte assim errou
+            # menos do que repetir a última publicada e do que somar a variação da Euribor por inteiro (1:1), que
+            # erra mais com a maioria dos créditos novos a taxa mista ou fixa (README, "Comprar casa").
+            both = pd.DataFrame({"m": m, "e": e}).dropna().sort_index()
+            d = both.diff()[both.index.to_series().diff() == 1].dropna().tail(36)
+            if len(d) >= 24 and d["e"].var() > 0:
+                passthrough = float(np.clip(np.polyfit(d["e"], d["m"], 1)[0], 0.0, 1.5))
+    if passthrough is not None:
+        r0 = (float(m.iloc[-1]) + passthrough * (e_now - float(e[mk]))) / 100
+    else:
+        r0 = (e_now + spread) / 100
     out = {"euribor_now": e_now, "euribor_month": e_month, "spread": spread, "spread_source": source,
            "years": years, "rate_now": r0 * 100, "shocks": []}
     if source != "assumed":
         out["mortgage_rate_now"] = float(m.iloc[-1])
+        out["mortgage_month"] = fc.m_label(mk)
+        out["euribor_at_mortgage"] = float(e[mk])
+    if passthrough is not None:
+        out["passthrough"] = passthrough
     beta = ci = None
     if hpi is not None and len(hpi) >= 32:
         h = hpi.dropna(subset=["value"]).assign(qi=lambda d: [int(str(p)[:4]) * 4 + int(str(p)[-1]) - 1 for p in d["period"]])

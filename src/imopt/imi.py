@@ -26,7 +26,7 @@ from . import geo
 
 log = logging.getLogger("imopt")
 UA = {"User-Agent": "imobiliario-pt/0.1 (dados abertos)"}
-PARSER_V = 2          # sobe quando a leitura muda: a tabela guardada com uma versão anterior é refeita
+PARSER_V = 3          # sobe quando a leitura muda: a tabela guardada com uma versão anterior é refeita
 
 
 def _strip(cell: str) -> str:
@@ -141,7 +141,7 @@ def ingest(cfg: dict | None, data_dir: Path, today: str, names: dict[str, str] |
         for year in years[:2]:
             if cached is not None and len(cached) >= 250 and int(cached["year"].max()) >= year:
                 return cached, f"ok (cache: taxas de {int(cached['year'].max())}; {years[0]} ainda incompleto)"
-            rows = []
+            rows, links = [], {}
             for i, d in enumerate(dists):
                 if i:
                     time.sleep(pause)
@@ -149,6 +149,7 @@ def ingest(cfg: dict | None, data_dir: Path, today: str, names: dict[str, str] |
                 (raw / str(year)).mkdir(parents=True, exist_ok=True)
                 (raw / str(year) / f"{re.sub(r'[^0-9A-Za-z]', '_', d)}.html").write_text(page, encoding="utf-8")
                 rows += [{**r, "district": d} for r in parse_district(page)]
+                links.update(deduction_links(page))
             if len(rows) >= 250:
                 break
         if len(rows) < 250:
@@ -160,6 +161,11 @@ def ingest(cfg: dict | None, data_dir: Path, today: str, names: dict[str, str] |
         if n_ok < 250:
             raise ValueError(f"só {n_ok} concelhos reconhecidos em {len(df)} linhas (ver data/raw/imi)")
         df = df.dropna(subset=["dico"]).drop_duplicates("dico").assign(parser_v=PARSER_V)
+        if links and cfg.get("deductions", True):
+            try:
+                df = ingest_deductions(df, links, cfg["table_url"], data_dir, year, pause=pause / 2)
+            except Exception as e:  # noqa: BLE001
+                log.warning("dedução do IMI familiar indisponível: %s", e)
         cached_path.parent.mkdir(parents=True, exist_ok=True)
         df.to_parquet(cached_path, index=False)
         return df, f"ok ({len(df)} concelhos, taxas de {year})"
@@ -194,6 +200,69 @@ def match_dico(df: pd.DataFrame, names: dict[str, str]) -> list[str | None]:
         else:
             out.append(by_region[reg].get(_norm(name)))
     return out
+
+
+def deduction_links(page: str) -> dict[str, str]:
+    """{código AT: ligação relativa da página da dedução do IMI familiar} de uma página de distrito."""
+    out = {}
+    for href in re.findall(r"href=[\"']([^\"']*consultaDeducao[^\"']*)", page, flags=re.I):
+        h = html.unescape(href)
+        m = re.search(r"codigoMunicipio=(\d{4})", h)
+        if m:
+            out[m.group(1)] = h
+    return out
+
+
+def parse_deduction(page: str) -> dict[str, float | None] | None:
+    """Dedução fixa do IMI familiar por n.º de dependentes ({'ded_1', 'ded_2', 'ded_3'}); zeros se o município
+    não a aplica. Procura linhas com 1, 2 e 3 dependentes e um valor em euros."""
+    rows = table_rows(page)
+    out: dict[str, float | None] = {}
+    for r in rows:
+        txt = " ".join(r).lower()
+        if "depend" not in txt:
+            continue
+        money = [parse_money(c) for c in r if re.search(r"\d", c) and ("€" in c or "," in c or "." in c)]
+        money = [v for v in money if v is not None and v < 10000]
+        k = re.search(r"(\d)\s*(ou mais\s*)?dependente", txt)
+        if k and money:
+            out[f"ded_{min(int(k.group(1)), 3)}"] = money[-1]
+    if not out and re.search(r"n[ãa]o\s+(aplica|delibero|fixou)|sem dedu", html.unescape(page).lower()):
+        return {"ded_1": 0.0, "ded_2": 0.0, "ded_3": 0.0}
+    return out or None
+
+
+def ingest_deductions(df: pd.DataFrame, links: dict[str, str], base_url: str, data_dir: Path, year: int,
+                      pause: float = 0.5) -> pd.DataFrame:
+    """Junta à tabela das taxas a dedução do IMI familiar (uma página por concelho; só quando o ano muda)."""
+    path = data_dir / "clean" / "imi_deductions.parquet"
+    cached = pd.read_parquet(path) if path.exists() else None
+    if cached is not None and len(cached) and int(cached["year"].max()) == year and int(cached["parser_v"].max()) >= PARSER_V:
+        drop = [c for c in ("ded_1", "ded_2", "ded_3") if c in df]
+        return df.drop(columns=drop).merge(cached.drop(columns=["year", "parser_v"]), on="code", how="left")
+    from urllib.parse import urljoin
+    raw = data_dir / "raw" / "imi" / str(year) / "deducao"
+    raw.mkdir(parents=True, exist_ok=True)
+    rows = []
+    for i, (code, href) in enumerate(sorted(links.items())):
+        if i:
+            time.sleep(pause)
+        try:
+            page = _get(urljoin(base_url, href), {})
+        except Exception as e:  # noqa: BLE001
+            log.warning("dedução do IMI familiar (%s): %s", code, e)
+            continue
+        (raw / f"{code}.html").write_text(page, encoding="utf-8")
+        d = parse_deduction(page)
+        if d:
+            rows.append({"code": code, **d})
+    if not rows:
+        return df
+    ded = pd.DataFrame(rows).assign(year=year, parser_v=PARSER_V)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    ded.to_parquet(path, index=False)
+    drop = [c for c in ("ded_1", "ded_2", "ded_3") if c in df]
+    return df.drop(columns=drop).merge(ded.drop(columns=["year", "parser_v"]), on="code", how="left")
 
 
 def per_municipality(df: pd.DataFrame | None) -> dict[str, dict]:

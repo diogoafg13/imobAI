@@ -100,3 +100,14 @@ def test_match_dico_mainland_by_code_islands_by_name_within_region():
                        "name": ["LAGOA", "LAGOA (AÇORES)", "CALHETA (MADEIRA)", "CALHETA (AÇORES)", "S. VICENTE",
                                 "VILA PRAIA DA VITORIA", "LISBOA", "CORVO"]})
     assert imi.match_dico(df, names) == ["0806", "4201", "3101", "4501", "3110", "4302", "1106", None]
+
+
+def test_deduction_links_and_parse():
+    page = '<td><a href="external/matrizes/imi/consultaDeducao.action?anoConsulta=2025&amp;codigoMunicipio=1107">+Info</a></td>'
+    assert imi.deduction_links(page) == {"1107": "external/matrizes/imi/consultaDeducao.action?anoConsulta=2025&codigoMunicipio=1107"}
+    ded = """<table><tr><th>N.º de dependentes</th><th>Dedução fixa</th></tr>
+    <tr><td>1 dependente</td><td>30,00 €</td></tr><tr><td>2 dependentes</td><td>70,00 €</td></tr>
+    <tr><td>3 ou mais dependentes</td><td>140,00 €</td></tr></table>"""
+    assert imi.parse_deduction(ded) == {"ded_1": 30.0, "ded_2": 70.0, "ded_3": 140.0}
+    assert imi.parse_deduction("<p>O município não aplica a dedução</p>") == {"ded_1": 0.0, "ded_2": 0.0, "ded_3": 0.0}
+    assert imi.parse_deduction("<p>nada</p>") is None

@@ -95,6 +95,8 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       <label>Taxa (%) <input name="rate" type="number" min="0" max="15" step="any" inputmode="decimal"></label>
       <label>Teste de juros (+p.p.) <input name="shock" type="number" min="0" max="5" step="any" inputmode="decimal"></label>
       <label>Salários <select name="earners"><option value="1">1</option><option value="2">2</option></select></label>
+      <label>Para <select name="use"><option value="hpp">Habitação própria</option><option value="sec">2.ª habitação / arrendar</option></select></label>
+      <label class="check"><input type="checkbox" name="young"> Até 35 anos (IMT Jovem)</label>
       <button type="button" id="aff-reset" class="btn">Repor</button>
     </form>
     <p id="aff-rate-note" class="muted"></p>
@@ -173,6 +175,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <option value="f_ef">Esforço de compra</option>
         <option value="f_vac">Casas vagas (Censos 2021)</option>
         <option value="f_sec">Segunda habitação (Censos 2021)</option>
+        <option value="f_al">Alojamento local por 100 casas</option>
       </select>
     </div>
     <div id="map"></div>

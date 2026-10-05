@@ -4,6 +4,7 @@ from __future__ import annotations
 import datetime as dt
 import logging
 import os
+import time
 from pathlib import Path
 from typing import Any
 
@@ -11,7 +12,7 @@ import duckdb
 import pandas as pd
 import yaml
 
-from . import changes, geo, housing, imi, ine, macro, outlook, parishes, scoring, tracking
+from . import al, changes, geo, housing, imi, ine, macro, outlook, parishes, scoring, tracking
 
 log = logging.getLogger("imopt")
 ROOT = Path(__file__).resolve().parents[2]
@@ -28,56 +29,80 @@ def _write_parquet(df: pd.DataFrame, path: Path) -> None:
 
 
 # ---------------------------------------------------------------- ingestão
-def ingest_ine(cfg: dict, data_dir: Path, today: str) -> tuple[dict[str, pd.DataFrame], dict[str, str]]:
+def ingest_ine(cfg: dict, data_dir: Path, today: str, pause: float = 60.0) -> tuple[dict[str, pd.DataFrame], dict[str, str]]:
     frames: dict[str, pd.DataFrame] = {}
     status: dict[str, str] = {}
     base, lang = cfg["ine"]["base_url"], cfg["ine"].get("lang", "PT")
-    # IMOPT_INE_MODE: live (defeito: 5 tentativas), auto (1 tentativa rápida; se o INE não
-    # responder, usa data/clean e não insiste nos restantes), cache (nunca usa a rede).
+    # IMOPT_INE_MODE: live (defeito: 5 tentativas por indicador), cache (nunca usa a rede) ou auto (o do
+    # workflow): 1 tentativa rápida por indicador. O INE recusa os runners do GitHub de forma intermitente (a meio
+    # de um build, não sempre): em auto só se desiste depois de 3 falhas seguidas, e os que falharam têm uma
+    # segunda volta no fim, depois de uma pausa. O que continuar a falhar usa o último snapshot (data/clean).
     mode = os.environ.get("IMOPT_INE_MODE", "live").lower()
-    ine_down = mode == "cache"
+    fetch_kw = {"retries": 1, "timeout": (10, 180)} if mode == "auto" else {}
     fetched: dict[tuple, pd.DataFrame] = {}   # o mesmo indicador com outras categorias: um só pedido
-    for key, spec in cfg["ine"]["indicators"].items():
-        varcd = spec.get("varcd")
-        if not varcd:
-            status[key] = "sem código (config)"
-            continue
-        try:
-            if ine_down:
-                raise ConnectionError("INE não contactado (modo cache ou já indisponível nesta execução)")
-            fetch_kw = {"retries": 1, "timeout": (10, 180)} if mode == "auto" else {}
-            ckey = (varcd, tuple(sorted((k, v) for k, v in (spec.get("dims") or {}).items() if k.startswith("api_"))))
-            if ckey not in fetched:
-                try:
-                    payload = ine.fetch(base, varcd, lang, spec.get("dims"), **fetch_kw)
-                except RuntimeError:
-                    if mode == "auto":
-                        ine_down = True
-                    raise
-                raw = ine.parse_response(payload, varcd)
-                if raw.empty:
-                    raise ValueError("resposta vazia")
-                _write_parquet(raw, data_dir / "raw" / "ine" / varcd / f"{today}.parquet")
-                fetched[ckey] = raw
-            raw = fetched[ckey]
-            filt = {k: v for k, v in (spec.get("dims") or {}).items() if not k.startswith("api_")}
-            df = ine.apply_dim_filters(raw, filt, varcd)
-            _write_parquet(df, data_dir / "clean" / f"ine_{key}.parquet")
-            frames[key] = df
-            chosen = ine.dim_labels(raw, filt)
-            status[key] = f"ok ({len(df)} linhas, {df['period'].max()})" + (f" [{chosen}]" if chosen else "")
-            log.info("%s: %s", key, status[key])
-        except Exception as e:  # noqa: BLE001
-            cached = data_dir / "clean" / f"ine_{key}.parquet"
-            if cached.exists() and not isinstance(e, ine.AmbiguousDimensionError):
-                frames[key] = pd.read_parquet(cached)
-                status[key] = f"CACHE (INE indisponível, dados do último snapshot): {str(e)[:120]}"
-                log.warning("indicador %s (%s): INE falhou, a usar snapshot anterior: %s", key, varcd, e)
+    errors: dict[str, Exception] = {}
+
+    def one(key: str, spec: dict) -> None:
+        varcd = spec["varcd"]
+        ckey = (varcd, tuple(sorted((k, v) for k, v in (spec.get("dims") or {}).items() if k.startswith("api_"))))
+        if ckey not in fetched:
+            payload = ine.fetch(base, varcd, lang, spec.get("dims"), **fetch_kw)
+            raw = ine.parse_response(payload, varcd)
+            if raw.empty:
+                raise ValueError("resposta vazia")
+            _write_parquet(raw, data_dir / "raw" / "ine" / varcd / f"{today}.parquet")
+            fetched[ckey] = raw
+        raw = fetched[ckey]
+        filt = {k: v for k, v in (spec.get("dims") or {}).items() if not k.startswith("api_")}
+        df = ine.apply_dim_filters(raw, filt, varcd)
+        _write_parquet(df, data_dir / "clean" / f"ine_{key}.parquet")
+        frames[key] = df
+        chosen = ine.dim_labels(raw, filt)
+        status[key] = f"ok ({len(df)} linhas, {df['period'].max()})" + (f" [{chosen}]" if chosen else "")
+        log.info("%s: %s", key, status[key])
+
+    def run_pass(keys: list[str]) -> None:
+        streak = 0
+        for key in keys:
+            spec = cfg["ine"]["indicators"][key]
+            if mode == "cache" or (mode == "auto" and streak >= 3):
+                errors[key] = ConnectionError("INE não contactado (modo cache ou indisponível nesta execução)")
                 continue
-            status[key] = f"ERRO: {e}"
-            log.warning("indicador %s (%s) falhou: %s", key, varcd, e)
-            if not spec.get("optional") and key == "sales_price_12m":
-                raise
+            try:
+                one(key, spec)
+                errors.pop(key, None)
+                streak = 0
+            except ine.AmbiguousDimensionError as e:
+                errors[key] = e
+            except Exception as e:  # noqa: BLE001
+                errors[key] = e
+                if isinstance(e, RuntimeError):      # falha de rede (ine.fetch esgotou as tentativas)
+                    streak += 1
+
+    keys = []
+    for key, spec in cfg["ine"]["indicators"].items():
+        if spec.get("varcd"):
+            keys.append(key)
+        else:
+            status[key] = "sem código (config)"
+    run_pass(keys)
+    retry = [k for k, e in errors.items() if not isinstance(e, ine.AmbiguousDimensionError)]
+    if mode == "auto" and retry:
+        log.warning("INE: %d indicadores falharam; segunda volta daqui a %.0fs", len(retry), pause)
+        time.sleep(pause)
+        run_pass(retry)
+    for key, e in errors.items():
+        spec, varcd = cfg["ine"]["indicators"][key], cfg["ine"]["indicators"][key]["varcd"]
+        cached = data_dir / "clean" / f"ine_{key}.parquet"
+        if cached.exists() and not isinstance(e, ine.AmbiguousDimensionError):
+            frames[key] = pd.read_parquet(cached)
+            status[key] = f"CACHE (INE indisponível, dados do último snapshot): {str(e)[:120]}"
+            log.warning("indicador %s (%s): INE falhou, a usar snapshot anterior: %s", key, varcd, e)
+            continue
+        status[key] = f"ERRO: {e}"
+        log.warning("indicador %s (%s) falhou: %s", key, varcd, e)
+        if not spec.get("optional") and key == "sales_price_12m":
+            raise e
     return frames, status
 
 
@@ -164,7 +189,8 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
                   geojson: dict | None, demo: bool = False, geo_unmatched: list[str] | None = None,
                   forecast_log: Path | None = None, parish_geojson: dict | None = None,
                   ine_summary: dict | None = None, imi_rates: pd.DataFrame | None = None,
-                  imi_status: str | None = None) -> dict:
+                  imi_status: str | None = None, al_points: pd.DataFrame | None = None,
+                  al_status: str | None = None) -> dict:
     sales = municipal(frames.get("sales_price_12m"))
     if sales is None or sales.empty:
         raise RuntimeError("sem dados de preços por concelho: nada para calcular")
@@ -276,7 +302,8 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
         "demo": demo,
         "latest_price_period": latest_period,
         "n_municipalities": len(munis),
-        "sources": {"ine": ine_status, "macro": macro_status, **({"at": {"imi_rates": imi_status}} if imi_status else {})},
+        "sources": {"ine": ine_status, "macro": macro_status, **({"at": {"imi_rates": imi_status}} if imi_status else {}),
+                    **({"turismo": {"al_rnal": al_status}} if al_status else {})},
         "ine_summary": ine_summary,
         "geo_unmatched": (geo_unmatched or [])[:20],
         "geo_unmatched_count": len(geo_unmatched or []),
@@ -286,6 +313,12 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
     out_dir.mkdir(parents=True, exist_ok=True)
     # Séries e previsões por concelho num ficheiro à parte (carregado pelo site só quando é preciso): o
     # municipalities.json fica com os números do ranking, do mapa e do detalhe, e abre mais depressa.
+    try:      # feeds RSS por concelho (precisam das séries, que a seguir saem do municipalities.json)
+        from . import feeds
+        feeds.write(munis, out_dir, os.environ.get("IMOPT_SITE_URL", "https://diogoafg13.github.io/imobAI/"),
+                    str(sales.sort_values("sort_key")["period"].iloc[-1]))
+    except Exception as e:  # noqa: BLE001
+        log.warning("feeds RSS falharam: %s", e)
     heavy = {}
     for item in munis:
         rent_s = item.get("series", {}).get("rent") or []
@@ -311,6 +344,18 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
                               dict(zip(feats["dico"].astype(str), feats["price"])), frames.get("irs_median"),
                               {k: frames.get(f"census_{k}") for k in ("total", "secondary", "vacant_market", "vacant_other")},
                               frames.get("rent_contracts"))
+        try:      # alojamento local (RNAL) por freguesia: pelas coordenadas, ou pelo nome dentro do concelho
+            if al_points is not None and not ptab.empty:
+                mnames = dict(zip(feats["dico"].astype(str), feats["name"]))
+                pn = {c: (n, mnames.get(str(c)[:4], "")) for c, n in zip(ptab["code"], ptab["name"]) if isinstance(n, str)}
+                agg = al.by_parish(al_points, parish_geojson, pn)
+                ct = ptab.set_index("code")["census_total"] if "census_total" in ptab else None
+                f = al.per_parish_fields(agg, ct)
+                if f is not None:
+                    ptab = ptab.merge(f, left_on="code", right_index=True, how="left")
+                    log.info("alojamento local: %.0f%% dos registos ligados a uma freguesia", 100 * agg.attrs.get("matched", 0))
+        except Exception as e:  # noqa: BLE001
+            log.warning("alojamento local por freguesia falhou: %s", e)
         ptab = parishes.add_neighbours(ptab, parish_geojson)
         rows = [{k: _clean(v) for k, v in r.items()} for r in ptab.to_dict("records")]
         geo.dump({"period": ptab.attrs.get("period"), "with_map": False, "rows": rows}, str(out_dir / "freguesias.json"))
@@ -344,11 +389,13 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
     except Exception:  # noqa: BLE001
         names = {}
     imi_rates, imi_status = imi.ingest(cfg.get("imi"), data_dir, today, names)
+    al_points, al_status = al.ingest(cfg.get("al"), data_dir, today)
     try:   # estado de todas as fontes no branch `data` (os logs do GitHub nem sempre estão à mão)
         import json as _json
         (data_dir / "clean").mkdir(parents=True, exist_ok=True)
         (data_dir / "clean" / "sources_status.json").write_text(_json.dumps(
-            {"date": today, "ine": ine_status, "macro": macro_status, "at": {"imi_rates": imi_status}},
+            {"date": today, "ine": ine_status, "macro": macro_status, "at": {"imi_rates": imi_status},
+             "turismo": {"al_rnal": al_status}},
             ensure_ascii=False, indent=1), encoding="utf-8")
     except Exception as e:  # noqa: BLE001
         log.warning("estado das fontes não gravado: %s", e)
@@ -382,7 +429,8 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
     parish_gj = None if skip_geo else load_parish_geojson(cfg, data_dir, ine_status)
     return build_outputs(frames, macro_frames, ine_status, macro_status, out_dir, geojson, geo_unmatched=unmatched,
                          forecast_log=data_dir / "clean" / "forecast_log.parquet", parish_geojson=parish_gj,
-                         ine_summary=ine_summary, imi_rates=imi_rates, imi_status=imi_status)
+                         ine_summary=ine_summary, imi_rates=imi_rates, imi_status=imi_status,
+                         al_points=al_points, al_status=al_status)
 
 
 def ine_live(status: dict) -> dict:
