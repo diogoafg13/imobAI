@@ -11,7 +11,7 @@ import duckdb
 import pandas as pd
 import yaml
 
-from . import changes, geo, housing, ine, macro, outlook, parishes, scoring, tracking
+from . import changes, geo, housing, imi, ine, macro, outlook, parishes, scoring, tracking
 
 log = logging.getLogger("imopt")
 ROOT = Path(__file__).resolve().parents[2]
@@ -158,7 +158,8 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
                   ine_status: dict, macro_status: dict, out_dir: Path,
                   geojson: dict | None, demo: bool = False, geo_unmatched: list[str] | None = None,
                   forecast_log: Path | None = None, parish_geojson: dict | None = None,
-                  ine_summary: dict | None = None) -> dict:
+                  ine_summary: dict | None = None, imi_rates: pd.DataFrame | None = None,
+                  imi_status: str | None = None) -> dict:
     sales = municipal(frames.get("sales_price_12m"))
     if sales is None or sales.empty:
         raise RuntimeError("sem dados de preços por concelho: nada para calcular")
@@ -252,11 +253,13 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
         except Exception as e:  # noqa: BLE001
             log.warning("arquivo de previsões falhou: %s", e)
             outlook_data.setdefault("errors", {})["tracking"] = str(e)[:200]
+    imi_per = imi.per_municipality(imi_rates)
     munis = []
     for r in feats.to_dict("records"):
         item = {"dico": r["dico"], "name": r["name"]}
         item.update({c: _clean(r.get(c)) for c in cols if c in r})
         item.update(per.get(str(r["dico"]), {}))
+        item.update(imi_per.get(str(r["dico"]), {}))
         item["series"] = {"price": price_series.get(r["dico"], []), "rent": rent_series.get(r["dico"], [])}
         if h_last:
             item["series"]["price_real"] = real_series(item["series"]["price"])
@@ -268,7 +271,7 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
         "demo": demo,
         "latest_price_period": latest_period,
         "n_municipalities": len(munis),
-        "sources": {"ine": ine_status, "macro": macro_status},
+        "sources": {"ine": ine_status, "macro": macro_status, **({"at": {"imi_rates": imi_status}} if imi_status else {})},
         "ine_summary": ine_summary,
         "geo_unmatched": (geo_unmatched or [])[:20],
         "geo_unmatched_count": len(geo_unmatched or []),
@@ -330,6 +333,12 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
     today = dt.date.today().strftime("%Y%m%d")
     frames, ine_status = ingest_ine(cfg, data_dir, today)
     macro_frames, macro_status = ingest_macro(cfg, data_dir)
+    try:
+        s12 = municipal(frames.get("sales_price_12m"))
+        names = dict(s12.drop_duplicates("dico")[["dico", "geoname"]].itertuples(index=False)) if s12 is not None else {}
+    except Exception:  # noqa: BLE001
+        names = {}
+    imi_rates, imi_status = imi.ingest(cfg.get("imi"), data_dir, today, names)
     ine_summary = write_ine_status(ine_status, data_dir)
 
     geojson, unmatched = None, []
@@ -360,7 +369,7 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
     parish_gj = None if skip_geo else load_parish_geojson(cfg, data_dir, ine_status)
     return build_outputs(frames, macro_frames, ine_status, macro_status, out_dir, geojson, geo_unmatched=unmatched,
                          forecast_log=data_dir / "clean" / "forecast_log.parquet", parish_geojson=parish_gj,
-                         ine_summary=ine_summary)
+                         ine_summary=ine_summary, imi_rates=imi_rates, imi_status=imi_status)
 
 
 def ine_live(status: dict) -> dict:

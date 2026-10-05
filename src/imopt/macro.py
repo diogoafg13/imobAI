@@ -6,12 +6,14 @@ pipeline decide se a falha é fatal (nunca é, para macro: degrada com aviso).
 from __future__ import annotations
 
 import io
+import logging
 from typing import Any
 
 import pandas as pd
 import requests
 
 UA = {"User-Agent": "imobiliario-pt/0.1 (dados abertos)"}
+log = logging.getLogger("imopt")
 
 
 def _get(url: str, params: dict[str, Any], accept: str | None = None) -> requests.Response:
@@ -63,10 +65,44 @@ def monthly_to_quarterly(df: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame({"period": g.index, "value": g["mean"].values}).reset_index(drop=True)
 
 
+def extend_with_annual_rates(idx: pd.DataFrame, rates: pd.DataFrame | None) -> pd.DataFrame:
+    """Índice mensal ('2025-12') prolongado com as taxas de variação homóloga (%) publicadas depois do seu fim:
+    I(t) = I(t-12) × (1 + taxa(t)/100). O Eurostat deixou de publicar o IHPC com base 2015 = 100 no fim de 2025
+    (mudou de base); a taxa homóloga não depende da base, por isso prolonga a série sem a quebrar. As taxas vêm
+    com uma casa decimal: o erro acumulado é de poucas centésimas de ponto por ano."""
+    if rates is None or rates.empty or idx.empty:
+        return idx
+    s = dict(zip(pd.PeriodIndex(idx["period"], freq="M"), idx["value"].astype(float)))
+    r = dict(zip(pd.PeriodIndex(rates["period"], freq="M"), rates["value"].astype(float)))
+    last = max(s)
+    for p in sorted(k for k in r if k > last):
+        if p - 12 not in s:
+            break
+        s[p] = s[p - 12] * (1 + r[p] / 100)
+    out = pd.DataFrame({"period": [str(p) for p in sorted(s)], "value": [s[p] for p in sorted(s)]})
+    if len(out) > len(idx):
+        log.info("IHPC prolongado com a taxa homóloga: %s -> %s", idx["period"].max(), out["period"].iloc[-1])
+    return out
+
+
+def _rates(cfg: dict, panel: bool = False) -> pd.DataFrame | None:
+    """Taxas de variação homóloga do IHPC (prc_hicp_manr), se configuradas; falha sem parar o resto."""
+    rc = cfg.get("rates")
+    if not rc:
+        return None
+    try:
+        js = _get(rc["url"], rc.get("params", {})).json()
+        return parse_jsonstat_panel(js) if panel else parse_jsonstat_time_series(js)
+    except Exception as e:  # noqa: BLE001
+        log.warning("taxa homóloga do IHPC indisponível (a série fica até à última base publicada): %s", e)
+        return None
+
+
 def fetch_eurostat_hicp(cfg: dict) -> pd.DataFrame:
-    """IHPC de Portugal (2015=100), mensal no Eurostat, devolvido em médias trimestrais."""
+    """IHPC de Portugal (2015=100), mensal no Eurostat, prolongado com a taxa homóloga depois do fim da base 2015,
+    devolvido em médias trimestrais."""
     r = _get(cfg["url"], cfg.get("params", {}))
-    return monthly_to_quarterly(parse_jsonstat_time_series(r.json()))
+    return monthly_to_quarterly(extend_with_annual_rates(parse_jsonstat_time_series(r.json()), _rates(cfg)))
 
 
 def fetch_bis_credit_gap(cfg: dict) -> pd.DataFrame:
@@ -108,7 +144,10 @@ def fetch_eurostat_panel(cfg: dict) -> pd.DataFrame:
     r = _get(cfg["url"], cfg.get("params", {}))
     df = parse_jsonstat_panel(r.json())
     if df["period"].str.contains("-").any():          # mensal ('2024-01')
-        df = pd.concat([monthly_to_quarterly(g[["period", "value"]]).assign(geo=geo)
+        rates = _rates(cfg, panel=True)
+        rg = dict(tuple(rates.groupby("geo"))) if rates is not None else {}
+        df = pd.concat([monthly_to_quarterly(extend_with_annual_rates(g[["period", "value"]],
+                                                                       rg[geo][["period", "value"]] if geo in rg else None)).assign(geo=geo)
                         for geo, g in df.groupby("geo")], ignore_index=True)
     return df.sort_values(["geo", "period"]).reset_index(drop=True)
 

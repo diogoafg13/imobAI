@@ -229,9 +229,12 @@ Metodologia 2026 pelos 0014700).
 
 ### Preços reais, o que mudou e volume nas previsões
 
-- **Preços reais**: variação a 12 meses, 3 e 5 anos descontada a inflação (IHPC do Eurostat, último
-  trimestre publicado — sai depois do preço da habitação) e, no gráfico de cada concelho, o preço em €
-  do último trimestre com IHPC. Também no mapa ("Variação 12 meses descontada a inflação").
+- **Preços reais**: variação a 12 meses, 3 e 5 anos descontada a inflação (IHPC do Eurostat) e, no gráfico
+  de cada concelho, o preço em € do último trimestre com IHPC. Também no mapa ("Variação 12 meses descontada
+  a inflação"). A inflação é sempre de um período com o mesmo comprimento (4, 12 ou 20 trimestres); se o IHPC
+  ainda não chegou ao trimestre do preço, usa a janela que acaba no último IHPC publicado. O Eurostat deixou
+  de publicar o IHPC com base 2015 = 100 depois de dez/2025: a série é prolongada com a taxa de variação
+  homóloga (`prc_hicp_manr`, que não depende da base), para Portugal e para os países da UE.
 - **O que mudou** (`imopt/changes.py`): trimestre mais recente vs anterior — variação do preço e do score,
   mudanças de faixa de risco. O score anterior é recalculado com o mesmo método e os dados cortados
   nesse trimestre (a renda é a mesma nos dois, por isso as mudanças vêm dos preços). As listas de
@@ -371,6 +374,17 @@ no snapshot bruto do build de 2026-10-01 (ver `config/sources.yml`). Nenhum entr
   2021 o custo de construir subiu +35% (mão de obra +45%), o preço das casas novas +63% e o das usadas +76%.
 - **Ficha para imprimir**: botão "Imprimir ficha" no detalhe; a impressão (ou "guardar como PDF") mostra só o
   concelho, com data e fontes.
+
+### Taxas de IMI (Finanças)
+
+Taxa de IMI dos prédios urbanos de cada concelho (0,3% a 0,45%), a dedução do IMI familiar por n.º de
+dependentes e se há taxas diferentes por freguesia, da consulta pública da Autoridade Tributária ("Taxas
+IMI/CA por Município e Ano", `imopt/imi.py`). O build lê o formulário (anos e distritos) e, só quando aparece
+um ano novo, a tabela de cada distrito (~20 pedidos, com pausa); o HTML bruto fica em `data/raw/imi/` no
+branch `data`, para se confirmar a leitura. Opcional: se a AT não responder, o painel continua sem a taxa.
+Aparece na ficha do concelho e no "O meu imóvel", onde o IMI é VPT × taxa quando se indica o VPT da caderneta;
+sem VPT, a taxa sobre o preço pago, assinalada como estimativa por excesso (o VPT costuma ficar abaixo do
+preço de mercado).
 
 ### Organização do site em separadores
 

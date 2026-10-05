@@ -18,15 +18,29 @@ def _sales(dico, values, start=(2024, 1)):
     return rows
 
 
-def test_real_growth_deflates_with_last_published_hicp():
-    hicp = pd.DataFrame({"period": ["2025Q1", "2025Q4"], "value": [100.0, 103.0]})
+def test_real_growth_uses_full_window_ending_at_last_published_hicp():
+    hicp = pd.DataFrame({"period": ["2024Q4", "2025Q1", "2025Q4"], "value": [100.0, 101.0, 103.0]})
     feats = pd.DataFrame({"dico": ["0001"], "latest_key": [202601], "price_growth_1y": [0.10],
                           "price_growth_3y": [np.nan], "price_growth_5y": [0.2]})
     f = scoring.real_growth(feats, hicp)
-    # 2026Q1 ainda sem IHPC: usa 2025Q4 (103); um ano antes, 2025Q1 (100)
+    # 2026Q1 ainda sem IHPC: a inflação de 4 trimestres é a que acaba no último publicado (2024Q4 -> 2025Q4),
+    # não 2025Q1 -> 2025Q4 (3 trimestres, com a sazonalidade dos saldos)
     assert f.at[0, "price_growth_1y_real"] == pytest.approx(1.10 / 1.03 - 1)
     assert f.at[0, "hicp_period"] == "2025Q4" and pd.isna(f.at[0, "price_growth_3y_real"])
     assert "price_growth_1y_real" not in scoring.real_growth(feats, None)
+
+
+def test_hicp_extended_with_annual_rates_after_base_change():
+    from imopt import macro
+    months = [f"2025-{m:02d}" for m in range(1, 13)]
+    idx = pd.DataFrame({"period": months, "value": [100.0 + m for m in range(12)]})
+    rates = pd.DataFrame({"period": ["2025-12", "2026-01", "2026-02", "2026-04"], "value": [9.9, 2.0, 3.0, 5.0]})
+    out = macro.extend_with_annual_rates(idx, rates)
+    # só depois do fim da base (a taxa de dez/2025 é ignorada); cada mês a partir do mesmo mês de 2025; março sem taxa fica de fora
+    v = dict(zip(out["period"], out["value"]))
+    assert v["2025-12"] == 111.0 and v["2026-01"] == pytest.approx(100 * 1.02) and v["2026-02"] == pytest.approx(101 * 1.03)
+    assert v["2026-04"] == pytest.approx(103 * 1.05) and "2026-03" not in v
+    assert macro.extend_with_annual_rates(idx, None).equals(idx)
 
 
 def test_quarter_changes_band_moves_and_movers():

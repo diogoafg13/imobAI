@@ -203,3 +203,13 @@ def demo_geojson() -> dict:
         feats.append({"type": "Feature", "properties": {"dico": f"{i + 1:04d}"},
                       "geometry": {"type": "Polygon", "coordinates": [ring]}})
     return {"type": "FeatureCollection", "features": feats}
+
+
+def demo_imi(frames: dict) -> pd.DataFrame:
+    """Taxas de IMI sintéticas (0,3% a 0,45%) para os concelhos do demo."""
+    d = frames["sales_price_12m"]
+    dicos = sorted(d.loc[d["level"] == "municipality", "dico"].dropna().unique())
+    return pd.DataFrame({"dico": dicos, "name": dicos, "year": 2025,
+                         "rate_urban": [0.003 + 0.0005 * (int(x) % 4) for x in dicos],
+                         "parish_rates": [int(x) % 5 == 0 for x in dicos],
+                         "ded_1": 30.0, "ded_2": 70.0, "ded_3": 140.0})

@@ -70,6 +70,7 @@ const GLOSS = {
   rent_effort: ['Esforço de arrendar', 'Renda da mesma casa (renda mediana de novos contratos × área escolhida) a dividir pelo rendimento mensal escolhido na calculadora. É o par do esforço de compra para quem arrenda. Como referência, o Eurostat considera sobrecarga gastar mais de 40% do rendimento disponível com a casa.'],
   fc_vs_be: ['Previsão vs ponto de equilíbrio', 'Compara a variação do preço prevista pelo modelo para os próximos 12 meses (e o intervalo onde o valor real caiu 80% das vezes no passado) com a valorização anual a partir da qual comprar sai mais barato do que arrendar. É só uma comparação de números: uma previsão a 12 meses não diz nada sobre os anos seguintes, o modelo erra, e não é aconselhamento financeiro.'],
   europe: ['Portugal face à Europa', 'Índice de preços da habitação de cada país da UE (Eurostat, 2015 = 100) dividido pelo índice de preços no consumidor desse país (IHPC): a subida dos preços das casas acima da inflação. Compara ritmos de subida, não níveis de preço (um m² em Lisboa e em Paris não é comparável por este índice). Cada país publica com atrasos diferentes: usa-se o último trimestre com dados em pelo menos 2/3 dos países.'],
+  imi: ['Taxa de IMI', 'Taxa do imposto municipal sobre imóveis fixada pelo concelho para os prédios urbanos (entre 0,3% e 0,45%), publicada pelas Finanças por ano. Aplica-se ao valor patrimonial tributário (VPT, na caderneta predial), não ao preço de mercado: IMI = VPT × taxa. Com dependentes, alguns concelhos dão uma dedução fixa (IMI familiar). Há concelhos com taxas diferentes em algumas freguesias.'],
   follow: ['Concelhos que segues', 'Concelhos que escolheste seguir: escreve o nome aqui ou usa o botão ☆ Seguir na ficha de um concelho (separador Mercado). A lista fica guardada só neste browser. Mostra o que mudou desde o trimestre anterior e os números principais.'],
   par_irs: ['Freguesias: rendimento e Censos', 'Por freguesia: mediana do rendimento declarado no IRS depois do imposto (por pessoa que declara, ÷ 12; o INE não publica freguesias com poucos declarantes), e a parte das casas vagas e de segunda habitação no Censos 2021. O esforço de compra por freguesia usa o preço da freguesia (só onde o INE o publica) e o rendimento do IRS de quem lá vive, com a casa e o crédito da calculadora.'],
   tourism_guests: ['Hóspedes e ocupação', 'Hóspedes em alojamento turístico nos últimos 12 meses publicados (INE, mensal; hotelaria, alojamento local com 10+ camas e turismo rural) e variação face aos 12 meses anteriores; parte dos hóspedes em alojamento local; taxa líquida de ocupação-cama no último ano (camas ocupadas ÷ camas disponíveis). Turismo a crescer depressa num concelho costuma puxar pelos preços e pelas rendas, sobretudo pelo alojamento local.'],
@@ -669,6 +670,8 @@ function select(dico, scroll = true) {
       `<span class="ctx">${m.val_gap_chg != null ? `${m.val_gap_chg >= 0 ? '+' : '−'}${fmt.n(Math.abs(m.val_gap_chg) * 100, 1)} p.p. num ano` : 'sem comparação a um ano'}</span>`)] : []),
     ...(m.irs_median != null ? [tile('irs', `Rendimento IRS (${m.irs_year})`, fmt.eur(m.irs_median / 12) + '/mês',
       `<span class="ctx">${fmt.eur(m.irs_median)}/ano por pessoa, após imposto${m.irs_growth_1y != null ? ` · ${fmt.spct(m.irs_growth_1y)} num ano` : ''}</span>`)] : []),
+    ...(m.imi_rate != null ? [tile('imi', `Taxa de IMI (${m.imi_year})`, `${imiPct(m.imi_rate)}`,
+      `<span class="ctx">do VPT (caderneta) por ano${m.imi_rate <= 0.003 ? ' · a mínima legal' : m.imi_rate >= 0.0045 ? ' · a máxima legal' : ''}${m.imi_ded_1 && m.imi_ded_2 && m.imi_ded_3 ? ` · IMI familiar: −${fmt.eur(m.imi_ded_1)}/−${fmt.eur(m.imi_ded_2)}/−${fmt.eur(m.imi_ded_3)} com 1/2/3+ dependentes` : ''}${m.imi_parish_rates ? ' · há taxas diferentes em algumas freguesias' : ''}</span>`)] : []),
     ...(m.vacant_share != null ? [tile('census', 'Vagos / 2.ª habitação (2021)', `${fmt.pct(m.vacant_share, 0)} / ${fmt.pct(m.secondary_share, 0)}`,
       `<span class="ctx">vagos para venda ou arrendamento: ${fmt.pct(m.vacant_market_share, 1)} · ${fmt.n(m.census_total, 0)} alojamentos</span>`)] : []),
     ...(m.guests_12m != null ? [tile('tourism_guests', 'Hóspedes (12 meses)', `${fmt.n(m.guests_12m / 1000, m.guests_12m < 10000 ? 1 : 0)} mil`,
@@ -1640,7 +1643,7 @@ function imRead() {
   const m = MUNIS.find((x) => x.name.toLowerCase() === name);
   return { conc: f.conc.value.trim(), dico: m ? m.dico : null, par: f.par.value || '', date: f.year.value && f.month.value ? `${f.year.value}-${f.month.value}` : '', price: num('price'), area: num('area'), kind: f.kind.value, typ: f.typ.value,
     loan: num('loan'), rate: num('rate'), years: num('years'), income: num('income'), rent: num('rent'),
-    cl: num('cl'), imi: num('imi'), condo: num('condo'), ins: num('ins'), vac: num('vac'), maint: num('maint'), tax: num('tax') };
+    cl: num('cl'), vpt: num('vpt'), imi: num('imi'), condo: num('condo'), ins: num('ins'), vac: num('vac'), maint: num('maint'), tax: num('tax') };
 }
 function imSave(v) { try { localStorage.setItem(IM_KEY, JSON.stringify(v)); } catch { /* sem armazenamento */ } }
 function imLoad() {
@@ -1648,7 +1651,7 @@ function imLoad() {
   try { v = JSON.parse(localStorage.getItem(IM_KEY) || 'null'); } catch { v = null; }
   if (!v) return;
   const f = $('#im-form');
-  ['conc', 'price', 'area', 'kind', 'typ', 'cl', 'loan', 'rate', 'years', 'income', 'rent', 'imi', 'condo', 'ins', 'vac', 'maint', 'tax']
+  ['conc', 'price', 'area', 'kind', 'typ', 'cl', 'vpt', 'loan', 'rate', 'years', 'income', 'rent', 'imi', 'condo', 'ins', 'vac', 'maint', 'tax']
     .forEach((k) => { if (v[k] != null && f[k]) f[k].value = v[k]; });
   // datas antigas guardadas noutro formato (ex.: "4" de um browser sem seletor de mês) são ignoradas
   if (qOfMonth(v.date)) { const [y, m] = v.date.split('-'); f.year.value = y; f.month.value = m; }
@@ -1761,7 +1764,7 @@ async function imAnalyse() {
       if (v.income) {
         const e = pay / v.income, eS = payS / v.income;
         tiles.push(tile('Taxa de esforço', fmt.pct(e, 0), `do rendimento líquido · com +2 p.p.: ${fmt.pct(eS, 0)}`));
-        li.push(`A prestação de ${fmt.eur(pay)}/mês leva ${fmt.pct(e, 0)} do rendimento líquido que indicaste${e > 0.5 ? ' — acima dos 50% que o Banco de Portugal usa como limite na concessão de crédito' : e > 0.35 ? ' — abaixo do limite de 50% do Banco de Portugal, mas pesada' : ''}. Com a taxa 2 p.p. acima, seriam ${fmt.eur(payS)} (${fmt.pct(eS, 0)}).${v.rate == null ? ` Taxa usada: a média atual dos novos créditos (${fmt.n(rate, 2)}%), porque não indicaste a tua.` : ''}`);
+        li.push(`A prestação de ${fmt.eur(pay)}/mês leva ${fmt.pct(e, 0)} do rendimento líquido que indicaste${e > 0.5 ? ' — acima dos 50% que o Banco de Portugal usa como limite na concessão de crédito' : e > 0.35 ? ' — abaixo do limite de 50% do Banco de Portugal, mas pesada' : ''}. Com a taxa 2 p.p. acima, seriam ${fmt.eur(payS)} (${fmt.pct(eS, 0)}).${v.rate == null ? ` Taxa usada: ${fmt.n(rate, 2)}%, a taxa atual estimada da calculadora "Comprar casa" (Euribor 12M mais recente + a diferença observada nos novos créditos à habitação), porque não indicaste a tua.` : ''}`);
       }
       li.push(`Valor estimado face ao crédito em dívida: ${fmt.pct(v.loan / val, 0)} (quanto do valor da casa ainda é do banco).`);
     }
@@ -1786,14 +1789,18 @@ async function imAnalyse() {
       const rent = v.rent || rentHome;
       const months = 12 - (v.vac ?? 1);
       const gross = rent * months;
-      const costs = (v.imi ?? v.price * 0.003) + (v.condo ?? (v.kind === 'house' ? 0 : 25)) * 12 + (v.ins ?? 150) + (v.maint ?? 5) / 100 * rent * 12;
+      // IMI: o indicado; senão VPT × taxa do concelho (AT); sem VPT, a taxa sobre o preço (por excesso: o VPT
+      // costuma ficar abaixo do preço de mercado). Sem taxa publicada, 0,3% (a mínima legal).
+      const imiRate = m.imi_rate ?? 0.003, imiV = v.imi ?? (v.vpt ? v.vpt * imiRate : v.price * imiRate);
+      const imiTxt = v.imi != null ? '' : ` IMI: ${fmt.eur(imiV)}/ano = ${v.vpt ? `VPT de ${fmt.eur(v.vpt)}` : 'preço pago'} × ${imiPct(imiRate)}${m.imi_rate != null ? ` (taxa de ${m.name} para ${m.imi_year}, Finanças${m.imi_parish_rates ? '; há taxas diferentes em algumas freguesias' : ''})` : ' (taxa mínima legal; sem a taxa do concelho)'}${v.vpt ? '' : ' — por excesso: o IMI incide sobre o VPT da caderneta, em regra abaixo do preço; indica-o para o valor certo'}${m.imi_ded_1 && m.imi_ded_2 && m.imi_ded_3 ? `; com dependentes, o IMI familiar desconta ${fmt.eur(m.imi_ded_1)} (1), ${fmt.eur(m.imi_ded_2)} (2) ou ${fmt.eur(m.imi_ded_3)} (3 ou mais)` : ''}.`;
+      const costs = imiV + (v.condo ?? (v.kind === 'house' ? 0 : 25)) * 12 + (v.ins ?? 150) + (v.maint ?? 5) / 100 * rent * 12;
       const taxR = (v.tax ?? 25) / 100, tax = Math.max(0, gross - costs) * taxR, net = gross - costs - tax;
       if (rLo && rHi) strips.push([`Renda para ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m²: faixa central dos novos contratos ${usePar ? 'na freguesia (estimada)' : 'no concelho'} (€/mês)`,
         imStrip([{ label: 'mediana', value: rentHome }], v.rent ? { label: 'a tua', value: v.rent } : null, [rLo, rHi], (x) => fmt.eur(x))]);
       if (v.rent) rentVerdict = imVerdict(v.rent / rentHome - 1, 'a tua renda está', 'renda mediana de novos contratos');
       tiles.push(tile('Renda de mercado (estimada)', `${fmt.eur(rentHome)}/mês`, `${pr && pr.rent != null ? `freguesia ${esc(pr.name)}` : `concelho`}, novos contratos${tf !== 1 ? `, ajustada a ${typName}` : ''}${rLo ? ` · 25%–75%: ${fmt.eur(rLo)}–${fmt.eur(rHi)}` : ''}${big ? ' · casa grande: a renda real tende a ficar abaixo' : ''}`));
       tiles.push(tile('Rendibilidade', `${fmt.pct(gross / val, 1)} bruta`, `${fmt.pct(net / val, 1)} líquida de custos e IRS · ${fmt.pct(net / v.price, 1)} sobre o preço pago`));
-      li.push(`${v.rent ? `A renda que indicaste (${fmt.eur(v.rent)}/mês) está ${rel(v.rent / rentHome - 1)} da renda mediana de novos contratos para ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m² (${fmt.eur(rentHome)}).` : `Arrendada, a casa renderia cerca de ${fmt.eur(rentHome)}/mês (renda mediana de novos contratos${pr && pr.rent != null ? ' da freguesia' : ' do concelho'} × área${rLo ? `; ${usePar ? 'na freguesia (estimativa)' : 'no concelho'}, 25% dos novos contratos ficam abaixo de ${fmt.eur(rLo)} e 25% acima de ${fmt.eur(rHi)} para esta área` : ''}).`} Com ${fmt.n(v.vac ?? 1, 0)} ${(v.vac ?? 1) === 1 ? 'mês' : 'meses'} vazio por ano, custos de ${fmt.eur(costs)}/ano (IMI, condomínio, seguro, manutenção) e IRS de ${fmt.n(v.tax ?? 25, 0)}% sobre o rendimento depois de custos, ficam ${fmt.eur(net)}/ano líquidos (${fmt.pct(net / val, 1)} do valor estimado).${pay ? ` Face à prestação, o saldo mensal seria de ${net / 12 - pay < 0 ? '−' : '+'}${fmt.eur(Math.abs(net / 12 - pay))} (${net / 12 - pay >= 0 ? 'a renda paga a prestação' : 'a renda não chega para a prestação'}).` : ''} A taxa do IRS sobre rendas depende do contrato e das opções fiscais: confirma com as Finanças ou um contabilista.${parTxt}${tfTxt} A renda estimada é proporcional à área: anexos, garagem ou arrumos contados como área habitável inflacionam-na, e casas grandes costumam ter renda por m² mais baixa do que a mediana.${big ? ` Com ${fmt.n(v.area, 0)} m², esta casa é bem maior do que a maioria das que se arrendam, de onde vem a mediana por m²: conta com uma renda mais perto da parte de baixo da faixa${rLo ? ` (${fmt.eur(rLo)})` : ''} do que da mediana.` : ''} As rendas do INE são as dos contratos declarados às Finanças, que costumam ficar abaixo dos valores pedidos nos anúncios.`);
+      li.push(`${v.rent ? `A renda que indicaste (${fmt.eur(v.rent)}/mês) está ${rel(v.rent / rentHome - 1)} da renda mediana de novos contratos para ${fmt.n(v.area, v.area % 1 ? 1 : 0)} m² (${fmt.eur(rentHome)}).` : `Arrendada, a casa renderia cerca de ${fmt.eur(rentHome)}/mês (renda mediana de novos contratos${pr && pr.rent != null ? ' da freguesia' : ' do concelho'} × área${rLo ? `; ${usePar ? 'na freguesia (estimativa)' : 'no concelho'}, 25% dos novos contratos ficam abaixo de ${fmt.eur(rLo)} e 25% acima de ${fmt.eur(rHi)} para esta área` : ''}).`} Com ${fmt.n(v.vac ?? 1, 0)} ${(v.vac ?? 1) === 1 ? 'mês' : 'meses'} vazio por ano, custos de ${fmt.eur(costs)}/ano (IMI, condomínio, seguro, manutenção) e IRS de ${fmt.n(v.tax ?? 25, 0)}% sobre o rendimento depois de custos, ficam ${fmt.eur(net)}/ano líquidos (${fmt.pct(net / val, 1)} do valor estimado).${pay ? ` Face à prestação, o saldo mensal seria de ${net / 12 - pay < 0 ? '−' : '+'}${fmt.eur(Math.abs(net / 12 - pay))} (${net / 12 - pay >= 0 ? 'a renda paga a prestação' : 'a renda não chega para a prestação'}).` : ''} A taxa do IRS sobre rendas depende do contrato e das opções fiscais: confirma com as Finanças ou um contabilista.${imiTxt}${parTxt}${tfTxt} A renda estimada é proporcional à área: anexos, garagem ou arrumos contados como área habitável inflacionam-na, e casas grandes costumam ter renda por m² mais baixa do que a mediana.${big ? ` Com ${fmt.n(v.area, 0)} m², esta casa é bem maior do que a maioria das que se arrendam, de onde vem a mediana por m²: conta com uma renda mais perto da parte de baixo da faixa${rLo ? ` (${fmt.eur(rLo)})` : ''} do que da mediana.` : ''} As rendas do INE são as dos contratos declarados às Finanças, que costumam ficar abaixo dos valores pedidos nos anúncios.`);
       tenant = imTenants(v.rent || rentHome, !!v.rent, m, pr);
       const be = (rate / 100 + 0.013) - (rentHome * 12) / val;
       const own = rate / 100 + 0.013, ry = (rentHome * 12) / val;
@@ -1958,6 +1965,7 @@ function imChart(id, D) {
     series,
   }, true);
 }
+const imiPct = (r) => `${(r * 100).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 3 })}%`;
 const IM_DISCLAIMER = '⚠ <b>Estimativa estatística, não vinculativa.</b> Isto não é uma avaliação imobiliária nem aconselhamento financeiro, fiscal ou jurídico. Os números aplicam medianas e índices oficiais (INE, BCE, Eurostat) ao preço que indicaste: não conhecem o estado, a localização exata, a vista, o piso, as obras nem o mercado da tua rua, que podem afastar o valor real muito destes valores. Para decisões (vender, pedir ou renegociar crédito, partilhas, impostos) consulta um perito avaliador registado na CMVM, o teu banco ou um contabilista. Os dados que introduzes ficam só neste browser: nada é enviado.';
 function initImovel() {
   $('#im-disclaimer').innerHTML = IM_DISCLAIMER;
@@ -2000,9 +2008,10 @@ function renderSummary() {
   $('#summary-tiles').onclick = (e) => { const a = e.target.closest('[data-go]'); if (a) { e.preventDefault(); goTo(a.dataset.go); } };
 }
 function renderSources() {
-  const S = META.sources || {}, ine = S.ine || {}, mac = S.macro || {}, sum = META.ine_summary;
+  const S = META.sources || {}, ine = S.ine || {}, mac = S.macro || {}, at = S.at || {}, sum = META.ine_summary;
   const ent = (o) => Object.entries(o).filter(([k]) => k !== 'geo');
   const all = [...ent(ine).map(([k, v]) => ['INE', k, String(v)]), ...ent(mac).map(([k, v]) => ['BCE/Eurostat/BIS', k, String(v)]),
+    ...ent(at).map(([k, v]) => ['Finanças (AT)', k, String(v)]),
     ...(ine.geo ? [['Fronteiras', 'concelhos', String(ine.geo)]] : [])].filter((r) => !r[2].startsWith('sem código'));
   if (!all.length) { $('#sources').hidden = true; return; }
   const bad = all.filter((r) => /^(CACHE|ERRO|AVISO)/.test(r[2]));

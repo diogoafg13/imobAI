@@ -471,6 +471,11 @@ macro:
     # IHPC (inflação) de Portugal, 2015=100, mensal. Serve para deflacionar o HPI (preço real).
     url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_midx
     params: {geo: PT, coicop: CP00, unit: I15, format: JSON, lang: EN}
+    # A base 2015 = 100 deixou de ser publicada depois de dez/2025: a série é prolongada com a taxa de variação
+    # homóloga (não depende da base). Se este pedido falhar, a série fica até dez/2025, como antes.
+    rates:
+      url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr
+      params: {geo: PT, coicop: CP00, unit: RCH_A, format: JSON, lang: EN}
     optional: true
   # Portugal face à Europa: HPI e IHPC dos 27 países da UE num só pedido cada (geo repetido). Só contexto.
   eurostat_hpi_eu:
@@ -480,12 +485,24 @@ macro:
   eurostat_hicp_eu:
     url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_midx
     params: {geo: [AT, BE, BG, CY, CZ, DE, DK, EE, EL, ES, FI, FR, HR, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, RO, SE, SI, SK], coicop: CP00, unit: I15, format: JSON, lang: EN}
+    rates:
+      url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_manr
+      params: {geo: [AT, BE, BG, CY, CZ, DE, DK, EE, EL, ES, FI, FR, HR, HU, IE, IT, LT, LU, LV, MT, NL, PL, PT, RO, SE, SI, SK], coicop: CP00, unit: RCH_A, format: JSON, lang: EN}
     optional: true
   bis_credit_gap:
     # BIS data portal (SDMX). Série: crédito ao sector privado não financeiro / PIB, desvio da tendência.
     url: https://stats.bis.org/api/v2/data/dataflow/BIS/WS_CREDIT_GAP/1.0/Q.PT.P.A.C
     params: {format: csv}
     optional: true
+
+# Taxas de IMI por concelho: consulta pública da Autoridade Tributária ("Taxas IMI/CA por Município e Ano").
+# O formulário dá os anos e os códigos dos distritos; a tabela, por ano e distrito, a taxa dos prédios urbanos, as
+# taxas por freguesia e a dedução do IMI familiar. Só é descarregada quando sai um ano novo (ver imopt/imi.py).
+imi:
+  form_url: https://www.portaldasfinancas.gov.pt/pt/main.jsp
+  form_params: {body: /imi/consultarTaxasIMIForm.jsp}
+  table_url: https://www.portaldasfinancas.gov.pt/pt/main.jsp
+  table_params: {body: /imi/consultarTaxasIMI.jsp}
 
 geo:
   # Fronteiras dos concelhos (E-REDES / OpenDataSoft, licença aberta).

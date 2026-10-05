@@ -114,14 +114,15 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       <label>Área habitável (m²) <input name="area" type="number" min="10" max="2000" step="any" inputmode="numeric" placeholder="sem anexos nem garagem" required></label>
       <label>Tipo <select name="kind"><option value="">Não sei</option><option value="apt">Apartamento</option><option value="house">Moradia</option></select></label>
       <label>Tipologia <select name="typ"><option value="">Não sei</option><option value="t01">T0 ou T1</option><option value="t2">T2</option><option value="t3">T3</option><option value="t4">T4 ou mais</option></select></label>
+      <label>VPT (€, caderneta) <input name="vpt" type="number" min="0" step="any" inputmode="numeric" placeholder="opcional"></label>
       <label>Coeficiente de localização (Cl) <input name="cl" type="number" min="0.35" max="3.5" step="any" inputmode="decimal" placeholder="opcional, ex.: 1,6"></label>
       <label>Crédito em dívida (€) <input name="loan" type="number" min="0" step="any" inputmode="numeric"></label>
-      <label>Taxa do crédito (%) <input name="rate" type="number" min="0" max="15" step="any" inputmode="decimal" placeholder="média atual"></label>
+      <label>Taxa do crédito (%) <input name="rate" type="number" min="0" max="15" step="any" inputmode="decimal" placeholder="taxa atual estimada"></label>
       <label>Prazo restante (anos) <input name="years" type="number" min="1" max="50" step="any" inputmode="numeric"></label>
       <label>Rendimento líquido do agregado (€/mês) <input name="income" type="number" min="0" step="any" inputmode="numeric"></label>
       <label>Renda atual, se arrendado (€/mês) <input name="rent" type="number" min="0" step="any" inputmode="numeric"></label>
       <details class="im-assume"><summary>Pressupostos do arrendamento (editáveis)</summary>
-        <label>IMI (€/ano) <input name="imi" type="number" min="0" step="any" placeholder="0,3% do preço"></label>
+        <label>IMI (€/ano) <input name="imi" type="number" min="0" step="any" placeholder="VPT × taxa do concelho"></label>
         <label>Condomínio (€/mês) <input name="condo" type="number" min="0" step="any" placeholder="25 (apart.)"></label>
         <label>Seguro (€/ano) <input name="ins" type="number" min="0" step="any" placeholder="150"></label>
         <label>Meses vazio por ano <input name="vac" type="number" min="0" max="12" step="any" placeholder="1"></label>

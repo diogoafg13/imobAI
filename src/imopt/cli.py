@@ -75,7 +75,8 @@ def main(argv: list[str] | None = None) -> int:
         frames, macro_frames = demo.demo_frames()
         pgj, _ = geo.attach_code(demo.demo_parish_geojson(), ["fre_code"])
         meta = pipeline.build_outputs(frames, macro_frames, {"demo": "sintético"}, {"demo": "sintético"},
-                                      out, demo.demo_geojson(), demo=True, parish_geojson=pgj)
+                                      out, demo.demo_geojson(), demo=True, parish_geojson=pgj,
+                                      imi_rates=demo.demo_imi(frames), imi_status="sintético")
     else:
         meta = pipeline.run(out_dir=out, skip_geo=args.skip_geo)
     print(json.dumps({k: meta[k] for k in ("built_at", "demo", "latest_price_period", "n_municipalities")}, ensure_ascii=False))

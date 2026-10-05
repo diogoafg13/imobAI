@@ -177,9 +177,13 @@ def real_growth(feats: pd.DataFrame, hicp: pd.DataFrame | None) -> pd.DataFrame:
     if last is None or "latest_key" not in feats:
         return feats
     f = feats.copy()
+    last_key = int(last[:4]) * 100 + int(last[-1])
+    # inflação de um período com o MESMO comprimento: se o IHPC ainda não chegou ao trimestre do preço, usa a
+    # janela que acaba no último IHPC publicado (antes media-se de menos trimestres e com sazonalidade a mais)
     for col, back in (("price_growth_1y", 4), ("price_growth_3y", 12), ("price_growth_5y", 20)):
         if col in f:
-            infl = f["latest_key"].map(lambda k, b=back: at(int(k)) / at(_shift_key(int(k), "quarter", b)) if pd.notna(k) else np.nan)
+            infl = f["latest_key"].map(lambda k, b=back: (lambda e: at(e) / at(_shift_key(e, "quarter", b)))(min(int(k), last_key))
+                                       if pd.notna(k) else np.nan)
             f[f"{col}_real"] = (1 + f[col]) / infl - 1
     f["hicp_period"] = last
     return f
