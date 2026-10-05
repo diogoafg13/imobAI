@@ -27,6 +27,7 @@ from . import geo
 log = logging.getLogger("imopt")
 UA = {"User-Agent": "imobiliario-pt/0.1 (dados abertos)"}
 MAX_AGE_DAYS = 7
+PARSER_V = 2          # sobe quando a leitura muda: o ficheiro guardado com uma versão anterior é relido
 
 
 def _col(cols: list[str], *pats: str, avoid: tuple[str, ...] = ()) -> str | None:
@@ -44,12 +45,22 @@ def read_points(text: str) -> pd.DataFrame:
     sep = ";" if first.count(";") > first.count(",") else ","
     df = pd.read_csv(io.StringIO(text), sep=sep, dtype=str, low_memory=False)
     cols = list(df.columns)
-    pick = {"lat": _col(cols, r"^lat", r"latitude", r"^y$"), "lon": _col(cols, r"^lon", r"longitude", r"^x$"),
-            "freguesia": _col(cols, r"freguesia"), "concelho": _col(cols, r"concelho", r"municipio"),
-            "utentes": _col(cols, r"utentes", r"capacidade", r"n.*utentes")}
-    if not pick["freguesia"] and not (pick["lat"] and pick["lon"]):
-        raise ValueError(f"CSV sem coordenadas nem freguesia reconhecíveis (colunas: {cols[:30]})")
+    # o RNAL traz o código DICOFRE da freguesia (DTMNFR), coordenadas em "LatLong" ("37,06 ; -7,82") e X/Y em metros
+    # (Web Mercator, não usados); a ordem dos padrões evita apanhar "LatLong" como latitude
+    pick = {"code": _col(cols, r"^dtmnfr$", r"dicofre"), "latlong": _col(cols, r"^latlong$"),
+            "lat": _col(cols, r"^latitude$", r"^lat$"), "lon": _col(cols, r"^longitude$", r"^lon$", r"^long$"),
+            "freguesia": _col(cols, r"^freguesia"), "concelho": _col(cols, r"^concelho", r"^municipio"),
+            "utentes": _col(cols, r"utentes", r"capacidade")}
+    if not pick["code"] and not pick["freguesia"] and not pick["latlong"] and not (pick["lat"] and pick["lon"]):
+        raise ValueError(f"CSV sem código, coordenadas nem freguesia reconhecíveis (colunas: {cols[:30]})")
     out = pd.DataFrame({k: df[c] for k, c in pick.items() if c})
+    if "code" in out:
+        out["code"] = out["code"].astype(str).str.strip().str.extract(r"(\d+)")[0].str.zfill(6)
+    if "latlong" in out:
+        ll = out.pop("latlong").astype(str).str.split(";", expand=True)
+        if ll.shape[1] >= 2:
+            out["lat"] = ll[0].str.strip()
+            out["lon"] = ll[1].str.strip()
     for k in ("lat", "lon", "utentes"):
         if k in out:
             out[k] = pd.to_numeric(out[k].str.replace(",", ".", regex=False), errors="coerce")
@@ -65,6 +76,8 @@ def ingest(cfg: dict | None, data_dir: Path, today: str) -> tuple[pd.DataFrame |
     cached = pd.read_parquet(path) if path.exists() else None
     if not cfg:
         return cached, "sem configuração"
+    if cached is not None and ("parser_v" not in cached or int(cached["parser_v"].max()) < PARSER_V):
+        cached = None
     if cached is not None and "fetched" in cached and len(cached):
         age = (dt.date.today() - dt.date.fromisoformat(str(cached["fetched"].iloc[0]))).days
         if age < MAX_AGE_DAYS:
@@ -74,8 +87,8 @@ def ingest(cfg: dict | None, data_dir: Path, today: str) -> tuple[pd.DataFrame |
         try:
             r = requests.get(url, headers=UA, timeout=300)
             r.raise_for_status()
-            r.encoding = r.encoding or "utf-8"
-            text = r.text.lstrip("﻿")
+            # o servidor não declara a codificação e o requests assumia latin-1 ("OlhÃ£o"): o ficheiro é UTF-8
+            text = r.content.decode("utf-8-sig", errors="replace")
             raw = data_dir / "raw" / "al"
             raw.mkdir(parents=True, exist_ok=True)
             (raw / f"sample_{today}.csv").write_text("\n".join(text.splitlines()[:50]), encoding="utf-8")
@@ -83,6 +96,7 @@ def ingest(cfg: dict | None, data_dir: Path, today: str) -> tuple[pd.DataFrame |
             if len(pts) < 10000:
                 raise ValueError(f"só {len(pts)} registos")
             pts["fetched"] = dt.date.today().isoformat()
+            pts["parser_v"] = PARSER_V
             path.parent.mkdir(parents=True, exist_ok=True)
             pts.to_parquet(path, index=False)
             return pts, f"ok ({len(pts)} registos, {url})"
@@ -100,8 +114,9 @@ def by_parish(points: pd.DataFrame | None, parish_geo: dict | None,
     para os registos sem coordenadas."""
     if points is None or points.empty:
         return None
-    code = pd.Series(None, index=points.index, dtype=object)
-    if parish_geo and "lat" in points and "lon" in points:
+    code = points["code"].where(points["code"].astype(str).str.fullmatch(r"\d{6}"), None) if "code" in points else \
+        pd.Series(None, index=points.index, dtype=object)
+    if parish_geo and "lat" in points and "lon" in points and code.isna().any():
         from shapely.geometry import Point, shape
         from shapely.strtree import STRtree
         polys, codes = [], []
@@ -115,7 +130,7 @@ def by_parish(points: pd.DataFrame | None, parish_geo: dict | None,
                     continue
         if polys:
             tree = STRtree(polys)
-            ok = points["lat"].notna() & points["lon"].notna()
+            ok = points["lat"].notna() & points["lon"].notna() & code.isna()
             pts = [Point(x, y) for x, y in zip(points.loc[ok, "lon"], points.loc[ok, "lat"])]
             hit_pt, hit_poly = tree.query(pts, predicate="within")
             idx = points.index[ok]

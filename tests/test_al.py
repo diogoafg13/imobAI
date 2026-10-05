@@ -12,10 +12,21 @@ def _square(code, x0, y0):
 def test_read_points_semicolon_decimal_comma_and_swapped_coords():
     csv = "Nº de registo;Latitude;Longitude;Freguesia;Concelho;Nº Utentes\n1;38,5;-9,5;Alfama;Lisboa;4\n2;-8,5;40,5;Sé;Porto;2\n"
     p = al.read_points(csv)
-    assert list(p.columns) == ["lat", "lon", "freguesia", "concelho", "utentes"]
+    assert {"lat", "lon", "freguesia", "concelho", "utentes"} <= set(p.columns)
     assert p.loc[0, "lat"] == 38.5 and p.loc[1, "lat"] == 40.5 and p.loc[1, "lon"] == -8.5 and p["utentes"].sum() == 6
     with pytest.raises(ValueError):
         al.read_points("a,b\n1,2\n")
+
+
+def test_read_points_rnal_format_uses_dicofre_and_latlong():
+    # cabeçalho real do RNAL (dados abertos do Turismo de Portugal)
+    csv = ("X,Y,OBJECTID,NrRNAL,Denominacao,Modalidade,NrUtentes,LatLong,DTMNFR,Freguesia,Concelho\n"
+           '-871301.88,4448274.2,1,1,Figo,Apartamento,4,"37,0657 ; -7,8270",081005,Quelfes,Olhão\n'
+           '-851399.38,4455000.1,2,2,Casa,Moradia,6,"37,1282 ; -7,6482",81412,União das freguesias de Tavira,Tavira\n')
+    p = al.read_points(csv)
+    assert list(p["code"]) == ["081005", "081412"] and p.loc[0, "lat"] == 37.0657 and p.loc[0, "lon"] == -7.827
+    out = al.by_parish(p, None)
+    assert out.loc["081005", "al_n"] == 1 and out.loc["081412", "al_users"] == 6 and out.attrs["matched"] == 1.0
 
 
 def test_by_parish_uses_coordinates_then_names():

@@ -425,11 +425,14 @@ preço de mercado).
   própria e permanente) ou 80%, prazo até 40 anos (até aos 35 anos de idade) ou 35. A calculadora conta os concelhos
   acima do limite e avisa se a entrada ou o prazo escolhidos passam as regras; o "O meu imóvel" compara o crédito
   indicado com a regra atual.
-- **Alojamento local por freguesia** (`imopt/al.py`): RNAL do Turismo de Portugal (dados abertos, continente),
-  registos ligados à freguesia pelas coordenadas e as fronteiras do painel (sem coordenadas, pelo nome dentro do
-  concelho); registos por 100 alojamentos do Censos 2021 na tabela de freguesias, no mapa e no "O meu imóvel".
+- **Alojamento local por freguesia** (`imopt/al.py`): RNAL do Turismo de Portugal (dados abertos, continente,
+  ~112 mil registos), ligados à freguesia pelo código DICOFRE que o próprio registo traz (`DTMNFR`; sem código,
+  pelas coordenadas e as fronteiras do painel, ou pelo nome dentro do concelho); registos por 100 alojamentos do Censos 2021 na tabela de freguesias, no mapa e no "O meu imóvel".
   Registado não quer dizer ativo. Descarregado no máximo uma vez por semana.
-- **Dedução do IMI familiar**: lida das páginas "+Info" da AT (uma por concelho, só quando muda o ano).
+- **Dedução do IMI familiar**: lida das páginas "+Info" da AT (uma por concelho, só quando muda o ano). Os valores
+  são os da lei (30 €, 70 € e 140 € com 1, 2 e 3 ou mais dependentes) e a coluna "Aplicar" diz se o concelho os dá.
+  Nas páginas de 2025: 264 concelhos dão os três, 10 só o de 3 ou mais e 4 só os de 2 e 3 ou mais. (A frase "Não
+  existe deduções…" aparece em todas as páginas, mesmo com "Sim": é texto fixo e não é lida.)
 - **RSS por concelho** (`imopt/feeds.py`, `data/rss/<DICO>.xml`): preços por trimestre, rendas por ano, mudanças
   de faixa e taxa de IMI, com identificadores fixos; ligação no separador "A seguir". `#c-<DICO>` abre a ficha.
 

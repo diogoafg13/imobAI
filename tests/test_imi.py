@@ -105,9 +105,10 @@ def test_match_dico_mainland_by_code_islands_by_name_within_region():
 def test_deduction_links_and_parse():
     page = '<td><a href="external/matrizes/imi/consultaDeducao.action?anoConsulta=2025&amp;codigoMunicipio=1107">+Info</a></td>'
     assert imi.deduction_links(page) == {"1107": "external/matrizes/imi/consultaDeducao.action?anoConsulta=2025&codigoMunicipio=1107"}
-    ded = """<table><tr><th>N.º de dependentes</th><th>Dedução fixa</th></tr>
-    <tr><td>1 dependente</td><td>30,00 €</td></tr><tr><td>2 dependentes</td><td>70,00 €</td></tr>
-    <tr><td>3 ou mais dependentes</td><td>140,00 €</td></tr></table>"""
-    assert imi.parse_deduction(ded) == {"ded_1": 30.0, "ded_2": 70.0, "ded_3": 140.0}
-    assert imi.parse_deduction("<p>O município não aplica a dedução</p>") == {"ded_1": 0.0, "ded_2": 0.0, "ded_3": 0.0}
+    ded = """<table><tr><td>Dedução Fixa para Agregados com Dependentes do Município de LOURES para o ano 2025</td></tr>
+    <tr><th>N.º de dependentes</th><th>Dedução fixa (em &euro;)</th><th>Aplicar</th></tr>
+    <tr><td>1</td><td>30</td><td>Sim</td></tr><tr><td>2</td><td>70</td><td>Não</td></tr>
+    <tr><td>3 ou mais</td><td>140</td><td>Sim</td></tr></table>
+    <p>Não existe deduções fixas para agregados familiares no Município para o ano de 2025.</p>"""
+    assert imi.parse_deduction(ded) == {"ded_1": 30.0, "ded_2": 0.0, "ded_3": 140.0}
     assert imi.parse_deduction("<p>nada</p>") is None

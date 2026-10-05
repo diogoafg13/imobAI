@@ -26,7 +26,7 @@ from . import geo
 
 log = logging.getLogger("imopt")
 UA = {"User-Agent": "imobiliario-pt/0.1 (dados abertos)"}
-PARSER_V = 3          # sobe quando a leitura muda: a tabela guardada com uma versão anterior é refeita
+PARSER_V = 4          # sobe quando a leitura muda: a tabela guardada com uma versão anterior é refeita
 
 
 def _strip(cell: str) -> str:
@@ -214,21 +214,19 @@ def deduction_links(page: str) -> dict[str, str]:
 
 
 def parse_deduction(page: str) -> dict[str, float | None] | None:
-    """Dedução fixa do IMI familiar por n.º de dependentes ({'ded_1', 'ded_2', 'ded_3'}); zeros se o município
-    não a aplica. Procura linhas com 1, 2 e 3 dependentes e um valor em euros."""
-    rows = table_rows(page)
+    """Dedução fixa do IMI familiar por n.º de dependentes ({'ded_1', 'ded_2', 'ded_3'}). A página da AT tem uma
+    tabela "N.º de dependentes | Dedução fixa (em €) | Aplicar" (ex.: "1 | 30 | Sim"); com "Não", o município não
+    dá essa dedução (0). A frase "Não existe deduções fixas…" aparece em todas as páginas, mesmo com "Sim": é
+    texto fixo e não conta."""
     out: dict[str, float | None] = {}
-    for r in rows:
-        txt = " ".join(r).lower()
-        if "depend" not in txt:
+    for r in table_rows(page):
+        if len(r) < 3:
             continue
-        money = [parse_money(c) for c in r if re.search(r"\d", c) and ("€" in c or "," in c or "." in c)]
-        money = [v for v in money if v is not None and v < 10000]
-        k = re.search(r"(\d)\s*(ou mais\s*)?dependente", txt)
-        if k and money:
-            out[f"ded_{min(int(k.group(1)), 3)}"] = money[-1]
-    if not out and re.search(r"n[ãa]o\s+(aplica|delibero|fixou)|sem dedu", html.unescape(page).lower()):
-        return {"ded_1": 0.0, "ded_2": 0.0, "ded_3": 0.0}
+        k = re.match(r"\s*(\d)", r[0])
+        apply = r[2].strip().lower()
+        if not k or apply not in ("sim", "não", "nao"):
+            continue
+        out[f"ded_{min(int(k.group(1)), 3)}"] = parse_money(r[1]) if apply == "sim" else 0.0
     return out or None
 
 
