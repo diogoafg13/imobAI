@@ -26,6 +26,7 @@ from . import geo
 
 log = logging.getLogger("imopt")
 UA = {"User-Agent": "imobiliario-pt/0.1 (dados abertos)"}
+PARSER_V = 2          # sobe quando a leitura muda: a tabela guardada com uma versão anterior é refeita
 
 
 def _strip(cell: str) -> str:
@@ -81,7 +82,8 @@ def parse_district(page: str) -> list[dict]:
     if head_i is None:
         return out
     head = [c.lower() for c in rows[head_i]]
-    ci_mun = next(i for i, c in enumerate(head) if "munic" in c)
+    # "Código Municipio" e "Município": o nome é a coluna com "munic" sem "código"
+    ci_mun = next((i for i, c in enumerate(head) if "munic" in c and "dig" not in c), next(i for i, c in enumerate(head) if "munic" in c))
     ci_urb = next(i for i, c in enumerate(head) if "urban" in c)
     ci_ded = [i for i, c in enumerate(head) if "depend" in c or "dedu" in c]
     ci_par = next((i for i, c in enumerate(head) if "freguesia" in c), None)
@@ -89,14 +91,14 @@ def parse_district(page: str) -> list[dict]:
         if len(r) <= max(ci_mun, ci_urb):
             continue
         rate = parse_rate(r[ci_urb])
-        if rate is None:
-            continue
-        cell = r[ci_mun]
+        # com taxas diferentes por freguesia, a AT não dá taxa única ("-") e põe uma ligação ("+Info")
+        parish = bool(ci_par is not None and len(r) > ci_par and r[ci_par].strip())
         code = re.search(r"\b(\d{4})\b", " ".join(r[:ci_mun + 1]))
-        name = re.sub(r"^[\d\s\-–.]+", "", cell).strip()
-        item = {"code": code.group(1) if code else None, "name": name, "rate_urban": rate,
-                "parish_rates": bool(ci_par is not None and len(r) > ci_par and re.search(r"\d", r[ci_par]))}
-        for k, i in enumerate(ci_ded[:3], 1):
+        name = re.sub(r"^[\d\s\-–.]+", "", r[ci_mun]).strip()
+        if not name or (rate is None and not parish):
+            continue
+        item = {"code": code.group(1) if code else None, "name": name, "rate_urban": rate, "parish_rates": parish}
+        for k, i in enumerate(ci_ded[:3], 1):      # na página atual a dedução é uma ligação ("+Info"): fica vazia
             item[f"ded_{k}"] = parse_money(r[i]) if len(r) > i else None
         out.append(item)
     return out
@@ -114,6 +116,8 @@ def ingest(cfg: dict | None, data_dir: Path, today: str, names: dict[str, str] |
     """Taxas de IMI do ano mais recente publicado pela AT. Devolve (tabela por concelho, estado para o site)."""
     cached_path = data_dir / "clean" / "imi_rates.parquet"
     cached = pd.read_parquet(cached_path) if cached_path.exists() else None
+    if cached is not None and ("parser_v" not in cached or int(cached["parser_v"].max()) < PARSER_V):
+        cached = None
     if not cfg:
         return cached, "sem configuração"
     raw = data_dir / "raw" / "imi"
@@ -151,12 +155,11 @@ def ingest(cfg: dict | None, data_dir: Path, today: str, names: dict[str, str] |
             raise ValueError(f"só {len(rows)} linhas reconhecidas para {year} (ver data/raw/imi)")
         df = pd.DataFrame(rows)
         df["year"] = year
-        by_name = {geo.norm_name(n): d for d, n in (names or {}).items()}
-        df["dico"] = [c if c else by_name.get(geo.norm_name(n)) for c, n in zip(df["code"], df["name"])]
+        df["dico"] = match_dico(df, names or {})
         n_ok = int(df["dico"].notna().sum())
         if n_ok < 250:
             raise ValueError(f"só {n_ok} concelhos reconhecidos em {len(df)} linhas (ver data/raw/imi)")
-        df = df.dropna(subset=["dico"]).drop_duplicates("dico")
+        df = df.dropna(subset=["dico"]).drop_duplicates("dico").assign(parser_v=PARSER_V)
         cached_path.parent.mkdir(parents=True, exist_ok=True)
         df.to_parquet(cached_path, index=False)
         return df, f"ok ({len(df)} concelhos, taxas de {year})"
@@ -167,13 +170,41 @@ def ingest(cfg: dict | None, data_dir: Path, today: str, names: dict[str, str] |
         return None, f"ERRO: {str(e)[:200]}"
 
 
+def _norm(name: str) -> str:
+    n = re.sub(r"\(.*?\)", "", str(name))
+    n = re.sub(r"\bS\.\s*", "SAO ", n.upper())
+    n = re.sub(r"\b(DA|DE|DO|DAS|DOS)\b", " ", n)          # "Vila Praia da Vitória" = "Vila da Praia da Vitória"
+    return geo.norm_name(n)
+
+
+def match_dico(df: pd.DataFrame, names: dict[str, str]) -> list[str | None]:
+    """Código da AT -> código DICO do INE. No continente são iguais (confirmado pelo nome); nas ilhas a AT usa os
+    distritos 19-22 (Açores 19-21, Madeira 22) e o INE 31-32 (Madeira) e 41-49 (Açores): liga-se pelo nome,
+    dentro da região (há Calheta e Lagoa nas duas regiões autónomas e Lagoa também no Algarve)."""
+    by_region: dict[str, dict[str, str]] = {"C": {}, "M": {}, "A": {}}
+    for d, n in names.items():
+        reg = "M" if d[:2] in ("31", "32") else "A" if d[:1] == "4" else "C"
+        by_region[reg][_norm(n)] = d
+    out = []
+    for code, name in zip(df["code"], df["name"]):
+        c = str(code) if code else ""
+        reg = "M" if c[:2] == "22" else "A" if c[:2] in ("19", "20", "21") else "C"
+        if reg == "C" and c and (not names or (c in names and _norm(names[c]) == _norm(name))):
+            out.append(c)
+        else:
+            out.append(by_region[reg].get(_norm(name)))
+    return out
+
+
 def per_municipality(df: pd.DataFrame | None) -> dict[str, dict]:
     """{dico: campos para o site}."""
     if df is None or df.empty:
         return {}
     out = {}
     for r in df.to_dict("records"):
-        item = {"imi_rate": round(float(r["rate_urban"]), 6), "imi_year": int(r["year"]), "imi_parish_rates": bool(r.get("parish_rates"))}
+        rate = r.get("rate_urban")
+        item = {"imi_rate": None if rate is None or rate != rate else round(float(rate), 6), "imi_year": int(r["year"]),
+                "imi_parish_rates": bool(r.get("parish_rates"))}
         for k in (1, 2, 3):
             v = r.get(f"ded_{k}")
             if v is not None and v == v:

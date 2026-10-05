@@ -12,7 +12,8 @@ FORM = """<form><select name="ano"><option value="">--</option><option value="20
 TABLE = """<table><tr><th>Código</th><th>Município</th><th>Taxa Prédios Urbanos</th><th>Taxa Prédios Rústicos</th>
 <th>Taxas por freguesia</th><th>Dedução 1 dependente</th><th>Dedução 2 dependentes</th><th>Dedução 3 ou mais dependentes</th></tr>
 <tr><td>1106</td><td>LISBOA</td><td>0,300%</td><td>0,8%</td><td></td><td>30,00 €</td><td>70,00 €</td><td>140,00 €</td></tr>
-<tr><td>1107</td><td>LOURES</td><td>0,375</td><td>0,8%</td><td>Sim: 0,35</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>1107</td><td>LOURES</td><td>0,375</td><td>0,8%</td><td>+Info</td><td>-</td><td>-</td><td>-</td></tr>
+<tr><td>1304</td><td>GONDOMAR</td><td>-</td><td>-</td><td>+Info</td><td>+Info</td><td></td><td></td></tr>
 <tr><td colspan="8">Notas</td></tr></table>"""
 
 
@@ -20,7 +21,8 @@ def test_parse_form_and_district_table():
     opts = imi.select_options(FORM)
     assert opts["ano"] == ["2024", "2025"] and opts["distrito"] == ["01AVEIRO", "11LISBOA"]
     rows = imi.parse_district(TABLE)
-    assert [r["code"] for r in rows] == ["1106", "1107"]
+    assert [r["code"] for r in rows] == ["1106", "1107", "1304"] and rows[0]["name"] == "LISBOA"
+    assert rows[2]["rate_urban"] is None and rows[2]["parish_rates"]
     assert rows[0]["rate_urban"] == 0.003 and rows[1]["rate_urban"] == 0.00375
     assert rows[0]["ded_1"] == 30.0 and rows[0]["ded_3"] == 140.0 and rows[1]["ded_1"] is None
     assert rows[1]["parish_rates"] and not rows[0]["parish_rates"]
@@ -34,7 +36,8 @@ def test_ingest_without_network_keeps_cache(tmp_path, monkeypatch):
     df, st = imi.ingest({"form_url": "x", "table_url": "y"}, tmp_path, "20260101")
     assert df is None and st.startswith("ERRO")
     (tmp_path / "clean").mkdir()
-    pd.DataFrame({"dico": ["1106"], "rate_urban": [0.003], "year": [2025]}).to_parquet(tmp_path / "clean" / "imi_rates.parquet")
+    pd.DataFrame({"dico": ["1106"], "rate_urban": [0.003], "year": [2025], "parser_v": [imi.PARSER_V]}).to_parquet(
+        tmp_path / "clean" / "imi_rates.parquet")
     df, st = imi.ingest({"form_url": "x", "table_url": "y"}, tmp_path, "20260101")
     assert len(df) == 1 and st.startswith("CACHE")
 
@@ -88,3 +91,12 @@ def test_macro_failure_uses_previous_snapshot(tmp_path, monkeypatch):
     frames, st = pipeline.ingest_macro({"macro": {"euribor_12m": {}, "euribor_3m": {}}}, tmp_path)
     assert st["euribor_12m"].startswith("CACHE") and len(frames["euribor_12m"]) == 1
     assert st["euribor_3m"].startswith("ERRO") and "euribor_3m" not in frames
+
+
+def test_match_dico_mainland_by_code_islands_by_name_within_region():
+    names = {"0806": "Lagoa", "4201": "Lagoa (R.A.A.)", "3101": "Calheta (R.A.M.)", "4501": "Calheta (R.A.A.)",
+             "3110": "São Vicente", "4302": "Vila da Praia da Vitória", "1106": "Lisboa"}
+    df = pd.DataFrame({"code": ["0806", "2101", "2201", "1902", "2211", "1905", "1106", "2001"],
+                       "name": ["LAGOA", "LAGOA (AÇORES)", "CALHETA (MADEIRA)", "CALHETA (AÇORES)", "S. VICENTE",
+                                "VILA PRAIA DA VITORIA", "LISBOA", "CORVO"]})
+    assert imi.match_dico(df, names) == ["0806", "4201", "3101", "4501", "3110", "4302", "1106", None]

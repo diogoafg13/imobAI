@@ -100,7 +100,7 @@ LIMITS_PT = [
 
 # ---------------------------------------------------------------- fontes
 EUROSTAT_HPI_URL = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hpi_q"
-EUROSTAT_HICP_URL = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_midx"
+EUROSTAT_HICP_URL = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_minr"  # ECOICOP ver. 2 (o prc_hicp_midx parou em dez/2025)
 BIS_CREDIT_GAP_URL = "https://stats.bis.org/api/v2/data/dataflow/BIS/WS_CREDIT_GAP/1.0/Q.{cc}.P.A.C"
 BIS_COUNTRY_CODE = {"EL": "GR"}  # Eurostat usa EL para a Grécia; o BIS usa GR
 
@@ -134,7 +134,7 @@ def ingest_country(cc: str, data_dir: Path) -> dict[str, pd.DataFrame | None]:
         }),
         "hicp": (macro.fetch_eurostat_hicp, {
             "url": EUROSTAT_HICP_URL,
-            "params": {"geo": cc, "coicop": "CP00", "unit": "I15", "format": "JSON", "lang": "EN"},
+            "params": {"geo": cc, "coicop18": "TOTAL", "unit": "I15", "format": "JSON", "lang": "EN"},
         }),
         "credit_gap": (macro.fetch_bis_credit_gap, {
             "url": BIS_CREDIT_GAP_URL.format(cc=_bis_code(cc)), "params": {"format": "csv"},
