@@ -427,7 +427,8 @@ preço de mercado).
   indicado com a regra atual.
 - **Alojamento local por freguesia** (`imopt/al.py`): RNAL do Turismo de Portugal (dados abertos, continente,
   ~112 mil registos), ligados à freguesia pelo código DICOFRE que o próprio registo traz (`DTMNFR`; sem código,
-  pelas coordenadas e as fronteiras do painel, ou pelo nome dentro do concelho); registos por 100 alojamentos do Censos 2021 na tabela de freguesias, no mapa e no "O meu imóvel".
+  ou com um código que já não existe — freguesias antigas —, pelas coordenadas e as fronteiras do painel; por último
+  pelo nome dentro do concelho). Com os dados de out/2026 ficaram ligados 99,9% dos registos, em 2 566 freguesias; registos por 100 alojamentos do Censos 2021 na tabela de freguesias, no mapa e no "O meu imóvel".
   Registado não quer dizer ativo. Descarregado no máximo uma vez por semana.
 - **Dedução do IMI familiar**: lida das páginas "+Info" da AT (uma por concelho, só quando muda o ano). Os valores
   são os da lei (30 €, 70 € e 140 € com 1, 2 e 3 ou mais dependentes) e a coluna "Aplicar" diz se o concelho os dá.

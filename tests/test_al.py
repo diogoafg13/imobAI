@@ -38,3 +38,10 @@ def test_by_parish_uses_coordinates_then_names():
     assert out.attrs["matched"] == 1.0
     f = al.per_parish_fields(out, pd.Series({"110601": 100.0, "110602": 0.0}))
     assert f.loc["110601", "al_per_100"] == 1.0 and pd.isna(f.loc["110602", "al_per_100"])
+
+
+def test_unknown_parish_code_falls_back_to_coordinates():
+    gj = {"type": "FeatureCollection", "features": [_square("110601", -10, 38)]}
+    pts = pd.DataFrame({"code": ["110699", "110601"], "lat": [38.5, 38.4], "lon": [-9.5, -9.4]})
+    out = al.by_parish(pts, gj)
+    assert out.loc["110601", "al_n"] == 2

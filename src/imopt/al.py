@@ -116,6 +116,9 @@ def by_parish(points: pd.DataFrame | None, parish_geo: dict | None,
         return None
     code = points["code"].where(points["code"].astype(str).str.fullmatch(r"\d{6}"), None) if "code" in points else \
         pd.Series(None, index=points.index, dtype=object)
+    if parish_geo:   # códigos que não existem nas fronteiras atuais (ex.: freguesias antigas) vão pelas coordenadas
+        known = {str((f.get("properties") or {}).get("code")) for f in parish_geo.get("features", [])}
+        code = code.where(code.isin(known), None)
     if parish_geo and "lat" in points and "lon" in points and code.isna().any():
         from shapely.geometry import Point, shape
         from shapely.strtree import STRtree
