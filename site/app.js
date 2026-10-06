@@ -74,6 +74,7 @@ const GLOSS = {
   imt: ['IMT e Imposto do Selo', 'Impostos na compra, tabelas de 2026 (continente): IMT por escalões, mais baixo na habitação própria e permanente; Imposto do Selo de 0,8% sobre o preço e de 0,6% sobre o crédito (prazo de 5 anos ou mais). Jovens até 35 anos, na 1.ª habitação própria e permanente e não dependentes no IRS, estão isentos de IMT e do Imposto do Selo da compra até 330 539 € e pagam só sobre o excesso até 660 982 € (o do crédito paga-se sempre). Contas sobre o preço; o IMT incide sobre o maior entre o preço e o VPT.'],
   imi: ['Taxa de IMI', 'Taxa do imposto municipal sobre imóveis fixada pelo concelho para os prédios urbanos (entre 0,3% e 0,45%), publicada pelas Finanças por ano. Aplica-se ao valor patrimonial tributário (VPT, na caderneta predial), não ao preço de mercado: IMI = VPT × taxa. Com dependentes, alguns concelhos dão uma dedução fixa (IMI familiar). Há concelhos com taxas diferentes em algumas freguesias.'],
   rentfit: ['Onde a renda cabe', 'Renda mediana dos novos contratos de arrendamento de cada concelho (INE, por m²) × a área que indicas, a dividir pelo rendimento líquido do teu agregado. Mostra onde fica dentro do limite escolhido (35% por omissão, uma referência comum, não legal) e onde só a parte mais barata do mercado cabe. Se já arrendas, mostra também o máximo que a renda pode subir no próximo ano com o coeficiente legal publicado pelo INE.'],
+  guide: ['Guia', 'Ordena os concelhos (e as freguesias) pelo que escolhes. Primeiro tira os que não cabem no orçamento: o custo é a mediana de venda (por tipologia, quando o INE a publica) ou da renda de novos contratos × a área. A comprar, o orçamento sai da poupança (entrada, IMT, Imposto do Selo, escritura) e do rendimento, com as regras do Banco de Portugal (LTV de 90%/80%, prestação com +1,5 p.p. até 45% do rendimento) e o esforço que escolhes. Depois, em cada critério, compara os concelhos que cabem entre si e faz a média ponderada. As medianas escondem casas muito diferentes: usa o resultado para saber onde procurar, não como avaliação.'],
   invest: ['Investir para arrendar', 'Contas de um investimento para arrendar: dinheiro à cabeça (entrada, IMT e Imposto do Selo de 2.ª habitação, escritura), prestação, rendas menos meses vazios, IMI do concelho, condomínio, seguro, manutenção e IRS sobre rendas (regras de 2026), e venda ao fim do prazo (custos, crédito em dívida e mais-valias). A TIR (taxa interna de rentabilidade) é o rendimento anual do dinheiro que puseste, contando com a venda. Preço e renda partem das medianas do concelho; a valorização e a subida da renda são pressupostos teus — a tabela de sensibilidade mostra quanto pesam.'],
   follow: ['Concelhos que segues', 'Concelhos que escolheste seguir: escreve o nome aqui ou usa o botão ☆ Seguir na ficha de um concelho (separador Mercado). A lista fica guardada só neste browser. Mostra o que mudou desde o trimestre anterior e os números principais.'],
   par_irs: ['Freguesias: rendimento e Censos', 'Por freguesia: mediana do rendimento declarado no IRS depois do imposto (por pessoa que declara, ÷ 12; o INE não publica freguesias com poucos declarantes), e a parte das casas vagas e de segunda habitação no Censos 2021. O esforço de compra por freguesia usa o preço da freguesia (só onde o INE o publica) e o rendimento do IRS de quem lá vive, com a casa e o crédito da calculadora.'],
@@ -2164,8 +2165,230 @@ function renderSources() {
       `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td style="text-align:left">${esc(r[2].slice(0, 140))}</td></tr>`).join('')}</tbody></table></div>` : '');
 }
 // ---------- separadores: cada secção pertence a um tema; os links entre secções mudam de separador sozinhos
+// ---------- guia: perguntas -> concelhos e freguesias que melhor encaixam
+const GUIDE_KEY = 'imopt.guide.v1';
+const G_STEPS = 5;
+const G_AREA = { t01: 50, t2: 80, t3: 110, t4: 150 };
+const G_TYPN = { t01: 'T0/T1', t2: 'T2', t3: 'T3', t4: 'T4+' };
+const G_ZONES = [['01', 'Aveiro'], ['02', 'Beja'], ['03', 'Braga'], ['04', 'Bragança'], ['05', 'Castelo Branco'], ['06', 'Coimbra'], ['07', 'Évora'],
+  ['08', 'Faro'], ['09', 'Guarda'], ['10', 'Leiria'], ['11', 'Lisboa'], ['12', 'Portalegre'], ['13', 'Porto'], ['14', 'Santarém'], ['15', 'Setúbal'],
+  ['16', 'Viana do Castelo'], ['17', 'Vila Real'], ['18', 'Viseu'], ['3', 'Madeira'], ['4', 'Açores']];
+const G_W = [['0', 'Não interessa'], ['1', 'Importa'], ['2', 'Importa muito']];
+// critérios: valor por concelho (m) e, quando existe, por freguesia (p); dir 1 = mais é melhor
+const G_CRIT = [
+  { key: 'fit', label: 'Folga no orçamento', goals: 'buy rent invest', def: { buy: 1, rent: 2, invest: 1 }, dir: 1, f: (v) => `sobram ${fmt.pct(v, 0)}` },
+  { key: 'yield', label: 'Rendibilidade líquida (renda − custos e IRS)', goals: 'invest', def: { invest: 2 }, dir: 1, f: (v) => `${fmt.pct(v, 1)} líquida` },
+  { key: 'growth', label: 'Valorização prevista a 12 meses', goals: 'buy invest', def: { buy: 1, invest: 1 }, dir: 1, f: (v) => `previsão ${fmt.spct(v, 1)}` },
+  { key: 'risk', label: 'Menos risco de correção dos preços (score do painel)', goals: 'buy invest', def: { buy: 2, invest: 1 }, dir: -1, f: (v) => `risco de correção ${fmt.n(v, 0)}/100` },
+  { key: 'demand', label: 'Procura de arrendamento (contratos novos por casa)', goals: 'invest', def: { invest: 1 }, dir: 1, f: (v) => `${fmt.n(v, 1)} contratos/1000 casas` },
+  { key: 'rstable', label: 'Rendas a subir menos', goals: 'rent', def: { rent: 1 }, dir: -1, f: (v) => `renda ${fmt.spct(v, 0)} num ano` },
+  { key: 'rsupply', label: 'Mais escolha (contratos novos por casa)', goals: 'rent', def: { rent: 1 }, dir: 1, f: (v) => `${fmt.n(v, 1)} contratos/1000 casas` },
+  { key: 'liquid', label: 'Mercado com movimento (avaliações bancárias por casa)', goals: 'buy invest', def: {}, dir: 1, f: (v) => `${fmt.n(v, 1)} avaliações/1000 casas` },
+  { key: 'services', label: 'Escolas e saúde (OpenStreetMap)', goals: 'buy rent invest', def: { buy: 1, rent: 1 }, dir: 1, f: (v) => `${fmt.n(v, 1)} escolas e unid. de saúde/1000 casas`, need: () => PAR && PAR.rows.some((r) => r.n_school != null) },
+  { key: 'flood', label: 'Menos área em zona inundável (APA)', goals: 'buy rent invest', def: {}, dir: -1, f: (v) => `${fmt.n(v, 1)}% em zona inundável`, need: () => PAR && PAR.rows.some((r) => r.flood_pct != null) },
+  { key: 'lowal', label: 'Pouco alojamento local', goals: 'buy rent invest', def: {}, dir: -1, f: (v) => `${fmt.n(v, 1)} camas de AL/100 casas` },
+  { key: 'income', label: 'Vizinhança com rendimentos mais altos (IRS)', goals: 'buy rent invest', def: {}, dir: 1, f: (v) => `IRS mediano ${fmt.eur(v)}/ano` },
+  { key: 'young', label: 'População mais jovem', goals: 'buy rent invest', def: {}, dir: -1, f: (v) => `${fmt.n(v, 0)} idosos por 100 jovens` },
+  { key: 'metro', label: 'Perto de Lisboa ou do Porto', goals: 'buy rent invest', def: {}, dir: -1, f: (v) => (v < 1 ? 'na área metropolitana' : `a ${fmt.n(v, 0)} km de Lisboa/Porto`) },
+];
+let G = null, GSTEP = 1, GCENT = null;
+const gDefaults = () => ({ goal: 'buy', typ: 't2', area: null, savings: null, income: null, effort: null, maxrent: null, maxprice: null, young: false, nocredit: false,
+  zone: 'all', near: '', km: null, coast: 'any', dists: [], small: false, w: {} });
+function gLoad() { try { G = { ...gDefaults(), ...(JSON.parse(localStorage.getItem(GUIDE_KEY) || 'null') || {}) }; } catch { G = gDefaults(); } }
+function gSave() { try { localStorage.setItem(GUIDE_KEY, JSON.stringify(G)); } catch { /* sem armazenamento */ } }
+const gArea = () => G.area || G_AREA[G.typ] || 80;
+const gW = (c) => { const w = (G.w[G.goal] || {})[c.key]; return w != null ? +w : (c.def[G.goal] || 0); };
+const gCrit = () => G_CRIT.filter((c) => c.goals.split(' ').includes(G.goal) && (!c.need || c.need()));
+// preço/m² da tipologia no concelho (INE, 12 meses); sem ela, a mediana de todas as casas
+const gPpm = (m) => m[`price_${G.typ}`] ?? m.price;
+function gBudget(ra = false) {
+  if (G.goal === 'rent') {
+    const v = G.maxrent || (G.income ? 0.35 * G.income : null);
+    return v ? { value: v, txt: `renda até ${fmt.eur(v)}/mês${G.maxrent ? '' : ' (35% do rendimento líquido)'}` } : null;
+  }
+  if (G.maxprice) return { value: G.maxprice, txt: `casa até ${fmt.eur(G.maxprice)} (o valor que indicaste)` };
+  if (!G.savings) return null;
+  const use = G.goal === 'buy' ? 'hpp' : 'sec', rate = affRateNow(), years = G.goal === 'buy' && G.young ? 40 : 30;
+  const r = maxPrice({ savings: G.savings, income: G.income || 0, effort: (G.effort || 35) / 100, rate, years, use, young: G.goal === 'buy' && G.young, ra, closing: 1000, credit: !(G.goal === 'invest' && G.nocredit) });
+  const lim = r.loan <= 0 ? 'só com a poupança' : r.limit === 'income' ? `o crédito fica limitado pelo rendimento (prestação de ${fmt.eur(r.pay)}/mês)` : `a poupança chega para a entrada de ${fmt.n((1 - BDP.ltv[use]) * 100, 0)}% mais impostos (prestação de ${fmt.eur(r.pay)}/mês)`;
+  return { value: r.price, r, txt: `casa até ${fmt.eur(r.price)}: ${fmt.eur(r.loan)} de crédito a ${fmt.n(rate, 2)}% em ${years} anos e ${fmt.eur(r.price - r.loan)} de entrada, mais ${fmt.eur(r.taxes)} de IMT e Imposto do Selo e ~${fmt.eur(1000)} de escritura; ${lim}` };
+}
+function gCentroids() {
+  if (GCENT || !GEO) return GCENT;
+  GCENT = {};
+  GEO.features.forEach((f) => {
+    const g = f.geometry; if (!g) return;
+    const polys = g.type === 'Polygon' ? [g.coordinates] : g.type === 'MultiPolygon' ? g.coordinates : [];
+    let best = null; polys.forEach((p) => { if (!best || p[0].length > best.length) best = p[0]; });
+    if (!best) return;
+    const n = best.length; GCENT[f.properties.dico] = [best.reduce((a, c) => a + c[0], 0) / n, best.reduce((a, c) => a + c[1], 0) / n];
+  });
+  return GCENT;
+}
+function gKm(a, b) {
+  const R = 6371, rad = Math.PI / 180, dLat = (b[1] - a[1]) * rad, dLon = (b[0] - a[0]) * rad;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a[1] * rad) * Math.cos(b[1] * rad) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+// agregados das freguesias por concelho: escolas+saúde por 1000 casas e % de área inundável (média pesada pelas casas)
+function gParAgg() {
+  const out = {};
+  if (!PAR) return out;
+  const hasFl = PAR.rows.some((r) => r.flood_pct != null);
+  PAR.rows.forEach((r) => {
+    const o = out[r.dico] || (out[r.dico] = { sv: 0, svn: 0, fl: 0, fln: 0 }), n = r.census_total || 0;
+    if (r.n_school != null && n) { o.sv += r.n_school + (r.n_health || 0); o.svn += n; }
+    if (hasFl && n && !islands(r.dico)) { o.fl += (r.flood_pct || 0) * n; o.fln += n; }
+  });
+  return out;
+}
+// mercado de arrendamento pequeno: menos de 100 contratos novos num ano, ou o INE nem publica (poucos casos)
+const G_SMALL = 100;
+const gSmall = (m) => m.rent_contracts == null || m.rent_contracts < G_SMALL;
+function gZoneOk(m) {
+  if (G.goal === 'invest' && !G.small && gSmall(m)) return false;
+  if (G.coast === 'coast' && !m.coastal) return false;
+  if (G.coast === 'inland' && m.coastal) return false;
+  if (G.zone === 'dist') return !G.dists.length || G.dists.some((d) => m.dico.startsWith(d));
+  if (G.zone === 'near') {
+    const ref = MUNIS.find((x) => x.name.toLowerCase() === String(G.near).trim().toLowerCase()), C = gCentroids();
+    if (!ref || !C || !C[ref.dico] || !C[m.dico]) return true;
+    return gKm(C[ref.dico], C[m.dico]) <= (G.km || 30);
+  }
+  return true;
+}
+function gVals(m, cost, agg) {
+  const per1000 = (x) => (x != null && m.census_total ? (x / m.census_total) * 1000 : null), a = agg[m.dico];
+  const v = { fit: null, growth: m.fc_growth_12m, risk: m.score_overall, demand: per1000(m.rent_contracts), rsupply: per1000(m.rent_contracts),
+    rstable: m.rent_growth_1y, liquid: per1000(m.val_count), lowal: m.al_beds_per_100, income: m.irs_median, young: m.ageing_index, metro: m.dist_metro_km,
+    services: a && a.svn ? (a.sv / a.svn) * 1000 : null, flood: a && a.fln ? a.fl / a.fln : null };
+  if (G.goal === 'invest' && m.rent != null && cost) { const o = invParams(m, { area: gArea(), price: cost, down: 100 }); v.yield = o ? invest(o).netYield : null; }
+  return v;
+}
+function gParishes(m, budget, crit) {
+  if (!PAR) return null;
+  const area = gArea(), adj = m.price && gPpm(m) ? gPpm(m) / m.price : 1, hasFl = PAR.rows.some((r) => r.flood_pct != null);
+  const rows = PAR.rows.filter((r) => r.dico === m.dico).map((r) => {
+    const cost = G.goal === 'rent' ? (r.rent != null ? r.rent * area : null) : (r.price != null ? r.price * adj * area : null);
+    if (cost == null) return null;
+    const rentM = (r.rent ?? m.rent) * area;
+    return { id: r.code, r, cost, vals: { fit: budget / cost - 1, yield: G.goal === 'invest' && rentM ? (rentM * 12) / cost : null,
+      services: r.n_school != null && r.census_total ? ((r.n_school + (r.n_health || 0)) / r.census_total) * 1000 : null,
+      flood: hasFl ? (r.flood_pct ?? 0) : null, lowal: r.al_per_100, income: r.irs_median, rstable: r.rent_g1y } };
+  }).filter(Boolean);
+  if (!rows.length) return { none: true };
+  const fits = rows.filter((x) => x.vals.fit >= -0.05);
+  if (!fits.length) return { over: rows.length };
+  const pc = crit.filter((c) => ['fit', 'yield', 'services', 'flood', 'lowal', 'income', 'rstable'].includes(c.key));
+  return { list: rankBy(fits, pc).slice(0, 3) };
+}
+function gTag(c, v, p) { return `<span class="g-tag ${p >= 0.75 ? 'up' : 'down'}" title="${esc(c.label)}: ${p >= 0.75 ? 'entre os melhores' : 'entre os piores'}">${p >= 0.75 ? '✓' : '✗'} ${esc(c.f(v))}</span>`; }
+async function gResults() {
+  const out = $('#guide-out');
+  out.innerHTML = '<p class="muted">A calcular…</p>';
+  await ensurePar().catch(() => null);
+  const crit = gCrit().map((c) => ({ ...c, w: gW(c) })), area = gArea();
+  const bMain = gBudget(false), bIsl = G.goal === 'rent' ? bMain : gBudget(true);
+  if (!bMain) { out.innerHTML = `<p class="banner">Falta o orçamento: ${G.goal === 'rent' ? 'indica o rendimento ou a renda máxima' : 'indica a poupança (e o rendimento, se vais pedir crédito) ou o preço máximo'} no passo 3.</p>`; return; }
+  const agg = gParAgg();
+  const all = MUNIS.filter(gZoneOk).map((m) => {
+    const cost = G.goal === 'rent' ? (m.rent != null ? m.rent * area : null) : (gPpm(m) != null ? gPpm(m) * area : null);
+    if (cost == null) return null;
+    const budget = (islands(m.dico) ? bIsl : bMain).value, vals = gVals(m, cost, agg);
+    vals.fit = budget / cost - 1;
+    return { id: m.dico, m, cost, budget, vals };
+  }).filter(Boolean);
+  const fits = all.filter((x) => x.vals.fit >= -0.05);
+  const what = `${G_TYPN[G.typ]} de ${fmt.n(area, 0)} m²`;
+  let html = `<div class="verdict"><b>Orçamento:</b> ${esc(bMain.txt)}.</div>`;
+  if (!all.length) { out.innerHTML = html + '<p class="banner">Nenhum concelho nessa zona tem preço ou renda publicados. Alarga a zona no passo 4.</p>'; return; }
+  if (!fits.length) {
+    const near = all.sort((a, b) => b.vals.fit - a.vals.fit).slice(0, 5);
+    out.innerHTML = html + `<p class="banner">Com este orçamento, nenhum concelho da zona escolhida tem um ${esc(what)} mediano ao alcance. Os mais próximos:</p><ul class="g-par">${near.map((x) => `<li><a class="lnk" href="#c-${x.m.dico}">${esc(x.m.name)}</a>: ${G.goal === 'rent' ? `${fmt.eur(x.cost)}/mês` : fmt.eur(x.cost)} (${fmt.pct(-x.vals.fit, 0)} acima)</li>`).join('')}</ul><p class="muted">Experimenta uma casa mais pequena (passo 2), outra zona (passo 4) ou, a comprar, mais poupança ou outro prazo.</p>`;
+    return;
+  }
+  const ranked = rankBy(fits, crit).slice(0, 10);
+  html += `<p class="muted">${fmt.n(fits.length, 0)} de ${fmt.n(all.length, 0)} concelhos na zona escolhida têm um ${esc(what)} mediano dentro do orçamento. Os 10 que melhor encaixam no que escolheste:</p><ol class="g-res">`;
+  ranked.forEach((x, i) => {
+    const m = x.m, used = crit.filter((c) => c.w > 0 && x.parts[c.key] != null);
+    const up = used.filter((c) => x.parts[c.key] >= 0.75).sort((a, b) => x.parts[b.key] - x.parts[a.key]).slice(0, 4);
+    const down = used.filter((c) => x.parts[c.key] <= 0.25).sort((a, b) => x.parts[a.key] - x.parts[b.key]).slice(0, 3);
+    const warn = [];
+    if (x.vals.fit < 0) warn.push(`ligeiramente acima do orçamento (${fmt.pct(-x.vals.fit, 0)})`);
+    if (m.band === 'red') warn.push('risco de correção elevado no painel');
+    if (m.volatile) warn.push('preço mediano instável (poucas vendas)');
+    if (gSmall(m)) warn.push(m.rent_contracts == null ? 'mercado pequeno: o INE não publica os contratos de arrendamento (poucos casos)' : `mercado pequeno: ${fmt.n(m.rent_contracts, 0)} contratos de arrendamento num ano`);
+    const miss = crit.filter((c) => c.w > 0 && x.missing.includes(c.key)).map((c) => c.label.toLowerCase());
+    if (miss.length) warn.push(`sem dados: ${miss.join(', ')}`);
+    const P = gParishes(m, x.budget, crit);
+    const ptxt = !P ? '' : P.none ? `<p class="muted">O INE não publica ${G.goal === 'rent' ? 'rendas' : 'preços'} por freguesia neste concelho (poucas ${G.goal === 'rent' ? 'rendas' : 'vendas'}).</p>`
+      : P.over ? `<p class="muted">Nas ${P.over} freguesias com ${G.goal === 'rent' ? 'renda' : 'preço'} publicado, a mediana fica acima do orçamento: procura nas restantes, ou casas abaixo da mediana.</p>`
+        : `<ul class="g-par">${P.list.map((q) => `<li><b>${esc(q.r.name)}</b>: ${G.goal === 'rent' ? `${fmt.eur(q.cost)}/mês` : `~${fmt.eur(q.cost)}`}${q.vals.fit >= 0 ? `, sobram ${fmt.pct(q.vals.fit, 0)}` : ' (à justa)'}${q.vals.yield != null ? ` · ${fmt.pct(q.vals.yield, 1)} bruta` : ''}${q.vals.services != null ? ` · ${fmt.n(q.vals.services, 1)} escolas e saúde/1000 casas` : ''}${q.r.flood_pct != null ? ` · ${fmt.n(q.r.flood_pct, 1)}% em zona inundável` : ''}${q.r.volatile ? ' · <span class="muted">⚠ mediana volátil</span>' : ''}</li>`).join('')}</ul>`;
+    html += `<li><div class="g-head"><h3>${i + 1}. <a class="lnk" href="#c-${m.dico}">${esc(m.name)}</a></h3><span class="g-fit">encaixe ${fmt.n(x.score * 100, 0)}/100</span></div>
+      <div class="g-bar"><i style="width:${(x.score * 100).toFixed(0)}%"></i></div>
+      <div class="muted">${esc(what)}: ${G.goal === 'rent' ? `${fmt.eur(x.cost)}/mês (${fmt.eur2(m.rent)}/m², novos contratos)` : `~${fmt.eur(x.cost)} (${fmt.eur(gPpm(m))}/m², ${m[`price_${G.typ}`] == null ? `mediana de todas as casas — o INE não publica a de ${G_TYPN[G.typ]} aqui` : `mediana de ${G_TYPN[G.typ]}`}, vendas dos últimos 12 meses)`}${G.goal === 'invest' && x.vals.yield != null ? ` · renda ~${fmt.eur(m.rent * area)}/mês · ${fmt.pct(x.vals.yield, 1)} líquida` : ''}</div>
+      <div class="g-tags">${up.map((c) => gTag(c, x.vals[c.key], x.parts[c.key])).join('')}${down.map((c) => gTag(c, x.vals[c.key], x.parts[c.key])).join('')}${warn.map((t) => `<span class="g-tag warn">⚠ ${esc(t)}</span>`).join('')}</div>
+      ${ptxt}
+      <div class="g-nav"><a class="btn" href="#c-${m.dico}">Ver o concelho</a>${G.goal === 'invest' ? ` <button type="button" class="btn" data-inv="${m.dico}" data-price="${Math.round(x.cost)}">Fazer as contas no Investir</button>` : ''}${G.goal === 'rent' ? ' <a class="btn" href="#arrendar">Arrendar</a>' : ''}</div></li>`;
+  });
+  html += `</ol>${G.goal === 'invest' && !G.small ? `<p class="muted">Ficaram de fora os concelhos com menos de ${G_SMALL} contratos de arrendamento novos num ano (ou sem esse número publicado): a rendibilidade no papel pode ser alta, mas é mais difícil arrendar e vender, e as medianas assentam em poucos casos. Podes incluí-los no passo 4.</p>` : ''}<p class="muted">Como se ordena: em cada critério, cada concelho que cabe no orçamento é comparado com os outros (0 = o pior, 100 = o melhor); o encaixe é a média, com "importa muito" a contar a dobrar. ✓ = entre os 25% melhores nesse critério, ✗ = entre os 25% piores. Os custos são medianas do concelho ou da freguesia × a área: uma casa concreta pode estar muito longe delas. Não é aconselhamento de investimento: é um ponto de partida para procurar, com dados públicos (INE, BCE, Finanças, Turismo de Portugal, APA e OpenStreetMap).</p>`;
+  out.innerHTML = html;
+  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function gRead() {
+  const f = $('#guide-form'), num = (k) => { const x = parseFloat(String(f[k].value).replace(/\s/g, '').replace(',', '.')); return Number.isFinite(x) && x > 0 ? x : null; };
+  G.goal = f.goal.value; G.typ = f.typ.value;
+  ['area', 'savings', 'income', 'effort', 'maxrent', 'maxprice', 'km'].forEach((k) => { G[k] = num(k); });
+  G.young = f.young.checked; G.nocredit = f.nocredit.checked; G.small = f.small.checked; G.zone = f.zone.value; G.near = f.near.value; G.coast = f.coast.value;
+  G.dists = [...f.querySelectorAll('input[name=dist]:checked')].map((x) => x.value);
+  f.querySelectorAll('select[data-w]').forEach((s) => { (G.w[G.goal] || (G.w[G.goal] = {}))[s.dataset.w] = +s.value; });
+  gSave();
+}
+function gFill() {
+  const f = $('#guide-form');
+  f.goal.value = G.goal; f.typ.value = G.typ;
+  ['area', 'savings', 'income', 'effort', 'maxrent', 'maxprice', 'km'].forEach((k) => { f[k].value = G[k] ?? ''; });
+  f.young.checked = !!G.young; f.nocredit.checked = !!G.nocredit; f.small.checked = !!G.small; f.zone.value = G.zone; f.near.value = G.near || ''; f.coast.value = G.coast;
+  $('#g-dists').innerHTML = G_ZONES.map(([c, n]) => `<label class="chip"><input type="checkbox" name="dist" value="${c}"${G.dists.includes(c) ? ' checked' : ''}> ${esc(n)}</label>`).join('');
+}
+function gStep(n) {
+  const f = $('#guide-form');
+  gRead();
+  GSTEP = Math.max(1, Math.min(G_STEPS, n));
+  f.querySelectorAll('fieldset[data-step]').forEach((fs) => { fs.hidden = +fs.dataset.step !== GSTEP; });
+  f.querySelectorAll('[data-g]').forEach((el) => { el.hidden = !el.dataset.g.split(' ').includes(G.goal); });
+  f.querySelectorAll('[data-z]').forEach((el) => { el.hidden = el.dataset.z !== G.zone; });
+  f.area.placeholder = String(G_AREA[G.typ] || 80);
+  if (GSTEP === 3) { const b = gBudget(false); $('#g-budget').hidden = !b; if (b) $('#g-budget').textContent = `Com estes valores: ${b.txt}.`; }
+  if (GSTEP === 5) ensurePar().catch(() => null).then(() => {
+    if (GSTEP !== 5) return;
+    $('#g-crit').innerHTML = gCrit().map((c) => `<label class="g-row"><span>${esc(c.label)}</span><select data-w="${c.key}">${G_W.map(([v, t]) => `<option value="${v}"${+v === gW(c) ? ' selected' : ''}>${t}</option>`).join('')}</select></label>`).join('');
+  });
+  $('#g-progress').textContent = `Passo ${GSTEP} de ${G_STEPS}`;
+  $('#g-prev').hidden = GSTEP === 1; $('#g-next').hidden = GSTEP === G_STEPS; $('#g-go').hidden = GSTEP < 3;
+}
+function initGuide() {
+  gLoad();
+  gFill(); gStep(1);
+  const f = $('#guide-form');
+  $('#g-next').addEventListener('click', () => gStep(GSTEP + 1));
+  $('#g-prev').addEventListener('click', () => gStep(GSTEP - 1));
+  $('#g-reset').addEventListener('click', () => { G = gDefaults(); gSave(); gFill(); gStep(1); $('#guide-out').innerHTML = ''; });
+  f.addEventListener('change', (e) => { if (e.target.name === 'typ') f.area.value = ''; gStep(GSTEP); });
+  f.addEventListener('input', () => { if (GSTEP === 3) gStep(3); });
+  f.addEventListener('submit', (e) => { e.preventDefault(); gRead(); if (GSTEP < 5) gStep(5); gResults(); });
+  $('#guide-out').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-inv]');
+    if (!b) return;
+    const m = BY[b.dataset.inv], inv = $('#inv-form');
+    inv.conc.value = m.name; inv.area.value = gArea(); inv.price.value = b.dataset.price; inv.rent.value = '';
+    showTab('investir', 'invest'); invRender();
+  });
+}
+
 const TABS = {
   mercado: ['summary', 'national', 'changes', 'mapsec', 'detail', 'compare', 'ranking'],
+  guia: ['guide'],
   seguir: ['follow'],
   comprar: ['afford'],
   arrendar: ['rent'],
@@ -2241,6 +2464,7 @@ async function main() {
   safe('resumo', renderSummary);
   safe('o meu imóvel', initImovel);
   safe('investir', initInvest);
+  safe('guia', initGuide);
   safe('arrendar', initRent);
   safe('comprar casa', initAfford);
   // indicadores do mapa sem nenhum valor nesta build (ex.: fonte que falhou) não aparecem na lista

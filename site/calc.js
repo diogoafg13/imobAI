@@ -173,8 +173,51 @@ function invest(o) {
     cashOnCash: y1.cf / cash0, totalProfit: flows.reduce((a, b) => a + b, 0) };
 }
 
+// Guia: preço máximo de casa que a poupança e o rendimento permitem. A poupança paga a entrada, o IMT, o Imposto do
+// Selo e a escritura; o crédito fica limitado (1) pelo LTV do Banco de Portugal (90% habitação própria, 80% outra),
+// (2) pelo esforço escolhido (prestação ≤ effort × rendimento líquido) e (3) pela regra do BdP (prestação com a taxa
+// +1,5 p.p. ≤ 45% do rendimento). o: { savings, income (líquido/mês), effort, rate (%), years, use, young, ra,
+// closing (€), credit (false = sem crédito) }.
+function maxPrice(o) {
+  const ltv = o.credit === false ? 0 : BDP.ltv[o.use === 'hpp' ? 'hpp' : 'sec'];
+  const inc = o.credit === false ? 0 : Math.max(0, o.income || 0);
+  const loanInc = inc > 0 ? Math.min((o.effort ?? 0.35) * inc / annuity(1, o.rate, o.years), BDP.dsti * inc / annuity(1, o.rate + BDP.shock, o.years)) : 0;
+  const plan = (P) => {
+    const loan = Math.min(ltv * P, loanInc), t = buyTaxes(P, loan, o.use, !!o.young, !!o.ra);
+    return { price: P, loan, taxes: t.total, cash: P - loan + t.total + (o.closing || 0) };
+  };
+  if (plan(0).cash > (o.savings || 0)) return { ...plan(0), limit: 'savings' };
+  let lo = 0, hi = 2e7;
+  for (let i = 0; i < 60; i++) { const mid = (lo + hi) / 2; if (plan(mid).cash <= (o.savings || 0)) lo = mid; else hi = mid; }
+  const r = plan(lo);
+  return { ...r, pay: annuity(r.loan, o.rate, o.years), limit: r.loan > 0 && r.loan >= loanInc - 1 && loanInc < ltv * lo ? 'income' : 'savings' };
+}
+
+// Guia: ordena candidatos por critérios ponderados. Cada critério vira um percentil entre os candidatos (0 = pior,
+// 1 = melhor, conforme dir); sem valor conta 0,5 (neutro) e fica em `missing`. score = média ponderada (0–1).
+// cands: [{ id, vals: { chave: número | null } }]; crit: [{ key, w, dir: 1 (mais é melhor) | -1 }].
+function rankBy(cands, crit) {
+  const use = crit.filter((c) => c.w > 0), sorted = {};
+  use.forEach((c) => { sorted[c.key] = cands.map((x) => x.vals[c.key]).filter((v) => v != null && Number.isFinite(v)).sort((a, b) => a - b); });
+  const lower = (xs, v) => { let lo = 0, hi = xs.length; while (lo < hi) { const m = (lo + hi) >> 1; if (xs[m] < v) lo = m + 1; else hi = m; } return lo; };
+  const pct = (c, v) => {
+    const xs = sorted[c.key];
+    if (v == null || !Number.isFinite(v) || xs.length < 2) return null;
+    const below = lower(xs, v), eq = lower(xs, v + Math.abs(v) * 1e-12 + 1e-12) - below;
+    const p = (below + (eq - 1) / 2) / (xs.length - 1);
+    return c.dir < 0 ? 1 - p : p;
+  };
+  const W = use.reduce((a, c) => a + c.w, 0) || 1;
+  return cands.map((x) => {
+    const parts = {}, missing = [];
+    let s = 0;
+    use.forEach((c) => { const p = pct(c, x.vals[c.key]); parts[c.key] = p; if (p == null) missing.push(c.key); s += c.w * (p == null ? 0.5 : p); });
+    return { ...x, score: s / W, parts, missing };
+  }).sort((a, b) => b.score - a.score);
+}
+
 if (typeof module !== 'undefined') {
   module.exports = { TAX_YEAR, taxTablesStale, BDP, LIMIT, IMT26, YOUNG_FULL, YOUNG_PART, IS_BUY, IS_LOAN, imtOf, isBuyOf, buyTaxes,
     islands, annuity, qOfMonth, serVal, qAdd, qIdx, at12, serGrowth, TAX_EDGES, shareAbove,
-    RENT_COEF, IRS_RENT, irsRentRate, irr, invest };
+    RENT_COEF, IRS_RENT, irsRentRate, irr, invest, maxPrice, rankBy };
 }

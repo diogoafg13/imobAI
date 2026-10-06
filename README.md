@@ -473,6 +473,25 @@ preço de mercado).
   parque habitacional do INE (parado em 2022) e o índice de preços da habitação do INE (parado em 2025T4; o painel usa
   o do Eurostat, em dia).
 
+### Guia: onde procurar (separador "Guia")
+
+Cinco perguntas (comprar para viver, arrendar ou investir; tipologia e área; orçamento; zona; o que pesa mais) e o
+painel ordena os concelhos e, dentro deles, até 3 freguesias.
+- **Orçamento**: a arrendar, renda máxima (por omissão 35% do rendimento líquido). A comprar, `maxPrice()` em
+  `site/calc.js`: a poupança paga entrada, IMT, Imposto do Selo e escritura; o crédito fica limitado pelo LTV do Banco
+  de Portugal (90% habitação própria, 80% outra), pelo esforço escolhido (35% por omissão) e pela regra de 45% com a
+  taxa +1,5 p.p.; IMT jovem e prazo de 40 anos até aos 35 anos. Ou um preço máximo indicado.
+- **Custo**: mediana de venda da tipologia (INE; a de todas as casas quando não é publicada) ou renda mediana de novos
+  contratos × área. Ficam os concelhos dentro do orçamento (até 5% acima, assinalados).
+- **Ordenação** (`rankBy()`): em cada critério, percentil entre os concelhos que cabem; encaixe = média ponderada
+  ("importa muito" conta a dobrar; sem dados = neutro e assinalado). Critérios: folga no orçamento, rendibilidade
+  líquida, valorização prevista, risco do painel, procura de arrendamento, rendas, avaliações bancárias, escolas e
+  saúde, zona inundável, alojamento local, IRS, envelhecimento e distância a Lisboa/Porto.
+- **Investir**: por omissão ficam de fora os concelhos com menos de 100 contratos de arrendamento novos num ano (ou
+  sem o número publicado) — rendibilidade alta no papel, mas difícil arrendar e vender; podem incluir-se no passo 4.
+- Zona: país, distritos/regiões, ou até X km (em linha reta, entre centros dos concelhos) de um concelho; litoral ou
+  interior. É um ponto de partida para procurar, não aconselhamento.
+
 ### Dados extra gratuitos (taxas por tipo, escolas/saúde/estações, descoberta de fontes)
 
 - **Taxa dos novos créditos por prazo de fixação** (BCE, MIR: variável/até 1 ano, 1–5, 5–10, mais de 10 anos) e

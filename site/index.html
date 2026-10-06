@@ -21,6 +21,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
 <nav id="topnav" aria-label="Separadores do painel">
   <div class="topnav-inner" role="tablist">
     <a href="#mercado" data-tab="mercado" role="tab">Mercado</a>
+    <a href="#guia" data-tab="guia" role="tab">Guia</a>
     <a href="#seguir" data-tab="seguir" role="tab">A seguir<span id="follow-n"></span></a>
     <a href="#comprar" data-tab="comprar" role="tab">Comprar casa</a>
     <a href="#arrendar" data-tab="arrendar" role="tab">Arrendar</a>
@@ -116,6 +117,61 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       <span class="im-buttons"><button type="submit" class="btn">Ver</button></span>
     </form>
     <div id="rent-out"></div>
+  </section>
+
+  <section id="guide" class="card">
+    <div class="row"><h2>Guia: onde procurar <button type="button" class="info" data-k="guide" aria-label="Sobre o guia">ⓘ</button></h2></div>
+    <p class="muted">Cinco perguntas e o painel ordena os concelhos (e, dentro deles, as freguesias) que melhor encaixam no que procuras, com os dados públicos que tem. As respostas ficam só neste browser.</p>
+    <form id="guide-form" autocomplete="off">
+      <p class="muted g-progress" id="g-progress"></p>
+      <fieldset data-step="1"><legend>O que procuras?</legend>
+        <label class="g-opt"><input type="radio" name="goal" value="buy" checked><span><b>Comprar para viver</b><br><span class="muted">casa própria e permanente</span></span></label>
+        <label class="g-opt"><input type="radio" name="goal" value="rent"><span><b>Arrendar para viver</b><br><span class="muted">onde a renda cabe no orçamento</span></span></label>
+        <label class="g-opt"><input type="radio" name="goal" value="invest"><span><b>Comprar para arrendar</b><br><span class="muted">investimento: rendibilidade, risco e procura</span></span></label>
+      </fieldset>
+      <fieldset data-step="2" hidden><legend>Que casa?</legend>
+        <div class="g-typs">
+          <label class="g-opt"><input type="radio" name="typ" value="t01"><span><b>T0/T1</b></span></label>
+          <label class="g-opt"><input type="radio" name="typ" value="t2" checked><span><b>T2</b></span></label>
+          <label class="g-opt"><input type="radio" name="typ" value="t3"><span><b>T3</b></span></label>
+          <label class="g-opt"><input type="radio" name="typ" value="t4"><span><b>T4 ou maior</b></span></label>
+        </div>
+        <div class="aff-form im-form"><label>Área (m²) <input name="area" type="number" min="15" max="1000" step="any" inputmode="numeric" placeholder="80"></label></div>
+        <p class="muted">A área conta para o custo: o preço e a renda são medianas por m² (por tipologia, quando o INE as publica).</p>
+      </fieldset>
+      <fieldset data-step="3" hidden><legend>Quanto podes gastar?</legend>
+        <div class="aff-form im-form">
+          <label data-g="buy invest">Poupança disponível (€) <input name="savings" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 40000"></label>
+          <label data-g="buy rent invest">Rendimento líquido do agregado (€/mês) <input name="income" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 2500"></label>
+          <label data-g="buy invest">Esforço máximo com a prestação (%) <input name="effort" type="number" min="10" max="45" step="any" inputmode="decimal" placeholder="35"></label>
+          <label data-g="rent">Renda máxima (€/mês) <input name="maxrent" type="number" min="0" step="any" inputmode="numeric" placeholder="35% do rendimento"></label>
+          <label data-g="buy invest">Ou: preço máximo da casa (€) <input name="maxprice" type="number" min="0" step="any" inputmode="numeric" placeholder="calculado"></label>
+          <label class="check" data-g="buy"><input type="checkbox" name="young"> Tenho 35 anos ou menos</label>
+          <label class="check" data-g="invest"><input type="checkbox" name="nocredit"> Compro sem crédito</label>
+        </div>
+        <p class="verdict" id="g-budget" hidden></p>
+      </fieldset>
+      <fieldset data-step="4" hidden><legend>Onde?</legend>
+        <div class="aff-form im-form">
+          <label>Zona <select name="zone"><option value="all">Todo o país</option><option value="near">Perto de um concelho</option><option value="dist">Escolher distritos ou regiões</option></select></label>
+          <label data-z="near">Concelho de referência <input name="near" list="im-conc" placeholder="ex.: Lisboa"></label>
+          <label data-z="near">Até (km, em linha reta) <input name="km" type="number" min="5" max="400" step="any" inputmode="numeric" placeholder="30"></label>
+          <label class="check" data-g="invest"><input type="checkbox" name="small"> Incluir concelhos com mercado de arrendamento pequeno</label>
+          <label>Litoral ou interior <select name="coast"><option value="any">Indiferente</option><option value="coast">Só litoral</option><option value="inland">Só interior</option></select></label>
+        </div>
+        <div data-z="dist" class="chips g-dists" id="g-dists"></div>
+      </fieldset>
+      <fieldset data-step="5" hidden><legend>O que pesa mais na escolha?</legend>
+        <div id="g-crit" class="g-crit"></div>
+      </fieldset>
+      <div class="g-nav">
+        <button type="button" class="btn" id="g-prev">← Anterior</button>
+        <button type="button" class="btn" id="g-next">Seguinte →</button>
+        <button type="submit" class="btn g-go" id="g-go">Ver resultados</button>
+        <button type="button" class="btn" id="g-reset">Recomeçar</button>
+      </div>
+    </form>
+    <div id="guide-out"></div>
   </section>
 
   <section id="invest" class="card">

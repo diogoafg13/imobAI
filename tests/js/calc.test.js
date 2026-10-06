@@ -142,3 +142,38 @@ test('investimento: contas do 1.º ano, venda e TIR', () => {
   assert.ok(c.invest({ ...o, rent: 1200 }).irr > r.irr);
   assert.ok(c.invest({ ...o, rate: 5 }).irr < r.irr);
 });
+
+test('maxPrice: poupança paga entrada e impostos; crédito limitado pelo LTV e pelo rendimento', () => {
+  const base = { savings: 50000, income: 3000, effort: 0.35, rate: 3.5, years: 30, use: 'hpp', young: false, ra: false, closing: 1000 };
+  const r = c.maxPrice(base);
+  assert.ok(Math.abs(r.cash - 50000) < 1, 'gasta a poupança toda');
+  assert.ok(r.loan <= 0.9 * r.price + 1e-6);
+  assert.ok(c.annuity(r.loan, 3.5, 30) <= 0.35 * 3000 + 1e-6);
+  assert.ok(c.annuity(r.loan, 3.5 + c.BDP.shock, 30) <= c.BDP.dsti * 3000 + 1e-6);
+  // com rendimento baixo, o limite passa a ser o rendimento e o preço desce
+  const low = c.maxPrice({ ...base, income: 1000 });
+  assert.equal(low.limit, 'income');
+  assert.ok(low.price < r.price);
+  // sem crédito: só a poupança
+  const cash = c.maxPrice({ ...base, credit: false });
+  assert.equal(cash.loan, 0);
+  assert.ok(cash.price < 50000 && cash.price > 40000);
+  // mais poupança nunca baixa o preço
+  assert.ok(c.maxPrice({ ...base, savings: 80000 }).price > r.price);
+});
+
+test('rankBy: percentis ponderados, direção e valores em falta neutros', () => {
+  const cands = [
+    { id: 'a', vals: { y: 0.06, risk: 30 } },
+    { id: 'b', vals: { y: 0.04, risk: 10 } },
+    { id: 'c', vals: { y: 0.05, risk: null } },
+  ];
+  const r1 = c.rankBy(cands, [{ key: 'y', w: 1, dir: 1 }]);
+  assert.deepEqual(r1.map((x) => x.id), ['a', 'c', 'b']);
+  const r2 = c.rankBy(cands, [{ key: 'y', w: 1, dir: 1 }, { key: 'risk', w: 3, dir: -1 }]);
+  assert.equal(r2[0].id, 'b');
+  assert.deepEqual(r2.find((x) => x.id === 'c').missing, ['risk']);
+  assert.ok(r2.every((x) => x.score >= 0 && x.score <= 1));
+  const r3 = c.rankBy(cands, [{ key: 'y', w: 0, dir: 1 }]);
+  assert.ok(r3.every((x) => x.score === 0.5 || Number.isFinite(x.score)));
+});
