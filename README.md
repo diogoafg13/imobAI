@@ -448,7 +448,7 @@ preço de mercado).
 - **Açores e Madeira**: escalões do IMT 25% acima dos do continente, mesmas taxas (parcelas pela continuidade; os da
   habitação própria conferem com o ofício circulado 40129/2026 da AT da Madeira); IMT Jovem até 413 174 €. A ficha
   de cada concelho das regiões autónomas usa estas tabelas.
-- **Workflow**: `actions/checkout@v5` e `actions/setup-python@v6` (Node 24; o Node 20 foi retirado dos runners) e
+- **Workflow**: `actions/checkout@v5`, `actions/setup-python@v6`, `configure-pages@v6`, `upload-pages-artifact@v5` e `deploy-pages@v5` (Node 24; o Node 20 foi retirado dos runners) e
   `runs-on: ubuntu-24.04` fixo (o `ubuntu-latest` passa a Ubuntu 26 a 19/10/2026; mudar de propósito, depois de
   testar).
 
