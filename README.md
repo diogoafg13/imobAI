@@ -528,8 +528,9 @@ WebGL dão aviso. Localmente: `pip install playwright && python -m playwright in
 - **Taxa dos novos créditos por prazo de fixação** (BCE, MIR: variável/até 1 ano, 1–5, 5–10, mais de 10 anos) e
   **parte dos créditos a taxa variável** (RAI): em Perspetivas, no bloco do crédito.
 - **Escolas, saúde e estações por freguesia** (`imopt/osm.py`): OpenStreetMap (© contribuidores do OpenStreetMap,
-  ODbL) pela API ohsome (HeiGIT, o país inteiro num pedido) ou, se falhar, pela API Overpass por quadrículas guardadas
-  (cada build pede as que faltam, até 10 minutos), uma vez por semana; contagens na tabela de freguesias, por 1000 casas no mapa, e no "O meu
+  ODbL) pela API Overpass por quadrículas guardadas (cada build pede as que faltam, até 10 minutos; entra no site quando
+  o país estiver completo), uma vez por semana. A API ohsome (o país num pedido) está no código mas desligada: a v1
+  recusou os runners do GitHub e é desligada a 30/11/2026; contagens na tabela de freguesias, por 1000 casas no mapa, e no "O meu
   imóvel". É o que está no mapa: pode faltar alguma coisa no interior.
 - **Descoberta** (`imopt/discover.py`): guarda o catálogo do INE e a descrição de serviços de mapas (zonas inundáveis
   da APA) no branch `data`, para confirmar códigos novos (séries paradas, idade e estado dos edifícios dos Censos) e

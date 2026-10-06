@@ -599,8 +599,9 @@ al:
 # Escolas, saúde e estações por freguesia: OpenStreetMap pela API Overpass (© contribuidores do OpenStreetMap, ODbL).
 # Três consultas, no máximo uma vez por semana (ver imopt/osm.py).
 osm:
-  # API ohsome (HeiGIT, Universidade de Heidelberg; dados do OpenStreetMap, ODbL): o país inteiro num pedido
-  ohsome: https://api.ohsome.org/v1/elements/centroid
+  # API ohsome (HeiGIT; o país inteiro num pedido): desligada — a v1 recusou os runners do GitHub (403, 6/10/2026) e é
+  # desligada a 30/11/2026; a v2 ainda não foi confirmada. O código fica pronto (osm.fetch_ohsome): basta pôr aqui
+  # `ohsome: <url do endpoint de centroides>` quando houver um que responda.
   # servidores públicos da API Overpass (lista em wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances),
   # tentados um a um quando um está ocupado (429/504)
   urls: [https://overpass-api.de/api/interpreter, https://overpass.private.coffee/api/interpreter,
