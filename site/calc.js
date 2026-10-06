@@ -216,8 +216,106 @@ function rankBy(cands, crit) {
   }).sort((a, b) => b.score - a.score);
 }
 
+// ---------- guias de decisão (crédito, senhorio, vender ou manter)
+// Plano de pagamentos de um crédito com taxa por mês (rateAt(mês) em %): a prestação é recalculada quando a taxa muda,
+// sobre o capital em dívida e o prazo que falta (como num crédito à habitação em Portugal).
+function schedule(loan, years, rateAt) {
+  const n = Math.round(years * 12);
+  let bal = loan, rPrev = null, pay = 0, total = 0, interest = 0, max = 0, first = 0;
+  for (let k = 0; k < n && bal > 0.005; k++) {
+    const rate = rateAt(k);
+    if (rate !== rPrev) { pay = annuity(bal, rate, (n - k) / 12); rPrev = rate; }
+    const i = bal * rate / 1200;
+    bal = Math.max(0, bal - (pay - i)); total += pay; interest += i;
+    if (k === 0) first = pay;
+    max = Math.max(max, pay);
+  }
+  return { first, max, total, interest };
+}
+// Tipos de taxa face a um choque constante da Euribor (delta, p.p.) a partir da 1.ª revisão (mês 13 na variável, fim do
+// prazo fixo na mista). Depois do prazo fixo, a mista passa à taxa variável de hoje + delta. o = { loan, years,
+// rates: { f, i, o, p } (%, BCE), fixShort, fixLong (anos de taxa fixa das mistas) }.
+const LOAN_PLANS = [
+  { key: 'f', label: 'Variável', fixed: () => 1 },
+  { key: 'i', label: 'Mista, taxa fixa curta', fixed: (o) => o.fixShort },
+  { key: 'o', label: 'Mista, taxa fixa longa', fixed: (o) => o.fixLong },
+  { key: 'p', label: 'Fixa todo o prazo', fixed: (o) => o.years },
+];
+function loanPlans(o, deltas = [-1, 0, 1, 2]) {
+  const varNow = o.rates.f;
+  const plans = LOAN_PLANS.filter((p) => o.rates[p.key] != null).map((p) => {
+    const fixM = Math.min(o.years, p.fixed(o)) * 12;
+    const run = (d) => schedule(o.loan, o.years, (k) => (k < fixM ? o.rates[p.key] : Math.max(0, varNow + d)));
+    const sc = Object.fromEntries(deltas.map((d) => [d, run(d)]));
+    const after = fixM < o.years * 12 ? Object.fromEntries(deltas.map((d) => [d, annuity(1, Math.max(0, varNow + d), (o.years * 12 - fixM) / 12)])) : null;
+    return { ...p, rate: o.rates[p.key], fixYears: fixM / 12, sc, run };
+  });
+  // Euribor média (subida constante, p.p.) que torna o custo total igual ao da variável
+  const v = plans.find((p) => p.key === 'f');
+  plans.forEach((p) => {
+    if (!v || p === v) return;
+    const diff = (d) => p.run(d).total - v.run(d).total;
+    let lo = -4, hi = 8;
+    if (diff(lo) * diff(hi) > 0) { p.breakeven = null; return; }
+    for (let i = 0; i < 60; i++) { const mid = (lo + hi) / 2; if (diff(lo) * diff(mid) <= 0) hi = mid; else lo = mid; }
+    p.breakeven = (lo + hi) / 2;
+  });
+  return plans;
+}
+
+// Senhorio: rendimento líquido por duração do contrato. o = { rent (€/mês), vacancy (meses/ano), imi (€/ano),
+// condo (€/mês), ins (€/ano), maint (fração da renda), growth (fração/ano), years (horizonte), startYear, marginal }.
+const LEASES = [{ years: 1, label: 'até 4 anos' }, { years: 5, label: '5 a 9 anos' }, { years: 10, label: '10 anos ou mais' }];
+function landlord(o) {
+  return LEASES.map((l) => {
+    let sum = 0, sumTax = 0;
+    const rows = [];
+    for (let t = 0; t < o.years; t++) {
+      const year = o.startYear + t, rentM = o.rent * (1 + o.growth) ** t, gross = rentM * (12 - o.vacancy);
+      const ded = o.imi + o.condo * 12 + o.maint * gross, rate = irsRentRate(rentM, l.years, year);
+      const tax = Math.max(0, gross - ded) * rate, net = gross - ded - o.ins - tax;
+      rows.push({ year, rentM, gross, rate, tax, net });
+      sum += net; sumTax += tax;
+    }
+    const eng = o.marginal != null ? rows.reduce((a, x) => a + Math.max(0, x.gross - o.imi - o.condo * 12 - o.maint * x.gross) * o.marginal, 0) : null;
+    return { ...l, rows, net: sum, tax: sumTax, first: rows[0], englobado: eng };
+  });
+}
+
+// Vender agora, arrendar ou manter (sem arrendar) e vender daqui a N anos: riqueza no fim, com todo o dinheiro que
+// entra e sai a render altRate. Mais-valias de residente: 50% do ganho à taxa marginal, sem os coeficientes de
+// desvalorização da moeda (por excesso); isentas na venda de hoje se era habitação própria e se reinveste noutra.
+// o = { value, sellCost, balance, rate, yearsLeft, buyCost (preço de compra + despesas), hpp, reinvest, marginal,
+//       rent, vacancy, imi, condo, ins, maint, contractYears, priceGrowth, rentGrowth, altRate, horizon, startYear }
+function holdOptions(o) {
+  const cgt = (sale) => Math.max(0, sale * (1 - o.sellCost) - o.buyCost) * 0.5 * o.marginal;
+  const cgt0 = o.hpp && o.reinvest ? 0 : cgt(o.value);
+  const now = o.value * (1 - o.sellCost) - o.balance - cgt0;
+  const pay = o.balance > 0 ? annuity(o.balance, o.rate, o.yearsLeft) : 0, r = o.rate / 1200, nLeft = o.yearsLeft * 12;
+  const path = (rented) => {
+    let bal = o.balance, acc = 0;
+    const rows = [];
+    for (let t = 1; t <= o.horizon; t++) {
+      let debt = 0;
+      for (let k = 0; k < 12 && bal > 0.005 && (t - 1) * 12 + k < nLeft; k++) { const i = bal * r; debt += pay; bal = Math.max(0, bal - (pay - i)); }
+      const rentM = o.rent * (1 + o.rentGrowth) ** (t - 1), year = o.startYear + t - 1;
+      const gross = rented ? rentM * (12 - o.vacancy) : 0, maint = rented ? o.maint * gross : 0;
+      const irs = rented ? Math.max(0, gross - o.imi - o.condo * 12 - maint) * irsRentRate(rentM, o.contractYears, year) : 0;
+      const cf = gross - o.imi - o.condo * 12 - o.ins - maint - irs - debt;
+      acc = acc * (1 + o.altRate) + cf;
+      rows.push({ t, year, gross, irs, debt, cf });
+    }
+    const sale = o.value * (1 + o.priceGrowth) ** o.horizon;
+    const end = sale * (1 - o.sellCost) - bal - cgt(sale);
+    return { rows, sale, cgt: cgt(sale), balance: bal, cash: acc, wealth: acc + end };
+  };
+  const rent = path(true), keep = path(false);
+  return { pay, cgt0, now, sell: { wealth: now * (1 + o.altRate) ** o.horizon }, rent, keep };
+}
+
 if (typeof module !== 'undefined') {
   module.exports = { TAX_YEAR, taxTablesStale, BDP, LIMIT, IMT26, YOUNG_FULL, YOUNG_PART, IS_BUY, IS_LOAN, imtOf, isBuyOf, buyTaxes,
     islands, annuity, qOfMonth, serVal, qAdd, qIdx, at12, serGrowth, TAX_EDGES, shareAbove,
-    RENT_COEF, IRS_RENT, irsRentRate, irr, invest, maxPrice, rankBy };
+    RENT_COEF, IRS_RENT, irsRentRate, irr, invest, maxPrice, rankBy,
+    schedule, LOAN_PLANS, loanPlans, LEASES, landlord, holdOptions };
 }

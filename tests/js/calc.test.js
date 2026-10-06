@@ -177,3 +177,47 @@ test('rankBy: percentis ponderados, direção e valores em falta neutros', () =>
   const r3 = c.rankBy(cands, [{ key: 'y', w: 0, dir: 1 }]);
   assert.ok(r3.every((x) => x.score === 0.5 || Number.isFinite(x.score)));
 });
+
+test('schedule: taxa constante = anuidade; subida da taxa sobe a prestação', () => {
+  const s = c.schedule(200000, 30, () => 3);
+  assert.ok(Math.abs(s.first - c.annuity(200000, 3, 30)) < 1e-6);
+  assert.ok(Math.abs(s.total - s.first * 360) < 1);
+  const up = c.schedule(200000, 30, (k) => (k < 12 ? 3 : 5));
+  assert.ok(up.max > s.first && up.total > s.total);
+});
+
+test('loanPlans: fixa não reage à Euribor; variável sim; ponto de equilíbrio coerente', () => {
+  const o = { loan: 200000, years: 30, rates: { f: 3.28, i: 2.88, o: 4.93, p: 3.68 }, fixShort: 5, fixLong: 10 };
+  const P = Object.fromEntries(c.loanPlans(o).map((p) => [p.key, p]));
+  assert.equal(P.p.sc[2].total, P.p.sc[0].total);                 // fixa todo o prazo
+  assert.ok(P.f.sc[2].total > P.f.sc[0].total && P.f.sc[2].max > P.f.sc[0].max);
+  assert.ok(P.i.sc[0].first < P.f.sc[0].first);                   // mista curta mais barata hoje
+  // a fixa (3,68%) só compensa face à variável (3,28%) se a Euribor subir em média: equilíbrio positivo
+  assert.ok(P.p.breakeven > 0 && P.p.breakeven < 2);
+  const at = P.p.run(P.p.breakeven).total, vt = P.f.run(P.p.breakeven).total;
+  assert.ok(Math.abs(at - vt) < 5);
+});
+
+test('landlord: rendas até 2300 € a 10% até 2029; depois depende da duração do contrato', () => {
+  const L = c.landlord({ rent: 1000, vacancy: 0, imi: 300, condo: 30, ins: 150, maint: 0.05, growth: 0, years: 6, startYear: 2026, marginal: null });
+  const short = L.find((x) => x.years === 1), long = L.find((x) => x.years === 10);
+  assert.equal(short.rows[0].rate, 0.10);
+  assert.equal(short.rows[4].rate, 0.25);       // 2030
+  assert.equal(long.rows[4].rate, 0.10);
+  assert.ok(long.net > short.net);
+  const big = c.landlord({ rent: 3000, vacancy: 0, imi: 0, condo: 0, ins: 0, maint: 0, growth: 0, years: 1, startYear: 2026, marginal: 0.2 });
+  assert.equal(big[0].rows[0].rate, 0.25);
+  assert.ok(big[0].englobado < big[0].tax);     // taxa marginal mais baixa: englobar paga menos
+});
+
+test('holdOptions: sem crescimento nem rendas, vender já ganha a manter vazia; isenção de mais-valias', () => {
+  const base = { value: 300000, sellCost: 0.05, balance: 100000, rate: 3, yearsLeft: 20, buyCost: 150000, hpp: false, reinvest: false,
+    marginal: 0.35, rent: 1000, vacancy: 1, imi: 400, condo: 40, ins: 200, maint: 0.05, contractYears: 1, priceGrowth: 0, rentGrowth: 0,
+    altRate: 0.02, horizon: 10, startYear: 2026 };
+  const r = c.holdOptions(base);
+  assert.ok(r.cgt0 > 0 && Math.abs(r.cgt0 - (300000 * 0.95 - 150000) * 0.5 * 0.35) < 1e-6);
+  assert.ok(r.sell.wealth > r.keep.wealth);
+  assert.ok(r.rent.wealth > r.keep.wealth);
+  assert.equal(c.holdOptions({ ...base, hpp: true, reinvest: true }).cgt0, 0);
+  assert.ok(c.holdOptions({ ...base, priceGrowth: 0.05 }).rent.wealth > r.rent.wealth);
+});

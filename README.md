@@ -492,6 +492,22 @@ painel ordena os concelhos e, dentro deles, até 3 freguesias.
 - Zona: país, distritos/regiões, ou até X km (em linha reta, entre centros dos concelhos) de um concelho; litoral ou
   interior. É um ponto de partida para procurar, não aconselhamento.
 
+### Guias de decisão (separador "Guia")
+
+Além do "Onde procurar casa", quatro guias curtos, com as contas em `site/calc.js` (testadas em `tests/js`):
+- **Taxa fixa, mista ou variável** (`loanPlans`, `schedule`): prestação hoje, prestação máxima e custo total com a
+  Euribor −1, igual ou +2 p.p.; a variável muda a partir da 1.ª revisão, as mistas passam à variável de hoje + a
+  variação no fim dos anos fixos. Para cada opção, quanto teria de subir a Euribor, em média, para compensar face à
+  variável. Taxas por omissão: médias dos créditos novos por prazo de fixação (BCE); dá para escrever as propostas.
+- **Senhorio** (`landlord`): líquido por duração do contrato (até 4, 5 a 9, 10 ou mais anos) com o IRS de 2026
+  (10% até 2029 em rendas até 2300 €/mês, DL 97/2026), comparação com englobar à taxa marginal, coeficiente de
+  atualização de 2027, posição da renda face aos quartis do concelho.
+- **Inquilino**: renda pedida face à mediana e aos quartis (INE), peso no rendimento, subida máxima legal, e freguesias
+  e concelhos até X km com mediana pelo menos 10% mais baixa.
+- **Vender, arrendar ou manter** (`holdOptions`): património ao fim de N anos em cada opção (venda, crédito, mais-valias
+  com a isenção por reinvestimento em habitação própria, rendas líquidas de IRS, custos, dinheiro a render a uma taxa
+  escolhida), com uma tabela por valorização da casa.
+
 ### Dados extra gratuitos (taxas por tipo, escolas/saúde/estações, descoberta de fontes)
 
 - **Taxa dos novos créditos por prazo de fixação** (BCE, MIR: variável/até 1 ano, 1–5, 5–10, mais de 10 anos) e

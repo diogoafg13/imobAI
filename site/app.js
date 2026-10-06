@@ -74,7 +74,7 @@ const GLOSS = {
   imt: ['IMT e Imposto do Selo', 'Impostos na compra, tabelas de 2026 (continente): IMT por escalões, mais baixo na habitação própria e permanente; Imposto do Selo de 0,8% sobre o preço e de 0,6% sobre o crédito (prazo de 5 anos ou mais). Jovens até 35 anos, na 1.ª habitação própria e permanente e não dependentes no IRS, estão isentos de IMT e do Imposto do Selo da compra até 330 539 € e pagam só sobre o excesso até 660 982 € (o do crédito paga-se sempre). Contas sobre o preço; o IMT incide sobre o maior entre o preço e o VPT.'],
   imi: ['Taxa de IMI', 'Taxa do imposto municipal sobre imóveis fixada pelo concelho para os prédios urbanos (entre 0,3% e 0,45%), publicada pelas Finanças por ano. Aplica-se ao valor patrimonial tributário (VPT, na caderneta predial), não ao preço de mercado: IMI = VPT × taxa. Com dependentes, alguns concelhos dão uma dedução fixa (IMI familiar). Há concelhos com taxas diferentes em algumas freguesias.'],
   rentfit: ['Onde a renda cabe', 'Renda mediana dos novos contratos de arrendamento de cada concelho (INE, por m²) × a área que indicas, a dividir pelo rendimento líquido do teu agregado. Mostra onde fica dentro do limite escolhido (35% por omissão, uma referência comum, não legal) e onde só a parte mais barata do mercado cabe. Se já arrendas, mostra também o máximo que a renda pode subir no próximo ano com o coeficiente legal publicado pelo INE.'],
-  guide: ['Guia', 'Ordena os concelhos (e as freguesias) pelo que escolhes. Primeiro tira os que não cabem no orçamento: o custo é a mediana de venda (por tipologia, quando o INE a publica) ou da renda de novos contratos × a área. A comprar, o orçamento sai da poupança (entrada, IMT, Imposto do Selo, escritura) e do rendimento, com as regras do Banco de Portugal (LTV de 90%/80%, prestação com +1,5 p.p. até 45% do rendimento) e o esforço que escolhes. Depois, em cada critério, compara os concelhos que cabem entre si e faz a média ponderada. As medianas escondem casas muito diferentes: usa o resultado para saber onde procurar, não como avaliação.'],
+  guide: ['Guias', 'Cinco guias com os dados do painel e as regras de 2026: onde procurar casa, que tipo de taxa de crédito escolher, as contas de um senhorio, se uma renda pedida é razoável, e se compensa vender, arrendar ou manter uma casa. São estimativas para ajudar a decidir, não aconselhamento. Onde procurar: ordena os concelhos (e as freguesias) pelo que escolhes. Primeiro tira os que não cabem no orçamento: o custo é a mediana de venda (por tipologia, quando o INE a publica) ou da renda de novos contratos × a área. A comprar, o orçamento sai da poupança (entrada, IMT, Imposto do Selo, escritura) e do rendimento, com as regras do Banco de Portugal (LTV de 90%/80%, prestação com +1,5 p.p. até 45% do rendimento) e o esforço que escolhes. Depois, em cada critério, compara os concelhos que cabem entre si e faz a média ponderada. As medianas escondem casas muito diferentes: usa o resultado para saber onde procurar, não como avaliação.'],
   invest: ['Investir para arrendar', 'Contas de um investimento para arrendar: dinheiro à cabeça (entrada, IMT e Imposto do Selo de 2.ª habitação, escritura), prestação, rendas menos meses vazios, IMI do concelho, condomínio, seguro, manutenção e IRS sobre rendas (regras de 2026), e venda ao fim do prazo (custos, crédito em dívida e mais-valias). A TIR (taxa interna de rentabilidade) é o rendimento anual do dinheiro que puseste, contando com a venda. Preço e renda partem das medianas do concelho; a valorização e a subida da renda são pressupostos teus — a tabela de sensibilidade mostra quanto pesam.'],
   follow: ['Concelhos que segues', 'Concelhos que escolheste seguir: escreve o nome aqui ou usa o botão ☆ Seguir na ficha de um concelho (separador Mercado). A lista fica guardada só neste browser. Mostra o que mudou desde o trimestre anterior e os números principais.'],
   par_irs: ['Freguesias: rendimento e Censos', 'Por freguesia: mediana do rendimento declarado no IRS depois do imposto (por pessoa que declara, ÷ 12; o INE não publica freguesias com poucos declarantes), e a parte das casas vagas e de segunda habitação no Censos 2021. O esforço de compra por freguesia usa o preço da freguesia (só onde o INE o publica) e o rendimento do IRS de quem lá vive, com a casa e o crédito da calculadora.'],
@@ -2386,6 +2386,197 @@ function initGuide() {
   });
 }
 
+// ---------- guias de decisão: taxa do crédito, senhorio, inquilino, vender ou manter
+const GD_KEY = 'imopt.guides.v1';
+const gdNum = (f, k) => { const el = f[k]; if (!el) return null; const x = parseFloat(String(el.value).replace(/\s/g, '').replace(',', '.')); return Number.isFinite(x) ? x : null; };
+const gdMuni = (f) => (f.conc ? MUNIS.find((x) => x.name.toLowerCase() === f.conc.value.trim().toLowerCase()) || null : null);
+const gdTile = (label, val, ctx = '') => `<div class="stat"><span class="muted">${esc(label)}</span><b>${val}</b>${ctx ? `<span class="ctx">${ctx}</span>` : ''}</div>`;
+async function gdParishes(f) {
+  const m = gdMuni(f), keep = f.par.dataset.dico === (m && m.dico) ? f.par.value : '';
+  f.par.dataset.dico = m ? m.dico : '';
+  f.par.innerHTML = '<option value="">— (usar o concelho)</option>';
+  if (!m) return;
+  await ensurePar();
+  const rows = PAR ? PAR.rows.filter((r) => r.dico === m.dico).sort((a, b) => String(a.name).localeCompare(String(b.name), 'pt')) : [];
+  f.par.innerHTML += rows.map((r) => `<option value="${esc(r.code)}">${esc(r.name)}${r.rent == null ? ' (sem renda publicada)' : ''}</option>`).join('');
+  if (keep) f.par.value = keep;
+}
+// renda mediana de novos contratos para a área: freguesia se houver, senão concelho
+function gdRent(m, pr, area) {
+  if (pr && pr.rent != null) return { v: pr.rent * area, ppm: pr.rent, where: `freguesia ${pr.name}`, year: pr.rent_year };
+  if (m && m.rent != null) return { v: m.rent * area, ppm: m.rent, where: m.name, year: m.rent_year ? String(m.rent_year).slice(0, 4) : null };
+  return null;
+}
+// posição de uma renda (€/m²) entre os quartis do concelho: texto
+function gdRentPos(ppm, m) {
+  if (m.rent_q1 == null || m.rent_q3 == null || m.rent == null) return null;
+  if (ppm < m.rent_q1) return { k: 'low', txt: 'abaixo de 3 em cada 4 contratos novos (abaixo do 1.º quartil)' };
+  if (ppm <= m.rent) return { k: 'mid', txt: 'na metade mais barata dos contratos novos (entre o 1.º quartil e a mediana)' };
+  if (ppm <= m.rent_q3) return { k: 'mid', txt: 'na metade mais cara dos contratos novos (entre a mediana e o 3.º quartil)' };
+  return { k: 'high', txt: 'acima de 3 em cada 4 contratos novos (acima do 3.º quartil)' };
+}
+
+// 1) taxa fixa, mista ou variável
+function glRender() {
+  const f = $('#gl-form'), out = $('#gl-out');
+  const loan = gdNum(f, 'loan'), years = gdNum(f, 'years') || 30, inc = gdNum(f, 'income'), extra = gdNum(f, 'extra');
+  if (!loan) { out.innerHTML = '<p class="muted">Indica o montante do crédito.</p>'; return; }
+  const M = OL && OL.rate_mix && OL.rate_mix.rates ? OL.rate_mix.rates : {};
+  const own = { f: gdNum(f, 'rf'), i: gdNum(f, 'ri'), o: gdNum(f, 'ro'), p: gdNum(f, 'rp') };
+  const rates = {};
+  ['f', 'i', 'o', 'p'].forEach((k) => { const v = own[k] ?? (M[k] ? M[k].value : null); if (v != null) rates[k] = v; });
+  if (rates.f == null) rates.f = affRateNow();
+  const fixShort = Math.min(5, Math.max(1, gdNum(f, 'fs') || 5)), fixLong = Math.min(10, Math.max(6, gdNum(f, 'fl') || 10));
+  const plans = loanPlans({ loan, years, rates, fixShort, fixLong });
+  const per = Object.values(M)[0] ? Object.values(M)[0].period : null;
+  const name = (p) => (p.key === 'f' ? 'Variável' : p.key === 'p' ? 'Fixa todo o prazo' : `Mista, ${fmt.n(p.fixYears, 0)} anos fixos`);
+  const src = (p) => (own[p.key] != null ? 'a tua' : M[p.key] ? `média BCE ${esc(M[p.key].period)}` : 'estimativa do painel');
+  const cheapest = plans.reduce((a, b) => (b.sc[0].first < a.sc[0].first ? b : a));
+  const safest = plans.reduce((a, b) => (b.sc[2].max < a.sc[2].max ? b : a));
+  const rows = plans.map((p) => {
+    const up = p.sc[2].max - p.sc[0].first;
+    return `<tr><td><b>${name(p)}</b><br><span class="muted">${fmt.n(p.rate, 2)}% (${src(p)})</span></td><td>${fmt.eur(p.sc[0].first)}</td>
+      <td>${fmt.eur(p.sc[2].max)}${up > 1 ? ` <span class="muted">(+${fmt.eur(up)})</span>` : ''}</td>
+      <td>${fmt.eur(p.sc[-1].total)}</td><td>${fmt.eur(p.sc[0].total)}</td><td>${fmt.eur(p.sc[2].total)}</td>
+      <td>${p.key === 'f' ? '—' : p.breakeven == null ? 'não compensa em nenhum cenário' : p.breakeven <= 0 ? `já sai mais barata${p.breakeven > -3.9 ? `, a não ser que a Euribor desça mais de ${fmt.n(-p.breakeven, 1)} p.p.` : ''}` : `se a Euribor subir, em média, mais de ${fmt.n(p.breakeven, 1)} p.p.`}</td></tr>`;
+  }).join('');
+  const li = [];
+  li.push(`Hoje, a prestação mais baixa é a da <b>${name(cheapest)}</b> (${fmt.eur(cheapest.sc[0].first)}/mês). Se a Euribor subir 2 p.p., a que menos sobe é a <b>${name(safest)}</b> (no máximo ${fmt.eur(safest.sc[2].max)}/mês).`);
+  const v = plans.find((p) => p.key === 'f');
+  if (v && extra != null) {
+    const up = v.sc[2].max - v.sc[0].first;
+    li.push(up <= extra ? `Com a variável, uma subida de 2 p.p. da Euribor aumentaria a prestação em ${fmt.eur(up)}/mês — dentro dos ${fmt.eur(extra)} que dizes aguentar.`
+      : `Com a variável, uma subida de 2 p.p. da Euribor aumentaria a prestação em ${fmt.eur(up)}/mês — mais do que os ${fmt.eur(extra)} que dizes aguentar: uma taxa fixa ou mista protege-te disso${plans.some((p) => p.key !== 'f' && p.sc[2].max - p.sc[0].first <= extra) ? ` (${plans.filter((p) => p.key !== 'f' && p.sc[2].max - p.sc[0].first <= extra).map(name).join(', ')} ficam dentro do limite)` : ''}.`);
+  }
+  if (inc) li.push(`Esforço com a prestação de hoje: ${plans.map((p) => `${name(p)} ${fmt.pct(p.sc[0].first / inc, 0)}`).join(', ')}. O Banco de Portugal só aprova se a prestação com a taxa +${fmt.n(BDP.shock, 1)} p.p. não passar de ${fmt.pct(BDP.dsti, 0)} do rendimento (${v ? (annuity(loan, v.rate + BDP.shock, years) / inc <= BDP.dsti ? 'cumpre' : 'não cumpre') : '—'} na variável).`);
+  if (OL && OL.rate_mix && OL.rate_mix.share_variable) li.push(`Em ${esc(OL.rate_mix.share_variable.period)}, ${fmt.pct(OL.rate_mix.share_variable.value, 0)} dos créditos novos foram a taxa variável (ou fixa até 1 ano); os restantes, mistos ou fixos.`);
+  if (OL && OL.rates && OL.rates.euribor_now != null) li.push(`Euribor a 12 meses em ${esc(OL.rates.euribor_month)}: ${fmt.n(OL.rates.euribor_now, 2)}%. Ninguém sabe para onde vai: a coluna "compensa se…" diz quanto teria de subir, em média durante todo o crédito, para cada opção sair mais barata do que a variável.`);
+  out.innerHTML = `<div class="table-wrap"><table class="ol-table g-table"><thead><tr><th>Tipo de taxa</th><th>Prestação hoje</th><th>Prestação máx. (Euribor +2 p.p.)</th><th>Total pago, Euribor −1 p.p.</th><th>Total pago, Euribor igual</th><th>Total pago, Euribor +2 p.p.</th><th>Face à variável, compensa…</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul>
+    <p class="muted">Como se calcula: ${fmt.eur(loan)} a ${years} anos; a variável muda com a Euribor a partir da 1.ª revisão (ao fim de 1 ano); as mistas pagam a taxa fixa durante os anos fixos e depois a taxa variável de hoje mais a variação da Euribor; a fixa não muda. Variação constante da Euribor durante o crédito (simplificação). As taxas por omissão são médias de todos os créditos novos${per ? ` em ${esc(per)}` : ''} (BCE): a tua depende do spread, da entrada, do rendimento e dos produtos associados. Compara as propostas pela TAEG na Ficha de Informação Normalizada (FINE) de cada banco.</p>`;
+}
+
+// 2) senhorio
+function gsRender() {
+  const f = $('#gs-form'), out = $('#gs-out'), m = gdMuni(f);
+  if (!m) { out.innerHTML = '<p class="muted">Escolhe um concelho da lista.</p>'; return; }
+  const pr = f.par.value && PARBY[f.par.value] ? PARBY[f.par.value] : null, area = gdNum(f, 'area') || 80;
+  const med = gdRent(m, pr, area), rent = gdNum(f, 'rent') || (med ? med.v : null);
+  if (!rent) { out.innerHTML = `<p class="banner">Sem renda publicada para ${esc(m.name)}: indica a renda.</p>`; return; }
+  const rate = m.imi_rate ?? 0.003, vpt = gdNum(f, 'vpt'), value = gdNum(f, 'value');
+  const imi = (vpt || value || (m.price ? m.price * area : 0)) * rate;
+  const marg = gdNum(f, 'marg'), year0 = new Date().getFullYear();
+  const L = landlord({ rent, vacancy: gdNum(f, 'vac') ?? 1, imi, condo: gdNum(f, 'condo') ?? 30, ins: gdNum(f, 'ins') ?? 150, maint: (gdNum(f, 'maint') ?? 5) / 100,
+    growth: RENT_COEF.value - 1, years: 10, startYear: year0, marginal: marg != null ? marg / 100 : null });
+  const short = L[0], best = L.reduce((a, b) => (b.net > a.net ? b : a));
+  const rateTxt = (l) => [...new Set(l.rows.map((x) => x.rate))].map((r) => { const ys = l.rows.filter((x) => x.rate === r).map((x) => x.year); return `${fmt.pct(r, 0)} (${ys[0]}${ys.length > 1 ? `–${ys[ys.length - 1]}` : ''})`; }).join(', ');
+  const rows = L.map((l) => `<tr${l === best ? ' class="g-best"' : ''}><td>${esc(l.label)}</td><td>${rateTxt(l)}</td><td>${fmt.eur(l.first.net / 12)}/mês</td><td>${fmt.eur(l.net)}</td><td>${l === short ? '—' : `+${fmt.eur(l.net - short.net)}`}</td></tr>`).join('');
+  const li = [];
+  if (rent <= IRS_RENT.moderateMax) li.push(`Com renda até ${fmt.eur(IRS_RENT.moderateMax)}/mês, o IRS é de ${fmt.pct(IRS_RENT.moderate, 0)} até ${IRS_RENT.moderateUntil}, seja qual for a duração (Decreto-Lei 97/2026). A partir de ${IRS_RENT.moderateUntil + 1}, a regra volta a depender da duração: ${fmt.pct(IRS_RENT.base, 0)} até 4 anos, ${fmt.pct(IRS_RENT.base - IRS_RENT.cut5, 0)} de 5 a 9, ${fmt.pct(IRS_RENT.base - IRS_RENT.cut10, 0)} com 10 ou mais.`);
+  else li.push(`Acima de ${fmt.eur(IRS_RENT.moderateMax)}/mês, o IRS depende da duração do contrato: ${fmt.pct(IRS_RENT.base, 0)} até 4 anos, ${fmt.pct(IRS_RENT.base - IRS_RENT.cut5, 0)} de 5 a 9, ${fmt.pct(IRS_RENT.base - IRS_RENT.cut10, 0)} com 10 ou mais.`);
+  if (marg != null && short.englobado != null) li.push(short.englobado < short.tax ? `Com a tua taxa marginal de ${fmt.n(marg, marg % 1 ? 1 : 0)}%, englobar as rendas no IRS pagaria cerca de ${fmt.eur(short.englobado)} em 10 anos, menos do que a taxa autónoma num contrato curto (${fmt.eur(short.tax)}): vale a pena simular as duas opções na declaração.` : `Com a tua taxa marginal de ${fmt.n(marg, marg % 1 ? 1 : 0)}%, englobar as rendas pagaria mais do que a taxa autónoma: fica com a taxa autónoma.`);
+  if (med) {
+    const pos = gdRentPos(rent / area, m);
+    li.push(`A renda de ${fmt.eur(rent)}/mês dá ${fmt.eur2(rent / area)}/m²; a mediana dos contratos novos em ${esc(med.where)} é ${fmt.eur2(med.ppm)}/m² (${fmt.eur(med.v)} para ${fmt.n(area, 0)} m²${med.year ? `, ${esc(med.year)}` : ''})${pos ? ` — no concelho fica ${pos.txt}` : ''}.${pos && pos.k === 'high' ? ' Acima do 3.º quartil, conta com mais tempo vazio.' : ''}`);
+  }
+  li.push(`Atualização: num contrato em curso, a renda pode subir no máximo ${fmt.n((RENT_COEF.value - 1) * 100, 2)}% em ${RENT_COEF.year} (coeficiente do INE), para ${fmt.eur(rent * RENT_COEF.value)}/mês, se o contrato não disser outra coisa. As contas acima assumem esta subida todos os anos.`);
+  if (value) li.push(`Rendibilidade: ${fmt.pct((rent * 12) / value, 1)} bruta e ${fmt.pct(best.first.net / value, 1)} líquida de custos e IRS no 1.º ano (sobre ${fmt.eur(value)}).`);
+  out.innerHTML = `<div class="table-wrap"><table class="ol-table g-table"><thead><tr><th>Duração do contrato</th><th>IRS sobre as rendas</th><th>Líquido no 1.º ano</th><th>Líquido em 10 anos</th><th>Face a um contrato curto</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul>
+    <p class="muted">Líquido = rendas (menos ${fmt.n(gdNum(f, 'vac') ?? 1, 0)} mês vazio por ano) − IMI (${fmt.eur(imi)}/ano: ${vpt ? 'VPT' : value ? 'valor da casa (por excesso: indica o VPT)' : 'mediana de venda × área (por excesso: indica o VPT)'} × ${imiPct(rate)}${m.imi_rate == null ? ', taxa mínima legal' : ''}) − condomínio − seguro − manutenção − IRS. O IRS incide sobre a renda menos IMI, condomínio e manutenção; os juros do crédito não se deduzem. Regras de ${TAX_YEAR}: confirma com as Finanças ou um contabilista.</p>`;
+}
+
+// 3) inquilino
+function gtRender() {
+  const f = $('#gt-form'), out = $('#gt-out'), m = gdMuni(f);
+  if (!m) { out.innerHTML = '<p class="muted">Escolhe um concelho da lista.</p>'; return; }
+  const pr = f.par.value && PARBY[f.par.value] ? PARBY[f.par.value] : null, area = gdNum(f, 'area') || 70, rent = gdNum(f, 'rent'), inc = gdNum(f, 'income');
+  const med = gdRent(m, pr, area);
+  if (!med) { out.innerHTML = `<p class="banner">O INE não publica rendas para ${esc(m.name)} (poucos contratos).</p>`; return; }
+  if (!rent) { out.innerHTML = `<p class="muted">Indica a renda pedida. Para ${fmt.n(area, 0)} m² em ${esc(med.where)}, a mediana dos contratos novos é ${fmt.eur(med.v)}/mês.</p>`; return; }
+  const ppm = rent / area, pos = gdRentPos(ppm, m), rel = rent / med.v - 1;
+  const tiles = [gdTile('Renda pedida', `${fmt.eur(rent)}/mês`, `${fmt.eur2(ppm)}/m²`),
+    gdTile(`Mediana (${med.where})`, `${fmt.eur(med.v)}/mês`, `${fmt.eur2(med.ppm)}/m², contratos novos${med.year ? ` ${esc(med.year)}` : ''}`),
+    gdTile('Face à mediana', fmt.spct(rel, 0), Math.abs(rel) < 0.1 ? 'em linha' : rel > 0 ? 'mais cara' : 'mais barata')];
+  if (m.rent_q1 != null) tiles.push(gdTile(`Metade dos contratos em ${m.name}`, `${fmt.eur(m.rent_q1 * area)}–${fmt.eur(m.rent_q3 * area)}`, `${fmt.eur2(m.rent_q1)}–${fmt.eur2(m.rent_q3)}/m²`));
+  if (inc) tiles.push(gdTile('Peso no rendimento', fmt.pct(rent / inc, 0), rent / inc > 0.35 ? 'acima de 35%: apertado' : 'até 35%'));
+  const li = [];
+  if (pos) li.push(`No concelho, esta renda fica ${pos.txt}.${pos.k === 'high' ? ' Pode justificar-se (casa renovada, mobilada, com garagem, zona muito procurada), mas é um bom argumento para negociar.' : pos.k === 'low' ? ' É barata para a zona: confirma o estado da casa e o que inclui.' : ''}`);
+  if (pr && pr.rent == null) li.push(`O INE não publica a renda da freguesia ${esc(pr.name)} (poucos contratos): a comparação é com o concelho.`);
+  li.push(`Depois de assinar: num contrato em curso, a renda pode subir no máximo ${fmt.n((RENT_COEF.value - 1) * 100, 2)}% em ${RENT_COEF.year} (coeficiente do INE): ${fmt.eur(rent * RENT_COEF.value)}/mês, se o contrato não disser outra coisa. Lê a cláusula de atualização antes de assinar.`);
+  if (m.rent_growth_1y != null) li.push(`Em ${esc(m.name)}, a renda dos contratos novos variou ${fmt.spct(m.rent_growth_1y, 0)} no último ano${m.rent_fc != null && m.rent != null ? `; a previsão para ${m.rent_fc_year} é ${fmt.spct(m.rent_fc / m.rent - 1, 0)}` : ''}.`);
+  // mais barato perto: freguesias do mesmo concelho e concelhos até X km
+  const cheaper = [];
+  if (PAR) PAR.rows.filter((r) => r.dico === m.dico && r.rent != null && r.rent * area < rent * 0.9 && (!pr || r.code !== pr.code))
+    .sort((a, b) => a.rent - b.rent).slice(0, 3).forEach((r) => cheaper.push(`freguesia ${esc(r.name)}: ${fmt.eur(r.rent * area)}/mês`));
+  const C = gCentroids(), km = gdNum(f, 'km') || 25;
+  if (C && C[m.dico]) MUNIS.filter((x) => x.dico !== m.dico && x.rent != null && C[x.dico] && gKm(C[m.dico], C[x.dico]) <= km && x.rent * area < rent * 0.9)
+    .map((x) => ({ x, d: gKm(C[m.dico], C[x.dico]) })).sort((a, b) => a.x.rent - b.x.rent).slice(0, 4)
+    .forEach(({ x, d }) => cheaper.push(`<a class="lnk" href="#c-${x.dico}">${esc(x.name)}</a> (a ~${fmt.n(d, 0)} km): ${fmt.eur(x.rent * area)}/mês`));
+  li.push(cheaper.length ? `Mais barato perto (medianas para ${fmt.n(area, 0)} m², pelo menos 10% abaixo da renda pedida): ${cheaper.join('; ')}.` : `Não há concelhos até ${fmt.n(km, 0)} km nem freguesias com mediana pelo menos 10% abaixo desta renda.`);
+  out.innerHTML = `<div class="stats">${tiles.join('')}</div><ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul>
+    <p class="muted">As medianas do INE são as rendas dos contratos novos declarados às Finanças, de todas as tipologias, e costumam ficar abaixo dos valores pedidos nos anúncios. A casa concreta (estado, mobília, garagem, andar, vista) pode justificar diferenças grandes.</p>`;
+}
+
+// 4) vender, arrendar ou manter
+function gvRender() {
+  const f = $('#gv-form'), out = $('#gv-out'), m = gdMuni(f);
+  if (!m) { out.innerHTML = '<p class="muted">Escolhe um concelho da lista.</p>'; return; }
+  const pr = f.par.value && PARBY[f.par.value] ? PARBY[f.par.value] : null, area = gdNum(f, 'area') || 90;
+  const estV = pr && pr.price != null ? pr.price * area : m.price != null ? m.price * area : null;
+  const value = gdNum(f, 'value') || estV, med = gdRent(m, pr, area), rent = gdNum(f, 'rent') || (med ? med.v : null);
+  if (!value || !rent) { out.innerHTML = `<p class="banner">Sem ${!value ? 'preço' : 'renda'} publicado para ${esc(m.name)}: indica-o nos campos.</p>`; return; }
+  const buy = gdNum(f, 'buy'), rate0 = m.imi_rate ?? 0.003, vpt = gdNum(f, 'vpt');
+  const o = { value, sellCost: (gdNum(f, 'sell') ?? 5) / 100, balance: gdNum(f, 'bal') || 0, rate: gdNum(f, 'rate') ?? affRateNow(), yearsLeft: gdNum(f, 'left') || 20,
+    buyCost: buy ?? value * 0.5, hpp: f.hpp.checked, reinvest: f.reinv.checked, marginal: (gdNum(f, 'marg') ?? 35) / 100, rent, vacancy: gdNum(f, 'vac') ?? 1,
+    imi: (vpt || value) * rate0, condo: gdNum(f, 'condo') ?? 30, ins: gdNum(f, 'ins') ?? 150, maint: (gdNum(f, 'maint') ?? 5) / 100, contractYears: gdNum(f, 'cy') || 1,
+    priceGrowth: (gdNum(f, 'pg') ?? 2) / 100, rentGrowth: RENT_COEF.value - 1, altRate: (gdNum(f, 'alt') ?? 2) / 100, horizon: Math.round(gdNum(f, 'hz') || 10), startYear: new Date().getFullYear() };
+  const H = holdOptions(o), N = o.horizon;
+  const opts = [['Vender já', H.sell.wealth, `recebes hoje ${fmt.eur(H.now)} (venda − custos − crédito${H.cgt0 > 0 ? ` − ${fmt.eur(H.cgt0)} de mais-valias` : ''}) e pões a render ${fmt.pct(o.altRate, 1)}/ano`],
+    ['Arrendar e vender daqui a ' + N + ' anos', H.rent.wealth, `rendas líquidas ${H.rent.rows[0].cf >= 0 ? '+' : '−'}${fmt.eur(Math.abs(H.rent.rows[0].cf / 12))}/mês no 1.º ano (depois da prestação); venda a ${fmt.eur(H.rent.sale)}${H.rent.cgt > 0 ? `, ${fmt.eur(H.rent.cgt)} de mais-valias` : ''}`],
+    ['Manter vazia e vender daqui a ' + N + ' anos', H.keep.wealth, `custos de ${fmt.eur(Math.abs(H.keep.rows[0].cf / 12))}/mês no 1.º ano (IMI, condomínio, seguro${o.balance ? ', prestação' : ''})`]];
+  const best = opts.reduce((a, b) => (b[1] > a[1] ? b : a));
+  const tiles = opts.map(([l, w, c]) => gdTile(l, fmt.eur(w), c)).join('');
+  const pgs = [-0.02, 0, 0.02, 0.04];
+  const sens = `<div class="table-wrap"><table class="ol-table g-table"><thead><tr><th>Ao fim de ${N} anos, se a casa…</th>${pgs.map((g) => `<th>${fmt.spct(g, 0)}/ano</th>`).join('')}</tr></thead><tbody>${['Vender já', 'Arrendar', 'Manter vazia'].map((l, i) => `<tr><td>${l}</td>${pgs.map((g) => { const h = holdOptions({ ...o, priceGrowth: g }); const w = [h.sell.wealth, h.rent.wealth, h.keep.wealth]; const top = Math.max(...w); return `<td${w[i] === top ? ' class="g-best"' : ''}>${fmt.eur(w[i])}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`;
+  const li = [];
+  li.push(`Com estes pressupostos, a opção que deixa mais património ao fim de ${N} anos é <b>${best[0].toLowerCase()}</b>. A diferença depende sobretudo da valorização da casa face ao que o dinheiro renderia — vê a tabela.`);
+  li.push(H.cgt0 > 0 ? `Mais-valias se venderes já: ~${fmt.eur(H.cgt0)} (50% do ganho à tua taxa marginal${buy == null ? '; sem o preço de compra, assumi metade do valor atual — indica-o' : ''}). O cálculo não usa os coeficientes de desvalorização da moeda, que baixam o imposto em casas compradas há muitos anos: é por excesso.`
+    : o.hpp && o.reinvest ? 'Sem mais-valias na venda de hoje: era habitação própria e reinvestes noutra (confirma os prazos de reinvestimento com as Finanças).' : 'Sem mais-valias na venda de hoje (sem ganho).');
+  if (o.hpp) li.push('Se a arrendares ou deixares vazia, deixa de ser habitação própria: na venda mais tarde, as contas assumem mais-valias sem isenção.');
+  li.push(`Arrendar: ${fmt.eur(rent)}/mês${med && !gdNum(f, 'rent') ? ` (mediana de ${esc(med.where)} × ${fmt.n(area, 0)} m²)` : ''}, ${fmt.n(o.vacancy, 0)} mês vazio por ano, IRS de ${fmt.pct(irsRentRate(rent, o.contractYears, o.startYear), 0)} em ${o.startYear}, subida da renda de ${fmt.n((RENT_COEF.value - 1) * 100, 2)}%/ano.`);
+  if (!gdNum(f, 'value')) li.push(`Valor de venda: ${pr && pr.price != null ? `mediana da freguesia ${esc(pr.name)}` : `mediana de ${esc(m.name)}`} × área (${fmt.eur(value)}). A tua casa pode valer bastante mais ou menos: indica uma avaliação, se tiveres.`);
+  out.innerHTML = `<div class="stats">${tiles}</div><p class="muted">Património ao fim de ${N} anos: o que fica da venda, mais o dinheiro que entrou e saiu pelo caminho, a render ${fmt.pct(o.altRate, 1)}/ano.</p>${sens}<ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul>
+    <p class="muted">Simplificações: valores nominais; mais-valias de residente; o crédito é pago com a venda; não inclui obras, tempo e trabalho de ser senhorio, nem o risco de incumprimento do inquilino. Não é aconselhamento financeiro ou fiscal.</p>`;
+}
+
+function initGuides() {
+  const pick = (k) => {
+    document.querySelectorAll('#guide [data-guide]').forEach((d) => { d.hidden = d.dataset.guide !== k; });
+    document.querySelectorAll('#guide [data-gp]').forEach((b) => { b.classList.toggle('on', b.dataset.gp === k); b.setAttribute('aria-selected', b.dataset.gp === k); });
+    try { localStorage.setItem(GD_KEY + '.pick', k); } catch { /* */ }
+  };
+  document.querySelectorAll('#guide [data-gp]').forEach((b) => b.addEventListener('click', () => pick(b.dataset.gp)));
+  let k0 = 'where';
+  try { k0 = localStorage.getItem(GD_KEY + '.pick') || 'where'; } catch { /* */ }
+  pick(document.querySelector(`#guide [data-guide="${k0}"]`) ? k0 : 'where');
+  const saved = (() => { try { return JSON.parse(localStorage.getItem(GD_KEY) || '{}') || {}; } catch { return {}; } })();
+  [['gl', glRender], ['gs', gsRender], ['gt', gtRender], ['gv', gvRender]].forEach(([id, render]) => {
+    const f = $(`#${id}-form`);
+    const save = () => { const v = {}; [...f.elements].forEach((el) => { if (el.name) v[el.name] = el.type === 'checkbox' ? el.checked : el.value; }); saved[id] = v; try { localStorage.setItem(GD_KEY, JSON.stringify(saved)); } catch { /* */ } };
+    const run = () => { save(); try { render(); } catch (e) { console.error(e); $(`#${id}-out`).innerHTML = '<p class="banner">Não foi possível calcular com estes valores.</p>'; } };
+    Object.entries(saved[id] || {}).forEach(([k, v]) => { const el = f.elements[k]; if (el && el.type === 'checkbox') el.checked = !!v; else if (el && el.tagName !== 'SELECT') el.value = v; });
+    if (f.par) {
+      const parSaved = (saved[id] || {}).par;
+      f.conc.addEventListener('change', () => gdParishes(f));
+      if (f.conc.value.trim()) gdParishes(f).then(() => { if (parSaved) f.par.value = parSaved; if (f.querySelector('[name=rent]').value || id !== 'gt') run(); });
+    }
+    f.addEventListener('submit', (e) => { e.preventDefault(); run(); });
+    f.addEventListener('change', (e) => { if (e.target.name !== 'conc' && $(`#${id}-out`).innerHTML) run(); });
+    if (!f.par && f.loan && f.loan.value) run();
+  });
+}
+
 const TABS = {
   mercado: ['summary', 'national', 'changes', 'mapsec', 'detail', 'compare', 'ranking'],
   guia: ['guide'],
@@ -2465,6 +2656,7 @@ async function main() {
   safe('o meu imóvel', initImovel);
   safe('investir', initInvest);
   safe('guia', initGuide);
+  safe('guias', initGuides);
   safe('arrendar', initRent);
   safe('comprar casa', initAfford);
   // indicadores do mapa sem nenhum valor nesta build (ex.: fonte que falhou) não aparecem na lista
