@@ -483,6 +483,15 @@ preço de mercado).
 - **Descoberta** (`imopt/discover.py`): guarda o catálogo do INE e a descrição de serviços de mapas (zonas inundáveis
   da APA) no branch `data`, para confirmar códigos novos (séries paradas, idade e estado dos edifícios dos Censos) e
   camadas antes de as usar. Não entra nos números.
+- **Zonas inundáveis por freguesia** (`imopt/flood.py`): cartas da Diretiva das Inundações (APA, SNIAmb, 2.º ciclo),
+  cenário de ~100 anos; % da área da freguesia em zona inundável cartografada, na tabela de freguesias, no mapa e no
+  "O meu imóvel". Só as áreas de risco potencial significativo do continente estão cartografadas: freguesia sem zona
+  fica sem valor (não quer dizer sem risco). A área não diz quantas casas estão lá dentro.
+- **Sonda do INE** (`discover.ine_probe`): códigos novos encontrados no catálogo (população até 2025, índice de preços
+  da habitação base 2025, edifícios dos Censos 2021 por época de construção e estado de conservação) são descarregados
+  uma vez em bruto, com o resumo das dimensões em `data/clean/ine_probe.json`, antes de entrarem nos números.
+- O parque habitacional (0008329) para em 2022 porque o INE ainda não publicou 2023 (o código novo 0014137 também acaba
+  em 2022): não é código mudado; o alerta de série parada para esta série só dispara a partir de 54 meses.
 - Risco sísmico: não há uma fonte aberta e estruturada por concelho; fica de fora.
 
 ### Organização do site em separadores

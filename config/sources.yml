@@ -226,6 +226,9 @@ ine:
       description: Alojamentos familiares clássicos, parque habitacional (N.º)
       level: municipality
       optional: true
+      # Último ano publicado: 2022 (catálogo completo do INE de 6/10/2026; o código novo 0014137 também acaba em
+      # 2022). Não é código mudado: o INE ainda não publicou 2023. Alerta só a partir de 4 anos e meio.
+      max_age_months: 54
     # Censos 2021 (0012502): geocod de 4 dígitos = concelho (DICO), 6 = freguesia. dim_3 = forma de ocupação
     # (1 habitual, 2 secundária, 3 vago para venda/arrendamento, 4 vago por outros motivos, T total);
     # dim_4 = tipo de edifício, dim_5 = n.º de alojamentos no edifício (ambos T = Total).
@@ -545,13 +548,29 @@ al:
 # Escolas, saúde e estações por freguesia: OpenStreetMap pela API Overpass (© contribuidores do OpenStreetMap, ODbL).
 # Três consultas, no máximo uma vez por semana (ver imopt/osm.py).
 osm:
-  url: https://overpass-api.de/api/interpreter
+  # dois servidores públicos da API Overpass, alternados quando um está ocupado (429/504)
+  urls: [https://overpass-api.de/api/interpreter, https://overpass.kumi.systems/api/interpreter]
 
 # Descoberta (imopt/discover.py): guarda o catálogo do INE e a descrição de serviços de mapas no branch `data`, para
 # confirmar códigos e camadas antes de os usar. Não mexe nos números do painel.
+# Zonas inundáveis (imopt/flood.py): cartas da Diretiva 2007/60/CE, APA/SNIAmb, 2.º ciclo; camada 1 = "Limite"
+# (área inundável), campo pretorno = período de retorno. Confirmado pela descrição do serviço guardada em
+# data/raw/services/apa_inundacoes_1.json (6/10/2026). Só o continente, só as ARPSI.
+flood:
+  url: https://sniambgeoogc.apambiente.pt/getogc/rest/services/SNIAmb/Diretiva200760CE_2c/MapServer/1
+  field: pretorno
+
 discover:
   ine_ranges: ["0012400-0012700", "0013000-0013500", "0011600-0011800"]
   max_requests: 400
+  # Códigos novos encontrados no catálogo completo (6/10/2026), sondados uma vez para confirmar as dimensões:
+  # 0012917/0012918 População residente por concelho até 2025 (substitutos de 0008272/0008273, parados em 2023);
+  # 0014765 Índice de preços da habitação base 2025, até 2026T2 (o 0009201, base 2015, parou em 2025T4);
+  # Censos 2021 por freguesia: 0012575 índice de envelhecimento dos edifícios, 0012581 % de edifícios com
+  # necessidade de reparação, 0012576/0012577/0012578/0012582/0014620/0014621 edifícios (N.º) por categorias
+  # (a confirmar quais são época de construção e estado de conservação).
+  ine_probe: ["0012917", "0012918", "0014765", "0012575", "0012581", "0012576", "0012577", "0012578", "0012582",
+              "0014620", "0014621"]
   services:
     apa_inundacoes: https://sniambgeoogc.apambiente.pt/getogc/rest/services/SNIAmb/Diretiva200760CE_2c/MapServer
 

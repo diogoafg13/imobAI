@@ -5,6 +5,9 @@ Corre em cada build (passo fixo, sem parâmetros vindos de fora), no máximo uma
   principais (opc=3) e uma varredura progressiva de intervalos de códigos (config `discover.ine_ranges`), com um
   limite de pedidos por build. Resultado: data/clean/ine_catalog.json (código, título, nível geográfico,
   periodicidade, último período) — para encontrar, por exemplo, o código novo de uma série parada.
+- INE, sonda (config `discover.ine_probe`): para cada código novo, o JSON completo uma vez (sem filtros) em
+  data/raw/ine/<código>/ e um resumo em data/clean/ine_probe.json (dimensões com códigos e nomes, níveis
+  geográficos, primeiro e último período) — para escrever os `dims` certos no config sem adivinhar.
 - Serviços de mapas (config `discover.services`, ex.: zonas inundáveis da APA): a descrição em JSON (camadas e
   campos), em data/raw/services/.
 
@@ -21,7 +24,7 @@ from pathlib import Path
 
 import requests
 
-from . import catalog
+from . import catalog, ine
 
 log = logging.getLogger("imopt")
 UA = {"User-Agent": "imobiliario-pt/0.1 (dados abertos)"}
@@ -86,6 +89,46 @@ def ine_catalog(cfg: dict, data_dir: Path) -> str:
     return f"ok ({len(items)} indicadores; {'; '.join(notes)})"
 
 
+def summarize(df) -> dict:
+    """Resumo de uma resposta do INE: dimensões (código -> nome), níveis geográficos e períodos."""
+    dims = {}
+    for c in sorted(c for c in df.columns if re.fullmatch(r"dim_\d+", c)):
+        t = f"{c}_t"
+        pairs = df[[c, t]].drop_duplicates() if t in df.columns else df[[c]].drop_duplicates().assign(_t="")
+        dims[c] = {str(a): str(b) for a, b in pairs.head(60).itertuples(index=False)}
+    lens = df["geocod"].astype(str).str.len().value_counts().to_dict() if "geocod" in df else {}
+    per = sorted(df["period"].astype(str).unique()) if "period" in df else []
+    return {"rows": int(len(df)), "dims": dims, "geocod_len": {str(k): int(v) for k, v in lens.items()},
+            "periods": [per[0], per[-1], len(per)] if per else [],
+            "sample": df.head(3).astype(str).to_dict("records")}
+
+
+def ine_probe(cfg: dict, ine_cfg: dict, data_dir: Path, today: str) -> str:
+    path = data_dir / "clean" / "ine_probe.json"
+    done = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+    notes = []
+    for varcd in cfg.get("ine_probe") or []:
+        varcd = str(varcd)
+        if varcd in done and "error" not in done[varcd]:
+            continue
+        try:
+            payload = ine.fetch(ine_cfg["base_url"], varcd, ine_cfg.get("lang", "PT"), None, retries=2, timeout=(10, 300))
+            df = ine.parse_response(payload, varcd)
+            if df.empty:
+                raise ValueError("resposta vazia")
+            out = data_dir / "raw" / "ine" / varcd / f"{today}.parquet"
+            out.parent.mkdir(parents=True, exist_ok=True)
+            df.to_parquet(out, index=False)
+            done[varcd] = {"probed": today, **summarize(df)}
+            notes.append(f"{varcd}: {len(df)} linhas")
+        except Exception as e:  # noqa: BLE001
+            done[varcd] = {"error": str(e)[:200]}
+            notes.append(f"{varcd}: falhou")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(done, ensure_ascii=False, indent=1), encoding="utf-8")
+    return "; ".join(notes) or f"nada novo ({len(done)} já sondados)"
+
+
 def services(cfg: dict, data_dir: Path) -> str:
     out_dir = data_dir / "raw" / "services"
     done = []
@@ -107,10 +150,15 @@ def services(cfg: dict, data_dir: Path) -> str:
     return "; ".join(done) or "sem serviços"
 
 
-def run(cfg: dict | None, data_dir: Path) -> dict:
+def run(cfg: dict | None, data_dir: Path, ine_cfg: dict | None = None, today: str | None = None) -> dict:
     if not cfg:
         return {}
     out = {}
+    if ine_cfg and cfg.get("ine_probe"):
+        try:
+            out["ine_probe"] = ine_probe(cfg, ine_cfg, data_dir, today or dt.date.today().strftime("%Y%m%d"))
+        except Exception as e:  # noqa: BLE001
+            out["ine_probe"] = f"ERRO: {str(e)[:150]}"
     try:
         out["ine_catalog"] = ine_catalog(cfg, data_dir)
     except Exception as e:  # noqa: BLE001
