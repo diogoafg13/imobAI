@@ -230,6 +230,10 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
         h = frames["hpi"]
         h = h[h["level"].isin(["national", "nuts1"])].sort_values("sort_key")
         hpi = h[["period", "value"]].drop_duplicates("period") if not h.empty else None
+        if hpi is not None:   # o INE publica em base 2025: repõe em 2015 = 100, como o do Eurostat e o resto do site
+            b15 = hpi.loc[hpi["period"].astype(str).str.startswith("2015"), "value"]
+            if len(b15) == 4 and b15.mean() > 0:
+                hpi = hpi.assign(value=hpi["value"] / b15.mean() * 100)
     national = scoring.national_scores(hpi, macro_frames.get("euribor_12m"), macro_frames.get("bis_credit_gap"))
     hpi_real = real_index(hpi, macro_frames.get("eurostat_hicp"))
     national["series"] = {
@@ -373,6 +377,12 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
                             ptab[f"{k}_per_1000"] = (ptab[f"n_{k}"] / ptab["census_total"] * 1000).where(ptab["census_total"] > 0)
         except Exception as e:  # noqa: BLE001
             log.warning("OpenStreetMap por freguesia falhou: %s", e)
+        try:      # edifícios dos Censos 2021: antigos (antes de 1961) e a precisar de obras médias ou profundas
+            bld = parishes.buildings({k: frames.get(f"census_bld_{k}") for k in parishes.BLD_KEYS})
+            if bld is not None and not ptab.empty:
+                ptab = ptab.merge(bld, left_on="code", right_index=True, how="left")
+        except Exception as e:  # noqa: BLE001
+            log.warning("edifícios por freguesia falharam: %s", e)
         try:      # % da área em zona inundável cartografada (APA); sem zona cartografada fica sem valor
             if flood_zones is not None and not ptab.empty:
                 fl = flood.by_parish(flood_zones, parish_geojson)

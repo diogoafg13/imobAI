@@ -194,6 +194,10 @@ const PMETRICS = {
     help: 'Escolas no OpenStreetMap (© contribuidores do OpenStreetMap) por 1000 alojamentos do Censos 2021. O mapa é feito por voluntários: quase completo nas cidades, pode faltar alguma escola no interior. Mais escuro = mais escolas face às casas.' },
   f_hea: { prop: 'hea1k', src: 'par', pal: SEQ, f: (v) => fmt.n(v, 1), label: 'Saúde por 1000 casas (freguesia)',
     help: 'Hospitais, centros de saúde, clínicas e consultórios no OpenStreetMap (© contribuidores do OpenStreetMap) por 1000 alojamentos do Censos 2021. Pode faltar algum no interior. Mais escuro = mais oferta face às casas.' },
+  f_bold: { prop: 'bold', src: 'par', pal: SEQ, f: (v) => fmt.pct(v, 0), label: 'Edifícios antes de 1961 (Censos 2021)',
+    help: 'Parte dos edifícios da freguesia construídos antes de 1961 (Censos 2021). Mais escuro = parque mais antigo: centros históricos e aldeias. Casas antigas podem ter mais obras e pior eficiência energética, mas também é onde está o património.' },
+  f_brep: { prop: 'brep', src: 'par', pal: SEQ, f: (v) => fmt.pct(v, 0), label: 'Edifícios a precisar de obras (Censos 2021)',
+    help: 'Parte dos edifícios da freguesia com necessidades médias ou profundas de reparação no Censos 2021 (avaliação do recenseador, do exterior). Mais escuro = mais edifícios degradados. Muitos foram reabilitados desde 2021, sobretudo nas cidades.' },
   f_fl: { prop: 'fl', src: 'par', pal: SEQ, f: (v) => fmt.n(v, 1) + '%', label: 'Zona inundável: % da área (freguesia)',
     help: 'Parte da área da freguesia dentro das zonas inundáveis cartografadas pela APA (Diretiva das Inundações, cheia com período de retorno de cerca de 100 anos). Só estão cartografadas as áreas de risco potencial significativo do continente: sem cor não quer dizer sem risco. A área não diz quantas casas estão lá dentro — confirma a rua no mapa do SNIAmb.' },
   f_rg: { prop: 'rent_g3y', src: 'par', pal: SEQ, f: (v) => fmt.spct(v, 0), label: 'Renda: variação 3 anos (freguesia)',
@@ -231,12 +235,12 @@ function parishDerive() {
   const rate = affRate();
   PAR.rows.forEach((r) => {
     r.irs_m = r.irs_median != null ? r.irs_median / 12 : null;
-    r.vac = r.vacant_share; r.sec = r.secondary_share; r.al100 = r.al_per_100; r.sch1k = r.school_per_1000; r.hea1k = r.health_per_1000; r.fl = r.flood_pct;
+    r.vac = r.vacant_share; r.sec = r.secondary_share; r.al100 = r.al_per_100; r.sch1k = r.school_per_1000; r.hea1k = r.health_per_1000; r.fl = r.flood_pct; r.bold = r.bld_old_share; r.brep = r.bld_repair_share;
     const pay = r.price != null ? annuity(r.price * AFF.area * (1 - AFF.down / 100), rate, AFF.years) : null;
     r.ef = pay != null && r.irs_m ? pay / (r.irs_m * AFF.earners) : null;
   });
   if (PGJ) {
-    PGJ.features.forEach((f) => { const r = PARBY[f.properties.code]; ['irs_m', 'ef', 'vac', 'sec', 'rent_g3y', 'al100', 'sch1k', 'hea1k', 'fl'].forEach((k) => { f.properties[k] = r ? r[k] ?? null : null; }); });
+    PGJ.features.forEach((f) => { const r = PARBY[f.properties.code]; ['irs_m', 'ef', 'vac', 'sec', 'rent_g3y', 'al100', 'sch1k', 'hea1k', 'fl', 'bold', 'brep'].forEach((k) => { f.properties[k] = r ? r[k] ?? null : null; }); });
     if (MAP && MAP.getSource('f')) MAP.getSource('f').setData(PGJ);
   }
 }
@@ -488,17 +492,18 @@ function renderParTable(dico) {
   if (!rows.length) return;
   const has = (k) => rows.some((r) => r[k] != null);
   const hasP = has('price'), hasRent = has('rent'), hasNb = has('rel_nb'), hasIrs = has('irs_median'), hasCen = has('vacant_share');
-  const hasRg = has('rent_g3y'), hasAl = has('al_n'), hasOsm = has('n_school'), hasFl = PAR.rows.some((r) => r.flood_pct != null);
+  const hasRg = has('rent_g3y'), hasAl = has('al_n'), hasOsm = has('n_school'), hasFl = PAR.rows.some((r) => r.flood_pct != null), hasBld = has('bld_old_share');
   const th = [['Freguesia', true], ['€/m²', hasP], ['Face ao concelho', hasP], ['Face às vizinhas', hasNb], ['Var. 12m', hasP], ['Renda €/m²', hasRent], ['Renda 3 anos', hasRg],
-    ['IRS €/mês', hasIrs], ['Esforço', hasP && hasIrs], ['Vagos', hasCen], ['2.ª hab.', hasCen], ['AL /100 casas', hasAl], ['Escolas · saúde · estações', hasOsm], ['Zona inundável', hasFl]];
+    ['IRS €/mês', hasIrs], ['Esforço', hasP && hasIrs], ['Vagos', hasCen], ['2.ª hab.', hasCen], ['AL /100 casas', hasAl], ['Escolas · saúde · estações', hasOsm], ['Zona inundável', hasFl], ['Edifícios: antes de 1961 · a precisar de obras', hasBld]];
   const td = (r) => [`${esc(r.name)}${r.volatile ? ' <span class="muted" title="Mediana muito instável (poucas vendas): entre as 25% de freguesias que mais oscilam">⚠ volátil</span>' : ''}`, fmt.eur(r.price), fmt.spct(r.rel_muni, 0), fmt.spct(r.rel_nb, 0), fmt.pct(r.g1y), r.rent == null ? '—' : fmt.eur2(r.rent), fmt.spct(r.rent_g3y, 0),
     fmt.eur(r.irs_m), fmt.pct(r.ef, 0), fmt.pct(r.vacant_share, 0), fmt.pct(r.secondary_share, 0), r.al_n == null ? '—' : `${fmt.n(r.al_per_100, 1)} <span class="muted">(${fmt.n(r.al_n, 0)})</span>`,
     r.n_school == null ? '—' : `${fmt.n(r.n_school, 0)} · ${fmt.n(r.n_health, 0)} · ${fmt.n(r.n_station, 0)}`,
-    r.flood_pct == null ? '—' : `${fmt.n(r.flood_pct, r.flood_pct < 1 ? 1 : 0)}% da área`];
+    r.flood_pct == null ? '—' : `${fmt.n(r.flood_pct, r.flood_pct < 1 ? 1 : 0)}% da área`,
+    r.bld_old_share == null ? '—' : `${fmt.pct(r.bld_old_share, 0)} · ${fmt.pct(r.bld_repair_share, 0)}`];
   $('#d-par-table').innerHTML = `<thead><tr>${th.filter((x) => x[1]).map((x) => `<th>${x[0]}</th>`).join('')}</tr></thead><tbody>` +
     rows.map((r) => `<tr>${td(r).filter((_, i) => th[i][1]).map((v) => `<td>${v}</td>`).join('')}</tr>`).join('') + '</tbody>';
   const np = rows.filter((r) => r.price != null).length;
-  $('#d-par-note').textContent = `${rows.length} freguesias; ${np} com preço publicado pelo INE (${qpt(PAR.period)}, últimos 12 meses) — as restantes têm poucas vendas.${hasRent ? ` Renda: novos contratos em ${rows.find((r) => r.rent_year)?.rent_year ?? '—'}.` : ''}${hasIrs ? ` IRS: mediana após imposto por pessoa que declara (${rows.find((r) => r.irs_year)?.irs_year ?? '—'}), ÷ 12; esforço com a casa e o crédito da calculadora.` : ''}${hasCen ? ' Vagos e 2.ª habitação: Censos 2021.' : ''}${hasAl ? ' AL: registos no RNAL (Turismo de Portugal) por 100 alojamentos do Censos 2021, entre parênteses o n.º de registos (registado não quer dizer ativo).' : ''}${hasOsm ? ' Escolas, saúde (hospitais, centros de saúde, clínicas) e estações de comboio e metro no OpenStreetMap (© contribuidores do OpenStreetMap): o que está no mapa, que pode estar incompleto no interior.' : ''}${hasFl ? ' Zona inundável: parte da área da freguesia nas zonas inundáveis cartografadas pela APA (cheia de ~100 anos); — = sem zona cartografada, o que não quer dizer sem risco (só estão cartografadas as áreas de risco significativo do continente).' : ''} Medianas de freguesia assentam em poucas vendas — diferenças grandes podem ser só o tipo de casas vendidas.${rows.some((r) => r.volatile) ? ' ⚠ volátil: mediana entre as 25% de freguesias que mais oscilam de trimestre para trimestre — lê com cautela.' : ''}`;
+  $('#d-par-note').textContent = `${rows.length} freguesias; ${np} com preço publicado pelo INE (${qpt(PAR.period)}, últimos 12 meses) — as restantes têm poucas vendas.${hasRent ? ` Renda: novos contratos em ${rows.find((r) => r.rent_year)?.rent_year ?? '—'}.` : ''}${hasIrs ? ` IRS: mediana após imposto por pessoa que declara (${rows.find((r) => r.irs_year)?.irs_year ?? '—'}), ÷ 12; esforço com a casa e o crédito da calculadora.` : ''}${hasCen ? ' Vagos e 2.ª habitação: Censos 2021.' : ''}${hasAl ? ' AL: registos no RNAL (Turismo de Portugal) por 100 alojamentos do Censos 2021, entre parênteses o n.º de registos (registado não quer dizer ativo).' : ''}${hasOsm ? ' Escolas, saúde (hospitais, centros de saúde, clínicas) e estações de comboio e metro no OpenStreetMap (© contribuidores do OpenStreetMap): o que está no mapa, que pode estar incompleto no interior.' : ''}${hasFl ? ' Zona inundável: parte da área da freguesia nas zonas inundáveis cartografadas pela APA (cheia de ~100 anos); — = sem zona cartografada, o que não quer dizer sem risco (só estão cartografadas as áreas de risco significativo do continente).' : ''}${hasBld ? ' Edifícios: Censos 2021, parte construída antes de 1961 e parte com necessidades médias ou profundas de reparação.' : ''} Medianas de freguesia assentam em poucas vendas — diferenças grandes podem ser só o tipo de casas vendidas.${rows.some((r) => r.volatile) ? ' ⚠ volátil: mediana entre as 25% de freguesias que mais oscilam de trimestre para trimestre — lê com cautela.' : ''}`;
 }
 
 // ---------- detalhe / comparação
@@ -1828,6 +1833,7 @@ async function imAnalyse() {
   } else li.push(`Não há índices de preços para ${m.name} que cubram ${qpt(q0)}: sem estimativa de valor.`);
   const flTxt = floodTxt(pr);
   if (flTxt) li.push(flTxt);
+  if (pr && pr.bld_old_share != null) li.push(`Edifícios na freguesia ${esc(pr.name)} (Censos 2021): ${fmt.pct(pr.bld_old_share, 0)} construídos antes de 1961 e ${fmt.pct(pr.bld_repair_share, 0)} com necessidades médias ou profundas de reparação (no país: 23% e 14%).`);
   const inputs = [`${esc(m.name)}${pr ? `, ${esc(pr.name)}` : ''}`, `compra em ${esc(monthTxt(v.date))}`, `${fmt.eur(v.price)}`, `${fmt.n(v.area, v.area % 1 ? 1 : 0)} m²`,
     v.kind === 'apt' ? 'apartamento' : v.kind === 'house' ? 'moradia' : null, typName || null, v.cl ? `Cl ${fmt.n(v.cl, 2)}` : null].filter(Boolean).join(' · ');
   out.innerHTML = `<p class="muted">Dados: ${inputs}. Calculado em ${new Date().toISOString().slice(0, 10)} com os dados do painel de ${META.built_at.slice(0, 10)}.</p>
@@ -2186,6 +2192,7 @@ const G_CRIT = [
   { key: 'liquid', label: 'Mercado com movimento (avaliações bancárias por casa)', goals: 'buy invest', def: {}, dir: 1, f: (v) => `${fmt.n(v, 1)} avaliações/1000 casas` },
   { key: 'services', label: 'Escolas e saúde (OpenStreetMap)', goals: 'buy rent invest', def: { buy: 1, rent: 1 }, dir: 1, f: (v) => `${fmt.n(v, 1)} escolas e unid. de saúde/1000 casas`, need: () => PAR && PAR.rows.some((r) => r.n_school != null) },
   { key: 'flood', label: 'Menos área em zona inundável (APA)', goals: 'buy rent invest', def: {}, dir: -1, f: (v) => `${fmt.n(v, 1)}% em zona inundável`, need: () => PAR && PAR.rows.some((r) => r.flood_pct != null) },
+  { key: 'repair', label: 'Edifícios em melhor estado (Censos 2021)', goals: 'buy rent invest', def: {}, dir: -1, f: (v) => `${fmt.pct(v, 0)} dos edifícios a precisar de obras`, need: () => PAR && PAR.rows.some((r) => r.bld_repair_share != null) },
   { key: 'lowal', label: 'Pouco alojamento local', goals: 'buy rent invest', def: {}, dir: -1, f: (v) => `${fmt.n(v, 1)} camas de AL/100 casas` },
   { key: 'income', label: 'Vizinhança com rendimentos mais altos (IRS)', goals: 'buy rent invest', def: {}, dir: 1, f: (v) => `IRS mediano ${fmt.eur(v)}/ano` },
   { key: 'young', label: 'População mais jovem', goals: 'buy rent invest', def: {}, dir: -1, f: (v) => `${fmt.n(v, 0)} idosos por 100 jovens` },
@@ -2236,7 +2243,8 @@ function gParAgg() {
   if (!PAR) return out;
   const hasFl = PAR.rows.some((r) => r.flood_pct != null);
   PAR.rows.forEach((r) => {
-    const o = out[r.dico] || (out[r.dico] = { sv: 0, svn: 0, fl: 0, fln: 0 }), n = r.census_total || 0;
+    const o = out[r.dico] || (out[r.dico] = { sv: 0, svn: 0, fl: 0, fln: 0, rp: 0, rpn: 0 }), n = r.census_total || 0;
+    if (r.bld_repair_share != null && r.bld_n) { o.rp += r.bld_repair_share * r.bld_n; o.rpn += r.bld_n; }
     if (r.n_school != null && n) { o.sv += r.n_school + (r.n_health || 0); o.svn += n; }
     if (hasFl && n && !islands(r.dico)) { o.fl += (r.flood_pct || 0) * n; o.fln += n; }
   });
@@ -2261,7 +2269,7 @@ function gVals(m, cost, agg) {
   const per1000 = (x) => (x != null && m.census_total ? (x / m.census_total) * 1000 : null), a = agg[m.dico];
   const v = { fit: null, growth: m.fc_growth_12m, risk: m.score_overall, demand: per1000(m.rent_contracts), rsupply: per1000(m.rent_contracts),
     rstable: m.rent_growth_1y, liquid: per1000(m.val_count), lowal: m.al_beds_per_100, income: m.irs_median, young: m.ageing_index, metro: m.dist_metro_km,
-    services: a && a.svn ? (a.sv / a.svn) * 1000 : null, flood: a && a.fln ? a.fl / a.fln : null };
+    services: a && a.svn ? (a.sv / a.svn) * 1000 : null, flood: a && a.fln ? a.fl / a.fln : null, repair: a && a.rpn ? a.rp / a.rpn : null };
   if (G.goal === 'invest' && m.rent != null && cost) { const o = invParams(m, { area: gArea(), price: cost, down: 100 }); v.yield = o ? invest(o).netYield : null; }
   return v;
 }
@@ -2274,12 +2282,12 @@ function gParishes(m, budget, crit) {
     const rentM = (r.rent ?? m.rent) * area;
     return { id: r.code, r, cost, vals: { fit: budget / cost - 1, yield: G.goal === 'invest' && rentM ? (rentM * 12) / cost : null,
       services: r.n_school != null && r.census_total ? ((r.n_school + (r.n_health || 0)) / r.census_total) * 1000 : null,
-      flood: hasFl ? (r.flood_pct ?? 0) : null, lowal: r.al_per_100, income: r.irs_median, rstable: r.rent_g1y } };
+      flood: hasFl ? (r.flood_pct ?? 0) : null, lowal: r.al_per_100, income: r.irs_median, rstable: r.rent_g1y, repair: r.bld_repair_share } };
   }).filter(Boolean);
   if (!rows.length) return { none: true };
   const fits = rows.filter((x) => x.vals.fit >= -0.05);
   if (!fits.length) return { over: rows.length };
-  const pc = crit.filter((c) => ['fit', 'yield', 'services', 'flood', 'lowal', 'income', 'rstable'].includes(c.key));
+  const pc = crit.filter((c) => ['fit', 'yield', 'services', 'flood', 'lowal', 'income', 'rstable', 'repair'].includes(c.key));
   return { list: rankBy(fits, pc).slice(0, 3) };
 }
 function gTag(c, v, p) { return `<span class="g-tag ${p >= 0.75 ? 'up' : 'down'}" title="${esc(c.label)}: ${p >= 0.75 ? 'entre os melhores' : 'entre os piores'}">${p >= 0.75 ? '✓' : '✗'} ${esc(c.f(v))}</span>`; }

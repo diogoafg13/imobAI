@@ -102,3 +102,18 @@ def test_parish_volatility_flags_top_quarter():
             rows.append(dict(geocod=f"170{code}", level="parish", period=f"{y}Q{qq}", sort_key=y * 100 + qq, value=v, geoname=f"F{i}"))
     t = parishes._price_table(pd.DataFrame(rows), None, {"1107": 2000.0})
     assert t["volatile"].sum() == 10 and t.loc[t["volatile"] == True].index.str[-2:].astype(int).min() >= 30  # noqa: E712
+
+
+def test_buildings_shares_from_census():
+    import pandas as pd
+    from imopt import parishes
+
+    def fr(vals):
+        return pd.DataFrame({"geocod": list(vals), "value": list(vals.values()), "level": "other"})
+    out = parishes.buildings({"total": fr({"110601": 100, "110602": 50, "1106": 150}), "pre1919": fr({"110601": 10}),
+                              "1919_1945": fr({"110601": 20, "110602": 5}), "1946_1960": fr({"110601": 10}),
+                              "repair_mid": fr({"110601": 6, "110602": 1}), "repair_deep": fr({"110601": 4})})
+    assert list(out.index) == ["110601", "110602"]            # só freguesias (6 dígitos)
+    assert out.loc["110601", "bld_old_share"] == 0.4 and out.loc["110602", "bld_old_share"] == 0.1
+    assert out.loc["110601", "bld_repair_share"] == 0.1 and out.loc["110602", "bld_repair_share"] == 0.02
+    assert parishes.buildings({"total": None}) is None

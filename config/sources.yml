@@ -140,7 +140,10 @@ ine:
       period_kind: year
       optional: true
     hpi:
-      varcd: "0009201"          # Índice de Preços da Habitação (base 2015), trimestral
+      # Índice de Preços da Habitação, base 2025, trimestral, 2009T1+ (0014765; o 0009201, base 2015, parou em
+      # 2025T4). Confirmado pela sonda de 6/10/2026: dim_3 H1 = Total, H11 = Novos, H12 = Existentes, só nacional.
+      # O painel usa-o só quando falta o HPI do Eurostat, e então repõe-no em 2015 = 100 (pipeline.py).
+      varcd: "0014765"
       description: Índice de preços da habitação (nacional)
       level: national
       # dim_3: H1 = Total, H11 = Novos, H12 = Existentes.
@@ -239,6 +242,51 @@ ine:
       dims: {dim_3: "T", dim_4: "T", dim_5: "T"}
       optional: true
       static: true            # Censos 2021: só muda com o próximo censo (sem alerta de série parada)
+    # Censos 2021, edifícios por época de construção (dim_3: 01 antes de 1919, 02 1919–1945, 03 1946–1960, … T) e
+    # necessidade de reparação (dim_4: 4 sem, 1 ligeiras, 2 médias, 3 profundas, T), por freguesia (CAOP de 2013, as
+    # mesmas do resto da tabela). 0012578, confirmado pela sonda de 6/10/2026 (data/clean/ine_probe.json).
+    census_bld_total:
+      varcd: "0012578"
+      description: Edifícios, Censos 2021 (N.º)
+      level: municipality
+      dims: {dim_3: "T", dim_4: "T"}
+      optional: true
+      static: true
+    census_bld_pre1919:
+      varcd: "0012578"
+      description: Edifícios construídos antes de 1919, Censos 2021 (N.º)
+      level: municipality
+      dims: {dim_3: "01", dim_4: "T"}
+      optional: true
+      static: true
+    census_bld_1919_1945:
+      varcd: "0012578"
+      description: Edifícios construídos em 1919–1945, Censos 2021 (N.º)
+      level: municipality
+      dims: {dim_3: "02", dim_4: "T"}
+      optional: true
+      static: true
+    census_bld_1946_1960:
+      varcd: "0012578"
+      description: Edifícios construídos em 1946–1960, Censos 2021 (N.º)
+      level: municipality
+      dims: {dim_3: "03", dim_4: "T"}
+      optional: true
+      static: true
+    census_bld_repair_mid:
+      varcd: "0012578"
+      description: Edifícios com necessidades médias de reparação, Censos 2021 (N.º)
+      level: municipality
+      dims: {dim_3: "T", dim_4: "2"}
+      optional: true
+      static: true
+    census_bld_repair_deep:
+      varcd: "0012578"
+      description: Edifícios com necessidades profundas de reparação, Censos 2021 (N.º)
+      level: municipality
+      dims: {dim_3: "T", dim_4: "3"}
+      optional: true
+      static: true
     census_secondary:
       varcd: "0012502"
       description: Alojamentos de residência secundária, Censos 2021 (N.º)
@@ -551,6 +599,8 @@ al:
 # Escolas, saúde e estações por freguesia: OpenStreetMap pela API Overpass (© contribuidores do OpenStreetMap, ODbL).
 # Três consultas, no máximo uma vez por semana (ver imopt/osm.py).
 osm:
+  # API ohsome (HeiGIT, Universidade de Heidelberg; dados do OpenStreetMap, ODbL): o país inteiro num pedido
+  ohsome: https://api.ohsome.org/v1/elements/centroid
   # servidores públicos da API Overpass (lista em wiki.openstreetmap.org/wiki/Overpass_API#Public_Overpass_API_instances),
   # tentados um a um quando um está ocupado (429/504)
   urls: [https://overpass-api.de/api/interpreter, https://overpass.private.coffee/api/interpreter,
@@ -574,6 +624,7 @@ discover:
   # Censos 2021 por freguesia: 0012575 índice de envelhecimento dos edifícios, 0012581 % de edifícios com
   # necessidade de reparação, 0012576/0012577/0012578/0012582/0014620/0014621 edifícios (N.º) por categorias
   # (a confirmar quais são época de construção e estado de conservação).
+  # (todos sondados a 6/10/2026; ligados: 0012917 população, 0014765 HPI, 0012578 edifícios)
   ine_probe: ["0012917", "0012918", "0014765", "0012575", "0012581", "0012576", "0012577", "0012578", "0012582",
               "0014620", "0014621"]
   services:

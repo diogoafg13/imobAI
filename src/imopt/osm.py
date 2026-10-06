@@ -1,6 +1,7 @@
 """Escolas, saúde e estações por freguesia, do OpenStreetMap (© contribuidores do OpenStreetMap, licença ODbL).
 
-Consultas à API Overpass por quadrículas de 1°×1° (o país inteiro de uma vez dá timeout no servidor), com os três
+Primeiro pela API ohsome (HeiGIT; o país inteiro num pedido, com os dados do OpenStreetMap atualizados com alguns dias
+de atraso); se falhar, consultas à API Overpass por quadrículas de 1°×1° (o país inteiro de uma vez dá timeout no servidor), com os três
 tipos na mesma consulta; no máximo uma vez por semana. Só se grava se todas as quadrículas responderem (uma parte do
 país em falta daria contagens a zero onde há escolas). Os pontos ficam em data/clean/osm_points.parquet e são
 contados por freguesia com as fronteiras do painel (os pontos de Espanha que caem nas quadrículas não batem com
@@ -59,6 +60,30 @@ def parse(js: dict) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=["lat", "lon", "kind"])
 
 
+# API ohsome (HeiGIT, Universidade de Heidelberg): dados do OpenStreetMap para análise, o país inteiro num pedido
+OHSOME_FILTER = "amenity in (school, hospital, clinic, doctors) or railway in (station, halt)"
+OHSOME_BBOXES = "|".join(f"{w},{s_},{e},{n}" for s_, w, n, e in [(36.8, -9.6, 42.2, -6.1), (32.3, -17.4, 33.2, -16.2),
+                                                                 (36.8, -31.4, 39.8, -24.9)])
+
+
+def parse_ohsome(js: dict) -> pd.DataFrame:
+    """GeoJSON de /elements/centroid com properties=tags -> lat, lon, kind."""
+    rows = []
+    for ft in js.get("features", []):
+        props = ft.get("properties") or {}
+        k = kind_of(props.get("tags") if isinstance(props.get("tags"), dict) else props)
+        c = (ft.get("geometry") or {}).get("coordinates")
+        if k and c and len(c) >= 2:
+            rows.append((float(c[1]), float(c[0]), k))
+    return pd.DataFrame(rows, columns=["lat", "lon", "kind"]).drop_duplicates()
+
+
+def fetch_ohsome(url: str) -> pd.DataFrame:
+    r = requests.post(url, data={"bboxes": OHSOME_BBOXES, "filter": OHSOME_FILTER, "properties": "tags"}, headers=UA, timeout=600)
+    r.raise_for_status()
+    return parse_ohsome(r.json())
+
+
 def _tile_path(tiles: Path, box: tuple) -> Path:
     return tiles / ("_".join(f"{x:g}" for x in box) + ".parquet")
 
@@ -71,9 +96,28 @@ def ingest(cfg: dict | None, data_dir: Path) -> tuple[pd.DataFrame | None, str]:
     cached = pd.read_parquet(path) if path.exists() else None
     if not cfg:
         return cached, "sem configuração"
+    today = dt.date.today()
+    if cached is not None and len(cached) and "fetched" in cached:
+        try:
+            if (today - dt.date.fromisoformat(str(cached["fetched"].iloc[0]))).days < MAX_AGE_DAYS:
+                return cached, f"ok (cache de {cached['fetched'].iloc[0]}: {len(cached)} pontos)"
+        except ValueError:
+            pass
+    ohsome_err = None
+    if cfg.get("ohsome"):          # 1.º: ohsome, um só pedido; se falhar, a Overpass por quadrículas
+        try:
+            pts = fetch_ohsome(cfg["ohsome"])
+            if len(pts) < 1000:
+                raise ValueError(f"só {len(pts)} pontos")
+            pts = pts.assign(fetched=today.isoformat())
+            path.parent.mkdir(parents=True, exist_ok=True)
+            pts.to_parquet(path, index=False)
+            return pts, "ok (ohsome: " + ", ".join(f"{k}: {int((pts['kind'] == k).sum())}" for k in KINDS) + ")"
+        except Exception as e:  # noqa: BLE001
+            ohsome_err = f"ohsome: {str(e)[:100]}"
+            log.warning("OpenStreetMap via ohsome falhou, a tentar a Overpass: %s", e)
     tiles = data_dir / "clean" / "osm_tiles"
     tiles.mkdir(parents=True, exist_ok=True)
-    today = dt.date.today()
 
     # índice {quadrícula: data}: uma quadrícula só de mar não tem pontos (ficheiro vazio, sem data) e tem de contar
     idx_path = tiles / "index.json"
@@ -114,7 +158,7 @@ def ingest(cfg: dict | None, data_dir: Path) -> tuple[pd.DataFrame | None, str]:
             errors.append(err)
         time.sleep(float(cfg.get("delay", 1)))
     missing = [b for b in BOXES if age(b) is None]
-    note = f"{got_n} quadrículas novas" + (f"; {len(errors)} falhas ({errors[0]})" if errors else "")
+    note = (f"{ohsome_err}; " if ohsome_err else "") + f"{got_n} quadrículas novas" + (f"; {len(errors)} falhas ({errors[0]})" if errors else "")
     if not missing:
         parts = [pd.read_parquet(_tile_path(tiles, b)) for b in BOXES]
         pts = pd.concat(parts, ignore_index=True)

@@ -87,3 +87,27 @@ def test_empty_sea_tiles_count_as_done(tmp_path, monkeypatch):
     calls.clear()
     pts2, st2 = osm.ingest({"urls": ["http://x"]}, tmp_path)
     assert calls == [] and len(pts2) == len(pts)                 # tudo em cache, nada pedido outra vez
+
+
+def test_ohsome_first_then_cache(tmp_path, monkeypatch):
+    js = {"type": "FeatureCollection", "features": [
+        {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-9.1 + i * 1e-4, 38.7]},
+         "properties": {"@osmId": f"node/{i}", "amenity": "school" if i % 2 else "clinic"}} for i in range(1200)]
+        + [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [-8.6, 41.1]}, "properties": {"railway": "halt"}},
+           {"type": "Feature", "geometry": {"type": "Point", "coordinates": [-8.6, 41.2]}, "properties": {"amenity": "pharmacy"}}]}
+
+    class R:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return js
+
+    calls = []
+    monkeypatch.setattr(osm.requests, "post", lambda url, data, headers, timeout: (calls.append(url), R())[1])
+    pts, st = osm.ingest({"ohsome": "http://ohsome", "urls": ["http://overpass"]}, tmp_path)
+    assert st.startswith("ok (ohsome") and calls == ["http://ohsome"]
+    assert sorted(pts["kind"].value_counts().to_dict().items()) == [("health", 600), ("school", 600), ("station", 1)]
+    calls.clear()
+    pts2, st2 = osm.ingest({"ohsome": "http://ohsome", "urls": ["http://overpass"]}, tmp_path)
+    assert calls == [] and "cache" in st2 and len(pts2) == len(pts)

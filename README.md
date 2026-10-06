@@ -512,8 +512,9 @@ Além do "Onde procurar casa", quatro guias curtos, com as contas em `site/calc.
 
 - **Taxa dos novos créditos por prazo de fixação** (BCE, MIR: variável/até 1 ano, 1–5, 5–10, mais de 10 anos) e
   **parte dos créditos a taxa variável** (RAI): em Perspetivas, no bloco do crédito.
-- **Escolas, saúde e estações por freguesia** (`imopt/osm.py`): OpenStreetMap pela API Overpass (© contribuidores do
-  OpenStreetMap, ODbL), uma vez por semana; contagens na tabela de freguesias, por 1000 casas no mapa, e no "O meu
+- **Escolas, saúde e estações por freguesia** (`imopt/osm.py`): OpenStreetMap (© contribuidores do OpenStreetMap,
+  ODbL) pela API ohsome (HeiGIT, o país inteiro num pedido) ou, se falhar, pela API Overpass por quadrículas guardadas
+  (cada build pede as que faltam, até 10 minutos), uma vez por semana; contagens na tabela de freguesias, por 1000 casas no mapa, e no "O meu
   imóvel". É o que está no mapa: pode faltar alguma coisa no interior.
 - **Descoberta** (`imopt/discover.py`): guarda o catálogo do INE e a descrição de serviços de mapas (zonas inundáveis
   da APA) no branch `data`, para confirmar códigos novos (séries paradas, idade e estado dos edifícios dos Censos) e
@@ -525,6 +526,11 @@ Além do "Onde procurar casa", quatro guias curtos, com as contas em `site/calc.
 - **Sonda do INE** (`discover.ine_probe`): códigos novos encontrados no catálogo (população até 2025, índice de preços
   da habitação base 2025, edifícios dos Censos 2021 por época de construção e estado de conservação) são descarregados
   uma vez em bruto, com o resumo das dimensões em `data/clean/ine_probe.json`, antes de entrarem nos números.
+- **Edifícios por freguesia (Censos 2021, INE 0012578)**: parte construída antes de 1961 e parte com necessidades
+  médias ou profundas de reparação (no país: 23% e 14%), na tabela de freguesias, no mapa, no "O meu imóvel" e como
+  critério do Guia.
+- **Séries paradas resolvidas**: população por concelho até 2025 (0012917, em vez do 0008273) e índice de preços da
+  habitação base 2025 (0014765, em vez do 0009201; usado só quando falta o do Eurostat, reposto em 2015 = 100).
 - O parque habitacional (0008329) para em 2022 porque o INE ainda não publicou 2023 (o código novo 0014137 também acaba
   em 2022): não é código mudado; o alerta de série parada para esta série só dispara a partir de 54 meses.
 - Risco sísmico: não há uma fonte aberta e estruturada por concelho; fica de fora.

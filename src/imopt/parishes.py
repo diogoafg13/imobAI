@@ -36,6 +36,27 @@ def _census_rows(df: pd.DataFrame | None) -> pd.Series | None:
     return d.assign(code=d["geocod"].astype(str).str.strip()).drop_duplicates("code", keep="last").set_index("code") if len(d) else None
 
 
+BLD_KEYS = ("total", "pre1919", "1919_1945", "1946_1960", "repair_mid", "repair_deep")
+
+
+def buildings(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame | None:
+    """Censos 2021 por freguesia: n.º de edifícios, parte construída antes de 1961 e parte com necessidades médias
+    ou profundas de reparação."""
+    c = {k: _census_rows(frames.get(k)) for k in BLD_KEYS}
+    if c["total"] is None:
+        return None
+    tot = c["total"]["value"]
+    tot = tot[tot > 0]
+    out = pd.DataFrame({"bld_n": tot})
+    if all(c[k] is not None for k in ("pre1919", "1919_1945", "1946_1960")):
+        old = sum(c[k]["value"].reindex(tot.index).fillna(0) for k in ("pre1919", "1919_1945", "1946_1960"))
+        out["bld_old_share"] = (old / tot).clip(0, 1)
+    if c["repair_mid"] is not None and c["repair_deep"] is not None:
+        rep = c["repair_mid"]["value"].reindex(tot.index).fillna(0) + c["repair_deep"]["value"].reindex(tot.index).fillna(0)
+        out["bld_repair_share"] = (rep / tot).clip(0, 1)
+    return out
+
+
 def rent_table(rent: pd.DataFrame | None, contracts: pd.DataFrame | None = None) -> pd.DataFrame | None:
     """Renda mediana de novos contratos por freguesia (anual), variação a 1 e 3 anos e n.º de contratos."""
     r = _parish_rows(rent)
