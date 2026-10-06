@@ -23,7 +23,6 @@
   "rent_contracts": "ok (3190 linhas, 2024)",
   "hpi": "ok (68 linhas, 2025Q4) [dim_3=H1 'Total']",
   "bank_valuation": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']",
-  "valuation_count": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']",
   "valuation_count_apartments": "ok (65236 linhas, 2026-08) [dim_3=1 'Apartamentos']",
   "valuation_count_houses": "ok (65236 linhas, 2026-08) [dim_3=2 'Moradias']",
   "valuation_apartments": "ok (65236 linhas, 2026-08) [dim_3=1 'Apartamentos']",
@@ -57,10 +56,11 @@
   "tax_households_6": "ok (2429 linhas, 2024) [dim_3=T6 '32 500 euros ou mais']",
   "income": "ok (1388 linhas, 2024) [dim_3=T 'Total']",
   "population_density": "ok (2082 linhas, 2025)",
+  "ageing_index": "ok (1735 linhas, 2025)",
   "migration_balance": "ok (1735 linhas, 2025)",
   "tourism_nights": "ok (5160 linhas, 2025) [dim_3=T 'Total']",
   "housing_credit_pc": "ok (1041 linhas, 2024)",
-  "ageing_index": "ok (1735 linhas, 2025)"
+  "valuation_count": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']"
  },
  "macro": {
   "euribor_3m": "ok (393 pontos, 2026-09)",
@@ -76,9 +76,9 @@
   "bis_credit_gap": "ok (222 pontos, 2026Q1)"
  },
  "at": {
-  "imi_rates": "ok (306 concelhos, taxas de 2025)"
+  "imi_rates": "ok (cache: taxas de 2025; 2026 ainda incompleto)"
  },
  "turismo": {
-  "al_rnal": "ok (111869 registos, https://dadosabertos.turismodeportugal.pt/api/download/v1/items/4e62eb1977564991bd01e61d7aa8266f/csv?layers=6)"
+  "al_rnal": "ok (cache de 2026-10-06: 111869 registos)"
  }
 }
