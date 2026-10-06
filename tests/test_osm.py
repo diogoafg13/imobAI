@@ -60,3 +60,30 @@ def test_ingest_keeps_tiles_and_completes_across_builds(tmp_path, monkeypatch):
     pts, st = osm.ingest(cfg, tmp_path)
     assert st.startswith("ok") and len(calls) == len(osm.BOXES) - 5      # só pede as que faltavam
     assert isinstance(pts, pd.DataFrame) and set(pts["kind"]) == {"school"}
+
+
+def test_empty_sea_tiles_count_as_done(tmp_path, monkeypatch):
+    class R:
+        def __init__(self, n):
+            self.n = n
+
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"elements": [{"lat": 38 + len(calls) * 0.01 + i * 1e-4, "lon": -8.5, "tags": {"railway": "station"}}
+                                 for i in range(self.n)]}
+
+    calls = []
+
+    def post(url, data, headers, timeout):
+        calls.append(1)
+        return R(0 if len(calls) % 2 else 80)       # metade das quadrículas só de mar
+
+    monkeypatch.setattr(osm.requests, "post", post)
+    monkeypatch.setattr(osm.time, "sleep", lambda s: None)
+    pts, st = osm.ingest({"urls": ["http://x"]}, tmp_path)
+    assert st.startswith("ok"), st
+    calls.clear()
+    pts2, st2 = osm.ingest({"urls": ["http://x"]}, tmp_path)
+    assert calls == [] and len(pts2) == len(pts)                 # tudo em cache, nada pedido outra vez

@@ -14,6 +14,7 @@ a medida é "o que está no mapa", não um censo oficial.
 from __future__ import annotations
 
 import datetime as dt
+import json
 import logging
 import time
 from pathlib import Path
@@ -74,14 +75,16 @@ def ingest(cfg: dict | None, data_dir: Path) -> tuple[pd.DataFrame | None, str]:
     tiles.mkdir(parents=True, exist_ok=True)
     today = dt.date.today()
 
+    # índice {quadrícula: data}: uma quadrícula só de mar não tem pontos (ficheiro vazio, sem data) e tem de contar
+    idx_path = tiles / "index.json"
+    try:
+        index = json.loads(idx_path.read_text(encoding="utf-8")) if idx_path.exists() else {}
+    except Exception:  # noqa: BLE001
+        index = {}
+
     def age(box) -> int | None:
-        f = _tile_path(tiles, box)
-        if not f.exists():
-            return None
-        try:
-            return (today - dt.date.fromisoformat(str(pd.read_parquet(f, columns=["fetched"])["fetched"].iloc[0]))).days
-        except Exception:  # noqa: BLE001
-            return None
+        d = index.get(_tile_path(tiles, box).stem)
+        return (today - dt.date.fromisoformat(d)).days if d and _tile_path(tiles, box).exists() else None
 
     urls = cfg.get("urls") or [cfg["url"]]
     deadline = time.monotonic() + float(cfg.get("budget_s", 600))
@@ -91,8 +94,8 @@ def ingest(cfg: dict | None, data_dir: Path) -> tuple[pd.DataFrame | None, str]:
         if time.monotonic() > deadline:
             errors.append("limite de tempo")
             break
-        for attempt in range(2):            # servidores alternados; 429/504 = ocupado
-            url = urls[attempt % len(urls)]
+        for attempt in range(len(urls)):    # um servidor de cada vez; 429/504 = ocupado, passa ao seguinte
+            url = urls[(attempt + got_n) % len(urls)]
             try:
                 r = requests.post(url, data={"data": query(box)}, headers=UA, timeout=200)
                 r.raise_for_status()
@@ -100,12 +103,13 @@ def ingest(cfg: dict | None, data_dir: Path) -> tuple[pd.DataFrame | None, str]:
                 if js.get("remark") and "error" in str(js["remark"]).lower():
                     raise ValueError(str(js["remark"])[:100])
                 parse(js).assign(fetched=today.isoformat()).to_parquet(_tile_path(tiles, box), index=False)
+                index[_tile_path(tiles, box).stem] = today.isoformat()
+                idx_path.write_text(json.dumps(index, indent=0), encoding="utf-8")
                 got_n += 1
                 break
             except Exception as e:  # noqa: BLE001
                 err = f"{box}: {str(e)[:90]}"
-                if attempt == 0:
-                    time.sleep(float(cfg.get("retry_wait", 10)))
+                time.sleep(float(cfg.get("retry_wait", 5)))
         else:
             errors.append(err)
         time.sleep(float(cfg.get("delay", 1)))
@@ -114,13 +118,14 @@ def ingest(cfg: dict | None, data_dir: Path) -> tuple[pd.DataFrame | None, str]:
     if not missing:
         parts = [pd.read_parquet(_tile_path(tiles, b)) for b in BOXES]
         pts = pd.concat(parts, ignore_index=True)
-        oldest = min(pts["fetched"].astype(str)) if len(pts) else today.isoformat()
+        oldest = min(index[_tile_path(tiles, b).stem] for b in BOXES)
         pts = pts.drop(columns=["fetched"]).drop_duplicates().assign(fetched=oldest)
         if len(pts) >= 1000:
             pts.to_parquet(path, index=False)
             return pts, "ok (" + ", ".join(f"{k}: {int((pts['kind'] == k).sum())}" for k in KINDS) + f"; {note})"
         errors.append(f"só {len(pts)} pontos")
-    msg = f"faltam {len(missing)} de {len(BOXES)} quadrículas, continua no próximo build; {note}"
+    msg = (f"faltam {len(missing)} de {len(BOXES)} quadrículas, continua no próximo build; {note}" if missing
+           else f"{errors[-1]}; {note}")
     log.warning("OpenStreetMap: %s", msg)
     if cached is not None:
         return cached, f"CACHE ({msg})"[:300]
