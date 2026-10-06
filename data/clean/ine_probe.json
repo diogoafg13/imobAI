@@ -1,0 +1,176 @@
+{
+ "0012917": {
+  "probed": "20261006",
+  "rows": 36435,
+  "dims": {
+   "dim_3": {
+    "1": "H",
+    "2": "M",
+    "T": "HM"
+   },
+   "dim_4": {
+    "1": "0 - 14 anos",
+    "2": "15 - 24 anos",
+    "3": "25 - 64 anos",
+    "4": "65 e mais anos",
+    "41": "65 - 74 anos",
+    "42": "75 e mais anos",
+    "T": "Total"
+   }
+  },
+  "geocod_len": {
+   "7": 32340,
+   "3": 2730,
+   "2": 1050,
+   "1": 315
+  },
+  "periods": [
+   "2021",
+   "2025",
+   5
+  ],
+  "sample": [
+   {
+    "varcd": "0012917",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "1C20205",
+    "geoname": "Beja",
+    "value": "2626.0",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "dim_4": "1",
+    "dim_4_t": "0 - 14 anos",
+    "level": "municipality",
+    "dico": "0205"
+   },
+   {
+    "varcd": "0012917",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "1C20206",
+    "geoname": "Castro Verde",
+    "value": "429.0",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "dim_4": "1",
+    "dim_4_t": "0 - 14 anos",
+    "level": "municipality",
+    "dico": "0206"
+   },
+   {
+    "varcd": "0012917",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "1C20207",
+    "geoname": "Cuba",
+    "value": "321.0",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "dim_4": "1",
+    "dim_4_t": "0 - 14 anos",
+    "level": "municipality",
+    "dico": "0207"
+   }
+  ]
+ },
+ "0012918": {
+  "probed": "20261006",
+  "rows": 98895,
+  "dims": {
+   "dim_3": {
+    "1": "H",
+    "2": "M",
+    "T": "HM"
+   },
+   "dim_4": {
+    "92": "85 e mais anos",
+    "91": "80 - 84 anos",
+    "11": "0 - 4 anos",
+    "82": "75 - 79 anos",
+    "12": "5 - 9 anos",
+    "81": "70 - 74 anos",
+    "22": "15 - 19 anos",
+    "32": "25 - 29 anos",
+    "41": "30 - 34 anos",
+    "21": "10 - 14 anos",
+    "31": "20 - 24 anos",
+    "62": "55 - 59 anos",
+    "71": "60 - 64 anos",
+    "72": "65 - 69 anos",
+    "61": "50 - 54 anos",
+    "52": "45 - 49 anos",
+    "51": "40 - 44 anos",
+    "42": "35 - 39 anos",
+    "T": "Total"
+   }
+  },
+  "geocod_len": {
+   "7": 87780,
+   "3": 7410,
+   "2": 2850,
+   "1": 855
+  },
+  "periods": [
+   "2021",
+   "2025",
+   5
+  ],
+  "sample": [
+   {
+    "varcd": "0012918",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "2004901",
+    "geoname": "Corvo",
+    "value": "1.0",
+    "dim_3": "1",
+    "dim_3_t": "H",
+    "dim_4": "92",
+    "dim_4_t": "85 e mais anos",
+    "level": "municipality",
+    "dico": "4901"
+   },
+   {
+    "varcd": "0012918",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "2004901",
+    "geoname": "Corvo",
+    "value": "3.0",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "dim_4": "91",
+    "dim_4_t": "80 - 84 anos",
+    "level": "municipality",
+    "dico": "4901"
+   },
+   {
+    "varcd": "0012918",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "2004901",
+    "geoname": "Corvo",
+    "value": "4.0",
+    "dim_3": "2",
+    "dim_3_t": "M",
+    "dim_4": "11",
+    "dim_4_t": "0 - 4 anos",
+    "level": "municipality",
+    "dico": "4901"
+   }
+  ]
+ },
+ "0014765": {
+  "error": "falha a obter 0014765 do INE: HTTPSConnectionPool(host='www.ine.pt', port=443): Max retries exceeded with url: /ine/json_indicador/pindica.jsp?op=2&varcd=0014765&lang=PT&Dim1=T (Caused by ConnectTimeo"
+ },
+ "0012575": {
+  "error": "falha a obter 0012575 do INE: HTTPSConnectionPool(host='www.ine.pt', port=443): Max retries exceeded with url: /ine/json_indicador/pindica.jsp?op=2&varcd=0012575&lang=PT&Dim1=T (Caused by ConnectTimeo"
+ }
+}
