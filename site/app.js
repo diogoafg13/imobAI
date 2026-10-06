@@ -2340,7 +2340,7 @@ async function gResults() {
       <div class="g-nav"><a class="btn" href="#c-${m.dico}">Ver o concelho</a>${G.goal === 'invest' ? ` <button type="button" class="btn" data-inv="${m.dico}" data-price="${Math.round(x.cost)}">Fazer as contas no Investir</button>` : ''}${G.goal === 'rent' ? ' <a class="btn" href="#arrendar">Arrendar</a>' : ''}</div></li>`;
   });
   html += `</ol>${G.goal === 'invest' && !G.small ? `<p class="muted">Ficaram de fora os concelhos com menos de ${G_SMALL} contratos de arrendamento novos num ano (ou sem esse número publicado): a rendibilidade no papel pode ser alta, mas é mais difícil arrendar e vender, e as medianas assentam em poucos casos. Podes incluí-los no passo 4.</p>` : ''}<p class="muted">Como se ordena: em cada critério, cada concelho que cabe no orçamento é comparado com os outros (0 = o pior, 100 = o melhor); o encaixe é a média, com "importa muito" a contar a dobrar. ✓ = entre os 25% melhores nesse critério, ✗ = entre os 25% piores. Os custos são medianas do concelho ou da freguesia × a área: uma casa concreta pode estar muito longe delas. Não é aconselhamento de investimento: é um ponto de partida para procurar, com dados públicos (INE, BCE, Finanças, Turismo de Portugal, APA e OpenStreetMap).</p>`;
-  out.innerHTML = html;
+  out.innerHTML = html + gdShareHtml('where');
   out.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 function gRead() {
@@ -2558,8 +2558,63 @@ function gvRender() {
     <p class="muted">Simplificações: valores nominais; mais-valias de residente; o crédito é pago com a venda; não inclui obras, tempo e trabalho de ser senhorio, nem o risco de incumprimento do inquilino. Não é aconselhamento financeiro ou fiscal.</p>`;
 }
 
+// 5) primeira casa até aos 35 anos
+function gyRender() {
+  const f = $('#gy-form'), out = $('#gy-out'), m = gdMuni(f), area = gdNum(f, 'area');
+  const price = gdNum(f, 'price') || (m && area && m.price != null ? m.price * area : null);
+  if (!price) { out.innerHTML = '<p class="muted">Indica o preço da casa (ou um concelho e a área, para usar a mediana).</p>'; return; }
+  const young = f.young.checked, owner = f.owner.checked, irs9 = f.irs9.checked, inc = gdNum(f, 'income'), sav = gdNum(f, 'savings') || 0;
+  const rate = gdNum(f, 'rate') ?? affRateNow(), ra = m ? islands(m.dico) : false;
+  const G = YOUNG_GUARANTEE, today = new Date().toISOString().slice(0, 10), open = today <= G.until;
+  const eligG = young && !owner && !irs9 && price <= G.maxPrice && open;
+  const P = youngPlan({ price, savings: sav, income: inc, rate, closing: 1000, ra, guarantee: eligG, young: young && !owner });
+  const A = P.aid, N = P.none;
+  const col = (x, title) => `<div class="stat"><span class="muted">${title}</span><b>${fmt.eur(x.cash)} à cabeça</b><span class="ctx">entrada ${fmt.eur(x.down)} (${fmt.pct(x.down / price, 0)}) + IMT ${fmt.eur(x.taxes.imt)} + Imposto do Selo ${fmt.eur(x.taxes.isb + x.taxes.isl)} + escritura ~${fmt.eur(1000)}<br>crédito ${fmt.eur(x.loan)} a ${x.years} anos: <b>${fmt.eur(x.pay)}/mês</b>${inc ? ` (${fmt.pct(x.pay / inc, 0)} do rendimento)` : ''}${x.short > 0 ? `<br>⚠ faltam ${fmt.eur(x.short)} de poupança` : ''}</span></div>`;
+  const [yf, yp] = ra ? [Math.round(YOUNG_FULL * 1.25), Math.round(YOUNG_PART * 1.25)] : [YOUNG_FULL, YOUNG_PART];
+  const ok = (b) => (b ? '✓' : '✗');
+  const li = [];
+  const imtOk = young && !owner;
+  li.push(`${ok(imtOk && price <= yp)} <b>IMT e Imposto do Selo da compra</b>: ${!imtOk ? 'sem isenção (só para quem tem até 35 anos e compra a primeira habitação própria e permanente).' : price <= yf ? `isentos (preço até ${fmt.eur(yf)}): poupas ${fmt.eur(N.taxes.imt + N.taxes.isb)}.` : price <= yp ? `isenção parcial (entre ${fmt.eur(yf)} e ${fmt.eur(yp)} paga-se só sobre o excesso): poupas ${fmt.eur(N.taxes.imt + N.taxes.isb - A.taxes.imt - A.taxes.isb)}.` : `sem isenção acima de ${fmt.eur(yp)}.`} O Imposto do Selo do crédito (0,6%) paga-se sempre.`);
+  li.push(`${ok(eligG)} <b>Garantia pública do Estado</b> (até ${fmt.pct(G.share, 0)} do valor, para o banco poder financiar até 100%): ${eligG ? 'cumpres as condições que indicaste' : [!young ? 'só até aos 35 anos' : null, owner ? 'não pode ter outra casa em nome próprio' : null, irs9 ? 'o rendimento tem de ficar até ao 8.º escalão do IRS' : null, price > G.maxPrice ? `o preço tem de ser até ${fmt.eur(G.maxPrice)}` : null, !open ? `aplicava-se a contratos até ${G.until.split('-').reverse().join('/')}: confirma se foi prorrogada` : null].filter(Boolean).join('; ')}.${eligG ? ` O banco não é obrigado a dar 100%: a garantia é pedida ao banco, que avalia o teu crédito como os outros. Aplica-se a contratos assinados até ${G.until.split('-').reverse().join('/')} (faltam ${Math.ceil((new Date(G.until) - new Date(today)) / 864e5)} dias), salvo prorrogação no Orçamento do Estado para 2027.` : ''}`);
+  li.push(`${ok(young)} <b>Prazo de 40 anos</b> (regra do Banco de Portugal para quem tem até 35 anos; 35 anos para os outros): a prestação baixa, mas pagas mais juros no total (${fmt.eur(A.pay * A.years * 12 - A.loan)} em ${A.years} anos, contra ${fmt.eur(annuity(A.loan, rate, 30) * 360 - A.loan)} a 30 anos).`);
+  if (inc) li.push(`${ok(A.dstiOk)} <b>Teste do Banco de Portugal</b>: com a taxa +${fmt.n(BDP.shock, 1)} p.p., a prestação seria ${fmt.eur(A.payStress)}/mês, ${fmt.pct(A.payStress / inc, 0)} do rendimento (máximo ${fmt.pct(BDP.dsti, 0)}).${A.dstiOk ? '' : ' Acima do limite, o banco não aprova este crédito: casa mais barata, mais entrada ou mais rendimento.'}`);
+  if (m && area && !gdNum(f, 'price')) li.push(`Preço: mediana de ${esc(m.name)} (${fmt.eur(m.price)}/m²) × ${fmt.n(area, 0)} m².`);
+  out.innerHTML = `<div class="stats">${col(A, 'Com os apoios')}${col(N, 'Sem os apoios (entrada de 10%, 30 anos)')}</div><ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul>
+    <p class="muted">Taxa de ${fmt.n(rate, 2)}%. A poupança paga primeiro os impostos e a escritura e o resto vai para a entrada. Regras de ${TAX_YEAR} (Decreto-Lei 44/2024 e Portaria 236-A/2024 para a garantia; isenções de IMT e Imposto do Selo para jovens): há mais condições (domicílio fiscal em Portugal, não ser dependente, nunca ter usado a garantia); confirma com o banco e as Finanças. Com compradores de idades diferentes, a isenção aplica-se à parte de quem tem até 35 anos.</p>`;
+}
+
+// ---------- ligações para partilhar um guia (os valores vão no endereço, depois de #guia?)
+const b64u = { enc: (s) => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''),
+  dec: (s) => decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/')))) };
+const GD_RUN = {};
+const gdShareHtml = (kind) => `<p class="g-share"><button type="button" class="btn" data-share="${kind}">🔗 Copiar ligação para partilhar</button> <span class="muted">A ligação leva os valores que escreveste (rendimento incluído): partilha-a só com quem quiseres.</span></p>`;
+function gdShareLink(kind) {
+  let d;
+  if (kind === 'where') d = G;
+  else { const f = GD_RUN[kind].f; d = {}; [...f.elements].forEach((el) => { if (!el.name) return; if (el.type === 'checkbox') d[el.name] = el.checked; else if (el.value !== '') d[el.name] = el.value; }); }
+  return `${location.origin}${location.pathname}#guia?g=${kind}&d=${b64u.enc(JSON.stringify(d))}`;
+}
+async function gdApplyShare(hash) {
+  const q = new URLSearchParams(String(hash).split('?')[1] || '');
+  const kind = q.get('g');
+  let d = null;
+  try { d = JSON.parse(b64u.dec(q.get('d') || '')); } catch { return false; }
+  if (!kind || !d || typeof d !== 'object') return false;
+  if (kind === 'where') {
+    G = { ...gDefaults(), ...d }; gSave(); gFill(); gStep(5); GD_RUN.pick('where'); await gResults(); return true;
+  }
+  const R = GD_RUN[kind];
+  if (!R) return false;
+  R.pick();
+  Object.entries(d).forEach(([k, v]) => { const el = R.f.elements[k]; if (!el || el.tagName === 'SELECT') return; if (el.type === 'checkbox') el.checked = !!v; else el.value = v; });
+  if (R.f.par) { await gdParishes(R.f); if (d.par) R.f.par.value = d.par; }
+  R.run();
+  return true;
+}
+
 function initGuides() {
   const pick = (k) => {
+    GD_RUN.pick = pick;
     document.querySelectorAll('#guide [data-guide]').forEach((d) => { d.hidden = d.dataset.guide !== k; });
     document.querySelectorAll('#guide [data-gp]').forEach((b) => { b.classList.toggle('on', b.dataset.gp === k); b.setAttribute('aria-selected', b.dataset.gp === k); });
     try { localStorage.setItem(GD_KEY + '.pick', k); } catch { /* */ }
@@ -2569,10 +2624,16 @@ function initGuides() {
   try { k0 = localStorage.getItem(GD_KEY + '.pick') || 'where'; } catch { /* */ }
   pick(document.querySelector(`#guide [data-guide="${k0}"]`) ? k0 : 'where');
   const saved = (() => { try { return JSON.parse(localStorage.getItem(GD_KEY) || '{}') || {}; } catch { return {}; } })();
-  [['gl', glRender], ['gs', gsRender], ['gt', gtRender], ['gv', gvRender]].forEach(([id, render]) => {
+  GD_RUN.pick = pick;
+  const KIND = { gy: 'young', gl: 'loan', gs: 'landlord', gt: 'tenant', gv: 'sell' };
+  [['gy', gyRender], ['gl', glRender], ['gs', gsRender], ['gt', gtRender], ['gv', gvRender]].forEach(([id, render]) => {
     const f = $(`#${id}-form`);
     const save = () => { const v = {}; [...f.elements].forEach((el) => { if (el.name) v[el.name] = el.type === 'checkbox' ? el.checked : el.value; }); saved[id] = v; try { localStorage.setItem(GD_KEY, JSON.stringify(saved)); } catch { /* */ } };
-    const run = () => { save(); try { render(); } catch (e) { console.error(e); $(`#${id}-out`).innerHTML = '<p class="banner">Não foi possível calcular com estes valores.</p>'; } };
+    const run = () => {
+      save();
+      try { render(); if ($(`#${id}-out .stats, #${id}-out table`)) $(`#${id}-out`).insertAdjacentHTML('beforeend', gdShareHtml(KIND[id])); } catch (e) { console.error(e); $(`#${id}-out`).innerHTML = '<p class="banner">Não foi possível calcular com estes valores.</p>'; }
+    };
+    GD_RUN[KIND[id]] = { f, run, pick: () => pick(KIND[id]) };
     Object.entries(saved[id] || {}).forEach(([k, v]) => { const el = f.elements[k]; if (el && el.type === 'checkbox') el.checked = !!v; else if (el && el.tagName !== 'SELECT') el.value = v; });
     if (f.par) {
       const parSaved = (saved[id] || {}).par;
@@ -2582,6 +2643,14 @@ function initGuides() {
     f.addEventListener('submit', (e) => { e.preventDefault(); run(); });
     f.addEventListener('change', (e) => { if (e.target.name !== 'conc' && $(`#${id}-out`).innerHTML) run(); });
     if (!f.par && f.loan && f.loan.value) run();
+  });
+  $('#guide').addEventListener('click', async (e) => {
+    const b = e.target.closest('button[data-share]');
+    if (!b) return;
+    const link = gdShareLink(b.dataset.share);
+    try { await navigator.clipboard.writeText(link); b.textContent = '✓ Ligação copiada'; }
+    catch { window.prompt('Copia esta ligação:', link); }
+    setTimeout(() => { b.textContent = '🔗 Copiar ligação para partilhar'; }, 2500);
   });
 }
 
@@ -2613,7 +2682,8 @@ function showTab(tab, target) {
 function goTo(id) { showTab(tabOf(id) || 'mercado', id); }
 function initTopNav() {
   const fromHash = () => {
-    const h = location.hash.slice(1);
+    const full = location.hash.slice(1), h = full.split('?')[0];
+    if (h === 'guia' && full.includes('?')) { showTab('guia'); gdApplyShare(full).catch((x) => console.error(x)); return; }
     const c = /^c-(\d{4})$/.exec(h);
     if (c && BY[c[1]]) { showTab('mercado'); select(c[1]); return; }   // ligação direta a um concelho (ex.: dos feeds RSS)
     if (TABS[h]) showTab(h);

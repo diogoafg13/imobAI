@@ -221,3 +221,18 @@ test('holdOptions: sem crescimento nem rendas, vender já ganha a manter vazia; 
   assert.equal(c.holdOptions({ ...base, hpp: true, reinvest: true }).cgt0, 0);
   assert.ok(c.holdOptions({ ...base, priceGrowth: 0.05 }).rent.wealth > r.rent.wealth);
 });
+
+test('youngPlan: garantia dispensa a entrada até 450 mil; isenção de IMT/IS até 330 539 €', () => {
+  const base = { price: 250000, savings: 5000, income: 2800, rate: 3.1, closing: 1000, ra: false, guarantee: true, young: true };
+  const r = c.youngPlan(base);
+  assert.equal(r.aid.guarantee, true);
+  assert.equal(r.aid.taxes.imt, 0); assert.equal(r.aid.taxes.isb, 0);
+  assert.ok(r.aid.taxes.isl > 0);                         // o Imposto do Selo do crédito paga-se na mesma
+  assert.equal(r.aid.years, 40);
+  assert.ok(r.aid.cash < r.none.cash && r.none.short > 0);
+  assert.ok(r.none.down >= 25000 - 1e-6);                  // sem garantia: entrada de 10%
+  const big = c.youngPlan({ ...base, price: 500000 });
+  assert.equal(big.aid.guarantee, false);                  // acima de 450 000 €: sem garantia
+  const noG = c.youngPlan({ ...base, guarantee: false });
+  assert.ok(noG.aid.down >= 25000 - 1e-6 && noG.aid.taxes.imt === 0);
+});

@@ -123,6 +123,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     <div class="row"><h2>Guias <button type="button" class="info" data-k="guide" aria-label="Sobre os guias">ⓘ</button></h2></div>
     <div class="chips g-pick" role="tablist" aria-label="Escolher o guia">
       <button type="button" class="chip" data-gp="where">Onde procurar casa</button>
+      <button type="button" class="chip" data-gp="young">Primeira casa até aos 35</button>
       <button type="button" class="chip" data-gp="loan">Taxa fixa, mista ou variável</button>
       <button type="button" class="chip" data-gp="landlord">Senhorio: contrato e IRS</button>
       <button type="button" class="chip" data-gp="tenant">Inquilino: a renda é razoável?</button>
@@ -180,6 +181,23 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       </div>
     </form>
     <div id="guide-out"></div>
+    </div>
+
+    <div data-guide="young" hidden>
+      <p class="muted">Para quem tem até 35 anos e compra a primeira casa para viver: o que a isenção de IMT e Imposto do Selo, a garantia pública do Estado e o prazo de 40 anos mudam no dinheiro à cabeça e na prestação.</p>
+      <form id="gy-form" class="aff-form im-form" autocomplete="off">
+        <label>Concelho <input name="conc" list="im-conc" placeholder="opcional"></label>
+        <label>Área (m²) <input name="area" type="number" min="15" max="1000" step="any" inputmode="numeric" placeholder="opcional"></label>
+        <label>Preço da casa (€) <input name="price" type="number" min="1000" step="any" inputmode="numeric" placeholder="ou mediana × área"></label>
+        <label>Poupança disponível (€) <input name="savings" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 15000"></label>
+        <label>Rendimento líquido do agregado (€/mês) <input name="income" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 2200"></label>
+        <label>Taxa do crédito (%) <input name="rate" type="number" min="0" max="15" step="any" inputmode="decimal" placeholder="taxa atual estimada"></label>
+        <label class="check"><input type="checkbox" name="young" checked> Todos os compradores têm entre 18 e 35 anos</label>
+        <label class="check"><input type="checkbox" name="owner"> Já tenho casa (ou parte de uma) em meu nome</label>
+        <label class="check"><input type="checkbox" name="irs9"> O rendimento passa do 8.º escalão do IRS</label>
+        <span class="im-buttons"><button type="submit" class="btn">Ver</button></span>
+      </form>
+      <div id="gy-out"></div>
     </div>
 
     <div data-guide="loan" hidden>

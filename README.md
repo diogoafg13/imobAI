@@ -508,6 +508,21 @@ Além do "Onde procurar casa", quatro guias curtos, com as contas em `site/calc.
   com a isenção por reinvestimento em habitação própria, rendas líquidas de IRS, custos, dinheiro a render a uma taxa
   escolhida), com uma tabela por valorização da casa.
 
+- **Primeira casa até aos 35** (`youngPlan`): com e sem apoios — isenção de IMT e Imposto do Selo da compra (até
+  330 539 €, parcial até 660 982 €), garantia pública do Estado (Decreto-Lei 44/2024, Portaria 236-A/2024: até 15%
+  do valor, primeira habitação própria até 450 000 €, rendimento até ao 8.º escalão do IRS, sem outra casa; contratos
+  até 31/12/2026 salvo prorrogação) e prazo de 40 anos; dinheiro à cabeça, prestação e teste do Banco de Portugal.
+- **Ligações para partilhar**: cada guia tem "Copiar ligação"; os valores vão no próprio endereço (`#guia?g=…&d=…`,
+  JSON em base64), sem servidor. Quem abre a ligação vê o mesmo resultado.
+
+### Teste do site no browser (no build)
+
+`scripts/smoke_site.py` abre o site com os dados do build no Chromium (Playwright): todos os separadores, todas as
+métricas do mapa, as calculadoras e os seis guias, e uma ligação partilhada. Falha com um erro de JavaScript, "NaN",
+"undefined" ou "Infinity" no texto, ou um guia sem resultado; nesse caso a versão nova não é publicada (o site
+anterior fica no ar; os dados já foram guardados no branch `data`). Bibliotecas de CDN que não carreguem ou falta de
+WebGL dão aviso. Localmente: `pip install playwright && python -m playwright install chromium && python scripts/smoke_site.py site`.
+
 ### Dados extra gratuitos (taxas por tipo, escolas/saúde/estações, descoberta de fontes)
 
 - **Taxa dos novos créditos por prazo de fixação** (BCE, MIR: variável/até 1 ano, 1–5, 5–10, mais de 10 anos) e

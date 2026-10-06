@@ -313,9 +313,33 @@ function holdOptions(o) {
   return { pay, cgt0, now, sell: { wealth: now * (1 + o.altRate) ** o.horizon }, rent, keep };
 }
 
+// Garantia pública para jovens (Decreto-Lei 44/2024, Portaria 236-A/2024): o Estado garante até 15% do valor da
+// transação, para o banco poder financiar até 100%; 18 a 35 anos, 1.ª habitação própria e permanente até 450 000 €,
+// rendimento até ao 8.º escalão do IRS, sem outra casa em nome próprio; contratos até 31/12/2026 (salvo prorrogação).
+const YOUNG_GUARANTEE = { share: 0.15, maxPrice: 450000, until: '2026-12-31', ageMax: 35 };
+// Primeira casa: com os apoios (IMT/IS jovem, garantia, prazo de 40 anos) e sem eles (entrada de 10%, 30 anos).
+// o = { price, savings, income, rate, closing, ra, guarantee (cumpre as condições), young (até 35 anos) }
+function youngPlan(o) {
+  const mk = (withAid) => {
+    const g = withAid && o.guarantee && o.price <= YOUNG_GUARANTEE.maxPrice;
+    const years = withAid && o.young ? BDP.years.young : 30;
+    const minDown = g ? 0 : 1 - BDP.ltv.hpp;
+    const t0 = buyTaxes(o.price, o.price * (1 - minDown), 'hpp', withAid && o.young, !!o.ra);
+    // a poupança paga primeiro impostos e escritura; o resto vai para a entrada (pelo menos a mínima)
+    const spare = Math.max(0, (o.savings || 0) - t0.total - (o.closing || 0));
+    const down = Math.min(o.price, Math.max(minDown * o.price, spare));
+    const loan = o.price - down, t = buyTaxes(o.price, loan, 'hpp', withAid && o.young, !!o.ra);
+    const cash = down + t.total + (o.closing || 0), pay = annuity(loan, o.rate, years);
+    return { guarantee: g, years, minDown, down, loan, taxes: t, cash, pay, short: Math.max(0, cash - (o.savings || 0)),
+      payStress: annuity(loan, o.rate + BDP.shock, years),
+      dstiOk: o.income ? annuity(loan, o.rate + BDP.shock, years) <= BDP.dsti * o.income : null };
+  };
+  return { aid: mk(true), none: mk(false) };
+}
+
 if (typeof module !== 'undefined') {
   module.exports = { TAX_YEAR, taxTablesStale, BDP, LIMIT, IMT26, YOUNG_FULL, YOUNG_PART, IS_BUY, IS_LOAN, imtOf, isBuyOf, buyTaxes,
     islands, annuity, qOfMonth, serVal, qAdd, qIdx, at12, serGrowth, TAX_EDGES, shareAbove,
     RENT_COEF, IRS_RENT, irsRentRate, irr, invest, maxPrice, rankBy,
-    schedule, LOAN_PLANS, loanPlans, LEASES, landlord, holdOptions };
+    schedule, LOAN_PLANS, loanPlans, LEASES, landlord, holdOptions, YOUNG_GUARANTEE, youngPlan };
 }
