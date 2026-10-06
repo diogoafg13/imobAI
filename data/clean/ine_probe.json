@@ -168,9 +168,694 @@
   ]
  },
  "0014765": {
-  "error": "falha a obter 0014765 do INE: HTTPSConnectionPool(host='www.ine.pt', port=443): Max retries exceeded with url: /ine/json_indicador/pindica.jsp?op=2&varcd=0014765&lang=PT&Dim1=T (Caused by ConnectTimeo"
+  "probed": "20261006",
+  "rows": 210,
+  "dims": {
+   "dim_3": {
+    "H1": "Total",
+    "H11": "Novos",
+    "H12": "Existentes"
+   }
+  },
+  "geocod_len": {
+   "2": 210
+  },
+  "periods": [
+   "2009Q1",
+   "2026Q2",
+   70
+  ],
+  "sample": [
+   {
+    "varcd": "0014765",
+    "period": "2009Q1",
+    "period_kind": "quarter",
+    "sort_key": "200901",
+    "geocod": "PT",
+    "geoname": "Portugal",
+    "value": "40.05",
+    "dim_3": "H1",
+    "dim_3_t": "Total",
+    "level": "national",
+    "dico": NaN
+   },
+   {
+    "varcd": "0014765",
+    "period": "2009Q1",
+    "period_kind": "quarter",
+    "sort_key": "200901",
+    "geocod": "PT",
+    "geoname": "Portugal",
+    "value": "49.31",
+    "dim_3": "H11",
+    "dim_3_t": "Novos",
+    "level": "national",
+    "dico": NaN
+   },
+   {
+    "varcd": "0014765",
+    "period": "2009Q1",
+    "period_kind": "quarter",
+    "sort_key": "200901",
+    "geocod": "PT",
+    "geoname": "Portugal",
+    "value": "37.69",
+    "dim_3": "H12",
+    "dim_3_t": "Existentes",
+    "level": "national",
+    "dico": NaN
+   }
+  ]
  },
  "0012575": {
-  "error": "falha a obter 0012575 do INE: HTTPSConnectionPool(host='www.ine.pt', port=443): Max retries exceeded with url: /ine/json_indicador/pindica.jsp?op=2&varcd=0012575&lang=PT&Dim1=T (Caused by ConnectTimeo"
+  "probed": "20261006",
+  "rows": 3439,
+  "dims": {},
+  "geocod_len": {
+   "6": 3092,
+   "4": 308,
+   "3": 26,
+   "2": 10,
+   "1": 3
+  },
+  "periods": [
+   "2021",
+   "2021",
+   1
+  ],
+  "sample": [
+   {
+    "varcd": "0012575",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "041215",
+    "geoname": "Paçó",
+    "value": "0.0",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0012575",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "070802",
+    "geoname": "Luz",
+    "value": "0.0",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0012575",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "160159",
+    "geoname": "União das freguesias de Padreiro (Salvador e Santa Cristina)",
+    "value": "0.0",
+    "level": "other",
+    "dico": NaN
+   }
+  ]
+ },
+ "0012581": {
+  "probed": "20261006",
+  "rows": 3439,
+  "dims": {},
+  "geocod_len": {
+   "6": 3092,
+   "4": 308,
+   "3": 26,
+   "2": 10,
+   "1": 3
+  },
+  "periods": [
+   "2021",
+   "2021",
+   1
+  ],
+  "sample": [
+   {
+    "varcd": "0012581",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "040921",
+    "geoname": "União das freguesias de Urros e Peredo dos Castelhanos",
+    "value": "0.2",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0012581",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "030279",
+    "geoname": "Silva",
+    "value": "0.3",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0012581",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "030921",
+    "geoname": "Rendufinho",
+    "value": "0.3",
+    "level": "other",
+    "dico": NaN
+   }
+  ]
+ },
+ "0012576": {
+  "probed": "20261006",
+  "rows": 770336,
+  "dims": {
+   "dim_3": {
+    "1": "1 piso",
+    "2": "2 pisos",
+    "3": "3 pisos",
+    "4": "4 pisos",
+    "5": "5 pisos",
+    "6": "6 pisos",
+    "7": "7 ou mais pisos",
+    "T": "Total"
+   },
+   "dim_4": {
+    "1": "Edifício exclusivamente residencial (100%)",
+    "2": "Edifício principalmente residencial (de 50% a 99%)",
+    "T": "Total",
+    "3": "Edifício principalmente não residencial (até 49%)"
+   },
+   "dim_5": {
+    "5": "5 - 9 alojamentos",
+    "1": "1 alojamento",
+    "2": "2 alojamentos",
+    "3": "3 alojamentos",
+    "T": "Total",
+    "4": "4 alojamentos",
+    "6": "10 ou mais alojamentos"
+   }
+  },
+  "geocod_len": {
+   "6": 692608,
+   "4": 68992,
+   "3": 5824,
+   "2": 2240,
+   "1": 672
+  },
+  "periods": [
+   "2021",
+   "2021",
+   1
+  ],
+  "sample": [
+   {
+    "varcd": "0012576",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "0101",
+    "geoname": "Águeda",
+    "value": "1.0",
+    "dim_3": "1",
+    "dim_3_t": "1 piso",
+    "dim_4": "1",
+    "dim_4_t": "Edifício exclusivamente residencial (100%)",
+    "dim_5": "5",
+    "dim_5_t": "5 - 9 alojamentos",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0012576",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "0101",
+    "geoname": "Águeda",
+    "value": "1.0",
+    "dim_3": "1",
+    "dim_3_t": "1 piso",
+    "dim_4": "2",
+    "dim_4_t": "Edifício principalmente residencial (de 50% a 99%)",
+    "dim_5": "1",
+    "dim_5_t": "1 alojamento",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0012576",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "0101",
+    "geoname": "Águeda",
+    "value": "1.0",
+    "dim_3": "1",
+    "dim_3_t": "1 piso",
+    "dim_4": "2",
+    "dim_4_t": "Edifício principalmente residencial (de 50% a 99%)",
+    "dim_5": "2",
+    "dim_5_t": "2 alojamentos",
+    "level": "other",
+    "dico": NaN
+   }
+  ]
+ },
+ "0012577": {
+  "probed": "20261006",
+  "rows": 907896,
+  "dims": {
+   "dim_3": {
+    "04": "1961 - 1980",
+    "06": "1991 - 2000",
+    "09": "2011 - 2015",
+    "07": "2001 - 2005",
+    "02": "1919 - 1945",
+    "08": "2006 - 2010",
+    "10": "2016 - 2021",
+    "01": "Antes de 1919",
+    "05": "1981 - 1990",
+    "03": "1946 - 1960",
+    "T": "Total"
+   },
+   "dim_4": {
+    "7": "7 ou mais pisos",
+    "2": "2 pisos",
+    "3": "3 pisos",
+    "6": "6 pisos",
+    "4": "4 pisos",
+    "T": "Total",
+    "1": "1 piso",
+    "5": "5 pisos"
+   },
+   "dim_5": {
+    "T": "Total",
+    "1": "Com elevador",
+    "2": "Sem elevador"
+   }
+  },
+  "geocod_len": {
+   "6": 816288,
+   "4": 81312,
+   "3": 6864,
+   "2": 2640,
+   "1": 792
+  },
+  "periods": [
+   "2021",
+   "2021",
+   1
+  ],
+  "sample": [
+   {
+    "varcd": "0012577",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "041236",
+    "geoname": "União das freguesias de Curopos e Vale de Janeiro",
+    "value": "0.0",
+    "dim_3": "04",
+    "dim_3_t": "1961 - 1980",
+    "dim_4": "7",
+    "dim_4_t": "7 ou mais pisos",
+    "dim_5": "T",
+    "dim_5_t": "Total",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0012577",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "050334",
+    "geoname": "União das freguesias de Casegas e Ourondo",
+    "value": "0.0",
+    "dim_3": "04",
+    "dim_3_t": "1961 - 1980",
+    "dim_4": "7",
+    "dim_4_t": "7 ou mais pisos",
+    "dim_5": "T",
+    "dim_5_t": "Total",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0012577",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "050337",
+    "geoname": "União das freguesias de Teixoso e Sarzedo",
+    "value": "0.0",
+    "dim_3": "04",
+    "dim_3_t": "1961 - 1980",
+    "dim_4": "7",
+    "dim_4_t": "7 ou mais pisos",
+    "dim_5": "T",
+    "dim_5_t": "Total",
+    "level": "other",
+    "dico": NaN
+   }
+  ]
+ },
+ "0012578": {
+  "probed": "20261006",
+  "rows": 189145,
+  "dims": {
+   "dim_3": {
+    "10": "2016 - 2021",
+    "06": "1991 - 2000",
+    "09": "2011 - 2015",
+    "08": "2006 - 2010",
+    "01": "Antes de 1919",
+    "05": "1981 - 1990",
+    "07": "2001 - 2005",
+    "03": "1946 - 1960",
+    "02": "1919 - 1945",
+    "04": "1961 - 1980",
+    "T": "Total"
+   },
+   "dim_4": {
+    "1": "Com necessidades ligeiras",
+    "3": "Com necessidades profundas",
+    "2": "Com necessidades médias",
+    "4": "Sem necessidades de reparação",
+    "T": "Total"
+   }
+  },
+  "geocod_len": {
+   "6": 170060,
+   "4": 16940,
+   "3": 1430,
+   "2": 550,
+   "1": 165
+  },
+  "periods": [
+   "2021",
+   "2021",
+   1
+  ],
+  "sample": [
+   {
+    "varcd": "0012578",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "010109",
+    "geoname": "Fermentelos",
+    "value": "1.0",
+    "dim_3": "10",
+    "dim_3_t": "2016 - 2021",
+    "dim_4": "1",
+    "dim_4_t": "Com necessidades ligeiras",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0012578",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "010112",
+    "geoname": "Macinhata do Vouga",
+    "value": "1.0",
+    "dim_3": "06",
+    "dim_3_t": "1991 - 2000",
+    "dim_4": "3",
+    "dim_4_t": "Com necessidades profundas",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0012578",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "010119",
+    "geoname": "Valongo do Vouga",
+    "value": "1.0",
+    "dim_3": "09",
+    "dim_3_t": "2011 - 2015",
+    "dim_4": "2",
+    "dim_4_t": "Com necessidades médias",
+    "level": "other",
+    "dico": NaN
+   }
+  ]
+ },
+ "0012582": {
+  "probed": "20261006",
+  "rows": 110048,
+  "dims": {
+   "dim_3": {
+    "1": "Edifício clássico, construído estruturalmente para possuir 1 ou 2 alojamentos familiares",
+    "3": "Edifício clássico de outro tipo",
+    "2": "Edifício clássico, construído estruturalmente para possuir 3 ou mais alojamentos familiares",
+    "T": "Total"
+   },
+   "dim_4": {
+    "6": "6 pisos",
+    "4": "4 pisos",
+    "5": "5 pisos",
+    "2": "2 pisos",
+    "T": "Total",
+    "3": "3 pisos",
+    "1": "1 piso",
+    "7": "7 ou mais pisos"
+   }
+  },
+  "geocod_len": {
+   "6": 98944,
+   "4": 9856,
+   "3": 832,
+   "2": 320,
+   "1": 96
+  },
+  "periods": [
+   "2021",
+   "2021",
+   1
+  ],
+  "sample": [
+   {
+    "varcd": "0012582",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "0101",
+    "geoname": "Águeda",
+    "value": "1.0",
+    "dim_3": "1",
+    "dim_3_t": "Edifício clássico, construído estruturalmente para possuir 1 ou 2 alojamentos familiares",
+    "dim_4": "6",
+    "dim_4_t": "6 pisos",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0012582",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "010103",
+    "geoname": "Aguada de Cima",
+    "value": "1.0",
+    "dim_3": "1",
+    "dim_3_t": "Edifício clássico, construído estruturalmente para possuir 1 ou 2 alojamentos familiares",
+    "dim_4": "4",
+    "dim_4_t": "4 pisos",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0012582",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "010103",
+    "geoname": "Aguada de Cima",
+    "value": "1.0",
+    "dim_3": "1",
+    "dim_3_t": "Edifício clássico, construído estruturalmente para possuir 1 ou 2 alojamentos familiares",
+    "dim_4": "5",
+    "dim_4_t": "5 pisos",
+    "level": "other",
+    "dico": NaN
+   }
+  ]
+ },
+ "0014620": {
+  "probed": "20261006",
+  "rows": 198330,
+  "dims": {
+   "dim_3": {
+    "10": "2016 - 2021",
+    "06": "1991 - 2000",
+    "09": "2011 - 2015",
+    "07": "2001 - 2005",
+    "08": "2006 - 2010",
+    "01": "Antes de 1919",
+    "05": "1981 - 1990",
+    "02": "1919 - 1945",
+    "03": "1946 - 1960",
+    "04": "1961 - 1980",
+    "T": "Total"
+   },
+   "dim_4": {
+    "1": "Com necessidades ligeiras",
+    "3": "Com necessidades profundas",
+    "2": "Com necessidades médias",
+    "4": "Sem necessidades de reparação",
+    "T": "Total"
+   }
+  },
+  "geocod_len": {
+   "6": 179245,
+   "4": 16940,
+   "3": 1430,
+   "2": 550,
+   "1": 165
+  },
+  "periods": [
+   "2021",
+   "2021",
+   1
+  ],
+  "sample": [
+   {
+    "varcd": "0014620",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "010109",
+    "geoname": "Fermentelos",
+    "value": "1.0",
+    "dim_3": "10",
+    "dim_3_t": "2016 - 2021",
+    "dim_4": "1",
+    "dim_4_t": "Com necessidades ligeiras",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0014620",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "010112",
+    "geoname": "Macinhata do Vouga",
+    "value": "1.0",
+    "dim_3": "06",
+    "dim_3_t": "1991 - 2000",
+    "dim_4": "3",
+    "dim_4_t": "Com necessidades profundas",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0014620",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "010119",
+    "geoname": "Valongo do Vouga",
+    "value": "1.0",
+    "dim_3": "09",
+    "dim_3_t": "2011 - 2015",
+    "dim_4": "2",
+    "dim_4_t": "Com necessidades médias",
+    "level": "other",
+    "dico": NaN
+   }
+  ]
+ },
+ "0014621": {
+  "probed": "20261006",
+  "rows": 115392,
+  "dims": {
+   "dim_3": {
+    "1": "Edifício clássico, construído estruturalmente para possuir 1 ou 2 alojamentos familiares",
+    "3": "Edifício clássico de outro tipo",
+    "2": "Edifício clássico, construído estruturalmente para possuir 3 ou mais alojamentos familiares",
+    "T": "Total"
+   },
+   "dim_4": {
+    "6": "6 pisos",
+    "4": "4 pisos",
+    "5": "5 pisos",
+    "2": "2 pisos",
+    "T": "Total",
+    "3": "3 pisos",
+    "1": "1 piso",
+    "7": "7 ou mais pisos"
+   }
+  },
+  "geocod_len": {
+   "6": 104288,
+   "4": 9856,
+   "3": 832,
+   "2": 320,
+   "1": 96
+  },
+  "periods": [
+   "2021",
+   "2021",
+   1
+  ],
+  "sample": [
+   {
+    "varcd": "0014621",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "0101",
+    "geoname": "Águeda",
+    "value": "1.0",
+    "dim_3": "1",
+    "dim_3_t": "Edifício clássico, construído estruturalmente para possuir 1 ou 2 alojamentos familiares",
+    "dim_4": "6",
+    "dim_4_t": "6 pisos",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0014621",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "010103",
+    "geoname": "Aguada de Cima",
+    "value": "1.0",
+    "dim_3": "1",
+    "dim_3_t": "Edifício clássico, construído estruturalmente para possuir 1 ou 2 alojamentos familiares",
+    "dim_4": "4",
+    "dim_4_t": "4 pisos",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0014621",
+    "period": "2021",
+    "period_kind": "year",
+    "sort_key": "202100",
+    "geocod": "010103",
+    "geoname": "Aguada de Cima",
+    "value": "1.0",
+    "dim_3": "1",
+    "dim_3_t": "Edifício clássico, construído estruturalmente para possuir 1 ou 2 alojamentos familiares",
+    "dim_4": "5",
+    "dim_4_t": "5 pisos",
+    "level": "other",
+    "dico": NaN
+   }
+  ]
  }
 }
