@@ -31,6 +31,7 @@
   "dwellings_licensed": "ok (9165 linhas, 2026-07) [dim_3=T 'Total']",
   "dwellings_completed": "ok (1170 linhas, 2026Q2)",
   "dwellings_stock": "ok (4128 linhas, 2022)",
+  "census_total": "ok (3439 linhas, 2021) [dim_3=T 'Total', dim_4=T 'Total', dim_5=T 'Total']",
   "census_secondary": "ok (3439 linhas, 2021) [dim_3=2 'Residência secundária', dim_4=T 'Total', dim_5=T 'Total']",
   "census_vacant_market": "ok (3439 linhas, 2021) [dim_3=3 'Vago para venda ou arrendamento', dim_4=T 'Total', dim_5=T 'Total']",
   "census_vacant_other": "ok (3439 linhas, 2021) [dim_3=4 'Vago por outros motivos', dim_4=T 'Total', dim_5=T 'Total']",
@@ -59,8 +60,7 @@
   "ageing_index": "ok (1735 linhas, 2025)",
   "migration_balance": "ok (1735 linhas, 2025)",
   "tourism_nights": "ok (5160 linhas, 2025) [dim_3=T 'Total']",
-  "housing_credit_pc": "ok (1041 linhas, 2024)",
-  "census_total": "ok (3439 linhas, 2021) [dim_3=T 'Total', dim_4=T 'Total', dim_5=T 'Total']"
+  "housing_credit_pc": "ok (1041 linhas, 2024)"
  },
  "macro": {
   "euribor_3m": "ok (393 pontos, 2026-09)",
@@ -87,7 +87,7 @@
   "al_rnal": "ok (cache de 2026-10-06: 111869 registos)"
  },
  "osm": {
-  "osm_points": "ERRO: faltam 31 de 32 quadrículas, continua no próximo build; 1 quadrículas novas; 2 falhas ((36, -9, 37, -8): 504 Server Error: Gateway Timeout for url: https://overpass-api.de/api/interpreter)"
+  "osm_points": "ERRO: faltam 23 de 32 quadrículas, continua no próximo build; 8 quadrículas novas; 1 falhas (limite de tempo)"
  },
  "apa": {
   "flood_zones": "ok (cache de 2026-10-06: 63 polígonos, pretorno=T0100)"
@@ -102,7 +102,7 @@
   }
  ],
  "discover": {
-  "ine_probe": "0014765: 210 linhas; 0012575: 3439 linhas; 0012581: 3439 linhas; 0012576: 770336 linhas; 0012577: 907896 linhas; 0012578: 189145 linhas; 0012582: 110048 linhas; 0014620: 198330 linhas; 0014621: 115392 linhas",
+  "ine_probe": "nada novo (11 já sondados)",
   "ine_catalog": "ok (cache: 13165 indicadores)",
   "services": "apa_inundacoes: 8 camadas"
  }
