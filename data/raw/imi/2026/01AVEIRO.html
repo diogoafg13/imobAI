@@ -298,25 +298,12 @@
 	function isSelectEmpty(select) {
 		return select.selectedIndex < 0 || isEmpty(select.options[select.selectedIndex].value);
 	}
-
+	
 	function onLoadBody () {
-		document.main.ano.focus();
 			}
 
-	function submitForm() {
-
-		if (submited) {
-	        alert("Pedido a decorrer...\nPor favor prima OK e aguarde...");
-	        return false;
-	    }
-
-		if (isSelectEmpty(document.main.ano)) {
-			return warnEmpty(document.main.ano, 'Por favor seleccione o ano.' );
-		} else if (isSelectEmpty(document.main.distrito)) {
-			return warnEmpty(document.main.distrito, 'Por favor seleccione o distrito.' );
-		}
-
-		return submited = true;
+	function writeIt(str) {
+		document.write(str);
 	}
 
 </script>
@@ -329,118 +316,86 @@
     <a class=body-navigation2 href="javascript:post('/imi/consultarTaxasIMIForm.jsp');"> Consultar Taxas IMI/CA Por Município</a></font>
 </p>
 
-<h1>Consultar Taxas IMI/CA por Município e Ano</h1>
 
-<p>
-As taxas do Imposto Municipal Sobre Imóveis (IMI) são fixadas anualmente pelos
-Municípios da área de localização dos prédios, que atualmente se situam dentro do seguinte intervalo, nos termos do artigo 112.º do Código do IMI:
-</p>
+<p class="body-navigation1">Consultar Taxas IMI/CA Por Município e Ano</p>
+<h2>Consulta de Taxas IMI/CA </h2>
+<table cellspacing="1" cellpadding="0" class="eT" align="center">
+	<tr class="eTR">
+					<td class="hTD"><b>Lista das taxas IMI por Município do Distrito AVEIRO para o ano 2026</b></td>
+			</tr>
+	<tr class="iTR">
+		<td>
+							<table class="iT">
+					<tr class="iTR" align="center">
+						<th class="ccTD"><b>Código Municipio</b></th>
+						<th class="ccTD"><b>Município</b></th>
+																			<th class="ccTD"><b>Prédios Urbanos<br>Avaliados nos Termos<br>do CIMI</b></th>
+												<th class="ccTD"><b>Prédios Rústicos</b></th>
+						<th class="ccTD"><b>Taxas por freguesia</b></th>
+												<th class="ccTD"><b>Dedução fixa por agregado</b></th>
+						
+					</tr>
+											<tr align="center" class="iTR">
+							<td align="center" class="table_space">0109</td>
+							<td align="center" class="table_space">SANTA MARIA DA FEIRA</td>
+							                                                        <td align="center" class="table_space"> 0,3650 % </td>
+                            							<td align="center" class="table_space"> 0,80 % </td>
+							<td align="center" class="table_space"></td>
+														<td align="center" class="table_space"><a href="external/matrizes/imi/consultaDeducao.action?anoConsulta=2026&codigoMunicipio=0109">+Info</a></td>
+							
+						</tr>
+									</table>
+					</td>
+	</tr>
+</table>
 
-<ul>
-<li>Entre 0,3% e 0,45% para os prédios urbanos.</li>
-</ul>
-<p>Esta taxa pode, nas circunstâncias específicas do nº 18 daquele artigo, ir até 0,5%.</p>
-<p>A taxa aplicável aos prédios rústicos é de 0,8%.</p>
-<p>A taxa aplicável aos prédios que sejam propriedade de entidades que tenham domicílio fiscal em país, território ou região constante da lista aprovada pela Portaria 150/2004, de 13 de fevereiro, , com as subsequentes atualizações,  é de 7,5%. Esta taxa não é aplicada a prédios que sejam propriedade de pessoas singulares.</p>
+<style>
 
-<p>Escolha o ano e o distrito pretendido tendo em conta o seguinte:</p>
-<ul>
-<li>Taxas de CA até 2002.</li>
-<li>Taxas de IMI de 2003 até ao presente ano.</li>
-</ul>
+	.table_space {
+		padding: 12px 5px 0 8px;
+	}
 
-<form name="main" method="get" action="main.jsp" onSubmit="return submitForm();">
+	.hTD {
+		margin-top: 0;
+		margin-bottom: 0;
+		font-size: 12px;
+		font-weight: bold;
+		height: 30px;
+		line-height: 20px;
+	}
 
-	<input type="hidden" name="body" value="/imi/consultarTaxasIMI.jsp">
 
-	<table cellspacing="4" width="300" border="0" align="center">
-		<tr>
-			<td colspan="2">&nbsp;</td>
-		</tr>
-		<tr>
-			<td><font class="body-link">Ano:</font></td>
-			<td>
-				<select name="ano">
-					<option></option>
-											<option value="2026">2026</option>
-											<option value="2025">2025</option>
-											<option value="2024">2024</option>
-											<option value="2023">2023</option>
-											<option value="2022">2022</option>
-											<option value="2021">2021</option>
-											<option value="2020">2020</option>
-											<option value="2019">2019</option>
-											<option value="2018">2018</option>
-											<option value="2017">2017</option>
-											<option value="2016">2016</option>
-											<option value="2015">2015</option>
-											<option value="2014">2014</option>
-											<option value="2013">2013</option>
-											<option value="2012">2012</option>
-											<option value="2011">2011</option>
-											<option value="2010">2010</option>
-											<option value="2009">2009</option>
-											<option value="2008">2008</option>
-											<option value="2007">2007</option>
-											<option value="2006">2006</option>
-											<option value="2005">2005</option>
-											<option value="2004">2004</option>
-											<option value="2003">2003</option>
-											<option value="2002">2002</option>
-											<option value="2001">2001</option>
-											<option value="2000">2000</option>
-											<option value="1999">1999</option>
-											<option value="1998">1998</option>
-											<option value="1997">1997</option>
-											<option value="1996">1996</option>
-											<option value="1995">1995</option>
-											<option value="1994">1994</option>
-											<option value="1993">1993</option>
-											<option value="1992">1992</option>
-											<option value="1991">1991</option>
-											<option value="1990">1990</option>
-											<option value="1989">1989</option>
-									</select>
-			</td>
-		</tr>
-		<tr>
-			<td><font class="body-link">Distrito:</font></td>
-			<td>
-				<select name="distrito">
-					<option></option>
-											<option value="19ANGRA DO HEROISMO">ANGRA DO HEROISMO</option>
-											<option value="01AVEIRO">AVEIRO</option>
-											<option value="02BEJA">BEJA</option>
-											<option value="03BRAGA">BRAGA</option>
-											<option value="04BRAGANCA">BRAGANCA</option>
-											<option value="05C BRANCO">C BRANCO</option>
-											<option value="06COIMBRA">COIMBRA</option>
-											<option value="07EVORA">EVORA</option>
-											<option value="08FARO">FARO</option>
-											<option value="22FUNCHAL">FUNCHAL</option>
-											<option value="09GUARDA">GUARDA</option>
-											<option value="20HORTA">HORTA</option>
-											<option value="10LEIRIA">LEIRIA</option>
-											<option value="11LISBOA">LISBOA</option>
-											<option value="21PONTA DELGADA">PONTA DELGADA</option>
-											<option value="12PORTALEGRE">PORTALEGRE</option>
-											<option value="13PORTO">PORTO</option>
-											<option value="14SANTAREM">SANTAREM</option>
-											<option value="15SETUBAL">SETUBAL</option>
-											<option value="16VIANA DO CASTELO">VIANA DO CASTELO</option>
-											<option value="17VILA REAL">VILA REAL</option>
-											<option value="18VISEU">VISEU</option>
-									</select>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">&nbsp;</td>
-		</tr>
-		<tr>
-			<td colspan="2" align="center"><input class="body-button" type="submit" value="Continuar"></td>
-		</tr>
-	</table>
-</form>
+	select {
+		background: #fff;
+		height: 26px !important;
+		border: 1px solid #c5c9cb;
+		font-size: 14px;
+		color: #798b8d;
+		margin: 4px 0px 0px 0px;
+		padding: 0;
+		min-width: 60px;
+	}
+
+	.ccTD {
+		padding: 0 5px 0 8px;
+		color: #0084cc;
+		font-size: 12px;
+		background: #f2f9fb;
+		vertical-align: middle;
+		line-height: 25px;
+	}
+
+
+	.ui-dialog .ui-dialog-content {
+		position: relative;
+		background: none;
+		overflow: auto;
+		width: 420px !important;
+		height: 110px !important;
+	}
+
+
+</style>
 
                             </div>
                             <div style="clear:both"></div>
