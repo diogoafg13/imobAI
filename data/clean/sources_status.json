@@ -23,6 +23,7 @@
   "rent_contracts": "ok (3190 linhas, 2024)",
   "hpi": "ok (68 linhas, 2025Q4) [dim_3=H1 'Total']",
   "bank_valuation": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']",
+  "valuation_count": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']",
   "valuation_count_apartments": "ok (65236 linhas, 2026-08) [dim_3=1 'Apartamentos']",
   "valuation_count_houses": "ok (65236 linhas, 2026-08) [dim_3=2 'Moradias']",
   "valuation_apartments": "ok (65236 linhas, 2026-08) [dim_3=1 'Apartamentos']",
@@ -35,7 +36,6 @@
   "census_vacant_market": "ok (3439 linhas, 2021) [dim_3=3 'Vago para venda ou arrendamento', dim_4=T 'Total', dim_5=T 'Total']",
   "census_vacant_other": "ok (3439 linhas, 2021) [dim_3=4 'Vago por outros motivos', dim_4=T 'Total', dim_5=T 'Total']",
   "irs_median": "ok (24073 linhas, 2024)",
-  "tourism_beds": "ok (1041 linhas, 2025) [dim_3=T 'Total']",
   "tourism_beds_al": "ok (1041 linhas, 2025) [dim_3=02 'Alojamento local']",
   "dwellings_licensed_t01": "ok (9165 linhas, 2026-07) [dim_3=1 'T0 ou T1']",
   "dwellings_licensed_t2": "ok (9165 linhas, 2026-07) [dim_3=2 'T2']",
@@ -60,7 +60,7 @@
   "migration_balance": "ok (1735 linhas, 2025)",
   "tourism_nights": "ok (5160 linhas, 2025) [dim_3=T 'Total']",
   "housing_credit_pc": "ok (1041 linhas, 2024)",
-  "valuation_count": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']"
+  "tourism_beds": "ok (1041 linhas, 2025) [dim_3=T 'Total']"
  },
  "macro": {
   "euribor_3m": "ok (393 pontos, 2026-09)",
