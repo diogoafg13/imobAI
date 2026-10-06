@@ -7,8 +7,6 @@
   "sales_price_12m": "ok (24206 linhas, 2026Q1) [dim_3=H1 'Total']",
   "sales_price_new": "ok (24206 linhas, 2026Q1) [dim_3=H11 'Novos']",
   "sales_price_existing": "ok (24206 linhas, 2026Q1) [dim_3=H12 'Existentes']",
-  "sales_price_domestic": "ok (24206 linhas, 2026Q1) [dim_3=1 'Território nacional']",
-  "sales_price_foreign": "ok (24206 linhas, 2026Q1) [dim_3=2 'Estrangeiro']",
   "sales_price_households": "ok (24206 linhas, 2026Q1) [dim_3=S1400000 'Famílias']",
   "sales_price_companies": "ok (24206 linhas, 2026Q1) [dim_3=S3000000 'Restantes setores institucionais']",
   "sales_price_apartments": "ok (17706 linhas, 2026Q1)",
@@ -36,6 +34,7 @@
   "census_vacant_market": "ok (3439 linhas, 2021) [dim_3=3 'Vago para venda ou arrendamento', dim_4=T 'Total', dim_5=T 'Total']",
   "census_vacant_other": "ok (3439 linhas, 2021) [dim_3=4 'Vago por outros motivos', dim_4=T 'Total', dim_5=T 'Total']",
   "irs_median": "ok (24073 linhas, 2024)",
+  "tourism_beds": "ok (1041 linhas, 2025) [dim_3=T 'Total']",
   "tourism_beds_al": "ok (1041 linhas, 2025) [dim_3=02 'Alojamento local']",
   "dwellings_licensed_t01": "ok (9165 linhas, 2026-07) [dim_3=1 'T0 ou T1']",
   "dwellings_licensed_t2": "ok (9165 linhas, 2026-07) [dim_3=2 'T2']",
@@ -54,13 +53,14 @@
   "tax_households_4": "ok (2429 linhas, 2024) [dim_3=T4 'De 13 500 a menos de 19 000 euros']",
   "tax_households_5": "ok (2429 linhas, 2024) [dim_3=T5 'De 19 000 a menos de 32 500 euros']",
   "tax_households_6": "ok (2429 linhas, 2024) [dim_3=T6 '32 500 euros ou mais']",
-  "income": "ok (1388 linhas, 2024) [dim_3=T 'Total']",
   "population_density": "ok (2082 linhas, 2025)",
   "ageing_index": "ok (1735 linhas, 2025)",
   "migration_balance": "ok (1735 linhas, 2025)",
   "tourism_nights": "ok (5160 linhas, 2025) [dim_3=T 'Total']",
   "housing_credit_pc": "ok (1041 linhas, 2024)",
-  "tourism_beds": "ok (1041 linhas, 2025) [dim_3=T 'Total']"
+  "sales_price_domestic": "ok (24206 linhas, 2026Q1) [dim_3=1 'Território nacional']",
+  "sales_price_foreign": "ok (24206 linhas, 2026Q1) [dim_3=2 'Estrangeiro']",
+  "income": "ok (1388 linhas, 2024) [dim_3=T 'Total']"
  },
  "macro": {
   "euribor_3m": "ok (393 pontos, 2026-09)",
@@ -76,7 +76,7 @@
   "bis_credit_gap": "ok (222 pontos, 2026Q1)"
  },
  "at": {
-  "imi_rates": "ok (cache: taxas de 2025; 2026 ainda incompleto)"
+  "imi_rates": "CACHE (formulário sem anos/distritos reconhecíveis (selects: []))"
  },
  "turismo": {
   "al_rnal": "ok (cache de 2026-10-06: 111869 registos)"
