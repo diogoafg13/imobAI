@@ -21,7 +21,7 @@
   "rent_q3": "ok (2082 linhas, 2025) [dim_3=3 '3.º quartil']",
   "rent_parish": "ok (3190 linhas, 2024)",
   "rent_contracts": "ok (3190 linhas, 2024)",
-  "hpi": "ok (68 linhas, 2025Q4) [dim_3=H1 'Total']",
+  "hpi": "ok (70 linhas, 2026Q2) [dim_3=H1 'Total']",
   "bank_valuation": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']",
   "valuation_count": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']",
   "valuation_count_apartments": "ok (65236 linhas, 2026-08) [dim_3=1 'Apartamentos']",
@@ -32,6 +32,12 @@
   "dwellings_completed": "ok (1170 linhas, 2026Q2)",
   "dwellings_stock": "ok (4128 linhas, 2022)",
   "census_total": "ok (3439 linhas, 2021) [dim_3=T 'Total', dim_4=T 'Total', dim_5=T 'Total']",
+  "census_bld_total": "ok (3439 linhas, 2021) [dim_3=T 'Total', dim_4=T 'Total']",
+  "census_bld_pre1919": "ok (3439 linhas, 2021) [dim_3=01 'Antes de 1919', dim_4=T 'Total']",
+  "census_bld_1919_1945": "ok (3439 linhas, 2021) [dim_3=02 '1919 - 1945', dim_4=T 'Total']",
+  "census_bld_1946_1960": "ok (3439 linhas, 2021) [dim_3=03 '1946 - 1960', dim_4=T 'Total']",
+  "census_bld_repair_mid": "ok (3439 linhas, 2021) [dim_3=T 'Total', dim_4=2 'Com necessidades médias']",
+  "census_bld_repair_deep": "ok (3439 linhas, 2021) [dim_3=T 'Total', dim_4=3 'Com necessidades profundas']",
   "census_secondary": "ok (3439 linhas, 2021) [dim_3=2 'Residência secundária', dim_4=T 'Total', dim_5=T 'Total']",
   "census_vacant_market": "ok (3439 linhas, 2021) [dim_3=3 'Vago para venda ou arrendamento', dim_4=T 'Total', dim_5=T 'Total']",
   "census_vacant_other": "ok (3439 linhas, 2021) [dim_3=4 'Vago por outros motivos', dim_4=T 'Total', dim_5=T 'Total']",
@@ -87,20 +93,12 @@
   "al_rnal": "ok (cache de 2026-10-06: 111869 registos)"
  },
  "osm": {
-  "osm_points": "ERRO: faltam 23 de 32 quadrículas, continua no próximo build; 8 quadrículas novas; 1 falhas (limite de tempo)"
+  "osm_points": "ERRO: faltam 17 de 32 quadrículas, continua no próximo build; ohsome: 403 Client Error: Forbidden for url: https://api.ohsome.org/v1/elements/centroid; 6 quadrículas novas; 1 falhas (limite de tempo)"
  },
  "apa": {
   "flood_zones": "ok (cache de 2026-10-06: 63 polígonos, pretorno=T0100)"
  },
- "stale": [
-  {
-   "source": "INE",
-   "key": "hpi",
-   "last": "2025Q4",
-   "months": 10,
-   "limit": 9
-  }
- ],
+ "stale": [],
  "discover": {
   "ine_probe": "nada novo (11 já sondados)",
   "ine_catalog": "ok (cache: 13165 indicadores)",
