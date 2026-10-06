@@ -115,7 +115,66 @@ function shareAbove(m, annual) {
   return annual <= 32500 ? { v: tot + sh[5], exact: true } : { v: sh[5], exact: false };
 }
 
+// ---------- arrendar e investir (regras de 2026; ver TAX_YEAR)
+// Coeficiente de atualização das rendas para 2027 (INE, Aviso n.º 24199/2026/2, DR de 1/10/2026): o máximo que o
+// senhorio pode aplicar a uma renda em curso no ano seguinte, se o contrato não disser outra coisa.
+const RENT_COEF = { year: 2027, value: 1.0256 };
+// IRS sobre rendas de habitação (taxa autónoma): 25%; com contrato de 5 a 10 anos −10 p.p., de 10 ou mais −15 p.p.;
+// rendas até 2 300 €/mês: 10% até 31/12/2029 (Decreto-Lei 97/2026). Incide sobre a renda menos IMI, condomínio e
+// conservação; os juros do crédito não se deduzem.
+const IRS_RENT = { base: 0.25, cut5: 0.10, cut10: 0.15, moderate: 0.10, moderateMax: 2300, moderateUntil: 2029 };
+function irsRentRate(rentMonthly, contractYears = 1, year = TAX_YEAR) {
+  if (rentMonthly <= IRS_RENT.moderateMax && year <= IRS_RENT.moderateUntil) return IRS_RENT.moderate;
+  return IRS_RENT.base - (contractYears >= 10 ? IRS_RENT.cut10 : contractYears >= 5 ? IRS_RENT.cut5 : 0);
+}
+// taxa interna de rentabilidade de fluxos anuais (o primeiro, negativo, é o investimento); bisseção
+function irr(flows) {
+  const npv = (r) => flows.reduce((a, f, t) => a + f / (1 + r) ** t, 0);
+  let lo = -0.99, hi = 1;
+  if (npv(lo) * npv(hi) > 0) return null;
+  for (let i = 0; i < 200; i++) { const mid = (lo + hi) / 2; if (npv(lo) * npv(mid) <= 0) hi = mid; else lo = mid; }
+  return (lo + hi) / 2;
+}
+// Investimento para arrendar: fluxos anuais, venda no fim do prazo e TIR.
+// o = { price, down (fração), rate (%), years (crédito), rent (€/mês no 1.º ano), rentGrowth, priceGrowth (frações/ano),
+//       vacancy (meses/ano), condo (€/mês), ins (€/ano), maint (fração da renda), imiRate, vpt (opcional),
+//       contractYears, hold (anos), sellCost (fração do preço de venda), marginal (taxa marginal de IRS, mais-valias),
+//       closing (€: escritura, registos), ra (Açores/Madeira), startYear }
+function invest(o) {
+  const loan = o.price * (1 - o.down), tax = buyTaxes(o.price, loan, 'sec', false, !!o.ra);
+  const cash0 = o.price - loan + tax.total + (o.closing || 0);
+  const r = o.rate / 100 / 12, n = o.years * 12, pay = loan > 0 ? annuity(loan, o.rate, o.years) : 0;
+  let bal = loan;
+  const rows = [];
+  for (let t = 1; t <= o.hold; t++) {
+    const rentM = o.rent * (1 + o.rentGrowth) ** (t - 1), year = (o.startYear || TAX_YEAR) + t - 1;
+    const gross = rentM * (12 - o.vacancy);
+    const imi = (o.vpt || o.price) * o.imiRate, condo = o.condo * 12, maint = o.maint * gross, ins = o.ins;
+    const deductible = imi + condo + maint;            // o seguro e os juros não se deduzem nas rendas
+    const irs = Math.max(0, gross - deductible) * irsRentRate(rentM, o.contractYears, year);
+    let interest = 0, debt = 0;
+    for (let k = 0; k < 12 && bal > 0.005 && (t - 1) * 12 + k < n; k++) {
+      const i = bal * r; interest += i; debt += pay; bal = Math.max(0, bal - (pay - i));
+    }
+    const cf = gross - imi - condo - maint - ins - irs - debt;
+    rows.push({ t, year, rentM, gross, imi, condo, maint, ins, irs, irsRate: irsRentRate(rentM, o.contractYears, year), debt, interest, cf, balance: bal });
+  }
+  const sale = o.price * (1 + o.priceGrowth) ** o.hold, sellCost = sale * o.sellCost;
+  // mais-valia de residente: 50% do ganho somado ao rendimento (taxa marginal); sem os coeficientes de
+  // desvalorização da moeda (que baixam o imposto em detenções longas) — conta por excesso
+  const gain = sale - sellCost - (o.price + tax.imt + tax.isb + (o.closing || 0));
+  const cgt = Math.max(0, gain) * 0.5 * o.marginal;
+  const netSale = sale - sellCost - bal - cgt;
+  const flows = [-cash0, ...rows.map((x, i) => x.cf + (i === rows.length - 1 ? netSale : 0))];
+  const y1 = rows[0];
+  const noi1 = y1.gross - y1.imi - y1.condo - y1.maint - y1.ins - y1.irs;
+  return { loan, tax, cash0, pay, rows, sale, sellCost, gain, cgt, netSale, flows, irr: irr(flows),
+    grossYield: (o.rent * 12) / o.price, netYield: noi1 / (o.price + tax.total + (o.closing || 0)),
+    cashOnCash: y1.cf / cash0, totalProfit: flows.reduce((a, b) => a + b, 0) };
+}
+
 if (typeof module !== 'undefined') {
   module.exports = { TAX_YEAR, taxTablesStale, BDP, LIMIT, IMT26, YOUNG_FULL, YOUNG_PART, IS_BUY, IS_LOAN, imtOf, isBuyOf, buyTaxes,
-    islands, annuity, qOfMonth, serVal, qAdd, qIdx, at12, serGrowth, TAX_EDGES, shareAbove };
+    islands, annuity, qOfMonth, serVal, qAdd, qIdx, at12, serGrowth, TAX_EDGES, shareAbove,
+    RENT_COEF, IRS_RENT, irsRentRate, irr, invest };
 }

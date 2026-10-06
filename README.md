@@ -452,6 +452,27 @@ preço de mercado).
   `runs-on: ubuntu-24.04` fixo (o `ubuntu-latest` passa a Ubuntu 26 a 19/10/2026; mudar de propósito, depois de
   testar).
 
+### Arrendar, Investir e séries paradas
+
+- **Separador Arrendar**: rendimento líquido do agregado e área → concelhos onde a renda mediana dos novos contratos
+  (INE, €/m² × área) fica até ao limite escolhido (35% por omissão; referência, não regra legal), onde aperta (até
+  50%) e onde só os 25% de contratos mais baratos cabem; indicador "Renda face ao teu rendimento" no mapa. Com a
+  renda atual, o máximo que pode subir no ano seguinte pelo coeficiente legal (2027: 1,0256, INE, Aviso n.º
+  24199/2026/2).
+- **Separador Investir** (contas em `site/calc.js`, `invest`, com testes): dinheiro à cabeça (entrada, IMT e Imposto
+  do Selo de 2.ª habitação, escritura), prestação, rendas menos meses vazios, IMI do concelho, condomínio, seguro,
+  manutenção, IRS sobre rendas pelas regras de 2026 (25%; −10/−15 p.p. com contratos de 5–10 / 10+ anos; 10% para
+  rendas até 2 300 €/mês até 2029, Decreto-Lei 97/2026; sobre a renda menos IMI, condomínio e conservação, sem
+  juros), venda no fim (custos, crédito em dívida, mais-valia: metade do ganho à taxa marginal, sem coeficientes de
+  desvalorização — por excesso). Dá fluxo de caixa, rendibilidade bruta e líquida, TIR e uma tabela de sensibilidade
+  (valorização × taxa). Avisa se a entrada fica abaixo dos 20% que o Banco de Portugal exige fora da habitação
+  própria. Novo indicador no mapa: rendibilidade líquida (90 m² medianos, sem crédito).
+- **Séries paradas** (`imopt/freshness.py`): cada série tem um atraso normal desde o fim do último período (mensal 4
+  meses, trimestral 9, anual 30; `max_age_months` ou `static: true` no config). As que passam aparecem no estado das
+  fontes do site, em `sources_status.json` e como aviso no resumo do build. Na primeira verificação apareceram o
+  parque habitacional do INE (parado em 2022) e o índice de preços da habitação do INE (parado em 2025T4; o painel usa
+  o do Eurostat, em dia).
+
 ### Organização do site em separadores
 
 O site passou a ter seis separadores: **Mercado** (resumo, visão nacional, o que mudou, mapa, detalhe,

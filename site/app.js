@@ -73,6 +73,8 @@ const GLOSS = {
   bdp: ['Regra do Banco de Portugal', 'Para contratos avaliados desde 1 de agosto de 2026, o Banco de Portugal recomenda que a prestação, calculada com a taxa de juro 1,5 p.p. acima, não passe de 45% do rendimento líquido (antes 50%; cada banco pode exceder em até 10% do crédito de cada semestre); que o crédito não passe de 90% do valor da casa na habitação própria e permanente (80% nas outras finalidades); e que o prazo não passe de 40 anos até aos 35 anos de idade (35 anos acima disso). O painel usa salários brutos ou rendimentos após IRS, por isso os 45% do líquido são aproximados (~36% do salário bruto, ~40% do rendimento após IRS).'],
   imt: ['IMT e Imposto do Selo', 'Impostos na compra, tabelas de 2026 (continente): IMT por escalões, mais baixo na habitação própria e permanente; Imposto do Selo de 0,8% sobre o preço e de 0,6% sobre o crédito (prazo de 5 anos ou mais). Jovens até 35 anos, na 1.ª habitação própria e permanente e não dependentes no IRS, estão isentos de IMT e do Imposto do Selo da compra até 330 539 € e pagam só sobre o excesso até 660 982 € (o do crédito paga-se sempre). Contas sobre o preço; o IMT incide sobre o maior entre o preço e o VPT.'],
   imi: ['Taxa de IMI', 'Taxa do imposto municipal sobre imóveis fixada pelo concelho para os prédios urbanos (entre 0,3% e 0,45%), publicada pelas Finanças por ano. Aplica-se ao valor patrimonial tributário (VPT, na caderneta predial), não ao preço de mercado: IMI = VPT × taxa. Com dependentes, alguns concelhos dão uma dedução fixa (IMI familiar). Há concelhos com taxas diferentes em algumas freguesias.'],
+  rentfit: ['Onde a renda cabe', 'Renda mediana dos novos contratos de arrendamento de cada concelho (INE, por m²) × a área que indicas, a dividir pelo rendimento líquido do teu agregado. Mostra onde fica dentro do limite escolhido (35% por omissão, uma referência comum, não legal) e onde só a parte mais barata do mercado cabe. Se já arrendas, mostra também o máximo que a renda pode subir no próximo ano com o coeficiente legal publicado pelo INE.'],
+  invest: ['Investir para arrendar', 'Contas de um investimento para arrendar: dinheiro à cabeça (entrada, IMT e Imposto do Selo de 2.ª habitação, escritura), prestação, rendas menos meses vazios, IMI do concelho, condomínio, seguro, manutenção e IRS sobre rendas (regras de 2026), e venda ao fim do prazo (custos, crédito em dívida e mais-valias). A TIR (taxa interna de rentabilidade) é o rendimento anual do dinheiro que puseste, contando com a venda. Preço e renda partem das medianas do concelho; a valorização e a subida da renda são pressupostos teus — a tabela de sensibilidade mostra quanto pesam.'],
   follow: ['Concelhos que segues', 'Concelhos que escolheste seguir: escreve o nome aqui ou usa o botão ☆ Seguir na ficha de um concelho (separador Mercado). A lista fica guardada só neste browser. Mostra o que mudou desde o trimestre anterior e os números principais.'],
   par_irs: ['Freguesias: rendimento e Censos', 'Por freguesia: mediana do rendimento declarado no IRS depois do imposto (por pessoa que declara, ÷ 12; o INE não publica freguesias com poucos declarantes), e a parte das casas vagas e de segunda habitação no Censos 2021. O esforço de compra por freguesia usa o preço da freguesia (só onde o INE o publica) e o rendimento do IRS de quem lá vive, com a casa e o crédito da calculadora.'],
   tourism_guests: ['Hóspedes e ocupação', 'Hóspedes em alojamento turístico nos últimos 12 meses publicados (INE, mensal; hotelaria, alojamento local com 10+ camas e turismo rural) e variação face aos 12 meses anteriores; parte dos hóspedes em alojamento local; taxa líquida de ocupação-cama no último ano (camas ocupadas ÷ camas disponíveis). Turismo a crescer depressa num concelho costuma puxar pelos preços e pelas rendas, sobretudo pelo alojamento local.'],
@@ -135,6 +137,8 @@ const METRICS = {
     help: 'Quão "esticado" está cada concelho face aos outros: preço a subir depressa e rendibilidade baixa = mais vermelho. Verde < 40 (baixo), amarelo/laranja 40–69 (moderado), vermelho ≥ 70 (elevado). É relativo, não uma probabilidade de bolha. Cinzento = sem dados.' },
   price: { prop: 'price', pal: SEQ, f: fmt.eur, label: '€/m²',
     help: 'Preço mediano de venda (INE, últimos 12 meses). Mais escuro = mais caro. A escala vai do 5.º ao 95.º percentil para os extremos não achatarem o resto do mapa.' },
+  ny: { prop: 'ny', pal: SEQ, f: (v) => fmt.pct(v, 2), label: 'Rendibilidade líquida',
+    help: 'Renda de um ano depois de 1 mês vazio, IMI do concelho, condomínio, seguro, manutenção e IRS sobre rendas (regras de 2026), a dividir pelo preço mais IMT, Imposto do Selo e escritura — para 90 m² ao preço e à renda medianos, comprado sem crédito. Mais escuro = rende mais. Contas completas no separador Investir.' },
   yield: { prop: 'yield', pal: SEQ, f: (v) => fmt.pct(v, 2), label: 'Rendibilidade bruta',
     help: 'Renda anual ÷ preço, antes de custos. Mais escuro = a renda paga mais do preço; claro = preço alto face à renda. Cinzento = INE não publica renda para o concelho.' },
   g1yr: { prop: 'g1yr', pal: ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'], diverge: true, f: (v) => fmt.spct(v), label: 'Var. 12m real',
@@ -154,6 +158,8 @@ METRICS.br = { prop: 'br', pal: DIV_PAL, diverge: true, f: (v) => fmt.spct(v, 0)
   help: 'Prestação do crédito face à renda da mesma casa (renda mediana de novos contratos). Azul = a prestação é mais baixa do que a renda; laranja = mais alta. A prestação inclui amortização (poupança): ver o ponto de equilíbrio em "Comprar casa". Cinzento = sem renda publicada.' };
 METRICS.rf = { prop: 'rf', pal: PAL, fixed: [0.1, 0.7], f: (v) => fmt.pct(v, 0), label: 'Esforço de arrendar',
   help: 'Renda da mesma casa (novos contratos) ÷ rendimento mensal, com a área e o rendimento escolhidos em "Comprar casa". Verde = renda leve; amarelo ≈ 40%; laranja e vermelho = acima de 55%. Cinzento = sem renda ou rendimento publicado.' };
+METRICS.ru = { prop: 'ru', pal: PAL, fixed: [0.1, 0.7], f: (v) => fmt.pct(v, 0), label: 'Renda face ao teu rendimento',
+  help: 'Renda mediana dos novos contratos para a área escolhida em "Arrendar" ÷ o rendimento líquido que lá indicaste. Verde = cabe com folga; amarelo ≈ 35–40%; vermelho = acima de 55%. Cinzento = sem renda publicada (ou sem rendimento indicado).' };
 METRICS.tg = { prop: 'tg', pal: DIV_PAL, diverge: true, f: (v) => fmt.spct(v, 0), label: 'Hóspedes: variação num ano',
   help: 'Variação do número de hóspedes em alojamento turístico nos últimos 12 meses face aos 12 anteriores (INE). Laranja = turismo a crescer; azul = a cair. Cinzento = sem dados (poucos estabelecimentos).' };
 METRICS.al = { prop: 'al', pal: SEQ, f: (v) => fmt.n(v, 1), label: 'Camas de alojamento local por 100 alojamentos',
@@ -162,8 +168,8 @@ METRICS.vac = { prop: 'vac', pal: SEQ, f: (v) => fmt.pct(v, 0), label: 'Alojamen
   help: 'Parte dos alojamentos vagos no Censos 2021 (para venda ou arrendamento, ou por outros motivos). Mais escuro = mais casas vazias. Muitas precisam de obras; é uma fotografia de 2021.' };
 METRICS.sec = { prop: 'sec', pal: SEQ, f: (v) => fmt.pct(v, 0), label: 'Residência secundária (Censos 2021)',
   help: 'Parte dos alojamentos de residência secundária (férias, fim de semana) no Censos 2021. Mais escuro = mais casas que não servem quem vive no concelho.' };
-const METRIC_VAL = { score: (x) => x.score_overall, price: (x) => x.price, yield: (x) => x.gross_yield, g1y: (x) => x.price_growth_1y, g1yr: (x) => x.price_growth_1y_real,
-  fc: (x) => x.fc_growth_12m, fv: (x) => x.fv_gap, fp: (x) => x.foreign_premium, ef: (x) => x.aff_effort, br: (x) => x.aff_pay_vs_rent, rf: (x) => x.aff_rent_effort, tg: (x) => x.guests_growth_1y,
+const METRIC_VAL = { score: (x) => x.score_overall, price: (x) => x.price, yield: (x) => x.gross_yield, ny: (x) => x.inv_ny, g1y: (x) => x.price_growth_1y, g1yr: (x) => x.price_growth_1y_real,
+  fc: (x) => x.fc_growth_12m, fv: (x) => x.fv_gap, fp: (x) => x.foreign_premium, ef: (x) => x.aff_effort, br: (x) => x.aff_pay_vs_rent, rf: (x) => x.aff_rent_effort, ru: (x) => x.rent_user, tg: (x) => x.guests_growth_1y,
   al: (x) => x.al_beds_per_100, vac: (x) => x.vacant_share, sec: (x) => x.secondary_share };
 const DIV = ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'];
 const PMETRICS = {
@@ -986,10 +992,10 @@ function affordOf(m) {
 function applyAfford() {
   PRUDENT = LIMIT[affBase()];
   try { parishDerive(); } catch (e) { console.error('freguesias:', e); }
-  MUNIS.forEach((m) => Object.assign(m, affordOf(m)));
+  MUNIS.forEach((m) => Object.assign(m, affordOf(m), { inv_ny: invNetYield(m) }));
   if (GEO) GEO.features.forEach((f) => {
     const m = BY[f.properties.dico];
-    ['ef', 'br', 'rf', 'tg', 'al', 'vac', 'sec'].forEach((k) => { f.properties[k] = m ? METRIC_VAL[k](m) ?? null : null; });
+    ['ef', 'br', 'rf', 'tg', 'al', 'vac', 'sec', 'ny', 'ru'].forEach((k) => { f.properties[k] = m ? METRIC_VAL[k](m) ?? null : null; });
   });
   if (MAP && MAP.getSource('c')) MAP.getSource('c').setData(GEO);
 }
@@ -1935,6 +1941,125 @@ function imChart(id, D) {
 }
 const imiPct = (r) => `${(r * 100).toLocaleString('pt-PT', { minimumFractionDigits: 2, maximumFractionDigits: 3 })}%`;
 const IM_DISCLAIMER = '⚠ <b>Estimativa estatística, não vinculativa.</b> Isto não é uma avaliação imobiliária nem aconselhamento financeiro, fiscal ou jurídico. Os números aplicam medianas e índices oficiais (INE, BCE, Eurostat) ao preço que indicaste: não conhecem o estado, a localização exata, a vista, o piso, as obras nem o mercado da tua rua, que podem afastar o valor real muito destes valores. Para decisões (vender, pedir ou renegociar crédito, partilhas, impostos) consulta um perito avaliador registado na CMVM, o teu banco ou um contabilista. Os dados que introduzes ficam só neste browser: nada é enviado.';
+// ---------- arrendar: onde a renda cabe no rendimento do utilizador
+const RENT_KEY = 'imopt.rent.v1';
+let RENTU = { inc: null, area: 70, lim: 35, cur: null };
+function rentApply() {
+  MUNIS.forEach((m) => { m.rent_user = RENTU.inc && m.rent != null ? (m.rent * RENTU.area) / RENTU.inc : null; });
+  if (GEO) GEO.features.forEach((f) => { const m = BY[f.properties.dico]; f.properties.ru = m ? m.rent_user ?? null : null; });
+  if (MAP && MAP.getSource('c')) MAP.getSource('c').setData(GEO);
+}
+function rentRender() {
+  const f = $('#rent-form'), num = (k) => { const x = parseFloat(String(f[k].value).replace(/\s/g, '').replace(',', '.')); return Number.isFinite(x) ? x : null; };
+  RENTU = { inc: num('inc'), area: num('area') || 70, lim: num('lim') || 35, cur: num('cur') };
+  try { localStorage.setItem(RENT_KEY, JSON.stringify(RENTU)); } catch { /* */ }
+  rentApply();
+  if ($('#metric').value === 'ru') updateMetric();
+  const out = $('#rent-out'), parts = [];
+  if (RENTU.cur) {
+    const up = RENTU.cur * RENT_COEF.value;
+    parts.push(`<p class="verdict">Se já arrendas: em ${RENT_COEF.year} o senhorio pode subir a renda no máximo <b>${fmt.spct(RENT_COEF.value - 1, 2)}</b> (coeficiente legal do INE, ${fmt.n(RENT_COEF.value, 4)}), se o contrato não previr outra forma de atualização: de ${fmt.eur(RENTU.cur)} para até <b>${fmt.eur(up)}/mês</b> (+${fmt.eur(up - RENTU.cur)}). A subida tem de ser comunicada por escrito com pelo menos 30 dias de antecedência e só pode acontecer um ano depois do início do contrato ou da última atualização.</p>`);
+  }
+  if (!RENTU.inc) { out.innerHTML = parts.join('') + '<p class="muted">Indica o rendimento líquido do agregado para ver onde a renda cabe.</p>'; return; }
+  const lim = RENTU.lim / 100, ok = MUNIS.filter((m) => m.rent_user != null);
+  const fit = ok.filter((m) => m.rent_user <= lim), tight = ok.filter((m) => m.rent_user > lim && m.rent_user <= 0.5), no = ok.filter((m) => m.rent_user > 0.5);
+  const q1fit = ok.filter((m) => m.rent_user > lim && m.rent_q1 != null && (m.rent_q1 * RENTU.area) / RENTU.inc <= lim);
+  const row = (m) => `<tr><td>${lnk(m.dico, m.name)}${m.volatile ? ' <span class="muted">⚠</span>' : ''}</td><td>${fmt.eur(m.rent * RENTU.area)}</td><td>${fmt.pct(m.rent_user, 0)}</td><td>${m.rent_q1 != null ? fmt.eur(m.rent_q1 * RENTU.area) : '—'}</td><td>${m.rent_growth_1y != null ? fmt.spct(m.rent_growth_1y, 0) : '—'}</td><td>${m.rent_contracts != null ? fmt.n(m.rent_contracts, 0) : '—'}</td></tr>`;
+  const big = (arr) => arr.filter((m) => (m.rent_contracts ?? 0) >= 100).sort((a, b) => b.rent_user - a.rent_user);
+  parts.push(`<p class="verdict">Para ${fmt.n(RENTU.area, 0)} m² e ${fmt.eur(RENTU.inc)}/mês, a renda mediana dos novos contratos fica até ${fmt.n(RENTU.lim, 0)}% do rendimento em <b>${fit.length} de ${ok.length}</b> concelhos; entre ${fmt.n(RENTU.lim, 0)}% e 50% em ${tight.length}; acima de 50% em ${no.length}.${q1fit.length ? ` Em mais ${q1fit.length}, só a parte mais barata do mercado (os 25% de contratos com renda mais baixa) cabe no limite.` : ''}</p>
+    <p class="aff-map"><button type="button" class="btn" data-m="ru">Ver no mapa</button></p>
+    ${big(fit).length ? `<p class="muted"><b>Onde cabe</b> (concelhos com pelo menos 100 novos contratos por ano, do mais caro para o mais barato)</p><div class="table-wrap"><table class="ol-table"><thead><tr><th>Concelho</th><th>Renda mediana</th><th>Do rendimento</th><th>25% mais baratos até</th><th>Renda num ano</th><th>Contratos/ano</th></tr></thead><tbody>${big(fit).slice(0, 25).map(row).join('')}</tbody></table></div>` : ''}
+    ${big(tight).length ? `<details><summary class="muted">Onde aperta (${fmt.n(RENTU.lim, 0)}–50%)</summary><div class="table-wrap"><table class="ol-table"><thead><tr><th>Concelho</th><th>Renda mediana</th><th>Do rendimento</th><th>25% mais baratos até</th><th>Renda num ano</th><th>Contratos/ano</th></tr></thead><tbody>${big(tight).slice(0, 40).map(row).join('')}</tbody></table></div></details>` : ''}
+    <ul class="read muted"><li>Renda: mediana dos novos contratos de arrendamento por m² (INE, ${String((ok.find((m) => m.rent_year) || {}).rent_year || '').slice(0, 4)}) × a área. São contratos declarados às Finanças, que costumam ficar abaixo dos preços pedidos nos anúncios, e são de há cerca de um ano — entretanto as rendas subiram (ver a coluna "Renda num ano").</li><li>${fmt.n(RENTU.lim, 0)}% do rendimento líquido é uma referência comum para a renda caber com o resto das despesas; não é uma regra legal. Na ficha de cada concelho e no mapa por freguesias há a renda por freguesia, onde o INE a publica.</li></ul>`);
+  out.innerHTML = parts.join('');
+}
+function initRent() {
+  const f = $('#rent-form');
+  try { const v = JSON.parse(localStorage.getItem(RENT_KEY) || 'null'); if (v) { RENTU = { ...RENTU, ...v }; ['inc', 'area', 'lim', 'cur'].forEach((k) => { if (v[k] != null) f[k].value = v[k]; }); } } catch { /* */ }
+  rentApply();
+  f.addEventListener('submit', (e) => { e.preventDefault(); rentRender(); });
+  f.addEventListener('change', rentRender);
+  $('#rent-out').addEventListener('click', (e) => {
+    const a = e.target.closest('a[data-d]'); if (a) { e.preventDefault(); select(a.dataset.d); return; }
+    const b = e.target.closest('[data-m]');
+    if (b) { if (LEVEL !== 'c') setLevel('c'); $('#metric').value = b.dataset.m; updateMetric(); goTo('mapsec'); }
+  });
+  rentRender();
+}
+// ---------- investir para arrendar (contas em calc.js: invest)
+const INV_KEY = 'imopt.invest.v1';
+const INV_DEF = { area: 90, down: 20, years: 30, hold: 10, pg: 0, rg: (RENT_COEF.value - 1) * 100, vac: 1, condo: 30, ins: 150, maint: 5, cy: 1, closing: 1000, sell: 5, marg: 35 };
+function invParams(m, v = {}) {
+  const area = v.area || INV_DEF.area, num = (k) => (v[k] != null ? v[k] : INV_DEF[k]);
+  const price = v.price || (m.price != null ? m.price * area : null), rent = v.rent || (m.rent != null ? m.rent * area : null);
+  if (!price || !rent) return null;
+  return { price, rent, down: num('down') / 100, rate: v.rate != null ? v.rate : affRateNow(), years: num('years'), hold: num('hold'),
+    priceGrowth: num('pg') / 100, rentGrowth: num('rg') / 100, vacancy: num('vac'), condo: num('condo'), ins: num('ins'),
+    maint: num('maint') / 100, imiRate: m.imi_rate ?? 0.003, vpt: v.vpt || null, contractYears: num('cy'), closing: num('closing'),
+    sellCost: num('sell') / 100, marginal: num('marg') / 100, ra: islands(m.dico), startYear: new Date().getFullYear() };
+}
+// mapa: rendibilidade líquida de 90 m² medianos, sem crédito (o 1.º ano de invest())
+function invNetYield(m) {
+  const o = invParams(m, { down: 100 });
+  return o ? invest(o).netYield : null;
+}
+function invRead() {
+  const f = $('#inv-form'), num = (k) => { const x = parseFloat(String(f[k].value).replace(/\s/g, '').replace(',', '.')); return Number.isFinite(x) ? x : null; };
+  const name = f.conc.value.trim().toLowerCase(), m = MUNIS.find((x) => x.name.toLowerCase() === name);
+  const v = { conc: f.conc.value.trim(), dico: m ? m.dico : null };
+  ['area', 'price', 'rent', 'down', 'rate', 'years', 'hold', 'pg', 'rg', 'vac', 'condo', 'ins', 'maint', 'vpt', 'cy', 'closing', 'sell', 'marg'].forEach((k) => { v[k] = num(k); });
+  return v;
+}
+function invRender() {
+  const v = invRead(), out = $('#inv-out');
+  try { localStorage.setItem(INV_KEY, JSON.stringify(v)); } catch { /* sem armazenamento */ }
+  const m = v.dico ? BY[v.dico] : null;
+  if (!m) { out.innerHTML = '<p class="muted">Escolhe um concelho da lista.</p>'; return; }
+  const o = invParams(m, v);
+  if (!o) { out.innerHTML = `<p class="banner">Sem preço ou renda publicados para ${esc(m.name)}: indica-os nos campos.</p>`; return; }
+  const r = invest(o), y1 = r.rows[0], last = r.rows[r.rows.length - 1];
+  const tile = (label, val, ctx = '') => `<div class="stat"><span class="muted">${esc(label)}</span><b>${val}</b>${ctx ? `<span class="ctx">${ctx}</span>` : ''}</div>`;
+  const ltvMax = BDP.ltv.sec;
+  const warn = [];
+  if (o.down < 1 - ltvMax - 1e-9) warn.push(`entrada abaixo de ${fmt.n((1 - ltvMax) * 100, 0)}%: fora da habitação própria e permanente, o Banco de Portugal limita o crédito a ${fmt.n(ltvMax * 100, 0)}% do valor`);
+  if (o.years > BDP.years.young) warn.push(`prazo acima de ${BDP.years.young} anos (o máximo; ${BDP.years.other} para quem tem mais de 35 anos)`);
+  const tiles = [
+    tile('Dinheiro à cabeça', fmt.eur(r.cash0), `entrada ${fmt.eur(o.price - r.loan)} + IMT ${fmt.eur(r.tax.imt)} + Imposto do Selo ${fmt.eur(r.tax.isb + r.tax.isl)} + escritura ${fmt.eur(o.closing)}`),
+    tile('Prestação', r.loan > 0 ? `${fmt.eur(r.pay)}/mês` : 'sem crédito', r.loan > 0 ? `${fmt.eur(r.loan)} a ${fmt.n(o.rate, 2)}%, ${o.years} anos` : ''),
+    tile('Fluxo de caixa no 1.º ano', `${y1.cf >= 0 ? '+' : '−'}${fmt.eur(Math.abs(y1.cf / 12))}/mês`, `${y1.cf >= 0 ? 'a renda paga tudo e sobra' : 'tens de pôr dinheiro todos os meses'} · IRS ${fmt.pct(y1.irsRate, 0)} sobre as rendas`),
+    tile('Rendibilidade', `${fmt.pct(r.grossYield, 1)} bruta`, `${fmt.pct(r.netYield, 1)} líquida de custos e IRS (sobre preço + impostos)`),
+    tile(`TIR em ${o.hold} anos`, r.irr == null ? '—' : fmt.pct(r.irr, 1), `com a venda: ${fmt.eur(r.sale)} (${fmt.spct(o.priceGrowth, 1)}/ano) − custos ${fmt.eur(r.sellCost)} − crédito em dívida ${fmt.eur(last.balance)} − mais-valias ${fmt.eur(r.cgt)}`),
+  ];
+  const pgs = [-0.02, 0, 0.02, 0.04], rts = [o.rate, o.rate + 2];
+  const sens = `<div class="table-wrap"><table class="ol-table"><thead><tr><th>TIR em ${o.hold} anos</th>${pgs.map((g) => `<th>casa ${fmt.spct(g, 0)}/ano</th>`).join('')}</tr></thead><tbody>${rts.map((rt) => `<tr><td>taxa ${fmt.n(rt, 2)}%</td>${pgs.map((g) => { const x = invest({ ...o, rate: rt, priceGrowth: g }).irr; return `<td>${x == null ? '—' : fmt.pct(x, 1)}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`;
+  const yrs = `<details><summary class="muted">Ano a ano</summary><div class="table-wrap"><table class="ol-table"><thead><tr><th>Ano</th><th>Renda/mês</th><th>Rendas</th><th>IMI, cond., seguro, manut.</th><th>IRS</th><th>Prestações</th><th>Fluxo</th><th>Crédito em dívida</th></tr></thead><tbody>${r.rows.map((x) => `<tr><td>${x.year}</td><td>${fmt.eur(x.rentM)}</td><td>${fmt.eur(x.gross)}</td><td>${fmt.eur(x.imi + x.condo + x.ins + x.maint)}</td><td>${fmt.eur(x.irs)} (${fmt.pct(x.irsRate, 0)})</td><td>${fmt.eur(x.debt)}</td><td>${x.cf >= 0 ? '+' : '−'}${fmt.eur(Math.abs(x.cf))}</td><td>${fmt.eur(x.balance)}</td></tr>`).join('')}</tbody></table></div></details>`;
+  const li = [];
+  li.push(`Preço e renda de partida: ${v.price ? 'os que indicaste' : `mediana de venda de ${esc(m.name)} (${fmt.eur(m.price)}/m², INE, 12 meses até ${qpt(META.latest_price_period)})`}${v.rent ? '' : ` e renda mediana dos novos contratos (${fmt.eur2(m.rent)}/m², ${m.rent_year ? String(m.rent_year).slice(0, 4) : 'último ano'})`} × ${fmt.n(v.area || INV_DEF.area, 0)} m². São medianas do concelho: a casa concreta pode estar longe delas.`);
+  const ctx = [];
+  if (m.rent_growth_1y != null) ctx.push(`renda dos novos contratos ${fmt.spct(m.rent_growth_1y, 0)} no último ano`);
+  if (m.rent_fc != null && m.rent != null) ctx.push(`previsão da renda para ${m.rent_fc_year}: ${fmt.spct(m.rent_fc / m.rent - 1, 0)}`);
+  if (m.fc_growth_12m != null) ctx.push(`previsão do preço a 12 meses: ${fmt.spct(m.fc_growth_12m)}`);
+  if (m.price_growth_3y != null) ctx.push(`preço ${fmt.spct(m.price_growth_3y, 0)} em 3 anos`);
+  if (m.val_count != null) ctx.push(`${fmt.n(m.val_count, 0)} avaliações bancárias em 3 meses (quanto mais, mais fácil vender)`);
+  if (m.imi_rate != null) ctx.push(`IMI de ${imiPct(m.imi_rate)}`);
+  if (m.al_beds_per_100 != null) ctx.push(`${fmt.n(m.al_beds_per_100, 1)} camas de alojamento local por 100 casas`);
+  if (ctx.length) li.push(`${esc(m.name)}: ${ctx.join('; ')}. A valorização e a subida da renda acima são tuas: a tabela mostra como a TIR muda com elas.`);
+  li.push(`IRS sobre as rendas: ${fmt.pct(y1.irsRate, 0)} no 1.º ano — 10% para rendas até 2 300 €/mês até 2029; depois, ou acima disso, 25% (15% com contratos de 5 a 10 anos, 10% com 10 ou mais). Sobre a renda menos IMI, condomínio e manutenção; os juros do crédito não se deduzem. Mais-valia na venda: metade do ganho à tua taxa marginal (${fmt.n(o.marginal * 100, 0)}%), sem os coeficientes de desvalorização da moeda — por isso o imposto está por excesso.`);
+  li.push(`IMT e Imposto do Selo de 2.ª habitação ou para arrendar${o.ra ? ' (escalões das regiões autónomas)' : ''}; IMI ${o.vpt ? 'sobre o VPT que indicaste' : 'sobre o preço (por excesso: o VPT costuma ser mais baixo)'}. A subida da renda por omissão é o coeficiente legal de ${RENT_COEF.year} (${fmt.spct(RENT_COEF.value - 1, 2)}): o máximo para um contrato em curso.`);
+  li.push('Fora das contas: obras e mobília, seguros de vida do crédito, comissões bancárias, AIMI (património acima de 600 mil € de VPT), inquilinos que não pagam, mudanças de lei. Não é aconselhamento financeiro nem fiscal.');
+  out.innerHTML = `${warn.length ? `<p class="banner">⚠ ${warn.join('; ')}.</p>` : ''}<div class="stats">${tiles.join('')}</div>
+    <p class="muted" style="margin:14px 0 4px"><b>Sensibilidade</b>: TIR conforme a valorização da casa e a taxa do crédito</p>${sens}${yrs}
+    <ul class="read">${li.map((t) => `<li>${t}</li>`).join('')}</ul>`;
+}
+function initInvest() {
+  const f = $('#inv-form');
+  try { const v = JSON.parse(localStorage.getItem(INV_KEY) || 'null'); if (v) Object.entries(v).forEach(([k, x]) => { if (x != null && f[k]) f[k].value = x; }); } catch { /* */ }
+  f.addEventListener('submit', (e) => { e.preventDefault(); invRender(); });
+  f.addEventListener('change', (e) => { if (f.conc.value.trim()) invRender(); });
+  $('#inv-clear').addEventListener('click', () => { f.reset(); try { localStorage.removeItem(INV_KEY); } catch { /* */ } $('#inv-out').innerHTML = ''; });
+  $('#inv-out').addEventListener('click', (e) => { const a = e.target.closest('a[data-d]'); if (a) { e.preventDefault(); select(a.dataset.d); } });
+  if (f.conc.value.trim()) invRender();
+}
 function initImovel() {
   $('#im-disclaimer').innerHTML = IM_DISCLAIMER;
   $('#im-conc').innerHTML = MUNIS.map((m) => `<option value="${esc(m.name)}"></option>`).join('');
@@ -1982,6 +2107,8 @@ function renderSources() {
     ...ent(at).map(([k, v]) => ['Finanças (AT)', k, String(v)]),
     ...(ine.geo ? [['Fronteiras', 'concelhos', String(ine.geo)]] : [])].filter((r) => !r[2].startsWith('sem código'));
   if (!all.length) { $('#sources').hidden = true; return; }
+  // séries que deixaram de ser atualizadas na fonte (ex.: mudança de código ou de base), sem dar erro
+  const stale = (META.stale || []).filter((r) => r && r.key);
   const bad = all.filter((r) => /^(CACHE|ERRO|AVISO)/.test(r[2]));
   const cache = bad.filter((r) => r[0] === 'INE' && r[2].startsWith('CACHE'));
   const day = META.built_at.slice(0, 10);
@@ -1992,11 +2119,13 @@ function renderSources() {
     head = `Fontes atualizadas em ${day}${old ? `; ${old} ${old === 1 ? 'série usa' : 'séries usam'} os dados do último build que a obteve` : ''}${err ? `; ${err} ${err === 1 ? 'indicador opcional' : 'indicadores opcionais'} com erro (fora do painel)` : ''}.`;
   }
   else head = `✓ Todas as fontes atualizadas em ${day}.`;
+  if (stale.length) head += ` ⚠ ${stale.length} ${stale.length === 1 ? 'série parece parada' : 'séries parecem paradas'} na fonte (último dado mais antigo do que o normal).`;
   $('#sources').hidden = false;
-  $('#sources').classList.toggle('warn', cache.length > 0);
+  $('#sources').classList.toggle('warn', cache.length > 0 || stale.length > 0);
   $('#sources-sum').innerHTML = `${esc(head)} ${info('sources')}`;
   const ok = all.length - bad.length;
-  $('#sources-body').innerHTML = `<p class="muted">${ok} de ${all.length} fontes descarregadas neste build.</p>` + (bad.length
+  const staleTxt = stale.length ? `<p class="muted">Séries paradas: ${stale.map((r) => `${esc(r.source)} ${esc(r.key)} (último período ${esc(qpt(r.last))}, há ${r.months} meses; normal até ${r.limit})`).join('; ')}. A fonte pode ter mudado de código ou de base: os números que dependem destas séries podem estar desatualizados.</p>` : '';
+  $('#sources-body').innerHTML = `<p class="muted">${ok} de ${all.length} fontes descarregadas neste build.</p>${staleTxt}` + (bad.length
     ? `<div class="table-wrap"><table class="ol-table"><thead><tr><th>Fonte</th><th>Indicador</th><th>Estado</th></tr></thead><tbody>${bad.map((r) =>
       `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td style="text-align:left">${esc(r[2].slice(0, 140))}</td></tr>`).join('')}</tbody></table></div>` : '');
 }
@@ -2005,6 +2134,8 @@ const TABS = {
   mercado: ['summary', 'national', 'changes', 'mapsec', 'detail', 'compare', 'ranking'],
   seguir: ['follow'],
   comprar: ['afford'],
+  arrendar: ['rent'],
+  investir: ['invest'],
   imovel: ['imovel'],
   perspetivas: ['outlook'],
   metodo: ['howto', 'backtest'],
@@ -2075,12 +2206,15 @@ async function main() {
   safe('painel nacional', renderNational);
   safe('resumo', renderSummary);
   safe('o meu imóvel', initImovel);
+  safe('investir', initInvest);
+  safe('arrendar', initRent);
   safe('comprar casa', initAfford);
   // indicadores do mapa sem nenhum valor nesta build (ex.: fonte que falhou) não aparecem na lista
   safe('métricas vazias', () => {
     [...$('#metric').options].forEach((o) => {
       const g = METRIC_VAL[o.value];
-      if (g && !MUNIS.some((m) => g(m) != null)) o.remove();
+      // 'ru' depende do rendimento indicado em "Arrendar": fica sempre (sem rendimento, o mapa fica cinzento)
+      if (g && o.value !== 'ru' && !MUNIS.some((m) => g(m) != null)) o.remove();
     });
   });
   safe('seguidos', renderFollow);

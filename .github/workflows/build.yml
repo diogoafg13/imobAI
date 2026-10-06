@@ -109,6 +109,17 @@ jobs:
           # endereço do site (ligações dos feeds RSS por concelho)
           IMOPT_SITE_URL: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
         run: python -m imopt build
+      - name: Avisar de séries paradas na fonte
+        if: steps.gate.outputs.run == 'true'
+        # Uma fonte que deixa de atualizar sem dar erro (mudança de código ou de base, como o IHPC em 2026) aparece
+        # como aviso no resumo do workflow; não pára o build.
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+          p = pathlib.Path("data/clean/sources_status.json")
+          for r in (json.loads(p.read_text()) if p.exists() else {}).get("stale", []):
+              print(f"::warning title=Série parada::{r['source']} {r['key']}: último período {r['last']} (há {r['months']} meses; normal até {r['limit']}). Ver se a fonte mudou de código ou de base.")
+          PY
       - name: Restaurar backtest.json em cache (se existir)
         if: steps.gate.outputs.run == 'true'
         # site/data/ nunca fica no repositório: cada build parte do zero. Sem isto, um deploy

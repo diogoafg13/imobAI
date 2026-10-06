@@ -106,3 +106,39 @@ test('IMT 2026 Açores e Madeira: escalões e parcelas publicados (ofício circu
   near(c.imtOf(250000, 'hpp', false, true), 0.07 * 250000 - 13072.48);
   assert.ok(c.imtOf(250000, 'hpp', false, true) < c.imtOf(250000, 'hpp', false));
 });
+
+test('IRS sobre rendas 2026: 10% até 2 300 €/mês até 2029; 25% com reduções por duração', () => {
+  assert.equal(c.irsRentRate(1000, 1, 2026), 0.10);
+  assert.equal(c.irsRentRate(1000, 1, 2030), 0.25);
+  assert.equal(c.irsRentRate(2500, 1, 2026), 0.25);
+  assert.equal(c.irsRentRate(2500, 5, 2026), 0.15);
+  assert.equal(c.irsRentRate(2500, 12, 2026), 0.10);
+  assert.equal(c.RENT_COEF.value, 1.0256);
+});
+
+test('TIR: fluxos simples', () => {
+  near(c.irr([-100, 110]), 0.10, 1e-6);
+  near(c.irr([-1000, 100, 100, 1100]), 0.10, 1e-6);
+  assert.equal(c.irr([100, 100]), null);
+});
+
+test('investimento: contas do 1.º ano, venda e TIR', () => {
+  const o = { price: 250000, down: 0.2, rate: 3.07, years: 30, rent: 1000, rentGrowth: 0.0256, priceGrowth: 0.02, vacancy: 1,
+    condo: 30, ins: 150, maint: 0.05, imiRate: 0.003, contractYears: 5, hold: 10, sellCost: 0.05, marginal: 0.35, closing: 1000, startYear: 2026 };
+  const r = c.invest(o);
+  near(r.cash0, 50000 + c.imtOf(250000, 'sec', false) + 2000 + 1200 + 1000);
+  const y1 = r.rows[0];
+  near(y1.gross, 11000); near(y1.imi, 750); near(y1.irs, (11000 - 750 - 360 - 550) * 0.10);
+  near(y1.debt, r.pay * 12, 0.05);
+  near(y1.cf, 11000 - 750 - 360 - 550 - 150 - y1.irs - y1.debt, 0.05);
+  near(r.sale, 250000 * 1.02 ** 10, 0.01);
+  near(r.cgt, Math.max(0, r.gain) * 0.5 * 0.35, 0.01);
+  // a TIR anula o valor atual dos fluxos
+  near(r.flows.reduce((a, f, t) => a + f / (1 + r.irr) ** t, 0), 0, 0.5);
+  // sem crédito: a dívida é zero e a rentabilidade sobre o capital é a líquida da casa
+  const cashOnly = c.invest({ ...o, down: 1 });
+  assert.equal(cashOnly.rows[0].debt, 0); assert.ok(cashOnly.irr > 0);
+  // mais renda -> mais TIR; mais juros -> menos TIR
+  assert.ok(c.invest({ ...o, rent: 1200 }).irr > r.irr);
+  assert.ok(c.invest({ ...o, rate: 5 }).irr < r.irr);
+});

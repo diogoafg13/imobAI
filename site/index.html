@@ -23,6 +23,8 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     <a href="#mercado" data-tab="mercado" role="tab">Mercado</a>
     <a href="#seguir" data-tab="seguir" role="tab">A seguir<span id="follow-n"></span></a>
     <a href="#comprar" data-tab="comprar" role="tab">Comprar casa</a>
+    <a href="#arrendar" data-tab="arrendar" role="tab">Arrendar</a>
+    <a href="#investir" data-tab="investir" role="tab">Investir</a>
     <a href="#imovel" data-tab="imovel" role="tab">O meu imóvel</a>
     <a href="#perspetivas" data-tab="perspetivas" role="tab">Perspetivas</a>
     <a href="#metodo" data-tab="metodo" role="tab">Método</a>
@@ -103,6 +105,49 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     <div id="aff-body"></div>
   </section>
 
+  <section id="rent" class="card">
+    <div class="row"><h2>Arrendar: onde a renda cabe no teu rendimento <button type="button" class="info" data-k="rentfit" aria-label="Sobre esta secção">ⓘ</button></h2></div>
+    <p class="muted">Indica o rendimento líquido do agregado e a casa que procuras: vês os concelhos onde a renda mediana dos novos contratos fica dentro do limite. Os valores ficam só neste browser.</p>
+    <form id="rent-form" class="aff-form im-form" autocomplete="off">
+      <label>Rendimento líquido do agregado (€/mês) <input name="inc" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 2000"></label>
+      <label>Área (m²) <input name="area" type="number" min="10" max="400" step="any" inputmode="numeric" placeholder="70"></label>
+      <label>Limite (% do rendimento) <input name="lim" type="number" min="10" max="80" step="any" inputmode="decimal" placeholder="35"></label>
+      <label>Renda atual, se já arrendas (€/mês) <input name="cur" type="number" min="0" step="any" inputmode="numeric" placeholder="opcional"></label>
+      <span class="im-buttons"><button type="submit" class="btn">Ver</button></span>
+    </form>
+    <div id="rent-out"></div>
+  </section>
+
+  <section id="invest" class="card">
+    <div class="row"><h2>Investir para arrendar: as contas <button type="button" class="info" data-k="invest" aria-label="Sobre a calculadora de investimento">ⓘ</button></h2></div>
+    <p class="muted">Escolhe um concelho: o preço e a renda partem das medianas do INE, e podes mudar tudo. Inclui IMT, Imposto do Selo, IMI do concelho, IRS sobre rendas (regras de 2026), crédito e venda no fim. Os valores ficam só neste browser.</p>
+    <form id="inv-form" class="aff-form im-form" autocomplete="off">
+      <label>Concelho <input name="conc" list="im-conc" placeholder="ex.: Porto"></label>
+      <label>Área (m²) <input name="area" type="number" min="10" max="2000" step="any" inputmode="numeric" placeholder="90"></label>
+      <label>Preço (€) <input name="price" type="number" min="1000" step="any" inputmode="numeric" placeholder="mediana × área"></label>
+      <label>Renda (€/mês) <input name="rent" type="number" min="0" step="any" inputmode="numeric" placeholder="mediana × área"></label>
+      <label>Entrada (%) <input name="down" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="20"></label>
+      <label>Taxa do crédito (%) <input name="rate" type="number" min="0" max="15" step="any" inputmode="decimal" placeholder="taxa atual estimada"></label>
+      <label>Prazo do crédito (anos) <input name="years" type="number" min="1" max="40" step="any" inputmode="numeric" placeholder="30"></label>
+      <label>Vender ao fim de (anos) <input name="hold" type="number" min="1" max="40" step="any" inputmode="numeric" placeholder="10"></label>
+      <label>Valorização da casa (%/ano) <input name="pg" type="number" min="-20" max="30" step="any" inputmode="decimal" placeholder="0"></label>
+      <label>Subida da renda (%/ano) <input name="rg" type="number" min="-20" max="30" step="any" inputmode="decimal" placeholder="2,56"></label>
+      <details class="im-assume"><summary>Custos e impostos (editáveis)</summary>
+        <label>Meses vazio por ano <input name="vac" type="number" min="0" max="12" step="any" placeholder="1"></label>
+        <label>Condomínio (€/mês) <input name="condo" type="number" min="0" step="any" placeholder="30"></label>
+        <label>Seguro (€/ano) <input name="ins" type="number" min="0" step="any" placeholder="150"></label>
+        <label>Manutenção (% da renda) <input name="maint" type="number" min="0" max="50" step="any" placeholder="5"></label>
+        <label>VPT (€, caderneta) <input name="vpt" type="number" min="0" step="any" placeholder="opcional"></label>
+        <label>Duração do contrato (anos) <input name="cy" type="number" min="1" max="30" step="any" placeholder="1"></label>
+        <label>Escritura e registos (€) <input name="closing" type="number" min="0" step="any" placeholder="1000"></label>
+        <label>Custos de venda (% do preço) <input name="sell" type="number" min="0" max="20" step="any" placeholder="5"></label>
+        <label>Taxa marginal de IRS (%) <input name="marg" type="number" min="0" max="60" step="any" placeholder="35"></label>
+      </details>
+      <span class="im-buttons"><button type="submit" class="btn">Calcular</button> <button type="button" id="inv-clear" class="btn">Repor</button></span>
+    </form>
+    <div id="inv-out"></div>
+  </section>
+
   <section id="imovel" class="card">
     <div class="row"><h2>O meu imóvel: análise não vinculativa <button type="button" class="info" data-k="imovel" aria-label="Sobre a análise do imóvel">ⓘ</button></h2></div>
     <div id="im-disclaimer" class="disclaimer"></div>
@@ -152,6 +197,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <option value="score">Score de risco (relativo)</option>
         <option value="price">Preço €/m²</option>
         <option value="yield">Rendibilidade bruta</option>
+        <option value="ny">Rendibilidade líquida (investir)</option>
         <option value="g1y">Variação preço 12 meses</option>
         <option value="g1yr">Variação 12 meses descontada a inflação</option>
         <option value="fc">Previsão próximos 12 meses</option>
@@ -160,6 +206,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <option value="ef">Esforço de compra</option>
         <option value="br">Prestação face à renda</option>
         <option value="rf">Esforço de arrendar</option>
+        <option value="ru">Renda face ao teu rendimento (Arrendar)</option>
         <option value="tg">Turismo: hóspedes num ano</option>
         <option value="al">Alojamento local</option>
         <option value="vac">Casas vagas (Censos 2021)</option>

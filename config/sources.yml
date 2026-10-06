@@ -235,24 +235,28 @@ ine:
       level: municipality
       dims: {dim_3: "T", dim_4: "T", dim_5: "T"}
       optional: true
+      static: true            # Censos 2021: só muda com o próximo censo (sem alerta de série parada)
     census_secondary:
       varcd: "0012502"
       description: Alojamentos de residência secundária, Censos 2021 (N.º)
       level: municipality
       dims: {dim_3: "2", dim_4: "T", dim_5: "T"}
       optional: true
+      static: true            # Censos 2021: só muda com o próximo censo (sem alerta de série parada)
     census_vacant_market:
       varcd: "0012502"
       description: Alojamentos vagos para venda ou arrendamento, Censos 2021 (N.º)
       level: municipality
       dims: {dim_3: "3", dim_4: "T", dim_5: "T"}
       optional: true
+      static: true            # Censos 2021: só muda com o próximo censo (sem alerta de série parada)
     census_vacant_other:
       varcd: "0012502"
       description: Alojamentos vagos por outros motivos, Censos 2021 (N.º)
       level: municipality
       dims: {dim_3: "4", dim_4: "T", dim_5: "T"}
       optional: true
+      static: true            # Censos 2021: só muda com o próximo censo (sem alerta de série parada)
     irs_median:
       varcd: "0012757"          # Mediana do rendimento bruto declarado deduzido do IRS liquidado por sujeito passivo (€), anual 2018+
       description: Rendimento declarado mediano após IRS, por sujeito passivo (€/ano)
