@@ -174,3 +174,31 @@ def credit_flow(volume: pd.DataFrame | None, pure: pd.DataFrame | None = None) -
             out["reneg_share"] = float(1 - pr[last] / roll[last])
             out["series_pure"] = [[label(int(i)), round(float(x), 1)] for i, x in pr.dropna().items() if i % 3 == 2 or i == last]
     return out
+
+
+FIX_LABELS = {"f": "variável ou fixa até 1 ano", "i": "fixa de 1 a 5 anos", "o": "fixa de 5 a 10 anos", "p": "fixa mais de 10 anos"}
+
+
+def rate_mix(series: dict[str, pd.DataFrame | None], share_variable: pd.DataFrame | None = None) -> dict | None:
+    """Taxa média dos novos créditos à habitação por prazo de fixação inicial (BCE, MIR) e parte dos créditos novos a
+    taxa variável (RAI): último mês e o mesmo mês um ano antes."""
+    def last_and_ago(df):
+        if df is None or df.empty:
+            return None
+        d = df.dropna(subset=["value"]).sort_values("period")
+        if d.empty:
+            return None
+        p, v = str(d["period"].iloc[-1]), float(d["value"].iloc[-1])
+        y, m = int(p[:4]), p[5:7]
+        ago = d.loc[d["period"].astype(str) == f"{y - 1}-{m}", "value"]
+        return {"period": p, "value": v, "year_ago": float(ago.iloc[0]) if len(ago) else None}
+    rates = {k: x for k, df in series.items() if (x := last_and_ago(df)) is not None}
+    sv = last_and_ago(share_variable)
+    if not rates and sv is None:
+        return None
+    out = {"rates": {k: {**v, "label": FIX_LABELS.get(k, k)} for k, v in rates.items()}}
+    if sv is not None:
+        # a série do BCE vem em percentagem (0-100)
+        out["share_variable"] = {**sv, "value": sv["value"] / 100 if sv["value"] > 1 else sv["value"],
+                                 "year_ago": (sv["year_ago"] / 100 if sv["year_ago"] and sv["year_ago"] > 1 else sv["year_ago"])}
+    return out

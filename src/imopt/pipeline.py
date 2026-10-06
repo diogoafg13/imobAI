@@ -12,7 +12,7 @@ import duckdb
 import pandas as pd
 import yaml
 
-from . import al, changes, freshness, geo, housing, imi, ine, macro, outlook, parishes, scoring, tracking
+from . import al, changes, discover, freshness, osm, geo, housing, imi, ine, macro, outlook, parishes, scoring, tracking
 
 log = logging.getLogger("imopt")
 ROOT = Path(__file__).resolve().parents[2]
@@ -190,7 +190,8 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
                   forecast_log: Path | None = None, parish_geojson: dict | None = None,
                   ine_summary: dict | None = None, imi_rates: pd.DataFrame | None = None,
                   imi_status: str | None = None, al_points: pd.DataFrame | None = None,
-                  al_status: str | None = None, stale: list[dict] | None = None) -> dict:
+                  al_status: str | None = None, stale: list[dict] | None = None,
+                  osm_points: pd.DataFrame | None = None, osm_status: str | None = None) -> dict:
     sales = municipal(frames.get("sales_price_12m"))
     if sales is None or sales.empty:
         raise RuntimeError("sem dados de preços por concelho: nada para calcular")
@@ -303,7 +304,8 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
         "latest_price_period": latest_period,
         "n_municipalities": len(munis),
         "sources": {"ine": ine_status, "macro": macro_status, **({"at": {"imi_rates": imi_status}} if imi_status else {}),
-                    **({"turismo": {"al_rnal": al_status}} if al_status else {})},
+                    **({"turismo": {"al_rnal": al_status}} if al_status else {}),
+                    **({"osm": {"osm_points": osm_status}} if osm_status else {})},
         "ine_summary": ine_summary,
         "stale": stale or [],
         "geo_unmatched": (geo_unmatched or [])[:20],
@@ -357,6 +359,18 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
                     log.info("alojamento local: %.0f%% dos registos ligados a uma freguesia", 100 * agg.attrs.get("matched", 0))
         except Exception as e:  # noqa: BLE001
             log.warning("alojamento local por freguesia falhou: %s", e)
+        try:      # escolas, saúde e estações (OpenStreetMap) por freguesia
+            if osm_points is not None and not ptab.empty:
+                cnt = osm.by_parish(osm_points, parish_geojson)
+                if cnt is not None:
+                    ptab = ptab.merge(cnt, left_on="code", right_index=True, how="left")
+                    for k in ("school", "health", "station"):
+                        ptab[f"n_{k}"] = ptab[f"n_{k}"].fillna(0)
+                    if "census_total" in ptab:
+                        for k in ("school", "health"):
+                            ptab[f"{k}_per_1000"] = (ptab[f"n_{k}"] / ptab["census_total"] * 1000).where(ptab["census_total"] > 0)
+        except Exception as e:  # noqa: BLE001
+            log.warning("OpenStreetMap por freguesia falhou: %s", e)
         ptab = parishes.add_neighbours(ptab, parish_geojson)
         rows = [{k: _clean(v) for k, v in r.items()} for r in ptab.to_dict("records")]
         geo.dump({"period": ptab.attrs.get("period"), "with_map": False, "rows": rows}, str(out_dir / "freguesias.json"))
@@ -391,6 +405,8 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
         names = {}
     imi_rates, imi_status = imi.ingest(cfg.get("imi"), data_dir, today, names)
     al_points, al_status = al.ingest(cfg.get("al"), data_dir, today)
+    disc = discover.run(cfg.get("discover"), data_dir)
+    osm_points, osm_status = osm.ingest(cfg.get("osm"), data_dir)
     stale = freshness.check(frames, macro_frames, cfg)
     for r in stale:
         log.warning("série parada: %s %s — último período %s (há %d meses; normal até %d)", r["source"], r["key"],
@@ -400,7 +416,7 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
         (data_dir / "clean").mkdir(parents=True, exist_ok=True)
         (data_dir / "clean" / "sources_status.json").write_text(_json.dumps(
             {"date": today, "ine": ine_status, "macro": macro_status, "at": {"imi_rates": imi_status},
-             "turismo": {"al_rnal": al_status}, "stale": stale},
+             "turismo": {"al_rnal": al_status}, "osm": {"osm_points": osm_status}, "stale": stale, "discover": disc},
             ensure_ascii=False, indent=1), encoding="utf-8")
     except Exception as e:  # noqa: BLE001
         log.warning("estado das fontes não gravado: %s", e)
@@ -435,7 +451,8 @@ def run(data_dir: str | Path | None = None, out_dir: str | Path | None = None, s
     return build_outputs(frames, macro_frames, ine_status, macro_status, out_dir, geojson, geo_unmatched=unmatched,
                          forecast_log=data_dir / "clean" / "forecast_log.parquet", parish_geojson=parish_gj,
                          ine_summary=ine_summary, imi_rates=imi_rates, imi_status=imi_status,
-                         al_points=al_points, al_status=al_status, stale=stale)
+                         al_points=al_points, al_status=al_status, stale=stale,
+                         osm_points=osm_points, osm_status=osm_status)
 
 
 def ine_live(status: dict) -> dict:

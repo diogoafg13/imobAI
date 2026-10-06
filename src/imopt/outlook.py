@@ -653,6 +653,8 @@ def build(frames: dict, macro_frames: dict, feats: pd.DataFrame | None, geojson:
             {k: (monthly_to_quarterly_muni(muni(frames.get(f"valuation_{t}"))), muni(frames.get(f"valuation_count_{t}")))
              for k, t in (("apt", "apartments"), ("house", "houses"))}))
     part("credit", lambda: market.credit_flow(macro_frames.get("mortgage_volume_pt"), macro_frames.get("mortgage_volume_pure_pt")))
+    part("rate_mix", lambda: market.rate_mix({k: macro_frames.get(f"mortgage_rate_pt_fix_{k}") for k in ("f", "i", "o", "p")},
+                                             macro_frames.get("mortgage_share_variable_pt")))
     part("europe", lambda: europe.compare(macro_frames.get("eurostat_hpi_eu"), macro_frames.get("eurostat_hicp_eu")))
     part("afford_hist", lambda: housing.affordability_history(valuation, macro_frames.get("mortgage_rate_pt"),
                                                               frames.get("income"), frames.get("irs_median")))

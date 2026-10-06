@@ -468,6 +468,29 @@ macro:
     url: https://data-api.ecb.europa.eu/service/data/MIR/M.PT.B.A2C.A.B.A.2250.EUR.P
     params: {format: csvdata}
     optional: true
+  # Taxa dos novos créditos à habitação por prazo de fixação inicial da taxa (MIR, IR_FIX no 5.º campo): F = variável
+  # ou fixa até 1 ano (confirmado no BCE), I = 1 a 5 anos, O = 5 a 10, P = mais de 10 (não confirmados ao vivo:
+  # opcionais, o estado das fontes diz se respondem). E a parte dos créditos novos a taxa variável (RAI, SVLHPHH).
+  mortgage_rate_pt_fix_f:
+    url: https://data-api.ecb.europa.eu/service/data/MIR/M.PT.B.A2C.F.R.A.2250.EUR.N
+    params: {format: csvdata}
+    optional: true
+  mortgage_rate_pt_fix_i:
+    url: https://data-api.ecb.europa.eu/service/data/MIR/M.PT.B.A2C.I.R.A.2250.EUR.N
+    params: {format: csvdata}
+    optional: true
+  mortgage_rate_pt_fix_o:
+    url: https://data-api.ecb.europa.eu/service/data/MIR/M.PT.B.A2C.O.R.A.2250.EUR.N
+    params: {format: csvdata}
+    optional: true
+  mortgage_rate_pt_fix_p:
+    url: https://data-api.ecb.europa.eu/service/data/MIR/M.PT.B.A2C.P.R.A.2250.EUR.N
+    params: {format: csvdata}
+    optional: true
+  mortgage_share_variable_pt:
+    url: https://data-api.ecb.europa.eu/service/data/RAI/M.PT.SVLHPHH.EUR.MIR.Z
+    params: {format: csvdata}
+    optional: true
   eurostat_hpi:
     url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hpi_q
     params: {geo: PT, purchase: TOTAL, unit: I15_Q, format: JSON, lang: EN}
@@ -518,6 +541,19 @@ imi:
 al:
   urls:
     - https://dadosabertos.turismodeportugal.pt/api/download/v1/items/4e62eb1977564991bd01e61d7aa8266f/csv?layers=6
+
+# Escolas, saúde e estações por freguesia: OpenStreetMap pela API Overpass (© contribuidores do OpenStreetMap, ODbL).
+# Três consultas, no máximo uma vez por semana (ver imopt/osm.py).
+osm:
+  url: https://overpass-api.de/api/interpreter
+
+# Descoberta (imopt/discover.py): guarda o catálogo do INE e a descrição de serviços de mapas no branch `data`, para
+# confirmar códigos e camadas antes de os usar. Não mexe nos números do painel.
+discover:
+  ine_ranges: ["0012400-0012700", "0013000-0013500", "0011600-0011800"]
+  max_requests: 400
+  services:
+    apa_inundacoes: https://sniambgeoogc.apambiente.pt/getogc/rest/services/SNIAmb/Diretiva200760CE_2c/MapServer
 
 geo:
   # Fronteiras dos concelhos (E-REDES / OpenDataSoft, licença aberta).

@@ -473,6 +473,18 @@ preço de mercado).
   parque habitacional do INE (parado em 2022) e o índice de preços da habitação do INE (parado em 2025T4; o painel usa
   o do Eurostat, em dia).
 
+### Dados extra gratuitos (taxas por tipo, escolas/saúde/estações, descoberta de fontes)
+
+- **Taxa dos novos créditos por prazo de fixação** (BCE, MIR: variável/até 1 ano, 1–5, 5–10, mais de 10 anos) e
+  **parte dos créditos a taxa variável** (RAI): em Perspetivas, no bloco do crédito.
+- **Escolas, saúde e estações por freguesia** (`imopt/osm.py`): OpenStreetMap pela API Overpass (© contribuidores do
+  OpenStreetMap, ODbL), uma vez por semana; contagens na tabela de freguesias, por 1000 casas no mapa, e no "O meu
+  imóvel". É o que está no mapa: pode faltar alguma coisa no interior.
+- **Descoberta** (`imopt/discover.py`): guarda o catálogo do INE e a descrição de serviços de mapas (zonas inundáveis
+  da APA) no branch `data`, para confirmar códigos novos (séries paradas, idade e estado dos edifícios dos Censos) e
+  camadas antes de as usar. Não entra nos números.
+- Risco sísmico: não há uma fonte aberta e estruturada por concelho; fica de fora.
+
 ### Organização do site em separadores
 
 O site passou a ter seis separadores: **Mercado** (resumo, visão nacional, o que mudou, mapa, detalhe,

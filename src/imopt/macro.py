@@ -199,6 +199,11 @@ FETCHERS = {
     "mortgage_rate_pt": fetch_euribor,     # mesmo formato CSV da API de dados do BCE
     "mortgage_volume_pt": fetch_euribor,
     "mortgage_volume_pure_pt": fetch_euribor,
+    "mortgage_rate_pt_fix_f": fetch_euribor,
+    "mortgage_rate_pt_fix_i": fetch_euribor,
+    "mortgage_rate_pt_fix_o": fetch_euribor,
+    "mortgage_rate_pt_fix_p": fetch_euribor,
+    "mortgage_share_variable_pt": fetch_euribor,
     "eurostat_hpi": fetch_eurostat_hpi,
     "eurostat_hicp": fetch_eurostat_hicp,
     "bis_credit_gap": fetch_bis_credit_gap,
