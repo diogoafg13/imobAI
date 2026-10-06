@@ -290,12 +290,94 @@
                                 </div>
                             </div>
                             <div class="bodyBoxInnerElement">
-                                <script>function onLoadBody () {}</script>
-<h1>Aviso</h1>
+                                
+<script language="JavaScript">
 
-<p>Por motivos de ordem t&eacute;cnica, n&atilde;o &eacute; poss&iacute;vel satisfazer o seu pedido neste momento.</p>
+	var submited = false;
 
-<p>Por favor tente mais tarde.</p>
+	function isSelectEmpty(select) {
+		return select.selectedIndex < 0 || isEmpty(select.options[select.selectedIndex].value);
+	}
+	
+	function onLoadBody () {
+					alert( 'Não existem taxas IMI definidas para o ano e Distrito que seleccionou.' );
+			}
+
+	function writeIt(str) {
+		document.write(str);
+	}
+
+</script>
+
+<p align="center">
+	<font class=body-navigation1><a class=body-navigation1 href="javascript:post('/portal-dgci/menuServicos.jsp');">Servi&ccedil;os Online</a> &gt; </font>
+	<font class=body-navigation2><a class=body-navigation2 href="javascript:post('/de/menuGeral.jsp');">Contribuintes</a> &gt;
+	<a class=body-navigation2 href="javascript:post('/de/menuConsultar.jsp');">Consultar</a> &gt;
+    <a class=body-navigation2 href="javascript:post('/de/menuConsPatrimonio.jsp');">Patrim&oacute;nio</a> &gt;
+    <a class=body-navigation2 href="javascript:post('/imi/consultarTaxasIMIForm.jsp');"> Consultar Taxas IMI/CA Por Município</a></font>
+</p>
+
+
+<p class="body-navigation1">Consultar Taxas IMI/CA Por Município e Ano</p>
+<h2>Consulta de Taxas IMI/CA </h2>
+<table cellspacing="1" cellpadding="0" class="eT" align="center">
+	<tr class="eTR">
+					<td class="hTD"><b>Lista das taxas IMI por Município do Distrito ANGRA DO HEROISMO para o ano 2026</b></td>
+			</tr>
+	<tr class="iTR">
+		<td>
+							<strong><script>writeIt('Não existem taxas IMI definidas para o ano e Distrito que seleccionou.');</script></strong>
+					</td>
+	</tr>
+</table>
+
+<style>
+
+	.table_space {
+		padding: 12px 5px 0 8px;
+	}
+
+	.hTD {
+		margin-top: 0;
+		margin-bottom: 0;
+		font-size: 12px;
+		font-weight: bold;
+		height: 30px;
+		line-height: 20px;
+	}
+
+
+	select {
+		background: #fff;
+		height: 26px !important;
+		border: 1px solid #c5c9cb;
+		font-size: 14px;
+		color: #798b8d;
+		margin: 4px 0px 0px 0px;
+		padding: 0;
+		min-width: 60px;
+	}
+
+	.ccTD {
+		padding: 0 5px 0 8px;
+		color: #0084cc;
+		font-size: 12px;
+		background: #f2f9fb;
+		vertical-align: middle;
+		line-height: 25px;
+	}
+
+
+	.ui-dialog .ui-dialog-content {
+		position: relative;
+		background: none;
+		overflow: auto;
+		width: 420px !important;
+		height: 110px !important;
+	}
+
+
+</style>
 
                             </div>
                             <div style="clear:both"></div>
