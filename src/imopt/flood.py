@@ -17,6 +17,7 @@ import datetime as dt
 import json
 import logging
 import re
+import time
 from pathlib import Path
 
 import requests
@@ -39,7 +40,7 @@ def pick_return_period(values: list) -> object | None:
 
 
 def _query(url: str, params: dict) -> dict:
-    r = requests.get(f"{url.rstrip('/')}/query", params={"f": "json", **params}, headers=UA, timeout=300)
+    r = requests.get(f"{url.rstrip('/')}/query", params={"f": "json", **params}, headers=UA, timeout=180)
     r.raise_for_status()
     js = r.json()
     if "error" in js:
@@ -92,7 +93,10 @@ def ingest(cfg: dict | None, data_dir: Path) -> tuple[dict | None, str]:
         if rp is None:
             raise ValueError(f"sem períodos de retorno ({field}: {values[:10]})")
         feats, offset = [], 0
+        deadline = time.monotonic() + float(cfg.get("budget_s", 600))
         while True:
+            if time.monotonic() > deadline:
+                raise TimeoutError(f"limite de tempo ao fim de {len(feats)} polígonos (tenta no próximo build)")
             page = _query(url, {"where": _where(field, rp), "outFields": f"{field},designa,local", "returnGeometry": "true",
                                 "outSR": 4326, "geometryPrecision": 5, "maxAllowableOffset": 0.00005,
                                 "resultOffset": offset, "resultRecordCount": PAGE, "orderByFields": "objectid"})

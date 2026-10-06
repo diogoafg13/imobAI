@@ -106,13 +106,17 @@ def summarize(df) -> dict:
 def ine_probe(cfg: dict, ine_cfg: dict, data_dir: Path, today: str) -> str:
     path = data_dir / "clean" / "ine_probe.json"
     done = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
-    notes = []
+    notes, fails = [], 0
+    deadline = time.monotonic() + float(cfg.get("probe_budget_s", 600))   # o build não fica preso à espera do INE
     for varcd in cfg.get("ine_probe") or []:
         varcd = str(varcd)
         if varcd in done and "error" not in done[varcd]:
             continue
+        if time.monotonic() > deadline or fails >= 2:
+            notes.append(f"{varcd}: fica para o próximo build")
+            continue
         try:
-            payload = ine.fetch(ine_cfg["base_url"], varcd, ine_cfg.get("lang", "PT"), None, retries=2, timeout=(10, 300))
+            payload = ine.fetch(ine_cfg["base_url"], varcd, ine_cfg.get("lang", "PT"), None, retries=1, timeout=(10, 240))
             df = ine.parse_response(payload, varcd)
             if df.empty:
                 raise ValueError("resposta vazia")
@@ -121,9 +125,11 @@ def ine_probe(cfg: dict, ine_cfg: dict, data_dir: Path, today: str) -> str:
             df.to_parquet(out, index=False)
             done[varcd] = {"probed": today, **summarize(df)}
             notes.append(f"{varcd}: {len(df)} linhas")
+            fails = 0
         except Exception as e:  # noqa: BLE001
             done[varcd] = {"error": str(e)[:200]}
             notes.append(f"{varcd}: falhou")
+            fails += 1
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(done, ensure_ascii=False, indent=1), encoding="utf-8")
     return "; ".join(notes) or f"nada novo ({len(done)} já sondados)"

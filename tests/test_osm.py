@@ -29,3 +29,34 @@ def test_boxes_cover_portugal():
                      (37.74, -25.67), (38.53, -28.63), (39.70, -31.11)]:
         assert inside(lat, lon), (lat, lon)
     assert "[bbox:38,-9,39,-8]" in osm.query((38, -9, 39, -8))
+
+
+def test_ingest_keeps_tiles_and_completes_across_builds(tmp_path, monkeypatch):
+    import pandas as pd
+    calls = []
+
+    seq = iter(range(10**6))
+
+    class R:
+        def raise_for_status(self):
+            pass
+
+        def json(self):              # 40 escolas diferentes por quadrícula
+            return {"elements": [{"lat": 38 + next(seq) * 1e-5, "lon": -9.5, "tags": {"amenity": "school"}} for _ in range(40)]}
+
+    def post(url, data, headers, timeout):
+        calls.append(data["data"])
+        if len(calls) > 5:              # o servidor "cai" a meio do primeiro build
+            raise osm.requests.ConnectionError("504")
+        return R()
+
+    monkeypatch.setattr(osm.requests, "post", post)
+    monkeypatch.setattr(osm.time, "sleep", lambda s: None)
+    cfg = {"urls": ["http://x"], "budget_s": 600}
+    pts, st = osm.ingest(cfg, tmp_path)
+    assert pts is None and "faltam" in st and "continua" in st
+    calls.clear()
+    monkeypatch.setattr(osm.requests, "post", lambda url, data, headers, timeout: (calls.append(1), R())[1])
+    pts, st = osm.ingest(cfg, tmp_path)
+    assert st.startswith("ok") and len(calls) == len(osm.BOXES) - 5      # só pede as que faltavam
+    assert isinstance(pts, pd.DataFrame) and set(pts["kind"]) == {"school"}
