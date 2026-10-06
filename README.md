@@ -437,6 +437,21 @@ preço de mercado).
 - **RSS por concelho** (`imopt/feeds.py`, `data/rss/<DICO>.xml`): preços por trimestre, rendas por ano, mudanças
   de faixa e taxa de IMI, com identificadores fixos; ligação no separador "A seguir". `#c-<DICO>` abre a ficha.
 
+### Manutenção: contas do site testadas, valores com prazo e workflow
+
+- **Contas do site num ficheiro próprio** (`site/calc.js`, carregado antes do `app.js`): prestação, IMT e Imposto
+  do Selo, regras do Banco de Portugal, mediana de 12 meses centrada e projetada, escalões de rendimento. Testadas
+  em Node (`node --test tests/js/*.test.js`), também no build, a seguir ao `pytest`.
+- **Valores com prazo**: `TAX_YEAR` em `site/calc.js` diz o ano das tabelas de IMT/Imposto do Selo e das regras
+  do Banco de Portugal. Num ano posterior, o site avisa na calculadora e o build deixa um aviso no resumo do
+  workflow (sem parar o build). Atualizar com cada Orçamento do Estado.
+- **Açores e Madeira**: escalões do IMT 25% acima dos do continente, mesmas taxas (parcelas pela continuidade; os da
+  habitação própria conferem com o ofício circulado 40129/2026 da AT da Madeira); IMT Jovem até 413 174 €. A ficha
+  de cada concelho das regiões autónomas usa estas tabelas.
+- **Workflow**: `actions/checkout@v5` e `actions/setup-python@v6` (Node 24; o Node 20 foi retirado dos runners) e
+  `runs-on: ubuntu-24.04` fixo (o `ubuntu-latest` passa a Ubuntu 26 a 19/10/2026; mudar de propósito, depois de
+  testar).
+
 ### Organização do site em separadores
 
 O site passou a ter seis separadores: **Mercado** (resumo, visão nacional, o que mudou, mapa, detalhe,

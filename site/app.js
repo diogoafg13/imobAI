@@ -943,36 +943,6 @@ const BAND_ORDER_JS = { green: 0, amber: 1, red: 2 };
 // Calculado no browser com os parâmetros escolhidos; não entra em nenhum score.
 const AFF_KEY = 'imopt.afford.v1';
 const OWN_COST = 0.013;     // IMI (~0,3%) + manutenção e seguros (~1%) por ano, em % do preço
-// Banco de Portugal (Recomendação macroprudencial, contratos avaliados desde 1/08/2026): prestação calculada com a
-// taxa +1,5 p.p. até 45% do rendimento líquido (antes 50%; cada banco pode passar até 10% do crédito de cada semestre);
-// financiamento até 90% do valor na habitação própria e permanente e 80% nas outras finalidades; prazo até 40 anos
-// até aos 35 anos de idade e 35 anos acima disso. Na escala de cada rendimento do painel, os 45% do líquido são
-// ~36% do salário bruto (IRS e Segurança Social ~20%) e ~40% do rendimento após IRS (falta a Segurança Social, ~11%).
-const BDP = { dsti: 0.45, shock: 1.5, ltv: { hpp: 0.9, sec: 0.8 }, years: { young: 40, other: 35 } };
-const LIMIT = { wage: 0.36, irs: 0.40 };
-// IMT e Imposto do Selo na compra, 2026 (continente; OE 2026, Lei 73-A/2025: escalões +2%). [limite, taxa, parcela
-// a abater]; parcela null = taxa única sobre o valor. Jovens até 35 anos (1.ª habitação própria e permanente, não
-// dependentes): IMT e Imposto do Selo isentos até 330 539 €; até 660 982 € pagam só sobre o excesso.
-const IMT26 = {
-  hpp: [[106346, 0, 0], [145470, 0.02, 2126.92], [198347, 0.05, 6491.02], [330539, 0.07, 10457.96], [660982, 0.08, 13763.35], [1150853, 0.06, null], [Infinity, 0.075, null]],
-  sec: [[106346, 0.01, 0], [145470, 0.02, 1063.46], [198347, 0.05, 5427.56], [330539, 0.07, 9394.50], [633931, 0.08, 12699.89], [1150853, 0.06, null], [Infinity, 0.075, null]],
-};
-const YOUNG_FULL = 330539, YOUNG_PART = 660982, IS_BUY = 0.008, IS_LOAN = 0.006;
-function imtOf(v, use, young) {
-  if (use === 'hpp' && young && v <= YOUNG_PART) return v <= YOUNG_FULL ? 0 : 0.08 * (v - YOUNG_FULL);
-  const [, r, ded] = IMT26[use === 'sec' ? 'sec' : 'hpp'].find(([lim]) => v <= lim);
-  return ded == null ? r * v : Math.max(0, r * v - ded);
-}
-function isBuyOf(v, use, young) {
-  if (use === 'hpp' && young && v <= YOUNG_PART) return v <= YOUNG_FULL ? 0 : IS_BUY * (v - YOUNG_FULL);
-  return IS_BUY * v;
-}
-// impostos de uma compra: IMT + Imposto do Selo da aquisição (0,8%) + do crédito (0,6%, prazo de 5 anos ou mais)
-function buyTaxes(v, loan, use, young) {
-  const imt = imtOf(v, use, young), isb = isBuyOf(v, use, young), isl = loan > 0 ? IS_LOAN * loan : 0;
-  return { imt, isb, isl, total: imt + isb + isl };
-}
-const islands = (dico) => /^[34]/.test(String(dico || ''));
 const hasIrs = () => MUNIS.some((m) => m.irs_median != null);
 const affBase = () => (AFF.base === 'irs' && hasIrs() ? 'irs' : 'wage');
 const IRS_NOTE = 'O IRS é a mediana por pessoa que declara, incluindo pensionistas e tempo parcial: fica abaixo do salário médio, e o esforço sobe. Com um casal, escolhe 2.';
@@ -991,10 +961,6 @@ const affDefaults = () => ({ area: 90, down: 10, years: 30, rate: null, earners:
 let AFF = affDefaults();
 const affRateNow = () => (OL && OL.rates && OL.rates.rate_now != null ? +OL.rates.rate_now.toFixed(2) : AFF_FALLBACK_RATE);
 const affRate = () => (AFF.rate != null ? AFF.rate : affRateNow());
-function annuity(loan, ratePct, years) {
-  const r = ratePct / 100 / 12, n = years * 12;
-  return Math.abs(r) < 1e-12 ? loan / n : (loan * r) / (1 - (1 + r) ** -n);
-}
 function affordOf(m) {
   if (m.price == null) return {};
   const rate = affRate(), P = m.price * AFF.area, loan = P * (1 - AFF.down / 100);
@@ -1006,7 +972,7 @@ function affordOf(m) {
     aff_pay_stress: annuity(loan, rate + AFF.shock, AFF.years),
     // regra do Banco de Portugal: prestação com a taxa +1,5 p.p. face ao rendimento (escala de cada rendimento: LIMIT)
     aff_bdp_effort: inc ? annuity(loan, rate + BDP.shock, AFF.years) / inc : null,
-    ...(() => { const t = buyTaxes(P, loan, AFF.use, AFF.young); return { aff_tax: t.total, aff_imt: t.imt, aff_is: t.isb + t.isl, aff_cash: P - loan + t.total }; })(),
+    ...(() => { const t = buyTaxes(P, loan, AFF.use, AFF.young, islands(m.dico)); return { aff_tax: t.total, aff_imt: t.imt, aff_is: t.isb + t.isl, aff_cash: P - loan + t.total }; })(),
     aff_effort_stress: inc ? annuity(loan, rate + AFF.shock, AFF.years) / inc : null,
     aff_years_salary: inc ? P / (inc * (affBase() === 'irs' ? 12 : 14)) : null,
     aff_inc: inc,
@@ -1053,7 +1019,7 @@ function affReadTxt(m) {
   let t = `Comprar ${AFF.area} m² ao preço mediano custa ${fmt.eur(m.aff_home)}; com ${AFF.down}% de entrada (${fmt.eur(m.aff_down)}) e crédito a ${AFF.years} anos a ${fmt.n(affRate(), 2)}%, a prestação é ${fmt.eur(m.aff_pay)}/mês`;
   if (e != null) t += ` — ${fmt.pct(e, 0)} ${who} (${incYear(m) || 'n/d'}: ${fmt.eur(m.aff_inc)}/mês)${m.aff_bdp_effort > PRUDENT ? `; com a taxa +${fmt.n(BDP.shock, 1)} p.p. do teste do Banco de Portugal, passa de ~${fmt.pct(PRUDENT, 0)}, o equivalente aproximado ao limite de 45% do rendimento líquido` : ''}`;
   t += '.';
-  if (m.aff_tax != null) t += ` Impostos na compra: ${fmt.eur(m.aff_tax)} (IMT ${fmt.eur(m.aff_imt)} e Imposto do Selo ${fmt.eur(m.aff_is)}${islands(m.dico) ? '; tabela do continente — nas regiões autónomas o IMT é diferente' : ''}); à cabeça, com a entrada: ${fmt.eur(m.aff_cash)}.`;
+  if (m.aff_tax != null) t += ` Impostos na compra: ${fmt.eur(m.aff_tax)} (IMT ${fmt.eur(m.aff_imt)} e Imposto do Selo ${fmt.eur(m.aff_is)}${islands(m.dico) ? '; escalões das regiões autónomas' : ''}); à cabeça, com a entrada: ${fmt.eur(m.aff_cash)}.`;
   if (m.aff_rent_home != null) t += ` Arrendar a mesma casa custa cerca de ${fmt.eur(m.aff_rent_home)}/mês (novos contratos): a prestação fica ${fmt.spct(m.aff_pay_vs_rent, 0)} face à renda, e ${breakevenTxt(m.aff_breakeven)} (já contando juros, IMI e manutenção; sem IMT e escritura). A renda leva ${fmt.pct(m.aff_rent_effort, 0)} do mesmo rendimento.${fcBeTxt(m)}`;
   return t;
 }
@@ -1114,7 +1080,7 @@ function renderAfford() {
   body.innerHTML = `
     <p class="verdict">No concelho típico (${fmt.eur(P)}/m²), ${AFF.area} m² custam <b>${fmt.eur(P * AFF.area)}</b>: com ${fmt.n(AFF.down, 0)}% de entrada e ${AFF.years} anos a ${fmt.n(affRate(), 2)}%, a prestação é <b>${fmt.eur(payTyp)}/mês</b>.
       A prestação leva, a meio dos concelhos, <b>${fmt.pct(eMed, 0)}</b> ${who}. <b>Regra do Banco de Portugal</b> ${info('bdp')}: com a taxa +${fmt.n(BDP.shock, 1)} p.p., a prestação não deve passar de 45% do rendimento líquido (desde agosto de 2026; ≈ ${fmt.pct(PRUDENT, 0)} na escala do ${incTxt().short}) — em <b>${over} de ${ok.length}</b> concelhos passa.${rules.length ? ` ⚠ Com estes valores, ${rules.join('; e ')}.` : ''}
-      <b>Impostos na compra</b> ${info('imt')} (concelho típico, ${AFF.use === 'hpp' ? 'habitação própria e permanente' : '2.ª habitação ou para arrendar'}${AFF.young ? ', jovem até 35 anos' : ''}): IMT ${fmt.eur(taxT.imt)} + Imposto do Selo ${fmt.eur(taxT.isb)} na compra e ${fmt.eur(taxT.isl)} no crédito = <b>${fmt.eur(taxT.total)}</b>; com a entrada, precisas de <b>${fmt.eur(P * AFF.area - loanT + taxT.total)}</b> à cabeça (sem escritura, registos e comissões).
+      <b>Impostos na compra</b> ${info('imt')} (concelho típico, ${AFF.use === 'hpp' ? 'habitação própria e permanente' : '2.ª habitação ou para arrendar'}${AFF.young ? ', jovem até 35 anos' : ''}): IMT ${fmt.eur(taxT.imt)} + Imposto do Selo ${fmt.eur(taxT.isb)} na compra e ${fmt.eur(taxT.isl)} no crédito = <b>${fmt.eur(taxT.total)}</b>; com a entrada, precisas de <b>${fmt.eur(P * AFF.area - loanT + taxT.total)}</b> à cabeça (sem escritura, registos e comissões; tabelas de ${TAX_YEAR}${taxTablesStale() ? ` — ⚠ já estamos em ${new Date().getFullYear()}: os escalões do IMT e as regras do Banco de Portugal podem ter mudado` : ''}).
       <b>Teste de juros</b> ${info('stress')}: com a taxa ${fmt.n(AFF.shock, 1)} p.p. acima (${fmt.n(affRate() + AFF.shock, 2)}%), a mesma prestação típica passa para <b>${fmt.eur(payS)}</b> (${fmt.spct(payS / payTyp - 1, 0)}) e ${overS} concelhos ficam acima de ${fmt.pct(PRUDENT, 0)}.
       ${wr.length ? `Nos ${wr.length} concelhos com renda publicada, a prestação é mais baixa do que a renda da mesma casa em <b>${cheaper}</b>; contando juros, IMI e manutenção, ${be <= 0 ? 'no concelho típico comprar sai mais barato do que arrendar mesmo sem a casa valorizar' : `no concelho típico comprar só sai mais barato do que arrendar se a casa valorizar mais de <b>${fmt.pct(be, 1)}/ano</b>`} — em <b>${beNeg} dos ${wr.length}</b> compensa mesmo sem valorizar.` : ''}
       ${rfOk.length ? ` <b>Arrendar</b> ${info('rent_effort')} a mesma casa leva, a meio dos concelhos, <b>${fmt.pct(rfMed, 0)}</b> ${AFF.earners > 1 ? 'dos rendimentos' : 'do ' + incTxt().short}; em ${rfOver} de ${rfOk.length} passa de 40%.` : ''}</p>
@@ -1133,7 +1099,7 @@ function renderAfford() {
         ? `<li>Rendimento: mediana do rendimento bruto declarado no IRS, após imposto, por pessoa que declara, no concelho onde vive (INE/AT, ${esc(String((ok.find((m) => m.irs_year) || {}).irs_year || 'ano n/d'))}), anual ÷ 12. Inclui pensões e outros rendimentos; não desconta a Segurança Social. ${IRS_NOTE} É de há cerca de 2 anos: com os rendimentos a subir, o esforço real é um pouco menor. Corrige o problema dos concelhos-dormitório (conta quem lá vive). Os anos de rendimento usam o valor anual.</li>`
         : `<li>Salário: ganho médio mensal bruto por trabalhador por conta de outrem (INE, ${esc(String((ok.find((m) => m.income_year) || {}).income_year || '').slice(0, 4) || 'ano n/d')}), não o rendimento líquido nem o do agregado. É o salário de quem trabalha no concelho, não de quem lá vive: nos concelhos-dormitório (por exemplo à volta de Lisboa) muitos residentes ganham mais noutro concelho, e o esforço aparece exagerado.${hasIrs() ? ' Escolhe "IRS de quem vive" para ver o rendimento de quem lá mora (mais baixo, por ser mediano e incluir pensionistas).' : ''} Os anos de salário usam 14 meses.</li>`}
       <li>Renda: mediana de novos contratos (€/m²) × a mesma área. A prestação inclui amortização, que é poupança: por isso o ponto de equilíbrio é a medida mais justa. Nos concelhos baratos do interior, muitas casas vendidas são antigas ou precisam de obras, enquanto as arrendadas estão prontas a habitar: aí comprar parece mais vantajoso do que é.</li>
-      <li>IMT e Imposto do Selo: tabelas de 2026 do continente (nos Açores e na Madeira os escalões do IMT são diferentes), sobre o preço. Fora das contas: escritura, registos e comissões, seguros obrigatórios do crédito e mudanças de taxa ao longo do empréstimo. As listas só incluem concelhos sem dados voláteis${hasVol ? ' e com pelo menos 20 avaliações bancárias em 3 meses' : ''}.</li>
+      <li>IMT e Imposto do Selo: tabelas de ${TAX_YEAR}, sobre o preço; o valor típico acima usa as do continente e a ficha de cada concelho dos Açores e da Madeira usa as das regiões autónomas (escalões 25% mais altos). Fora das contas: escritura, registos e comissões, seguros obrigatórios do crédito e mudanças de taxa ao longo do empréstimo. As listas só incluem concelhos sem dados voláteis${hasVol ? ' e com pelo menos 20 avaliações bancárias em 3 meses' : ''}.</li>
     </ul>`;
 }
 function initAfford() {
@@ -1646,45 +1612,8 @@ function ensureHist() {
   if (!histP) histP = j('data/history.json').then((d) => { HIST = d; }).catch(() => { HIST = { parish: {}, val: {}, typ: {}, hicp: [] }; });
   return histP;
 }
-const qOfMonth = (ym) => {
-  const mt = /^(\d{4})-(\d{2})$/.exec(String(ym || ''));
-  if (!mt) return null;
-  const y = +mt[1], m = +mt[2];
-  return y >= 2000 && m >= 1 && m <= 12 ? `${y}Q${Math.floor((m - 1) / 3) + 1}` : null;
-};
 const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 const monthTxt = (ym) => { const [y, m] = String(ym).split('-').map(Number); return MESES[m - 1] ? `${MESES[m - 1]} de ${y}` : String(ym); };
-function serVal(ser, q) { const r = (ser || []).find((x) => x[0] === q); return r ? r[1] : null; }
-// As medianas de venda do INE (concelho, freguesia, tipologia) são das vendas dos últimos 12 meses: o valor do
-// trimestre Q reflete o mercado de ~1,5 trimestres antes. Para o mercado do trimestre q usa-se a média das
-// janelas que acabam em q+1 e q+2 (centradas em q); se ainda não saíram, projeta-se o último valor com a
-// variação anual da série `trend`: a mediana nacional. Testado com o histórico (README): erra menos do que a
-// tendência do próprio concelho (ruidosa nos pequenos) e do que não projetar (que ficava ~4% abaixo).
-const qAdd = (q, k) => { const i = +q.slice(0, 4) * 4 + +q.slice(-1) - 1 + k; return `${Math.floor(i / 4)}Q${(i % 4) + 1}`; };
-const qIdx = (q) => +q.slice(0, 4) * 4 + +q.slice(-1) - 1;
-function at12(ser, q, trend) {
-  if (!ser || !ser.length || q < ser[0][0]) return null;
-  const a = serVal(ser, qAdd(q, 1)), b = serVal(ser, qAdd(q, 2));
-  if (a && b) return { v: (a + b) / 2 };
-  const last = ser[ser.length - 1];
-  if (q < qAdd(last[0], -1)) { const x = serVal(ser, q); return x ? { v: x } : null; }   // falha no meio da série
-  const tr = trend && trend.length ? trend : ser, tl = tr[tr.length - 1], tp = serVal(tr, qAdd(tl[0], -4));
-  const gq = tp ? (tl[1] / tp) ** 0.25 : 1;
-  return { v: last[1] * gq ** (qIdx(q) + 1.5 - qIdx(last[0])), proj: last[0], gy: tp ? tl[1] / tp - 1 : null };
-}
-function serGrowth(ser, q0, roll12 = false) {
-  if (!ser || !ser.length) return null;
-  const first = ser[0][0], last = ser[ser.length - 1];
-  if (q0 < first) return null;
-  if (roll12) {
-    const b = at12(ser, q0);
-    if (!b || b.proj) return { g: 0, from: q0, to: last[0], recent: true };
-    return { g: last[1] / b.v - 1, from: q0, to: last[0], v0: b.v, roll12: true };
-  }
-  if (q0 >= last[0]) return { g: 0, from: q0, to: last[0], recent: true };
-  const v0 = serVal(ser, q0);
-  return v0 ? { g: last[1] / v0 - 1, from: q0, to: last[0], v0 } : null;
-}
 function imRead() {
   const f = $('#im-form'), num = (k) => { const v = parseFloat(String(f[k].value).replace(/\s/g, '').replace(',', '.')); return Number.isFinite(v) ? v : null; };
   const name = f.conc.value.trim().toLowerCase();
@@ -1876,20 +1805,6 @@ async function imAnalyse() {
   imLast = chartData;
   layoutStrips(out);
   if (chartData) try { imChart('im-chart', chartData); } catch (e) { console.error('gráfico do imóvel:', e); }
-}
-// Quem consegue pagar esta renda? Perfis com rendimentos locais e parte dos agregados fiscais do concelho com
-// rendimento bruto suficiente (escalões do INE, interpolação linear dentro de cada escalão).
-const TAX_EDGES = [0, 5000, 10000, 13500, 19000, 32500];
-function shareAbove(m, annual) {
-  const sh = [1, 2, 3, 4, 5, 6].map((i) => m[`tax_hh_${i}`]);
-  if (sh.some((x) => x == null)) return null;
-  let tot = 0;
-  for (let i = 0; i < 5; i++) {
-    const a = TAX_EDGES[i], b = TAX_EDGES[i + 1];
-    tot += annual <= a ? sh[i] : annual >= b ? 0 : sh[i] * (b - annual) / (b - a);
-  }
-  // escalão de topo (32 500 € ou mais) é aberto: abaixo do limiar conta inteiro; acima, só sabemos o máximo
-  return annual <= 32500 ? { v: tot + sh[5], exact: true } : { v: sh[5], exact: false };
 }
 function imTenants(rent, isUser, m, pr) {
   const fit = (e) => (e <= 0.35 ? ['comportável', 'neutral'] : e <= 0.5 ? ['pesado', 'neutral'] : ['não suporta', 'neutral']);

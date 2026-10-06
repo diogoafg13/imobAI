@@ -27,11 +27,11 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # fixo: o ubuntu-latest passa a Ubuntu 26 em 19/10/2026; mudar de propósito, depois de testar
     outputs:
       run: ${{ steps.gate.outputs.run }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Decidir se é preciso tentar outra vez
@@ -52,7 +52,7 @@ jobs:
             fi
           fi
           echo "run=$run" >> "$GITHUB_OUTPUT"
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         if: steps.gate.outputs.run == 'true'
         with:
           python-version: "3.12"
@@ -61,6 +61,17 @@ jobs:
         if: steps.gate.outputs.run == 'true'
       - run: pytest -q
         if: steps.gate.outputs.run == 'true'
+      - name: Testes das contas do site (IMT, Banco de Portugal, projeções)
+        if: steps.gate.outputs.run == 'true'
+        run: node --test tests/js/*.test.js
+      - name: Avisar se as tabelas fiscais do site são de um ano anterior
+        if: steps.gate.outputs.run == 'true'
+        # Não pára o build (o site continua a atualizar): deixa um aviso no resumo do workflow, e o site mostra-o.
+        run: |
+          y=$(sed -n 's/^const TAX_YEAR = \([0-9]*\);.*/\1/p' site/calc.js)
+          if [ "$(date -u +%Y)" -gt "${y:-0}" ]; then
+            echo "::warning title=Tabelas fiscais desatualizadas::site/calc.js tem IMT, Imposto do Selo e regras do Banco de Portugal de $y. Atualizar com o Orçamento do Estado de $(date -u +%Y) e mudar TAX_YEAR."
+          fi
       - name: Restaurar último snapshot (fallback se o INE falhar)
         if: steps.gate.outputs.run == 'true'
         run: |
@@ -151,7 +162,7 @@ jobs:
   deploy:
     needs: build
     if: needs.build.outputs.run == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # fixo: o ubuntu-latest passa a Ubuntu 26 em 19/10/2026; mudar de propósito, depois de testar
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
