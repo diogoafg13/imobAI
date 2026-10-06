@@ -16,7 +16,6 @@
   "sales_price_t2": "ok (17706 linhas, 2026Q1) [dim_3=2 'T2']",
   "sales_price_t3": "ok (17706 linhas, 2026Q1) [dim_3=3 'T3']",
   "sales_price_t4": "ok (17706 linhas, 2026Q1) [dim_3=4 'T4 ou mais']",
-  "rent_new_contracts": "ok (2082 linhas, 2025) [dim_3=2 '2.º quartil']",
   "rent_q1": "ok (2082 linhas, 2025) [dim_3=1 '1.º quartil']",
   "rent_q3": "ok (2082 linhas, 2025) [dim_3=3 '3.º quartil']",
   "rent_parish": "ok (3190 linhas, 2024)",
@@ -27,6 +26,7 @@
   "valuation_count_houses": "ok (65236 linhas, 2026-08) [dim_3=2 'Moradias']",
   "valuation_apartments": "ok (65236 linhas, 2026-08) [dim_3=1 'Apartamentos']",
   "valuation_houses": "ok (65236 linhas, 2026-08) [dim_3=2 'Moradias']",
+  "dwellings_licensed": "ok (9165 linhas, 2026-07) [dim_3=T 'Total']",
   "dwellings_completed": "ok (1170 linhas, 2026Q2)",
   "dwellings_stock": "ok (4128 linhas, 2022)",
   "census_total": "ok (3439 linhas, 2021) [dim_3=T 'Total', dim_4=T 'Total', dim_5=T 'Total']",
@@ -59,8 +59,8 @@
   "migration_balance": "ok (1735 linhas, 2025)",
   "tourism_nights": "ok (5160 linhas, 2025) [dim_3=T 'Total']",
   "housing_credit_pc": "ok (1041 linhas, 2024)",
-  "valuation_count": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']",
-  "dwellings_licensed": "ok (9165 linhas, 2026-07) [dim_3=T 'Total']"
+  "rent_new_contracts": "ok (2082 linhas, 2025) [dim_3=2 '2.º quartil']",
+  "valuation_count": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']"
  },
  "macro": {
   "euribor_3m": "ok (393 pontos, 2026-09)",
@@ -69,6 +69,11 @@
   "mortgage_rate_pt": "ok (320 pontos, 2026-08)",
   "mortgage_volume_pt": "ok (284 pontos, 2026-08)",
   "mortgage_volume_pure_pt": "ok (109 pontos, 2026-08)",
+  "mortgage_rate_pt_fix_f": "ok (320 pontos, 2026-08)",
+  "mortgage_rate_pt_fix_i": "ok (227 pontos, 2026-08)",
+  "mortgage_rate_pt_fix_o": "ok (227 pontos, 2026-08)",
+  "mortgage_rate_pt_fix_p": "ok (220 pontos, 2026-08)",
+  "mortgage_share_variable_pt": "ok (284 pontos, 2026-08)",
   "eurostat_hpi": "ok (74 pontos, 2026Q2)",
   "eurostat_hicp": "ok (123 pontos, 2026Q3)",
   "eurostat_hpi_eu": "ok (2086 pontos, 2026Q2)",
@@ -80,6 +85,9 @@
  },
  "turismo": {
   "al_rnal": "ok (cache de 2026-10-06: 111869 registos)"
+ },
+ "osm": {
+  "osm_points": "ERRO: school: 504 Server Error: Gateway Timeout for url: https://overpass-api.de/api/interpreter"
  },
  "stale": [
   {
@@ -103,5 +111,9 @@
    "months": 10,
    "limit": 9
   }
- ]
+ ],
+ "discover": {
+  "ine_catalog": "ok (13165 indicadores; opc=2: 13165)",
+  "services": "apa_inundacoes: 8 camadas"
+ }
 }
