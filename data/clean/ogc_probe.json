@@ -1,37 +1,135 @@
 {
  "updated": "2026-10-07",
+ "cfg": "{\"dgt\": {\"base\": \"https://ogcapi.dgterritorio.gov.pt\", \"grep\": [\"^crus\", \"cadastro\", \"srup_\"], \"point\": [-9.1685, 38.8309], \"sample\": [\"crus\", \"cadastro\", \"srup_ran\", \"srup_ren_areal\", \"srup_areas_protegidas\", \"srup_zec\", \"srup_zpe\", \"srup_perigosidade_inc_rural\"]}}",
  "apis": {
   "dgt": {
    "landing_status": 200,
    "cors": "https://example.github.io",
    "n_collections": 90,
-   "match_^crus_": {
-    "n": 0,
-    "first": []
-   },
-   "match_ran": {
+   "match_^crus": {
     "n": 1,
     "first": [
-     "srup_ran"
+     "crus"
     ]
    },
-   "match_ren": {
-    "n": 2,
+   "match_cadastro": {
+    "n": 1,
+    "first": [
+     "cadastro"
+    ]
+   },
+   "match_srup_": {
+    "n": 19,
     "first": [
      "srup_ren_areal",
-     "srup_ren_linear"
+     "srup_ren_linear",
+     "srup_ran",
+     "srup_areas_protegidas",
+     "srup_arvores_areal",
+     "srup_arvores_point",
+     "srup_marcos_geod",
+     "srup_aeronautica",
+     "srup_albufeiras",
+     "srup_aquiferos",
+     "srup_defesa_militar",
+     "srup_defesa_militar_zonas",
+     "srup_zpe",
+     "srup_zec",
+     "srup_perigosidade_inc_rural"
     ]
    },
    "samples": {
-    "crus_fafe": {
-     "meta_status": 404,
-     "queryables_status": 404,
-     "items_status": 404
+    "crus": {
+     "meta_status": 200,
+     "queryables_status": 200,
+     "items_status": 200,
+     "properties": [
+      "area_ha",
+      "autor",
+      "categoria_2021",
+      "classe_2021",
+      "codigo",
+      "data_pub_origem",
+      "designacao_no_plano",
+      "dtcc",
+      "escala_origem",
+      "fid",
+      "fonte",
+      "municipio",
+      "objectid",
+      "registo_ou_deposito",
+      "situacao_pdm"
+     ],
+     "example": {
+      "fid": 1,
+      "objectid": 1,
+      "dtcc": "1714",
+      "municipio": "VILA REAL",
+      "designacao_no_plano": "Área Predominantemente Habitacional - Área de Interesse Patrimonial",
+      "classe_2021": "Solo Urbano",
+      "categoria_2021": "Espaço Habitacional",
+      "escala_origem": "1/10000",
+      "fonte": "CM - Vectorial",
+      "area_ha": 3.6311597591403406,
+      "autor": "DGT",
+      "data_pub_origem": "2011-03-22T00:00:00+00:00",
+      "registo_ou_deposito": "01.17.14/123/2011/PDM/03",
+      "situacao_pdm": "Vigente",
+      "codigo": 3
+     },
+     "geometry": "MultiPolygon",
+     "point_status": 200,
+     "point_hits": 1,
+     "point_example": {
+      "fid": 166634,
+      "objectid": 166634,
+      "dtcc": "1107",
+      "municipio": "LOURES",
+      "designacao_no_plano": "Solo Urbano-Espaços Residenciais-Consolidadas Habitacionais de nível I",
+      "classe_2021": "Solo Urbano",
+      "categoria_2021": "Espaço Habitacional",
+      "escala_origem": "1/25000",
+      "fonte": "CM - Vectorial e Raster",
+      "area_ha": 62.19765232363334,
+      "autor": "DGT",
+      "data_pub_origem": "2023-09-11T00:00:00+00:00",
+      "registo_ou_deposito": "03.11.07/PDM/02/2023/108",
+      "situacao_pdm": "Vigente",
+      "codigo": 3
+     }
     },
-    "crus_loures": {
-     "meta_status": 404,
-     "queryables_status": 404,
-     "items_status": 404
+    "cadastro": {
+     "meta_status": 200,
+     "queryables_status": 200,
+     "items_status": 200,
+     "properties": [
+      "administrativeunit",
+      "areavalue",
+      "beginlifespanversion",
+      "endlifespanversion",
+      "id",
+      "inspireid",
+      "label",
+      "nationalcadastralreference",
+      "validfrom",
+      "validto"
+     ],
+     "example": {
+      "nationalcadastralreference": "AAA000000001",
+      "inspireid": "PT.DGT.CP.AAA000000001",
+      "label": "AAA 000 000 001",
+      "areavalue": 3125.0,
+      "validfrom": null,
+      "validto": null,
+      "beginlifespanversion": "2023-11-21T00:00:00+00:00",
+      "endlifespanversion": null,
+      "administrativeunit": "110808",
+      "id": 1230424334
+     },
+     "geometry": "MultiPolygon",
+     "point_status": 200,
+     "point_hits": 0,
+     "point_example": null
     },
     "srup_ran": {
      "meta_status": 200,
@@ -61,7 +159,10 @@
       "serv_lei": "PORT 139/93",
       "municipio": "CASTELO BRANCO"
      },
-     "geometry": "MultiPolygon"
+     "geometry": "MultiPolygon",
+     "point_status": 200,
+     "point_hits": 0,
+     "point_example": null
     },
     "srup_ren_areal": {
      "meta_status": 200,
@@ -99,11 +200,168 @@
       "classifica": " ",
       "serv_hiperligacao": "https://snit-mais.dgterritorio.gov.pt/SRUP/RCM 134_2004.pdf"
      },
-     "geometry": "MultiPolygon"
+     "geometry": "MultiPolygon",
+     "point_status": 200,
+     "point_hits": 0,
+     "point_example": null
+    },
+    "srup_areas_protegidas": {
+     "meta_status": 200,
+     "queryables_status": 200,
+     "items_status": 200,
+     "properties": [
+      "codigo",
+      "designacao",
+      "dtccs",
+      "fid",
+      "lei_tipo",
+      "municipio",
+      "serv_data",
+      "serv_dr",
+      "serv_hiperligacao",
+      "serv_lei",
+      "servidao",
+      "tipologia"
+     ],
+     "example": {
+      "fid": 1,
+      "designacao": "ÁREA DE PAISAGEM PROTEGIDA DA ARRIBA FÓSSIL DA COSTA DA CAPARICA",
+      "servidao": "ÁREAS PROTEGIDAS",
+      "tipologia": "ÁREAS PROTEGIDAS - ÁREA DE PAISAGEM PROTEGIDA",
+      "lei_tipo": "DL 613/76",
+      "serv_dr": "118 IS",
+      "serv_data": "1984-05-22T00:00:00",
+      "serv_hiperligacao": "https://snit-mais.dgterritorio.gov.pt/SRUP/DL 168_1984.pdf",
+      "serv_lei": "DL 168/84",
+      "municipio": "ALMADA, SESIMBRA",
+      "dtccs": "1503, 1511",
+      "codigo": "87"
+     },
+     "geometry": "MultiPolygon",
+     "point_status": 200,
+     "point_hits": 0,
+     "point_example": null
+    },
+    "srup_zec": {
+     "meta_status": 200,
+     "queryables_status": 200,
+     "items_status": 200,
+     "properties": [
+      "designacao",
+      "dtccs",
+      "fid",
+      "lei_tipo",
+      "municipio",
+      "serv_data",
+      "serv_dr",
+      "serv_hiperligacao",
+      "serv_lei",
+      "servidao",
+      "tipologia"
+     ],
+     "example": {
+      "fid": 1,
+      "designacao": "ALVÃO-MARÃO",
+      "servidao": "REDE NATURA 2000 - ZONAS ESPECIAIS DE CONSERVAÇÃO",
+      "tipologia": "CONSERVAÇÃO DA NATUREZA - LISTA NACIONAL DE SÍTIOS-1ª FASE",
+      "lei_tipo": "DL 140/99",
+      "serv_dr": "53 IS",
+      "serv_data": "2020-03-16T00:00:00",
+      "serv_hiperligacao": "https://snit-mais.dgterritorio.gov.pt/SRUP/DR 1_2020.pdf",
+      "serv_lei": "DR 1/2020",
+      "municipio": "SABROSA, SANTA MARTA DE PENAGUIÃO, VILA REAL, RIBEIRA DE PENA, VILA POUCA DE AGUIAR, AMARANTE, PESO DA RÉGUA, MESÃO FRIO, BAIÃO, MONDIM DE BASTO",
+      "dtccs": "1710, 1711, 1714, 1709, 1713, 1301, 1708, 1704, 1302, 1705"
+     },
+     "geometry": "MultiPolygon",
+     "point_status": 200,
+     "point_hits": 0,
+     "point_example": null
+    },
+    "srup_zpe": {
+     "meta_status": 200,
+     "queryables_status": 200,
+     "items_status": 200,
+     "properties": [
+      "designacao",
+      "dtccs",
+      "fid",
+      "lei_tipo",
+      "municipio",
+      "serv_data",
+      "serv_dr",
+      "serv_hiperligacao",
+      "serv_lei",
+      "servidao",
+      "tipologia"
+     ],
+     "example": {
+      "fid": 1,
+      "designacao": "AÇUDE DA MURTA",
+      "servidao": "REDE NATURA 2000 - ZONAS DE PROTEÇÃO ESPECIAL",
+      "tipologia": "CONSERVAÇÃO DA NATUREZA - ZONA DE PROTEÇÃO ESPECIAL",
+      "lei_tipo": "DL 140/99",
+      "serv_dr": "223 IS-A",
+      "serv_data": "1999-09-23T00:00:00",
+      "serv_hiperligacao": "https://snit-mais.dgterritorio.gov.pt/SRUP/DL 384B_1999.pdf",
+      "serv_lei": "DL 384-B/99",
+      "municipio": "ALCÁCER DO SAL",
+      "dtccs": "1501"
+     },
+     "geometry": "MultiPolygon",
+     "point_status": 200,
+     "point_hits": 0,
+     "point_example": null
+    },
+    "srup_perigosidade_inc_rural": {
+     "meta_status": 200,
+     "queryables_status": 200,
+     "items_status": 200,
+     "properties": [
+      "designacao",
+      "dtccs",
+      "fid",
+      "lei_tipo",
+      "municipio",
+      "objectid",
+      "serv_data",
+      "serv_dr",
+      "serv_hiperligacao",
+      "servidao",
+      "tipologia"
+     ],
+     "example": {
+      "fid": 1,
+      "objectid": 1,
+      "municipio": "Aljustrel",
+      "servidao": "Perigosidade de Incêndio Rural",
+      "designacao": "Planeamento de Defesa da Floresta Contra Incêndios",
+      "tipologia": "Baixa",
+      "serv_data": "2006-06-28T00:00:00+00:00",
+      "lei_tipo": null,
+      "serv_hiperligacao": "https://snit-mais.dgterritorio.gov.pt/SRUP/DL 124_2006.pdf",
+      "serv_dr": "Decreto-Lei 124/2006",
+      "dtccs": "0201"
+     },
+     "geometry": "MultiPolygon",
+     "point_status": 200,
+     "point_hits": 1,
+     "point_example": {
+      "fid": 398075,
+      "objectid": 398075,
+      "municipio": "Loures",
+      "servidao": "Perigosidade de Incêndio Rural",
+      "designacao": "Planeamento de Defesa da Floresta Contra Incêndios",
+      "tipologia": null,
+      "serv_data": "2006-06-28T00:00:00+00:00",
+      "lei_tipo": null,
+      "serv_hiperligacao": "https://snit-mais.dgterritorio.gov.pt/SRUP/DL 124_2006.pdf",
+      "serv_dr": "Decreto-Lei 124/2006",
+      "dtccs": "1107"
+     }
     }
    }
   }
  },
  "ok": true,
- "summary": "dgt: 90 coleções, ^crus_: 0, ran: 1, ren: 2; exemplos com dados: srup_ran, srup_ren_areal"
+ "summary": "dgt: 90 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, cadastro, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural"
 }

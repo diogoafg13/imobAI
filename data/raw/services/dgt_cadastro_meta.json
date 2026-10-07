@@ -1,0 +1,152 @@
+{
+    "id":"cadastro",
+    "links":[
+        {
+            "type":"text/csv",
+            "rel":"canonical",
+            "title":"data",
+            "href":"https://snig.dgterritorio.gov.pt/rndg/srv/por/catalog.search#/metadata/73282c48-7f23-435c-ba41-592a96470080",
+            "hreflang":"en-US"
+        },
+        {
+            "type":"application/json",
+            "rel":"root",
+            "title":"The landing page of this server as JSON",
+            "href":"https://ogcapi.dgterritorio.gov.pt?f=json"
+        },
+        {
+            "type":"text/html",
+            "rel":"root",
+            "title":"The landing page of this server as HTML",
+            "href":"https://ogcapi.dgterritorio.gov.pt?f=html"
+        },
+        {
+            "type":"application/json",
+            "rel":"self",
+            "title":"This document as JSON",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/cadastro?f=json"
+        },
+        {
+            "type":"application/ld+json",
+            "rel":"alternate",
+            "title":"This document as RDF (JSON-LD)",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/cadastro?f=jsonld"
+        },
+        {
+            "type":"text/html",
+            "rel":"alternate",
+            "title":"This document as HTML",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/cadastro?f=html"
+        },
+        {
+            "type":"application/schema+json",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/schema",
+            "title":"Schema of collection in JSON",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/cadastro/schema?f=json"
+        },
+        {
+            "type":"text/html",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/schema",
+            "title":"Schema of collection in HTML",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/cadastro/schema?f=html"
+        },
+        {
+            "type":"application/schema+json",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/queryables",
+            "title":"Queryables for this collection as JSON",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/cadastro/queryables?f=json"
+        },
+        {
+            "type":"text/html",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/queryables",
+            "title":"Queryables for this collection as HTML",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/cadastro/queryables?f=html"
+        },
+        {
+            "type":"application/geo+json",
+            "rel":"items",
+            "title":"Items as GeoJSON",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/cadastro/items?f=json"
+        },
+        {
+            "type":"application/ld+json",
+            "rel":"items",
+            "title":"Items as RDF (GeoJSON-LD)",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/cadastro/items?f=jsonld"
+        },
+        {
+            "type":"text/html",
+            "rel":"items",
+            "title":"Items as HTML",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/cadastro/items?f=html"
+        },
+        {
+            "type":"text/csv; charset=utf-8",
+            "rel":"items",
+            "title":"Items as CSV",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/cadastro/items?f=csv"
+        },
+        {
+            "type":"application/json",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector",
+            "title":"Tiles as JSON",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/cadastro/tiles?f=json"
+        },
+        {
+            "type":"text/html",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector",
+            "title":"Tiles as HTML",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/cadastro/tiles?f=html"
+        }
+    ],
+    "title":"Cadastro Predial (Continente)",
+    "description":"Parcelas Cadastrais",
+    "keywords":[
+        "pr\u00e9dio",
+        "conserva\u00e7\u00e3o cadastral",
+        "INSPIRECORE",
+        "DL_72_2023",
+        "Cadastro Oficial",
+        "HVD",
+        "cadastro",
+        "cadastro predial",
+        "carta cadastral",
+        "pr\u00e9dios cadastrados",
+        "cadastro predial atualizado",
+        "Base de Dados Nacional de Cadastro Predial",
+        "BDNCP",
+        "Dire\u00e7\u00e3o-geral do Territ\u00f3rio",
+        "DGT",
+        "Geoespaciais"
+    ],
+    "extent":{
+        "spatial":{
+            "bbox":[
+                [
+                    -9.51,
+                    36.96,
+                    -6.19,
+                    42.15
+                ]
+            ],
+            "crs":"http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+        },
+        "temporal":{
+            "interval":[
+                [
+                    "2000-10-30T18:24:39+00:00",
+                    "2007-10-30T08:57:29+00:00"
+                ]
+            ]
+        }
+    },
+    "itemType":"feature",
+    "crs":[
+        "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+        "http://www.opengis.net/def/crs/EPSG/0/4326",
+        "http://www.opengis.net/def/crs/EPSG/0/3857",
+        "http://www.opengis.net/def/crs/EPSG/0/4258",
+        "http://www.opengis.net/def/crs/EPSG/0/3763"
+    ],
+    "storageCrs":"http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+}
