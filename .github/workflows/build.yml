@@ -163,7 +163,12 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -f data
           git commit -m "snapshot $(date -u +%F)" || echo "sem alterações"
-          git push origin data
+          # o GitHub às vezes recusa o push com "Internal Server Error": tenta outra vez antes de falhar
+          for i in 1 2 3 4; do
+            git push origin data && exit 0
+            echo "push falhou (tentativa $i), nova tentativa daqui a $((i * 15))s"; sleep $((i * 15))
+          done
+          exit 1
       - name: Teste do site no browser (todos os separadores e guias)
         # Abre o site com os dados acabados de construir: um erro de JavaScript, "NaN" no texto ou um guia sem
         # resultado falham o build e a versão nova não é publicada (os dados já ficaram no branch data).
