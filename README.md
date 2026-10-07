@@ -562,6 +562,8 @@ WebGL dão aviso. Localmente: `pip install playwright && python -m playwright in
   critério do Guia.
 - **Séries paradas resolvidas**: população por concelho até 2025 (0012917, em vez do 0008273) e índice de preços da
   habitação base 2025 (0014765, em vez do 0009201; usado só quando falta o do Eurostat, reposto em 2015 = 100).
+- **Rendas e contratos por freguesia com a metodologia de 2026** (0014698 e 0014697, 2020–2025, em vez do 0012600 e
+  0012601, que acabam em 2024): mais freguesias com renda publicada (207) e o ano de 2025.
 - O parque habitacional (0008329) para em 2022 porque o INE ainda não publicou 2023 (o código novo 0014137 também acaba
   em 2022): não é código mudado; o alerta de série parada para esta série só dispara a partir de 54 meses.
 - Risco sísmico: não há uma fonte aberta e estruturada por concelho; fica de fora.

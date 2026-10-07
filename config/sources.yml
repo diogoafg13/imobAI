@@ -128,7 +128,10 @@ ine:
       period_kind: year
       optional: true
     rent_parish:
-      varcd: "0012600"          # Renda mediana de novos contratos por freguesia (Metodologia 2021, €/m²), anual
+      # Metodologia 2026, 2020–2025 (0014698; o 0012600, metodologia 2021, acaba em 2024). Confirmado pela sonda de
+      # 7/10/2026: sem dimensões, freguesias da CAOP de 2013 (as da tabela), 207 com renda publicada; o INE reviu os anos
+      # anteriores com a metodologia nova (2024: mediana +0,9% face ao 0012600). O 0014773 é o mesmo na CAOP de 2025.
+      varcd: "0014698"          # Renda mediana de novos contratos por freguesia (€/m²), anual
       description: Renda mediana de novos contratos por freguesia (€/m²)
       level: parish
       period_kind: year
@@ -144,7 +147,8 @@ ine:
       period_kind: year
       optional: true
     rent_contracts:
-      varcd: "0012601"          # Novos contratos de arrendamento (Metodologia 2021 - N.º), anual, até freguesia
+      # Metodologia 2026, 2020–2025, concelhos e freguesias (0014697; substitui o 0012601, que acaba em 2024)
+      varcd: "0014697"          # Novos contratos de arrendamento (N.º), anual, até freguesia
       description: Novos contratos de arrendamento (N.º)
       level: municipality
       period_kind: year
@@ -635,7 +639,8 @@ discover:
   # Censos 2021 por freguesia: 0012575 índice de envelhecimento dos edifícios, 0012581 % de edifícios com
   # necessidade de reparação, 0012576/0012577/0012578/0012582/0014620/0014621 edifícios (N.º) por categorias
   # (a confirmar quais são época de construção e estado de conservação).
-  # (todos sondados a 6/10/2026; ligados: 0012917 população, 0014765 HPI, 0012578 edifícios)
+  # (todos sondados; ligados: 0012917 população, 0014765 HPI, 0012578 edifícios, 0000087 licenças, 0014697/0014698
+  # rendas e contratos por freguesia)
   # e para os terrenos: fogos licenciados em construções novas por freguesia (0000087 e 0000088, até 2025)
   # rendas por freguesia com a metodologia de 2026 (até 2025; o painel usa ainda a de 2021, que acaba em 2024)
   ine_probe: ["0014697", "0014698", "0014772", "0014773", "0000087", "0000088", "0012917", "0012918", "0014765", "0012575", "0012581", "0012576", "0012577", "0012578", "0012582",
