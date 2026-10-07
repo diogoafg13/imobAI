@@ -857,5 +857,11 @@
     "dico": NaN
    }
   ]
+ },
+ "0000087": {
+  "error": "falha a obter 0000087 do INE: HTTPSConnectionPool(host='www.ine.pt', port=443): Max retries exceeded with url: /ine/json_indicador/pindica.jsp?op=2&varcd=0000087&lang=PT&Dim1=T (Caused by ConnectTimeo"
+ },
+ "0000088": {
+  "error": "falha a obter 0000088 do INE: HTTPSConnectionPool(host='www.ine.pt', port=443): Max retries exceeded with url: /ine/json_indicador/pindica.jsp?op=2&varcd=0000088&lang=PT&Dim1=T (Caused by ConnectTimeo"
  }
 }

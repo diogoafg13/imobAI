@@ -1,0 +1,10 @@
+{
+ "updated": "2026-10-07",
+ "apis": {
+  "dgt": {
+   "error": "502 Server Error: Proxy Error for url: https://ogcapi.dgterritorio.gov.pt/collections?f=json"
+  }
+ },
+ "ok": false,
+ "summary": "dgt: falhou (502 Server Error: Proxy Error for url: https://ogcapi.dgterritorio.gov.pt/collec)"
+}

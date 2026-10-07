@@ -93,15 +93,16 @@
   "al_rnal": "ok (cache de 2026-10-06: 111869 registos)"
  },
  "osm": {
-  "osm_points": "ERRO: faltam 8 de 32 quadrículas, continua no próximo build; 3 quadrículas novas; 1 falhas (limite de tempo)"
+  "osm_points": "ERRO: faltam 6 de 32 quadrículas, continua no próximo build; 2 quadrículas novas; 1 falhas (limite de tempo)"
  },
  "apa": {
   "flood_zones": "ok (cache de 2026-10-06: 63 polígonos, pretorno=T0100)"
  },
  "stale": [],
  "discover": {
-  "ine_probe": "nada novo (11 já sondados)",
+  "ine_probe": "0000087: falhou; 0000088: falhou",
   "ine_catalog": "ok (cache: 13165 indicadores)",
+  "ogc": "dgt: falhou (502 Server Error: Proxy Error for url: https://ogcapi.dgterritorio.gov.pt/collec)",
   "services": "apa_inundacoes: 8 camadas"
  }
 }

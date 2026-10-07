@@ -300,7 +300,6 @@
 	}
 	
 	function onLoadBody () {
-					alert( 'Não existem taxas IMI definidas para o ano e Distrito que seleccionou.' );
 			}
 
 	function writeIt(str) {
@@ -326,7 +325,26 @@
 			</tr>
 	<tr class="iTR">
 		<td>
-							<strong><script>writeIt('Não existem taxas IMI definidas para o ano e Distrito que seleccionou.');</script></strong>
+							<table class="iT">
+					<tr class="iTR" align="center">
+						<th class="ccTD"><b>Código Municipio</b></th>
+						<th class="ccTD"><b>Município</b></th>
+																			<th class="ccTD"><b>Prédios Urbanos<br>Avaliados nos Termos<br>do CIMI</b></th>
+												<th class="ccTD"><b>Prédios Rústicos</b></th>
+						<th class="ccTD"><b>Taxas por freguesia</b></th>
+												<th class="ccTD"><b>Dedução fixa por agregado</b></th>
+						
+					</tr>
+											<tr align="center" class="iTR">
+							<td align="center" class="table_space">0714</td>
+							<td align="center" class="table_space">VILA VIÇOSA</td>
+							                                                        <td align="center" class="table_space"> 0,3000 % </td>
+                            							<td align="center" class="table_space"> 0,80 % </td>
+							<td align="center" class="table_space"></td>
+														<td align="center" class="table_space"><a href="external/matrizes/imi/consultaDeducao.action?anoConsulta=2026&codigoMunicipio=0714">+Info</a></td>
+							
+						</tr>
+									</table>
 					</td>
 	</tr>
 </table>
