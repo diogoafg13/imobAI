@@ -515,6 +515,15 @@ Além do "Onde procurar casa", quatro guias curtos, com as contas em `site/calc.
 - **Ligações para partilhar**: cada guia tem "Copiar ligação"; os valores vão no próprio endereço (`#guia?g=…&d=…`,
   JSON em base64), sem servidor. Quem abre a ligação vê o mesmo resultado.
 
+- **Terreno para construir** (`landResidual`): método residual — valor das casas novas a vender (mediana das casas
+  novas do concelho, INE, ajustada à freguesia) − construção (custo por m² indicado; o INE só publica um índice) −
+  projetos, licenças e taxas − comercialização − margem do promotor − juros − IMT (6,5% terreno para construção, 5%
+  rústico) e Imposto do Selo (0,8%) = o máximo a pagar pelo terreno; margem ao preço pedido, preço de venda necessário,
+  tabela de sensibilidade (construção e venda ±10%), sinais da zona e rendibilidade de construir para arrendar. A área
+  de construção permitida vem do PDM (índice × área): a certidão ou o PIP da câmara é que valem. Em descoberta (branch
+  `data`): a Carta do Regime de Uso do Solo da DGT (classificação do PDM) e a RAN/REN, e os fogos licenciados por
+  freguesia (INE).
+
 ### Teste do site no browser (no build)
 
 `scripts/smoke_site.py` abre o site com os dados do build no Chromium (Playwright): todos os separadores, todas as

@@ -28,7 +28,7 @@ TABS = ["mercado", "guia", "seguir", "comprar", "arrendar", "investir", "imovel"
 class Smoke:
     def __init__(self, page):
         self.pg, self.errors, self.warnings, self.cdn_failed = page, [], [], False
-        page.on("pageerror", lambda e: self.errors.append(f"erro de JavaScript: {str(e)[:300]}"))
+        page.on("pageerror", lambda e: self.errors.append(f"erro de JavaScript: {str(e)[:200]} | {(getattr(e, 'stack', '') or '').splitlines()[1:3]}"))
         page.on("console", self._console)
         page.on("requestfailed", self._reqfail)
 
@@ -167,7 +167,8 @@ def steps(pg, s: Smoke, ctx, base: str) -> None:
               ("loan", "gl", {"loan": "200000", "income": "3000", "extra": "200"}),
               ("landlord", "gs", {"conc": names[porto], "area": "80"}),
               ("tenant", "gt", {"conc": names[lisboa], "area": "70", "rent": "1300", "income": "3000"}),
-              ("sell", "gv", {"conc": names[porto], "area": "90", "buy": "160000", "bal": "50000"})]
+              ("sell", "gv", {"conc": names[porto], "area": "90", "buy": "160000", "bal": "50000"}),
+              ("land", "gn", {"conc": names[porto], "area": "800", "iu": "0.6", "asking": "150000"})]
     for kind, fid, fill in guides:
         pg.click(f"[data-gp={kind}]")
         for k, v in fill.items():

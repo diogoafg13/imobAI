@@ -2583,11 +2583,62 @@ function gyRender() {
     <p class="muted">Taxa de ${fmt.n(rate, 2)}%. A poupança paga primeiro os impostos e a escritura e o resto vai para a entrada. Regras de ${TAX_YEAR} (Decreto-Lei 44/2024 e Portaria 236-A/2024 para a garantia; isenções de IMT e Imposto do Selo para jovens): há mais condições (domicílio fiscal em Portugal, não ser dependente, nunca ter usado a garantia); confirma com o banco e as Finanças. Com compradores de idades diferentes, a isenção aplica-se à parte de quem tem até 35 anos.</p>`;
 }
 
+// 6) terreno para construir (método residual)
+const LAND_DEF = { cost: 1500, soft: 12, sales: 5, margin: 15, rate: 5, years: 2.5, eff: { apt: 80, house: 90 } };
+function gnRender() {
+  const f = $('#gn-form'), out = $('#gn-out'), m = gdMuni(f);
+  if (!m) { out.innerHTML = '<p class="muted">Escolhe um concelho da lista.</p>'; return; }
+  const pr = f.par.value && PARBY[f.par.value] ? PARBY[f.par.value] : null, kind = f.kind.value;
+  const area = gdNum(f, 'area'), iu = gdNum(f, 'iu'), abc = gdNum(f, 'abc') || (area && iu ? area * iu : null);
+  if (!abc) { out.innerHTML = '<p class="muted">Indica a área de construção permitida (ou a área do terreno e o índice de utilização do PDM).</p>'; return; }
+  // preço de venda: casas novas do concelho (INE); na freguesia, ajustado pela relação entre a freguesia e o concelho
+  const prem = (() => { const xs = MUNIS.map((x) => x.new_premium).filter((v) => v != null).sort((a, b) => a - b); return xs.length ? xs[Math.floor(xs.length / 2)] : 0.15; })();
+  let sale = gdNum(f, 'sale'), saleSrc = 'o que indicaste';
+  if (!sale) {
+    const base = m.price_new != null ? m.price_new : m.price != null ? m.price * (1 + prem) : null;
+    if (base == null) { out.innerHTML = `<p class="banner">Sem preços publicados para ${esc(m.name)}: indica o preço de venda por m².</p>`; return; }
+    const adj = pr && pr.price != null && m.price ? pr.price / m.price : 1;
+    sale = base * adj;
+    saleSrc = `${m.price_new != null ? `mediana das casas novas vendidas em ${esc(m.name)}` : `mediana de todas as casas de ${esc(m.name)} + ${fmt.pct(prem, 0)} (prémio mediano das casas novas no país)`}${adj !== 1 ? `, ajustada à freguesia ${esc(pr.name)} (${fmt.spct(adj - 1, 0)} face ao concelho)` : ''}, INE`;
+  }
+  const num = (k, d) => gdNum(f, k) ?? d;
+  const o = { abc, eff: num('eff', LAND_DEF.eff[kind]) / 100, sale, cost: num('cost', LAND_DEF.cost), soft: num('soft', LAND_DEF.soft) / 100,
+    sales: num('sales', LAND_DEF.sales) / 100, margin: num('margin', LAND_DEF.margin) / 100, rate: num('rate', LAND_DEF.rate), years: num('years', LAND_DEF.years),
+    closing: 1000, rustic: f.rustic.checked, asking: gdNum(f, 'asking') };
+  const r = landResidual(o);
+  const tiles = [gdTile('Valor máximo do terreno', fmt.eur(r.max), `${fmt.eur(r.maxPerM2)}/m² de construção · ${fmt.pct(r.landShare, 0)} do valor das casas`),
+    gdTile('Valor das casas a construir', fmt.eur(r.gdv), `${fmt.n(abc * o.eff, 0)} m² vendáveis × ${fmt.eur(sale)}/m²`),
+    gdTile('Custo da obra', fmt.eur(r.build + r.soft), `${fmt.n(abc, 0)} m² × ${fmt.eur(o.cost)}/m² + ${fmt.pct(o.soft, 0)} projetos, licenças e taxas`)];
+  if (o.asking != null) {
+    tiles.push(gdTile('Ao preço pedido', `margem ${fmt.pct(r.marginAtAsking, 0)}`, `${o.asking > r.max ? `${fmt.pct(o.asking / r.max - 1, 0)} acima` : `${fmt.pct(1 - o.asking / (r.max || 1), 0)} abaixo`} do valor máximo; impostos do terreno ${fmt.eur(r.landTaxes)}`));
+    tiles.push(gdTile('Preço de venda necessário', `${fmt.eur(r.saleNeeded)}/m²`, `para ${fmt.pct(o.margin, 0)} de margem pagando o preço pedido (mercado: ${fmt.eur(sale)}/m²)`));
+  }
+  const ks = [-0.1, 0, 0.1];
+  const sens = `<div class="table-wrap"><table class="ol-table g-table"><thead><tr><th>Valor máximo do terreno</th>${ks.map((k) => `<th>venda ${fmt.eur(sale * (1 + k))}/m²</th>`).join('')}</tr></thead><tbody>${ks.map((kc) => `<tr><td>construção ${fmt.eur(o.cost * (1 + kc))}/m²</td>${ks.map((kv) => { const x = landResidual({ ...o, asking: null, cost: o.cost * (1 + kc), sale: sale * (1 + kv) }).max; return `<td${o.asking != null && x >= o.asking ? ' class="g-best"' : ''}>${fmt.eur(x)}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`;
+  const li = [];
+  if (o.asking != null) li.push(o.asking <= r.max ? `Ao preço pedido, com estes pressupostos, o projeto deixa ${fmt.pct(r.marginAtAsking, 0)} de margem (pretendida: ${fmt.pct(o.margin, 0)}): o preço é compatível com construir e vender.` : r.marginAtAsking > 0 ? `O preço pedido está acima do que o projeto paga com ${fmt.pct(o.margin, 0)} de margem: a margem desce para ${fmt.pct(r.marginAtAsking, 0)}. Só compensa se venderes a ${fmt.eur(r.saleNeeded)}/m² ou construíres mais barato.` : `Ao preço pedido, o projeto perde dinheiro com estes pressupostos: precisaria de vender a ${fmt.eur(r.saleNeeded)}/m².`);
+  li.push(`Preço de venda: ${saleSrc}. Casas novas vendem-se em média ${m.new_premium != null ? `${fmt.pct(m.new_premium, 0)} acima das existentes em ${esc(m.name)}` : 'acima das existentes'}.${m.fc_growth_12m != null ? ` Previsão do preço no concelho a 12 meses: ${fmt.spct(m.fc_growth_12m, 1)} (as obras demoram ${fmt.n(o.years, 1)} anos: o preço na altura da venda pode ser outro).` : ''}`);
+  const zone = [];
+  if (m.band) zone.push(`risco de correção dos preços ${BAND_LABEL[m.band].toLowerCase()} no painel`);
+  if (m.val_count != null) zone.push(`${fmt.n(m.val_count, 0)} avaliações bancárias em 3 meses (mercado com movimento)`);
+  if (m.migration_balance != null) zone.push(`saldo migratório de ${m.migration_balance >= 0 ? '+' : ''}${fmt.n(m.migration_balance, 0)} pessoas/ano`);
+  if (pr && pr.lic_new != null) zone.push(`${fmt.n(pr.lic_new, 0)} fogos novos licenciados na freguesia em ${pr.lic_year} (concorrência a caminho)`);
+  if (zone.length) li.push(`A zona: ${zone.join('; ')}.`);
+  const fl = floodTxt(pr);
+  if (fl) li.push(fl);
+  if (m.rent != null) {
+    const rentY = (m.rent * abc * o.eff * 12) / (r.build + r.soft + (o.asking ?? r.max) * (1 + r.tx));
+    li.push(`Construir para arrendar em vez de vender: com a renda mediana de ${esc(m.name)} (${fmt.eur2(m.rent)}/m²), daria ${fmt.pct(rentY, 1)} brutos por ano sobre terreno, impostos e obra.`);
+  }
+  out.innerHTML = `<div class="stats">${tiles.join('')}</div>${sens}<ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul>
+    <p class="muted">Método residual: valor das casas − construção − projetos, licenças e taxas − comercialização (${fmt.pct(o.sales, 0)}) − margem do promotor (${fmt.pct(o.margin, 0)}) − juros (${fmt.n(o.rate, 1)}%/ano durante ${fmt.n(o.years, 1)} anos sobre o terreno e metade da obra) − IMT (${o.rustic ? '5%, rústico' : '6,5%, terreno para construção'}) e Imposto do Selo (0,8%) e escritura. O custo de construção é um pressuposto teu (o INE só publica a variação, não o valor). Antes de comprar: confirma na câmara o que se pode construir (certidão ou pedido de informação prévia), se o terreno está em RAN ou REN, as infraestruturas (água, esgotos, arruamento) e as taxas municipais. Não é uma avaliação nem aconselhamento.</p>`;
+}
+
 // ---------- ligações para partilhar um guia (os valores vão no endereço, depois de #guia?)
 const b64u = { enc: (s) => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''),
   dec: (s) => decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/')))) };
 const GD_RUN = {};
-const gdShareHtml = (kind) => `<p class="g-share"><button type="button" class="btn" data-share="${kind}">🔗 Copiar ligação para partilhar</button> <span class="muted">A ligação leva os valores que escreveste (rendimento incluído): partilha-a só com quem quiseres.</span></p>`;
+const gdShareHtml = (kind) => `<p class="g-share"><button type="button" class="btn" data-share="${kind}">🔗 Copiar ligação para partilhar</button> <span class="muted">A ligação leva os valores que escreveste: partilha-a só com quem quiseres.</span></p>`;
 function gdShareLink(kind) {
   let d;
   if (kind === 'where') d = G;
@@ -2625,8 +2676,8 @@ function initGuides() {
   pick(document.querySelector(`#guide [data-guide="${k0}"]`) ? k0 : 'where');
   const saved = (() => { try { return JSON.parse(localStorage.getItem(GD_KEY) || '{}') || {}; } catch { return {}; } })();
   GD_RUN.pick = pick;
-  const KIND = { gy: 'young', gl: 'loan', gs: 'landlord', gt: 'tenant', gv: 'sell' };
-  [['gy', gyRender], ['gl', glRender], ['gs', gsRender], ['gt', gtRender], ['gv', gvRender]].forEach(([id, render]) => {
+  const KIND = { gy: 'young', gl: 'loan', gs: 'landlord', gt: 'tenant', gv: 'sell', gn: 'land' };
+  [['gy', gyRender], ['gl', glRender], ['gs', gsRender], ['gt', gtRender], ['gv', gvRender], ['gn', gnRender]].forEach(([id, render]) => {
     const f = $(`#${id}-form`);
     const save = () => { const v = {}; [...f.elements].forEach((el) => { if (el.name) v[el.name] = el.type === 'checkbox' ? el.checked : el.value; }); saved[id] = v; try { localStorage.setItem(GD_KEY, JSON.stringify(saved)); } catch { /* */ } };
     const run = () => {
@@ -2638,7 +2689,7 @@ function initGuides() {
     if (f.par) {
       const parSaved = (saved[id] || {}).par;
       f.conc.addEventListener('change', () => gdParishes(f));
-      if (f.conc.value.trim()) gdParishes(f).then(() => { if (parSaved) f.par.value = parSaved; if (f.querySelector('[name=rent]').value || id !== 'gt') run(); });
+      if (f.conc.value.trim()) gdParishes(f).then(() => { if (parSaved) f.par.value = parSaved; if (id !== 'gt' || f.rent.value) run(); });
     }
     f.addEventListener('submit', (e) => { e.preventDefault(); run(); });
     f.addEventListener('change', (e) => { if (e.target.name !== 'conc' && $(`#${id}-out`).innerHTML) run(); });

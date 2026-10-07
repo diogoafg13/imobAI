@@ -626,8 +626,16 @@ discover:
   # necessidade de reparação, 0012576/0012577/0012578/0012582/0014620/0014621 edifícios (N.º) por categorias
   # (a confirmar quais são época de construção e estado de conservação).
   # (todos sondados a 6/10/2026; ligados: 0012917 população, 0014765 HPI, 0012578 edifícios)
-  ine_probe: ["0012917", "0012918", "0014765", "0012575", "0012581", "0012576", "0012577", "0012578", "0012582",
+  # e para os terrenos: fogos licenciados em construções novas por freguesia (0000087 e 0000088, até 2025)
+  ine_probe: ["0000087", "0000088", "0012917", "0012918", "0014765", "0012575", "0012581", "0012576", "0012577", "0012578", "0012582",
               "0014620", "0014621"]
+  # API OGC da DGT: Carta do Regime de Uso do Solo (CRUS, a planta de ordenamento dos PDM uniformizada: solo urbano/
+  # rústico e categorias), uma coleção por concelho (ex.: crus_fafe); e RAN/REN, se lá estiverem.
+  ogc:
+    dgt:
+      base: https://ogcapi.dgterritorio.gov.pt
+      sample: [crus_fafe, crus_loures]
+      grep: ["^crus_", "ran", "ren"]
   services:
     apa_inundacoes: https://sniambgeoogc.apambiente.pt/getogc/rest/services/SNIAmb/Diretiva200760CE_2c/MapServer
 

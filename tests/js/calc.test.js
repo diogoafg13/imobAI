@@ -236,3 +236,16 @@ test('youngPlan: garantia dispensa a entrada até 450 mil; isenção de IMT/IS a
   const noG = c.youngPlan({ ...base, guarantee: false });
   assert.ok(noG.aid.down >= 25000 - 1e-6 && noG.aid.taxes.imt === 0);
 });
+
+test('landResidual: pagar o máximo dá exatamente a margem pretendida; margem e preço necessário coerentes', () => {
+  const o = { abc: 600, eff: 0.85, sale: 3500, cost: 1500, soft: 0.12, sales: 0.05, margin: 0.15, rate: 5, years: 2.5, closing: 1000, rustic: false };
+  const r = c.landResidual(o);
+  assert.ok(r.max > 0 && r.landShare > 0 && r.landShare < 0.5);
+  const atMax = c.landResidual({ ...o, asking: r.max });
+  assert.ok(Math.abs(atMax.marginAtAsking - 0.15) < 1e-9);
+  assert.ok(Math.abs(atMax.saleNeeded - 3500) < 1e-6);            // no máximo, o preço necessário é o de mercado
+  const dear = c.landResidual({ ...o, asking: r.max * 1.5 });
+  assert.ok(dear.marginAtAsking < 0.15 && dear.saleNeeded > 3500);
+  assert.ok(c.landResidual({ ...o, rustic: true }).max > r.max);  // IMT mais baixo
+  assert.equal(c.landResidual({ ...o, sale: 1000 }).max, 0);       // não paga a construção: o terreno não vale nada para construir
+});

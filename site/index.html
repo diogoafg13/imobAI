@@ -128,6 +128,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       <button type="button" class="chip" data-gp="landlord">Senhorio: contrato e IRS</button>
       <button type="button" class="chip" data-gp="tenant">Inquilino: a renda é razoável?</button>
       <button type="button" class="chip" data-gp="sell">Vender, arrendar ou manter</button>
+      <button type="button" class="chip" data-gp="land">Terreno para construir</button>
     </div>
     <div data-guide="where">
     <p class="muted">Cinco perguntas e o painel ordena os concelhos (e, dentro deles, as freguesias) que melhor encaixam no que procuras, com os dados públicos que tem. As respostas ficam só neste browser.</p>
@@ -285,6 +286,32 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <span class="im-buttons"><button type="submit" class="btn">Comparar</button></span>
       </form>
       <div id="gv-out"></div>
+    </div>
+
+    <div data-guide="land" hidden>
+      <p class="muted">Para avaliar um terreno para construir habitação: quanto faz sentido pagar por ele (método residual, o que os promotores usam), que margem fica ao preço pedido e o que dizem os dados da zona. A área de construção permitida vem do PDM — confirma-a na câmara (certidão ou pedido de informação prévia).</p>
+      <form id="gn-form" class="aff-form im-form" autocomplete="off">
+        <label>Concelho <input name="conc" list="im-conc" placeholder="ex.: Loures"></label>
+        <label>Freguesia <select name="par"><option value="">— (usar o concelho)</option></select></label>
+        <label>Área do terreno (m²) <input name="area" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 800"></label>
+        <label>Índice de utilização do PDM <input name="iu" type="number" min="0" max="10" step="any" inputmode="decimal" placeholder="ex.: 0,6"></label>
+        <label>Ou: área de construção permitida (m²) <input name="abc" type="number" min="0" step="any" inputmode="numeric" placeholder="índice × área"></label>
+        <label>Para construir <select name="kind"><option value="apt">Apartamentos</option><option value="house">Moradias</option></select></label>
+        <label>Preço pedido pelo terreno (€) <input name="asking" type="number" min="0" step="any" inputmode="numeric" placeholder="opcional"></label>
+        <label>Custo de construção (€/m², com IVA) <input name="cost" type="number" min="200" max="6000" step="any" inputmode="numeric" placeholder="1500"></label>
+        <label>Preço de venda (€/m²) <input name="sale" type="number" min="200" step="any" inputmode="numeric" placeholder="casas novas da zona"></label>
+        <label class="check"><input type="checkbox" name="rustic"> É prédio rústico (IMT 5%)</label>
+        <details class="im-assume"><summary>Pressupostos (editáveis)</summary>
+          <label>Área vendável (% da construção) <input name="eff" type="number" min="40" max="100" step="any" placeholder="80 / 90"></label>
+          <label>Projetos, licenças e taxas (% da construção) <input name="soft" type="number" min="0" max="50" step="any" placeholder="12"></label>
+          <label>Comercialização (% das vendas) <input name="sales" type="number" min="0" max="20" step="any" placeholder="5"></label>
+          <label>Margem do promotor (% das vendas) <input name="margin" type="number" min="0" max="50" step="any" placeholder="15"></label>
+          <label>Juros do financiamento (%/ano) <input name="rate" type="number" min="0" max="20" step="any" placeholder="5"></label>
+          <label>Prazo até vender (anos) <input name="years" type="number" min="0.5" max="10" step="any" placeholder="2,5"></label>
+        </details>
+        <span class="im-buttons"><button type="submit" class="btn">Avaliar</button></span>
+      </form>
+      <div id="gn-out"></div>
     </div>
   </section>
 

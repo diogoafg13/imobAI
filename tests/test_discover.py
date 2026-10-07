@@ -46,3 +46,39 @@ def test_summarize_probe_lists_dims_levels_and_periods():
     s = discover.summarize(df)
     assert s["dims"]["dim_3"] == {"T": "Total", "1": "Antes de 1919", "2": "1919 - 1945"}
     assert s["geocod_len"] == {"6": 2, "2": 1, "4": 1} and s["periods"] == ["2021", "2021", 1] and s["rows"] == 4
+
+
+def test_ogc_probe_lists_collections_samples_and_cors(tmp_path, monkeypatch):
+    import json as _json
+    from imopt import discover
+
+    class R:
+        def __init__(self, js, headers=None, status=200):
+            self._js, self.headers, self.status_code = js, headers or {}, status
+            self.ok = status == 200
+            self.text = _json.dumps(js)
+
+        def json(self):
+            return self._js
+
+        def raise_for_status(self):
+            if not self.ok:
+                raise RuntimeError(self.status_code)
+
+    def get(url, params=None, headers=None, timeout=None):
+        if url.endswith("/collections"):
+            return R({"collections": [{"id": "crus_fafe"}, {"id": "crus_loures"}, {"id": "ren_braga"}, {"id": "orto"}]},
+                     {"Access-Control-Allow-Origin": "*"})
+        if url.endswith("/items"):
+            return R({"features": [{"properties": {"classe": "Solo urbano", "categoria": "Espaços habitacionais"},
+                                    "geometry": {"type": "MultiPolygon", "coordinates": []}}]})
+        return R({"id": url.rsplit("/", 1)[-1]})
+
+    monkeypatch.setattr(discover.requests, "get", get)
+    st = discover.ogc_probe({"dgt": {"base": "http://x", "sample": ["crus_fafe"], "grep": ["^crus_", "ren"]}}, tmp_path)
+    assert "4 coleções" in st and "crus_: 2" in st and "ren: 1" in st
+    d = _json.loads((tmp_path / "clean" / "ogc_probe.json").read_text())
+    api = d["apis"]["dgt"]
+    assert api["cors"] == "*" and set(api["samples"]) == {"crus_fafe", "ren_braga"}
+    assert api["samples"]["crus_fafe"]["properties"] == ["categoria", "classe"]
+    assert (tmp_path / "raw" / "services" / "dgt_collections.json").exists()

@@ -337,9 +337,34 @@ function youngPlan(o) {
   return { aid: mk(true), none: mk(false) };
 }
 
+// Terreno para construir: valor residual (o método dos promotores). Valor das casas a vender (GDV) − construção −
+// projetos/licenças/taxas − comercialização − margem do promotor − financiamento − impostos e escritura do terreno
+// = o máximo a pagar pelo terreno. IMT de terreno para construção 6,5% (rústico 5%) + Imposto do Selo 0,8%.
+// Financiamento: juros sobre o terreno durante todo o prazo e sobre metade da construção (gasta ao longo da obra).
+// o = { abc (m² de construção), eff (área vendável / abc), sale (€/m² vendável), cost (€/m² de construção, com IVA),
+//       soft (fração da construção), sales (fração do GDV), margin (fração do GDV), rate (%/ano), years, closing (€),
+//       rustic, asking (€, opcional) }
+const LAND_TAX = { urban: 0.065, rustic: 0.05, is: 0.008 };
+function landResidual(o) {
+  const tx = (o.rustic ? LAND_TAX.rustic : LAND_TAX.urban) + LAND_TAX.is, rT = (o.rate / 100) * o.years;
+  const gdv = o.abc * o.eff * o.sale, build = o.abc * o.cost, soft = build * o.soft, sales = gdv * o.sales;
+  const fixed = build + soft + sales + (o.closing || 0) * (1 + rT) + 0.5 * rT * (build + soft);
+  const max = Math.max(0, (gdv - fixed - gdv * o.margin) / ((1 + tx) * (1 + rT)));
+  const out = { gdv, build, soft, sales, tx, max, maxPerM2: o.abc ? max / o.abc : null, landShare: gdv ? max / gdv : null };
+  if (o.asking != null) {
+    const land = o.asking * (1 + tx) * (1 + rT);
+    const profit = gdv - fixed - land;
+    // preço de venda (€/m²) que dá a margem pretendida pagando o preço pedido
+    const needGdv = (build + soft + (o.closing || 0) * (1 + rT) + 0.5 * rT * (build + soft) + land) / (1 - o.sales - o.margin);
+    Object.assign(out, { profit, marginAtAsking: gdv ? profit / gdv : null, saleNeeded: o.abc * o.eff ? needGdv / (o.abc * o.eff) : null,
+      totalCost: gdv - profit, landTaxes: o.asking * tx });
+  }
+  return out;
+}
+
 if (typeof module !== 'undefined') {
   module.exports = { TAX_YEAR, taxTablesStale, BDP, LIMIT, IMT26, YOUNG_FULL, YOUNG_PART, IS_BUY, IS_LOAN, imtOf, isBuyOf, buyTaxes,
     islands, annuity, qOfMonth, serVal, qAdd, qIdx, at12, serGrowth, TAX_EDGES, shareAbove,
     RENT_COEF, IRS_RENT, irsRentRate, irr, invest, maxPrice, rankBy,
-    schedule, LOAN_PLANS, loanPlans, LEASES, landlord, holdOptions, YOUNG_GUARANTEE, youngPlan };
+    schedule, LOAN_PLANS, loanPlans, LEASES, landlord, holdOptions, YOUNG_GUARANTEE, youngPlan, LAND_TAX, landResidual };
 }
