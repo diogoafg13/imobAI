@@ -19,9 +19,9 @@
   "rent_new_contracts": "ok (2082 linhas, 2025) [dim_3=2 '2.º quartil']",
   "rent_q1": "ok (2082 linhas, 2025) [dim_3=1 '1.º quartil']",
   "rent_q3": "ok (2082 linhas, 2025) [dim_3=3 '3.º quartil']",
-  "rent_parish": "ok (3190 linhas, 2024)",
+  "rent_parish": "ok (3828 linhas, 2025)",
   "lic_dwellings": "ok (171554 linhas, 2025) [dim_3=T 'Total']",
-  "rent_contracts": "ok (3190 linhas, 2024)",
+  "rent_contracts": "ok (3828 linhas, 2025)",
   "hpi": "ok (70 linhas, 2026Q2) [dim_3=H1 'Total']",
   "bank_valuation": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']",
   "valuation_count": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']",
@@ -94,14 +94,14 @@
   "al_rnal": "ok (cache de 2026-10-06: 111869 registos)"
  },
  "osm": {
-  "osm_points": "ok (school: 9374, health: 4353, station: 831; 1 quadrículas novas)"
+  "osm_points": "ok (cache de 2026-10-06: 14558 pontos)"
  },
  "apa": {
   "flood_zones": "ok (cache de 2026-10-06: 63 polígonos, pretorno=T0100)"
  },
  "stale": [],
  "discover": {
-  "ine_probe": "0014697: 3828 linhas; 0014698: 3828 linhas; 0014772: 4074 linhas; 0014773: 4074 linhas",
+  "ine_probe": "nada novo (17 já sondados)",
   "ine_catalog": "ok (cache: 13165 indicadores)",
   "ogc": "ok (cache: dgt: 90 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, cadastro, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural)",
   "services": "apa_inundacoes: 8 camadas"
