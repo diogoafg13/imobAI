@@ -162,16 +162,18 @@ def services(cfg: dict, data_dir: Path) -> str:
 def ogc_probe(cfg: dict, data_dir: Path) -> str:
     """Descobre uma API OGC (Features): coleções, campos e exemplos das que interessam. Uma vez por semana."""
     path = data_dir / "clean" / "ogc_probe.json"
+    key = json.dumps(cfg, sort_keys=True, default=str)       # mudar a configuração (exemplos, ponto) obriga a repetir
     if path.exists():
         try:
             prev = json.loads(path.read_text(encoding="utf-8"))
-            if (dt.date.today() - dt.date.fromisoformat(prev.get("updated", "1900-01-01"))).days < MAX_AGE_DAYS and prev.get("ok"):
+            if ((dt.date.today() - dt.date.fromisoformat(prev.get("updated", "1900-01-01"))).days < MAX_AGE_DAYS
+                    and prev.get("ok") and prev.get("cfg") == key):
                 return f"ok (cache: {prev.get('summary')})"
         except Exception:  # noqa: BLE001
             pass
     out_dir = data_dir / "raw" / "services"
     out_dir.mkdir(parents=True, exist_ok=True)
-    res: dict = {"updated": dt.date.today().isoformat(), "apis": {}}
+    res: dict = {"updated": dt.date.today().isoformat(), "cfg": key, "apis": {}}
     notes = []
     for name, spec in (cfg or {}).items():
         base = spec["base"].rstrip("/")

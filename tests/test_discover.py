@@ -116,3 +116,26 @@ def test_ogc_probe_survives_a_failing_collection_list(tmp_path, monkeypatch):
     d = _json.loads((tmp_path / "clean" / "ogc_probe.json").read_text())
     assert d["ok"] and "502" in d["apis"]["dgt"]["collections_error"]
     assert d["apis"]["dgt"]["samples"]["crus_fafe"]["properties"] == ["classe"]
+
+
+def test_ogc_probe_cache_is_invalidated_by_a_config_change(tmp_path, monkeypatch):
+    import json as _json
+    from imopt import discover
+    calls = []
+
+    class R:
+        status_code, ok, headers, text = 200, True, {}, "{}"
+
+        def json(self):
+            return {"collections": [{"id": "crus"}], "features": []}
+
+        def raise_for_status(self):
+            pass
+
+    monkeypatch.setattr(discover.requests, "get", lambda url, params=None, headers=None, timeout=None: (calls.append(url), R())[1])
+    discover.ogc_probe({"dgt": {"base": "http://x", "sample": ["crus"]}}, tmp_path)
+    n = len(calls)
+    discover.ogc_probe({"dgt": {"base": "http://x", "sample": ["crus"]}}, tmp_path)
+    assert len(calls) == n                                         # mesma configuração: cache
+    discover.ogc_probe({"dgt": {"base": "http://x", "sample": ["crus", "cadastro"]}}, tmp_path)
+    assert len(calls) > n                                          # configuração nova: repete
