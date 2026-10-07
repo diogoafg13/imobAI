@@ -249,3 +249,12 @@ test('landResidual: pagar o máximo dá exatamente a margem pretendida; margem e
   assert.ok(c.landResidual({ ...o, rustic: true }).max > r.max);  // IMT mais baixo
   assert.equal(c.landResidual({ ...o, sale: 1000 }).max, 0);       // não paga a construção: o terreno não vale nada para construir
 });
+
+test('parseLL: formatos do Google Maps, vírgula decimal, ordem trocada e fora de Portugal', () => {
+  assert.deepEqual(c.parseLL('38.83092, -9.16851'), [38.83092, -9.16851]);
+  assert.deepEqual(c.parseLL('38,7223 -9,1393'), [38.7223, -9.1393]);
+  assert.deepEqual(c.parseLL('-9.1393, 38.7223'), [38.7223, -9.1393]);
+  assert.deepEqual(c.parseLL('32.65, -16.91'), [32.65, -16.91]);           // Funchal
+  assert.equal(c.parseLL('48.85, 2.35'), null);                             // Paris
+  assert.equal(c.parseLL('x'), null);
+});

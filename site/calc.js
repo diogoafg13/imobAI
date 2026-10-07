@@ -362,9 +362,21 @@ function landResidual(o) {
   return out;
 }
 
+// coordenadas como o Google Maps as copia ("38.83092, -9.16851"), com vírgula decimal ou pela ordem inversa;
+// null fora de Portugal (continente, Madeira e Açores)
+function parseLL(txt) {
+  const t = String(txt || '').trim();
+  let nums = t.match(/-?\d+\.\d+/g);
+  if (!nums || nums.length < 2) nums = (t.match(/-?\d+,\d+/g) || []).map((x) => x.replace(',', '.'));
+  if (!nums || nums.length < 2) return null;
+  let [a, b] = nums.slice(0, 2).map(Number);
+  if (a < 0 && b > 0) [a, b] = [b, a];                    // ordem trocada (longitude primeiro)
+  return a >= 32 && a <= 43 && b >= -32 && b <= -6 ? [a, b] : null;
+}
+
 if (typeof module !== 'undefined') {
   module.exports = { TAX_YEAR, taxTablesStale, BDP, LIMIT, IMT26, YOUNG_FULL, YOUNG_PART, IS_BUY, IS_LOAN, imtOf, isBuyOf, buyTaxes,
     islands, annuity, qOfMonth, serVal, qAdd, qIdx, at12, serGrowth, TAX_EDGES, shareAbove,
     RENT_COEF, IRS_RENT, irsRentRate, irr, invest, maxPrice, rankBy,
-    schedule, LOAN_PLANS, loanPlans, LEASES, landlord, holdOptions, YOUNG_GUARANTEE, youngPlan, LAND_TAX, landResidual };
+    schedule, LOAN_PLANS, loanPlans, LEASES, landlord, holdOptions, YOUNG_GUARANTEE, youngPlan, LAND_TAX, landResidual, parseLL };
 }

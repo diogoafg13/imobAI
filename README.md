@@ -523,9 +523,12 @@ Além do "Onde procurar casa", quatro guias curtos, com as contas em `site/calc.
   de construção permitida vem do PDM (índice × área): a certidão ou o PIP da câmara é que valem.
 - **Casas novas licenciadas por freguesia** (INE 0000087, 1995–2025): último ano, soma de 3 anos e por 100 casas
   existentes, na tabela de freguesias, no mapa e no guia do terreno (a concorrência que vem a caminho).
-- Em descoberta (branch `data`, `data/clean/ogc_probe.json`): a API OGC da DGT tem a Carta do Regime de Uso do Solo
-  (`crus`), o cadastro predial e as servidões (RAN, REN, áreas protegidas, Rede Natura, perigosidade de incêndio), com
-  CORS aberto — o site poderá consultar um ponto diretamente do browser.
+- **O que está num ponto** (guia do terreno): com as coordenadas (ou a localização do browser), o site identifica o
+  concelho e a freguesia pelas fronteiras do painel e pergunta, do próprio browser, à API OGC da DGT
+  (`ogcapi.dgterritorio.gov.pt`, CORS aberto, confirmado pela descoberta em `data/clean/ogc_probe.json`): a
+  classificação do solo no PDM (Carta do Regime de Uso do Solo, coleção `crus`: classe, categoria e designação no
+  plano), se está em RAN, REN, área protegida ou Rede Natura 2000 (com a ligação ao diploma), a perigosidade de incêndio
+  rural e o cadastro predial (onde existe). Num raio de ~5 m; são cartas de síntese — vale o PDM e a câmara.
 
 ### Teste do site no browser (no build)
 

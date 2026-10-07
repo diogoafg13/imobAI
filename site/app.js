@@ -2586,6 +2586,90 @@ function gyRender() {
     <p class="muted">Taxa de ${fmt.n(rate, 2)}%. A poupança paga primeiro os impostos e a escritura e o resto vai para a entrada. Regras de ${TAX_YEAR} (Decreto-Lei 44/2024 e Portaria 236-A/2024 para a garantia; isenções de IMT e Imposto do Selo para jovens): há mais condições (domicílio fiscal em Portugal, não ser dependente, nunca ter usado a garantia); confirma com o banco e as Finanças. Com compradores de idades diferentes, a isenção aplica-se à parte de quem tem até 35 anos.</p>`;
 }
 
+// terreno: o que está num ponto (API OGC da DGT, consultada do browser) e a freguesia pelas fronteiras do painel
+const DGT_API = 'https://ogcapi.dgterritorio.gov.pt';
+const DGT_LAYERS = [
+  ['crus', 'Classificação do solo no PDM (Carta do Regime de Uso do Solo)'],
+  ['srup_ran', 'Reserva Agrícola Nacional (RAN)'],
+  ['srup_ren_areal', 'Reserva Ecológica Nacional (REN)'],
+  ['srup_areas_protegidas', 'Área protegida'],
+  ['srup_zec', 'Rede Natura 2000 — Zona Especial de Conservação'],
+  ['srup_zpe', 'Rede Natura 2000 — Zona de Proteção Especial'],
+  ['srup_perigosidade_inc_rural', 'Perigosidade de incêndio rural'],
+  ['cadastro', 'Cadastro predial'],
+];
+let PARGEO = null;
+function inRing(x, y, ring) {
+  let ins = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i], [xj, yj] = ring[j];
+    if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) ins = !ins;
+  }
+  return ins;
+}
+async function parishAt(lat, lon) {
+  if (!PARGEO) PARGEO = await j('data/freguesias.geojson').catch(() => null);
+  if (!PARGEO) return null;
+  for (const f of PARGEO.features) {
+    const g = f.geometry; if (!g) continue;
+    const polys = g.type === 'Polygon' ? [g.coordinates] : g.type === 'MultiPolygon' ? g.coordinates : [];
+    if (polys.some((p) => inRing(lon, lat, p[0]) && !p.slice(1).some((h) => inRing(lon, lat, h)))) return f.properties;
+  }
+  return null;
+}
+async function dgtAt(lat, lon) {
+  const e = 0.00005, bbox = `${lon - e},${lat - e},${lon + e},${lat + e}`;
+  const one = async ([id, label]) => {
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 20000);
+    try {
+      const r = await fetch(`${DGT_API}/collections/${id}/items?f=json&limit=5&bbox=${bbox}`, { signal: ctl.signal });
+      if (!r.ok) throw new Error(r.status);
+      return { id, label, feats: ((await r.json()).features || []).map((x) => x.properties || {}) };
+    } catch (err) { return { id, label, error: String(err.message || err) }; } finally { clearTimeout(timer); }
+  };
+  return Promise.all(DGT_LAYERS.map(one));
+}
+const srupLink = (p) => (p.serv_hiperligacao ? ` — <a class="lnk" href="${esc(encodeURI(p.serv_hiperligacao))}" target="_blank" rel="noopener">diploma</a>` : '');
+async function gnPointSection(lat, lon, pr) {
+  const box = $('#gn-point');
+  if (!box) return;
+  box.innerHTML = '<p class="muted">A perguntar à DGT o que está neste ponto…</p>';
+  const R = await dgtAt(lat, lon), by = Object.fromEntries(R.map((x) => [x.id, x]));
+  if (R.every((x) => x.error)) { box.innerHTML = `<h3>Neste ponto</h3><p class="banner">Não foi possível consultar a DGT agora (${esc(R[0].error)}). Tenta mais tarde, ou vê no <a href="https://snit.dgterritorio.gov.pt/" target="_blank" rel="noopener">SNIT</a>.</p>`; return; }
+  const li = [];
+  const c = by.crus;
+  if (c && !c.error) {
+    if (!c.feats.length) li.push('ℹ <b>PDM</b>: sem classificação da DGT neste ponto (pode ser fora do continente ou numa área sem carta uniformizada).');
+    else {
+      const x = c.feats[0], rustic = /r[uú]stico/i.test(x.classe_2021 || '');
+      li.push(`${rustic ? '⚠' : '✓'} <b>PDM — ${esc(x.classe_2021 || '—')}</b>, ${esc(x.categoria_2021 || '—')}: "${esc(x.designacao_no_plano || '')}" (${esc(x.municipio || '')}; PDM ${esc((x.situacao_pdm || '').toLowerCase())}, publicado em ${esc(String(x.data_pub_origem || '').slice(0, 10))}).${rustic ? ' Em solo rústico, construir habitação nova é em regra muito limitado (só nas exceções do regulamento do PDM): o método residual acima não se aplica sem isso.' : ''}${c.feats.length > 1 ? ' O ponto está perto do limite entre classes: confirma na planta.' : ''}`);
+    }
+  }
+  const restr = ['srup_ran', 'srup_ren_areal', 'srup_areas_protegidas', 'srup_zec', 'srup_zpe'].map((id) => by[id]).filter((x) => x && !x.error && x.feats.length);
+  const failed = ['srup_ran', 'srup_ren_areal', 'srup_areas_protegidas', 'srup_zec', 'srup_zpe'].filter((id) => by[id] && by[id].error);
+  if (restr.length) restr.forEach((x) => li.push(`⚠ <b>${esc(x.label)}</b>: ${esc(x.feats[0].designacao || x.feats[0].tipologia || '')}${srupLink(x.feats[0])}. Construir aqui depende de parecer ou é interdito — confirma na câmara.`));
+  else li.push(`✓ Não está em RAN, REN, área protegida nem Rede Natura, segundo as servidões publicadas pela DGT${failed.length ? ` (sem resposta para: ${failed.map((id) => by[id].label).join(', ')})` : ''}.`);
+  const fire = by.srup_perigosidade_inc_rural;
+  if (fire && !fire.error && fire.feats.length) {
+    const t = fire.feats.map((x) => x.tipologia).filter(Boolean)[0];
+    li.push(t ? `${/alta/i.test(t) ? '⚠' : 'ℹ'} <b>Perigosidade de incêndio rural: ${esc(t)}</b>.${/alta/i.test(t) ? ' Em perigosidade alta ou muito alta, construir fora de solo urbano está muito condicionado (regime de gestão integrada de fogos rurais).' : ''}` : 'ℹ Perigosidade de incêndio rural: sem classe atribuída neste ponto (habitual em zona urbana).');
+  }
+  const cad = by.cadastro;
+  if (cad && !cad.error) li.push(cad.feats.length ? `ℹ <b>Cadastro predial</b>: prédio ${esc(cad.feats[0].label || cad.feats[0].nationalcadastralreference || '')}, ${fmt.n(cad.feats[0].areavalue, 0)} m² cadastrados.` : 'ℹ Sem cadastro geométrico neste ponto (só existe em parte do país): a área é a da caderneta.');
+  const fl = floodTxt(pr);
+  if (fl) li.push(fl);
+  box.innerHTML = `<h3>Neste ponto (${fmt.n(lat, 5)}, ${fmt.n(lon, 5)})</h3><ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul><p class="muted">Dados da DGT (API OGC: Carta do Regime de Uso do Solo dos PDM e servidões e restrições de utilidade pública), consultados agora, num raio de ~5 m. São cartas de síntese: o que vale é o PDM em vigor e a informação da câmara.</p>`;
+}
+async function gnLocate(lat, lon) {
+  const f = $('#gn-form');
+  f.ll.value = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+  const p = await parishAt(lat, lon);
+  if (p && p.code) {
+    const m = BY[String(p.code).slice(0, 4)];
+    if (m) { f.conc.value = m.name; await gdParishes(f); if (PARBY[p.code]) f.par.value = p.code; }
+  }
+}
+
 // 6) terreno para construir (método residual)
 const LAND_DEF = { cost: 1500, soft: 12, sales: 5, margin: 15, rate: 5, years: 2.5, eff: { apt: 80, house: 90 } };
 function gnRender() {
@@ -2593,7 +2677,12 @@ function gnRender() {
   if (!m) { out.innerHTML = '<p class="muted">Escolhe um concelho da lista.</p>'; return; }
   const pr = f.par.value && PARBY[f.par.value] ? PARBY[f.par.value] : null, kind = f.kind.value;
   const area = gdNum(f, 'area'), iu = gdNum(f, 'iu'), abc = gdNum(f, 'abc') || (area && iu ? area * iu : null);
-  if (!abc) { out.innerHTML = '<p class="muted">Indica a área de construção permitida (ou a área do terreno e o índice de utilização do PDM).</p>'; return; }
+  if (!abc) {
+    out.innerHTML = '<p class="muted">Indica a área de construção permitida (ou a área do terreno e o índice de utilização do PDM) para as contas.</p><div id="gn-point"></div>';
+    const ll = parseLL(f.ll.value);
+    if (ll) gnPointSection(ll[0], ll[1], pr).catch((x) => console.error(x));
+    return;
+  }
   // preço de venda: casas novas do concelho (INE); na freguesia, ajustado pela relação entre a freguesia e o concelho
   const prem = (() => { const xs = MUNIS.map((x) => x.new_premium).filter((v) => v != null).sort((a, b) => a - b); return xs.length ? xs[Math.floor(xs.length / 2)] : 0.15; })();
   let sale = gdNum(f, 'sale'), saleSrc = 'o que indicaste';
@@ -2634,7 +2723,10 @@ function gnRender() {
     li.push(`Construir para arrendar em vez de vender: com a renda mediana de ${esc(m.name)} (${fmt.eur2(m.rent)}/m²), daria ${fmt.pct(rentY, 1)} brutos por ano sobre terreno, impostos e obra.`);
   }
   out.innerHTML = `<div class="stats">${tiles.join('')}</div>${sens}<ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul>
+    <div id="gn-point"></div>
     <p class="muted">Método residual: valor das casas − construção − projetos, licenças e taxas − comercialização (${fmt.pct(o.sales, 0)}) − margem do promotor (${fmt.pct(o.margin, 0)}) − juros (${fmt.n(o.rate, 1)}%/ano durante ${fmt.n(o.years, 1)} anos sobre o terreno e metade da obra) − IMT (${o.rustic ? '5%, rústico' : '6,5%, terreno para construção'}) e Imposto do Selo (0,8%) e escritura. O custo de construção é um pressuposto teu (o INE só publica a variação, não o valor). Antes de comprar: confirma na câmara o que se pode construir (certidão ou pedido de informação prévia), se o terreno está em RAN ou REN, as infraestruturas (água, esgotos, arruamento) e as taxas municipais. Não é uma avaliação nem aconselhamento.</p>`;
+  const ll = parseLL(f.ll.value);
+  if (ll) gnPointSection(ll[0], ll[1], pr).catch((x) => console.error(x));
 }
 
 // ---------- ligações para partilhar um guia (os valores vão no endereço, depois de #guia?)
@@ -2697,6 +2789,13 @@ function initGuides() {
     f.addEventListener('submit', (e) => { e.preventDefault(); run(); });
     f.addEventListener('change', (e) => { if (e.target.name !== 'conc' && $(`#${id}-out`).innerHTML) run(); });
     if (!f.par && f.loan && f.loan.value) run();
+  });
+  const gnf = $('#gn-form');
+  gnf.ll.addEventListener('change', async () => { const ll = parseLL(gnf.ll.value); if (ll) { await gnLocate(ll[0], ll[1]); GD_RUN.land.run(); } });
+  $('#gn-locate').addEventListener('click', () => {
+    if (!navigator.geolocation) { $('#gn-out').innerHTML = '<p class="banner">Este browser não dá a localização: escreve as coordenadas.</p>'; return; }
+    navigator.geolocation.getCurrentPosition(async (pos) => { await gnLocate(pos.coords.latitude, pos.coords.longitude); GD_RUN.land.run(); },
+      () => { $('#gn-out').innerHTML = '<p class="banner">Sem acesso à localização: escreve as coordenadas.</p>'; }, { enableHighAccuracy: true, timeout: 15000 });
   });
   $('#guide').addEventListener('click', async (e) => {
     const b = e.target.closest('button[data-share]');

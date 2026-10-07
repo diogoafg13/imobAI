@@ -168,7 +168,7 @@ def steps(pg, s: Smoke, ctx, base: str) -> None:
               ("landlord", "gs", {"conc": names[porto], "area": "80"}),
               ("tenant", "gt", {"conc": names[lisboa], "area": "70", "rent": "1300", "income": "3000"}),
               ("sell", "gv", {"conc": names[porto], "area": "90", "buy": "160000", "bal": "50000"}),
-              ("land", "gn", {"conc": names[porto], "area": "800", "iu": "0.6", "asking": "150000"})]
+              ("land", "gn", {"conc": names[porto], "area": "800", "iu": "0.6", "asking": "150000", "ll": "41.1579, -8.6291"})]
     for kind, fid, fill in guides:
         pg.click(f"[data-gp={kind}]")
         for k, v in fill.items():

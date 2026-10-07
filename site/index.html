@@ -289,8 +289,10 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     </div>
 
     <div data-guide="land" hidden>
-      <p class="muted">Para avaliar um terreno para construir habitação: quanto faz sentido pagar por ele (método residual, o que os promotores usam), que margem fica ao preço pedido e o que dizem os dados da zona. A área de construção permitida vem do PDM — confirma-a na câmara (certidão ou pedido de informação prévia).</p>
+      <p class="muted">Para avaliar um terreno para construir habitação: quanto faz sentido pagar por ele (método residual, o que os promotores usam), que margem fica ao preço pedido e o que dizem os dados da zona. Com as coordenadas (no Google Maps: clique direito no sítio → copiar as coordenadas), o painel pergunta à DGT a classificação do solo no PDM e se o sítio está em RAN, REN, área protegida, Rede Natura ou perigosidade de incêndio. A área de construção permitida vem do PDM — confirma-a na câmara (certidão ou pedido de informação prévia).</p>
       <form id="gn-form" class="aff-form im-form" autocomplete="off">
+        <label>Coordenadas do terreno <input name="ll" placeholder="ex.: 38.8309, -9.1685" inputmode="decimal"></label>
+        <span class="im-buttons"><button type="button" class="btn" id="gn-locate">📍 Estou no terreno</button></span>
         <label>Concelho <input name="conc" list="im-conc" placeholder="ex.: Loures"></label>
         <label>Freguesia <select name="par"><option value="">— (usar o concelho)</option></select></label>
         <label>Área do terreno (m²) <input name="area" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 800"></label>
