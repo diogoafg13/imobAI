@@ -66,6 +66,8 @@ def test_ogc_probe_lists_collections_samples_and_cors(tmp_path, monkeypatch):
                 raise RuntimeError(self.status_code)
 
     def get(url, params=None, headers=None, timeout=None):
+        if url.endswith("/"):
+            return R({"title": "DGT"}, {"Access-Control-Allow-Origin": "*"})
         if url.endswith("/collections"):
             return R({"collections": [{"id": "crus_fafe"}, {"id": "crus_loures"}, {"id": "ren_braga"}, {"id": "orto"}]},
                      {"Access-Control-Allow-Origin": "*"})
@@ -76,9 +78,41 @@ def test_ogc_probe_lists_collections_samples_and_cors(tmp_path, monkeypatch):
 
     monkeypatch.setattr(discover.requests, "get", get)
     st = discover.ogc_probe({"dgt": {"base": "http://x", "sample": ["crus_fafe"], "grep": ["^crus_", "ren"]}}, tmp_path)
-    assert "4 coleções" in st and "crus_: 2" in st and "ren: 1" in st
+    assert "4 coleções" in st and "crus_: 2" in st and "ren: 1" in st and "exemplos com dados" in st
     d = _json.loads((tmp_path / "clean" / "ogc_probe.json").read_text())
     api = d["apis"]["dgt"]
     assert api["cors"] == "*" and set(api["samples"]) == {"crus_fafe", "ren_braga"}
     assert api["samples"]["crus_fafe"]["properties"] == ["categoria", "classe"]
     assert (tmp_path / "raw" / "services" / "dgt_collections.json").exists()
+
+
+def test_ogc_probe_survives_a_failing_collection_list(tmp_path, monkeypatch):
+    import json as _json
+    from imopt import discover
+
+    class R:
+        def __init__(self, js, status=200):
+            self._js, self.status_code, self.headers = js, status, {}
+            self.ok = status == 200
+            self.text = _json.dumps(js)
+
+        def json(self):
+            return self._js
+
+        def raise_for_status(self):
+            if not self.ok:
+                raise RuntimeError(f"{self.status_code} Server Error")
+
+    def get(url, params=None, headers=None, timeout=None):
+        if url.endswith("/collections"):
+            return R({}, 502)
+        if url.endswith("/items"):
+            return R({"features": [{"properties": {"classe": "Solo urbano"}, "geometry": {"type": "Polygon"}}]})
+        return R({})
+
+    monkeypatch.setattr(discover.requests, "get", get)
+    st = discover.ogc_probe({"dgt": {"base": "http://x", "sample": ["crus_fafe"], "grep": ["^crus_"]}}, tmp_path)
+    assert "lista indisponível" in st and "crus_fafe" in st
+    d = _json.loads((tmp_path / "clean" / "ogc_probe.json").read_text())
+    assert d["ok"] and "502" in d["apis"]["dgt"]["collections_error"]
+    assert d["apis"]["dgt"]["samples"]["crus_fafe"]["properties"] == ["classe"]

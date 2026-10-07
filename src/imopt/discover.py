@@ -177,11 +177,19 @@ def ogc_probe(cfg: dict, data_dir: Path) -> str:
         base = spec["base"].rstrip("/")
         info: dict = {}
         try:
-            r = requests.get(f"{base}/collections", params={"f": "json"}, headers={**UA, "Origin": "https://example.github.io"}, timeout=120)
-            r.raise_for_status()
-            info["cors"] = r.headers.get("Access-Control-Allow-Origin")
-            (out_dir / f"{name}_collections.json").write_text(r.text, encoding="utf-8")
-            cols = [c.get("id") for c in r.json().get("collections", []) if c.get("id")]
+            # página inicial: a API está viva? e o CORS (o site pode consultá-la do browser?)
+            lp = requests.get(f"{base}/", params={"f": "json"}, headers={**UA, "Origin": "https://example.github.io"}, timeout=60)
+            info["landing_status"] = lp.status_code
+            info["cors"] = lp.headers.get("Access-Control-Allow-Origin")
+            # a lista completa de coleções pode ser pesada demais para o servidor (502): se falhar, segue só com os exemplos
+            cols: list[str] = []
+            try:
+                r = requests.get(f"{base}/collections", params={"f": "json"}, headers=UA, timeout=180)
+                r.raise_for_status()
+                (out_dir / f"{name}_collections.json").write_text(r.text, encoding="utf-8")
+                cols = [c.get("id") for c in r.json().get("collections", []) if c.get("id")]
+            except Exception as e:  # noqa: BLE001
+                info["collections_error"] = str(e)[:160]
             info["n_collections"] = len(cols)
             for pat in spec.get("grep", []):
                 hits = [c for c in cols if re.search(pat, c, re.I)]
@@ -208,7 +216,11 @@ def ogc_probe(cfg: dict, data_dir: Path) -> str:
                     except Exception as e:  # noqa: BLE001
                         one[f"{key}_error"] = str(e)[:120]
                 info["samples"][cid] = one
-            notes.append(f"{name}: {len(cols)} coleções" + "".join(f", {k[6:]}: {v['n']}" for k, v in info.items() if k.startswith("match_")))
+            ok_samples = [c for c, v in info["samples"].items() if v.get("items_status") == 200]
+            notes.append(f"{name}: {len(cols) if cols else 'lista indisponível,'} coleções" + "".join(f", {k[6:]}: {v['n']}" for k, v in info.items() if k.startswith("match_"))
+                         + f"; exemplos com dados: {', '.join(ok_samples) or 'nenhum'}")
+            if not cols and not ok_samples:
+                raise RuntimeError(info.get("collections_error") or "sem resposta")
         except Exception as e:  # noqa: BLE001
             info["error"] = str(e)[:200]
             notes.append(f"{name}: falhou ({str(e)[:80]})")
