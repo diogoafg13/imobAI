@@ -991,9 +991,211 @@
   ]
  },
  "0014697": {
-  "error": "falha a obter 0014697 do INE: HTTPSConnectionPool(host='www.ine.pt', port=443): Max retries exceeded with url: /ine/json_indicador/pindica.jsp?op=2&varcd=0014697&lang=PT&Dim1=T (Caused by ConnectTimeo"
+  "probed": "20261007",
+  "rows": 3828,
+  "dims": {},
+  "geocod_len": {
+   "7": 1848,
+   "9": 1746,
+   "3": 156,
+   "2": 60,
+   "1": 18
+  },
+  "periods": [
+   "2020",
+   "2025",
+   6
+  ],
+  "sample": [
+   {
+    "varcd": "0014697",
+    "period": "2020",
+    "period_kind": "year",
+    "sort_key": "202000",
+    "geocod": "11A011302",
+    "geoname": "Cesar",
+    "value": "33.0",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0014697",
+    "period": "2020",
+    "period_kind": "year",
+    "sort_key": "202000",
+    "geocod": "11A011303",
+    "geoname": "Fajões",
+    "value": "33.0",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0014697",
+    "period": "2020",
+    "period_kind": "year",
+    "sort_key": "202000",
+    "geocod": "11A131613",
+    "geoname": "Labruge",
+    "value": "33.0",
+    "level": "other",
+    "dico": NaN
+   }
+  ]
  },
  "0014698": {
-  "error": "falha a obter 0014698 do INE: HTTPSConnectionPool(host='www.ine.pt', port=443): Max retries exceeded with url: /ine/json_indicador/pindica.jsp?op=2&varcd=0014698&lang=PT&Dim1=T (Caused by ConnectTimeo"
+  "probed": "20261007",
+  "rows": 3828,
+  "dims": {},
+  "geocod_len": {
+   "7": 1848,
+   "9": 1746,
+   "3": 156,
+   "2": 60,
+   "1": 18
+  },
+  "periods": [
+   "2020",
+   "2025",
+   6
+  ],
+  "sample": [
+   {
+    "varcd": "0014698",
+    "period": "2020",
+    "period_kind": "year",
+    "sort_key": "202000",
+    "geocod": "1960910",
+    "geoname": "Pinhel",
+    "value": "1.89",
+    "level": "municipality",
+    "dico": "0910"
+   },
+   {
+    "varcd": "0014698",
+    "period": "2020",
+    "period_kind": "year",
+    "sort_key": "202000",
+    "geocod": "11E0410",
+    "geoname": "Vila Flor",
+    "value": "1.97",
+    "level": "municipality",
+    "dico": "0410"
+   },
+   {
+    "varcd": "0014698",
+    "period": "2020",
+    "period_kind": "year",
+    "sort_key": "202000",
+    "geocod": "11D0914",
+    "geoname": "Vila Nova de Foz Côa",
+    "value": "2.09",
+    "level": "municipality",
+    "dico": "0914"
+   }
+  ]
+ },
+ "0014772": {
+  "probed": "20261007",
+  "rows": 4074,
+  "dims": {},
+  "geocod_len": {
+   "9": 1992,
+   "7": 1848,
+   "3": 156,
+   "2": 60,
+   "1": 18
+  },
+  "periods": [
+   "2020",
+   "2025",
+   6
+  ],
+  "sample": [
+   {
+    "varcd": "0014772",
+    "period": "2020",
+    "period_kind": "year",
+    "sort_key": "202000",
+    "geocod": "11A011302",
+    "geoname": "Cesar",
+    "value": "33.0",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0014772",
+    "period": "2020",
+    "period_kind": "year",
+    "sort_key": "202000",
+    "geocod": "11A011303",
+    "geoname": "Fajões",
+    "value": "33.0",
+    "level": "other",
+    "dico": NaN
+   },
+   {
+    "varcd": "0014772",
+    "period": "2020",
+    "period_kind": "year",
+    "sort_key": "202000",
+    "geocod": "11A131613",
+    "geoname": "Labruge",
+    "value": "33.0",
+    "level": "other",
+    "dico": NaN
+   }
+  ]
+ },
+ "0014773": {
+  "probed": "20261007",
+  "rows": 4074,
+  "dims": {},
+  "geocod_len": {
+   "9": 1992,
+   "7": 1848,
+   "3": 156,
+   "2": 60,
+   "1": 18
+  },
+  "periods": [
+   "2020",
+   "2025",
+   6
+  ],
+  "sample": [
+   {
+    "varcd": "0014773",
+    "period": "2020",
+    "period_kind": "year",
+    "sort_key": "202000",
+    "geocod": "1960910",
+    "geoname": "Pinhel",
+    "value": "1.89",
+    "level": "municipality",
+    "dico": "0910"
+   },
+   {
+    "varcd": "0014773",
+    "period": "2020",
+    "period_kind": "year",
+    "sort_key": "202000",
+    "geocod": "11E0410",
+    "geoname": "Vila Flor",
+    "value": "1.97",
+    "level": "municipality",
+    "dico": "0410"
+   },
+   {
+    "varcd": "0014773",
+    "period": "2020",
+    "period_kind": "year",
+    "sort_key": "202000",
+    "geocod": "11D0914",
+    "geoname": "Vila Nova de Foz Côa",
+    "value": "2.09",
+    "level": "municipality",
+    "dico": "0914"
+   }
+  ]
  }
 }
