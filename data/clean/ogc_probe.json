@@ -2,9 +2,108 @@
  "updated": "2026-10-07",
  "apis": {
   "dgt": {
-   "error": "502 Server Error: Proxy Error for url: https://ogcapi.dgterritorio.gov.pt/collections?f=json"
+   "landing_status": 200,
+   "cors": "https://example.github.io",
+   "n_collections": 90,
+   "match_^crus_": {
+    "n": 0,
+    "first": []
+   },
+   "match_ran": {
+    "n": 1,
+    "first": [
+     "srup_ran"
+    ]
+   },
+   "match_ren": {
+    "n": 2,
+    "first": [
+     "srup_ren_areal",
+     "srup_ren_linear"
+    ]
+   },
+   "samples": {
+    "crus_fafe": {
+     "meta_status": 404,
+     "queryables_status": 404,
+     "items_status": 404
+    },
+    "crus_loures": {
+     "meta_status": 404,
+     "queryables_status": 404,
+     "items_status": 404
+    },
+    "srup_ran": {
+     "meta_status": 200,
+     "queryables_status": 200,
+     "items_status": 200,
+     "properties": [
+      "designacao",
+      "fid",
+      "lei_tipo",
+      "municipio",
+      "serv_data",
+      "serv_dr",
+      "serv_hiperligacao",
+      "serv_lei",
+      "servidao",
+      "tipologia"
+     ],
+     "example": {
+      "fid": 1,
+      "designacao": "RAN de CASTELO BRANCO",
+      "servidao": "RESERVA AGRÍCOLA NACIONAL",
+      "tipologia": "RESERVA AGRÍCOLA NACIONAL",
+      "lei_tipo": "DL 196/89",
+      "serv_dr": "32 IS-B",
+      "serv_data": "1993-02-08T00:00:00",
+      "serv_hiperligacao": "https://snit-mais.dgterritorio.gov.pt/SRUP/PORT 139_1993.pdf",
+      "serv_lei": "PORT 139/93",
+      "municipio": "CASTELO BRANCO"
+     },
+     "geometry": "MultiPolygon"
+    },
+    "srup_ren_areal": {
+     "meta_status": 200,
+     "queryables_status": 200,
+     "items_status": 200,
+     "properties": [
+      "area_ha",
+      "classifica",
+      "designacao",
+      "dtcc",
+      "fid",
+      "id",
+      "lei_tipo",
+      "municipio",
+      "serv_data",
+      "serv_dr",
+      "serv_hiperligacao",
+      "serv_lei",
+      "servidao",
+      "tipologia"
+     ],
+     "example": {
+      "fid": 1,
+      "id": 166728.0,
+      "designacao": "DELIMITAÇÃO DA REN DO CONCELHO - 1ª ALTERAÇÃO",
+      "serv_dr": "217 IS-B",
+      "serv_lei": "RCM 134/2004",
+      "servidao": "RESERVA ECOLÓGICA NACIONAL",
+      "lei_tipo": "DL 93/90 DL 203/2002",
+      "dtcc": "0202",
+      "municipio": "ALMODÔVAR",
+      "area_ha": 47338.7876903,
+      "tipologia": "Reserva Ecológica Nacional",
+      "serv_data": "2004-09-14T00:00:00+00:00",
+      "classifica": " ",
+      "serv_hiperligacao": "https://snit-mais.dgterritorio.gov.pt/SRUP/RCM 134_2004.pdf"
+     },
+     "geometry": "MultiPolygon"
+    }
+   }
   }
  },
- "ok": false,
- "summary": "dgt: falhou (502 Server Error: Proxy Error for url: https://ogcapi.dgterritorio.gov.pt/collec)"
+ "ok": true,
+ "summary": "dgt: 90 coleções, ^crus_: 0, ran: 1, ren: 2; exemplos com dados: srup_ran, srup_ren_areal"
 }

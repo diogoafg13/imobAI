@@ -859,9 +859,135 @@
   ]
  },
  "0000087": {
-  "error": "falha a obter 0000087 do INE: HTTPSConnectionPool(host='www.ine.pt', port=443): Max retries exceeded with url: /ine/json_indicador/pindica.jsp?op=2&varcd=0000087&lang=PT&Dim1=T (Caused by ConnectTimeo"
+  "probed": "20261007",
+  "rows": 857770,
+  "dims": {
+   "dim_3": {
+    "1": "T0 ou T1",
+    "2": "T2",
+    "4": "T4 ou mais",
+    "3": "T3",
+    "T": "Total"
+   }
+  },
+  "geocod_len": {
+   "9": 803675,
+   "7": 47740,
+   "3": 4650,
+   "2": 1240,
+   "1": 465
+  },
+  "periods": [
+   "1995",
+   "2025",
+   31
+  ],
+  "sample": [
+   {
+    "varcd": "0000087",
+    "period": "1995",
+    "period_kind": "year",
+    "sort_key": "199500",
+    "geocod": "111160101",
+    "geoname": "Aboim das Choças",
+    "value": "0.0",
+    "dim_3": "1",
+    "dim_3_t": "T0 ou T1",
+    "level": "parish",
+    "dico": NaN
+   },
+   {
+    "varcd": "0000087",
+    "period": "1995",
+    "period_kind": "year",
+    "sort_key": "199500",
+    "geocod": "111160102",
+    "geoname": "Aguiã",
+    "value": "0.0",
+    "dim_3": "1",
+    "dim_3_t": "T0 ou T1",
+    "level": "parish",
+    "dico": NaN
+   },
+   {
+    "varcd": "0000087",
+    "period": "1995",
+    "period_kind": "year",
+    "sort_key": "199500",
+    "geocod": "111160102",
+    "geoname": "Aguiã",
+    "value": "0.0",
+    "dim_3": "2",
+    "dim_3_t": "T2",
+    "level": "parish",
+    "dico": NaN
+   }
+  ]
  },
  "0000088": {
-  "error": "falha a obter 0000088 do INE: HTTPSConnectionPool(host='www.ine.pt', port=443): Max retries exceeded with url: /ine/json_indicador/pindica.jsp?op=2&varcd=0000088&lang=PT&Dim1=T (Caused by ConnectTimeo"
+  "probed": "20261007",
+  "rows": 857770,
+  "dims": {
+   "dim_3": {
+    "4": "Outros",
+    "2": "Organismo público",
+    "3": "Empresa privada",
+    "1": "Pessoa singular",
+    "T": "Total"
+   }
+  },
+  "geocod_len": {
+   "9": 803675,
+   "7": 47740,
+   "3": 4650,
+   "2": 1240,
+   "1": 465
+  },
+  "periods": [
+   "1995",
+   "2025",
+   31
+  ],
+  "sample": [
+   {
+    "varcd": "0000088",
+    "period": "1995",
+    "period_kind": "year",
+    "sort_key": "199500",
+    "geocod": "111",
+    "geoname": "Minho-Lima",
+    "value": "0.0",
+    "dim_3": "4",
+    "dim_3_t": "Outros",
+    "level": "nuts3",
+    "dico": NaN
+   },
+   {
+    "varcd": "0000088",
+    "period": "1995",
+    "period_kind": "year",
+    "sort_key": "199500",
+    "geocod": "1111601",
+    "geoname": "Arcos de Valdevez",
+    "value": "0.0",
+    "dim_3": "2",
+    "dim_3_t": "Organismo público",
+    "level": "municipality",
+    "dico": "1601"
+   },
+   {
+    "varcd": "0000088",
+    "period": "1995",
+    "period_kind": "year",
+    "sort_key": "199500",
+    "geocod": "1111601",
+    "geoname": "Arcos de Valdevez",
+    "value": "0.0",
+    "dim_3": "4",
+    "dim_3_t": "Outros",
+    "level": "municipality",
+    "dico": "1601"
+   }
+  ]
  }
 }
