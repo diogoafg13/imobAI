@@ -520,9 +520,12 @@ Além do "Onde procurar casa", quatro guias curtos, com as contas em `site/calc.
   projetos, licenças e taxas − comercialização − margem do promotor − juros − IMT (6,5% terreno para construção, 5%
   rústico) e Imposto do Selo (0,8%) = o máximo a pagar pelo terreno; margem ao preço pedido, preço de venda necessário,
   tabela de sensibilidade (construção e venda ±10%), sinais da zona e rendibilidade de construir para arrendar. A área
-  de construção permitida vem do PDM (índice × área): a certidão ou o PIP da câmara é que valem. Em descoberta (branch
-  `data`): a Carta do Regime de Uso do Solo da DGT (classificação do PDM) e a RAN/REN, e os fogos licenciados por
-  freguesia (INE).
+  de construção permitida vem do PDM (índice × área): a certidão ou o PIP da câmara é que valem.
+- **Casas novas licenciadas por freguesia** (INE 0000087, 1995–2025): último ano, soma de 3 anos e por 100 casas
+  existentes, na tabela de freguesias, no mapa e no guia do terreno (a concorrência que vem a caminho).
+- Em descoberta (branch `data`, `data/clean/ogc_probe.json`): a API OGC da DGT tem a Carta do Regime de Uso do Solo
+  (`crus`), o cadastro predial e as servidões (RAN, REN, áreas protegidas, Rede Natura, perigosidade de incêndio), com
+  CORS aberto — o site poderá consultar um ponto diretamente do browser.
 
 ### Teste do site no browser (no build)
 

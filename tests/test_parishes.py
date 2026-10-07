@@ -117,3 +117,16 @@ def test_buildings_shares_from_census():
     assert out.loc["110601", "bld_old_share"] == 0.4 and out.loc["110602", "bld_old_share"] == 0.1
     assert out.loc["110601", "bld_repair_share"] == 0.1 and out.loc["110602", "bld_repair_share"] == 0.02
     assert parishes.buildings({"total": None}) is None
+
+
+def test_licences_last_year_three_years_and_per_100():
+    import pandas as pd
+    from imopt import parishes
+    rows = []
+    for code, vals in {"110601": [5, 10, 20, 30], "110602": [0, 0, 2, 1]}.items():
+        for y, v in zip((2022, 2023, 2024, 2025), vals):
+            rows.append({"geocod": "1A0" + code, "level": "parish", "period": str(y), "sort_key": y * 100, "value": v})
+    df = pd.DataFrame(rows)
+    out = parishes.licences(df, pd.Series({"110601": 1000, "110602": 300}))
+    assert out.loc["110601", "lic_new"] == 30 and out.loc["110601", "lic_3y"] == 60 and out.loc["110601", "lic_year"] == 2025
+    assert out.loc["110601", "lic_per_100"] == 6.0 and out.loc["110602", "lic_3y"] == 3

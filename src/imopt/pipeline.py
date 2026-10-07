@@ -377,6 +377,13 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
                             ptab[f"{k}_per_1000"] = (ptab[f"n_{k}"] / ptab["census_total"] * 1000).where(ptab["census_total"] > 0)
         except Exception as e:  # noqa: BLE001
             log.warning("OpenStreetMap por freguesia falhou: %s", e)
+        try:      # fogos licenciados em construções novas (INE): concorrência que vem a caminho
+            ct = ptab.set_index("code")["census_total"] if "census_total" in ptab else None
+            lic = parishes.licences(frames.get("lic_dwellings"), ct)
+            if lic is not None and not ptab.empty:
+                ptab = ptab.merge(lic, left_on="code", right_index=True, how="left")
+        except Exception as e:  # noqa: BLE001
+            log.warning("licenças por freguesia falharam: %s", e)
         try:      # edifícios dos Censos 2021: antigos (antes de 1961) e a precisar de obras médias ou profundas
             bld = parishes.buildings({k: frames.get(f"census_bld_{k}") for k in parishes.BLD_KEYS})
             if bld is not None and not ptab.empty:

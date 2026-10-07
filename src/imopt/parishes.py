@@ -57,6 +57,22 @@ def buildings(frames: dict[str, pd.DataFrame | None]) -> pd.DataFrame | None:
     return out
 
 
+def licences(df: pd.DataFrame | None, census_total: pd.Series | None = None) -> pd.DataFrame | None:
+    """Fogos licenciados em construções novas por freguesia: último ano, soma dos últimos 3 anos e, com o Censos,
+    por 100 alojamentos (a construção nova que vem a caminho face ao parque existente)."""
+    r = _parish_rows(df)
+    if r is None:
+        return None
+    ly = int(r["sort_key"].max())
+    piv = r.pivot_table(index="code", columns="sort_key", values="value", aggfunc="last")
+    last3 = [k for k in sorted(piv.columns) if k > ly - 300]          # sort_key AAAA00: últimos 3 anos
+    out = pd.DataFrame({"lic_new": piv[ly], "lic_3y": piv[last3].sum(axis=1, min_count=1), "lic_year": ly // 100})
+    if census_total is not None:
+        tot = census_total.reindex(out.index)
+        out["lic_per_100"] = (out["lic_3y"] / tot * 100).where(tot > 0)
+    return out.dropna(subset=["lic_3y"])
+
+
 def rent_table(rent: pd.DataFrame | None, contracts: pd.DataFrame | None = None) -> pd.DataFrame | None:
     """Renda mediana de novos contratos por freguesia (anual), variação a 1 e 3 anos e n.º de contratos."""
     r = _parish_rows(rent)

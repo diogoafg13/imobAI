@@ -215,6 +215,19 @@ def ogc_probe(cfg: dict, data_dir: Path) -> str:
                                 one["geometry"] = feats[0]["geometry"]["type"] if feats and feats[0].get("geometry") else None
                     except Exception as e:  # noqa: BLE001
                         one[f"{key}_error"] = str(e)[:120]
+                pt = spec.get("point")
+                if pt:      # consulta num ponto: o que está aqui? (bbox de ~10 m à volta)
+                    try:
+                        e = 0.0001
+                        rr = requests.get(f"{base}/collections/{cid}/items", headers=UA, timeout=120,
+                                          params={"f": "json", "limit": 5, "bbox": f"{pt[0]-e},{pt[1]-e},{pt[0]+e},{pt[1]+e}"})
+                        one["point_status"] = rr.status_code
+                        if rr.ok:
+                            feats = rr.json().get("features", [])
+                            one["point_hits"] = len(feats)
+                            one["point_example"] = feats[0].get("properties") if feats else None
+                    except Exception as e2:  # noqa: BLE001
+                        one["point_error"] = str(e2)[:120]
                 info["samples"][cid] = one
             ok_samples = [c for c, v in info["samples"].items() if v.get("items_status") == 200]
             notes.append(f"{name}: {len(cols) if cols else 'lista indisponível,'} coleções" + "".join(f", {k[6:]}: {v['n']}" for k, v in info.items() if k.startswith("match_"))
