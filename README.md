@@ -550,6 +550,24 @@ tabela "livro → ideia → onde está no painel":
   subida da Euribor de 3 p.p., quanto a casa onde vives custa face a arrendá-la, concentração do património e a
   perda numa crise como a de 2008–2013, e margem de segurança.
 
+- **Amortizar ou investir** (guia, `amortPlan`): juros poupados ao reduzir o prazo ou a prestação, comissão de
+  reembolso antecipado de 2026 (até 0,5% taxa variável, 2% fixa, + 4% de Imposto do Selo; isenções por morte,
+  desemprego ou deslocação; o fim da comissão na variável foi aprovado na generalidade em setembro de 2026, ainda não é
+  lei), retorno que uma aplicação teria de dar antes do IRS de 28% para igualar a taxa do crédito, fundo de emergência
+  e regras do PPR (dedução de 20% até 400/350/300 €; resgate para a casa só para prestações e após 5 anos).
+- **Comprar já ou esperar** (guia, `waitOrBuy`; Buffett, Kahneman): património no fim de 1 a 3 anos de espera, com o
+  mesmo orçamento mensal, em cenários de preços — queda como 2008–2013, preços parados e a previsão do painel (central
+  e intervalo de 80%) —, com o erro medido da previsão.
+- **Mais-valias com o coeficiente de desvalorização da moeda** (guia Vender): preço de compra × coeficiente (Portaria
+  anual; o valor é indicado por quem usa, porque a portaria de 2026 ainda não saiu) + despesas.
+- **Retorno total real por concelho, 5 anos** (`imopt/returns.py`; Shiller, Dimson): valorização real + renda líquida
+  de custos (25%, antes de IRS), no mapa e no detalhe do concelho.
+- **Vieses** (Kahneman, Thaler): avisos de ancoragem (preço ou renda pedidos acima das referências), custo afundado e
+  aversão à perda (vender abaixo do que se pagou) e excesso de confiança (prever o momento).
+- **Termómetro do ciclo** (Perspetivas; Howard Marks, Ray Dalio): seis sinais — preços face à tendência, subida anual,
+  esforço de compra face à história, crédito novo, ciclo preço-volume e crédito/PIB — entre o pânico e a euforia.
+  Não é um modelo testado; o score nacional é que foi testado no backtest.
+
 ### Teste do site no browser (no build)
 
 `scripts/smoke_site.py` abre o site com os dados do build no Chromium (Playwright): todos os separadores, todas as

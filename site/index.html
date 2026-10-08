@@ -131,6 +131,8 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       <button type="button" class="chip" data-gp="land">Terreno para construir</button>
       <button type="button" class="chip" data-gp="fi">Liberdade financeira</button>
       <button type="button" class="chip" data-gp="sign">Antes de assinar</button>
+      <button type="button" class="chip" data-gp="wait">Comprar já ou esperar</button>
+      <button type="button" class="chip" data-gp="amort">Amortizar ou investir</button>
     </div>
     <div data-guide="where">
     <p class="muted">Cinco perguntas e o painel ordena os concelhos (e, dentro deles, as freguesias) que melhor encaixam no que procuras, com os dados públicos que tem. As respostas ficam só neste browser.</p>
@@ -265,7 +267,9 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <label>Freguesia <select name="par"><option value="">— (usar o concelho)</option></select></label>
         <label>Área (m²) <input name="area" type="number" min="10" max="1000" step="any" inputmode="numeric" placeholder="90"></label>
         <label>Valor de venda hoje (€) <input name="value" type="number" min="0" step="any" inputmode="numeric" placeholder="mediana × área"></label>
-        <label>Preço de compra + despesas (€) <input name="buy" type="number" min="0" step="any" inputmode="numeric" placeholder="para as mais-valias"></label>
+        <label>Preço de compra (€) <input name="buy" type="number" min="0" step="any" inputmode="numeric" placeholder="para as mais-valias"></label>
+        <label>Despesas de compra e obras (€) <input name="buyexp" type="number" min="0" step="any" inputmode="numeric" placeholder="IMT, escritura, obras com fatura"></label>
+        <label>Coeficiente de desvalorização da moeda <input name="coef" type="number" min="1" max="10000" step="any" inputmode="decimal" placeholder="1 (sem correção)"></label>
         <label>Crédito em dívida (€) <input name="bal" type="number" min="0" step="any" inputmode="numeric" placeholder="0"></label>
         <label>Taxa do crédito (%) <input name="rate" type="number" min="0" max="15" step="any" inputmode="decimal" placeholder="taxa atual estimada"></label>
         <label>Anos que faltam ao crédito <input name="left" type="number" min="1" max="40" step="any" inputmode="numeric" placeholder="20"></label>
@@ -354,6 +358,40 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       </form>
       <div id="ga-out"></div>
     </div>
+
+    <div data-guide="wait" hidden>
+      <p class="muted">Comprar agora ou esperar 1 a 3 anos para juntar mais entrada? Compara o teu património no fim da espera nos dois casos, com o mesmo orçamento mensal (a renda que pagas + o que poupas), em vários cenários de preços — incluindo a previsão do painel e uma queda como a de 2008–2013.</p>
+      <form id="gw-form" class="aff-form im-form" autocomplete="off">
+        <label>Concelho <input name="conc" list="im-conc" placeholder="ex.: Loures"></label>
+        <label>Área (m²) <input name="area" type="number" min="15" max="1000" step="any" inputmode="numeric" placeholder="80"></label>
+        <label>Ou: preço da casa (€) <input name="price" type="number" min="1000" step="any" inputmode="numeric" placeholder="mediana × área"></label>
+        <label>Poupança disponível (€) <input name="savings" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 40000"></label>
+        <label>Renda que pagas (€/mês) <input name="rent" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 900"></label>
+        <label>Poupas por mês (€) <input name="save" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 400"></label>
+        <label>Esperar <select name="years"><option value="1">1 ano</option><option value="2" selected>2 anos</option><option value="3">3 anos</option></select></label>
+        <label>Taxa do crédito (%) <input name="rate" type="number" min="0" max="15" step="any" inputmode="decimal" placeholder="taxa atual estimada"></label>
+        <label class="check"><input type="checkbox" name="young"> Tenho até 35 anos (IMT jovem)</label>
+        <span class="im-buttons"><button type="submit" class="btn">Comparar</button></span>
+      </form>
+      <div id="gw-out"></div>
+    </div>
+
+    <div data-guide="amort" hidden>
+      <p class="muted">Tens dinheiro de lado: amortizar o crédito da casa ou investir? Amortizar rende a taxa do crédito, garantida e sem imposto; investir pode render mais, com risco e 28% de IRS sobre o ganho. Com as comissões e as regras de 2026.</p>
+      <form id="gm-form" class="aff-form im-form" autocomplete="off">
+        <label>Crédito em dívida (€) <input name="bal" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 150000"></label>
+        <label>Taxa do crédito (%) <input name="rate" type="number" min="0" max="15" step="any" inputmode="decimal" placeholder="ex.: 3,5"></label>
+        <label>Anos que faltam <input name="left" type="number" min="1" max="40" step="any" inputmode="numeric" placeholder="ex.: 25"></label>
+        <label>Quanto amortizar (€) <input name="amount" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 20000"></label>
+        <label>Tipo de taxa <select name="type"><option value="var">Variável (comissão até 0,5%)</option><option value="fix">Fixa, ou mista no período fixo (até 2%)</option><option value="free">Isento (morte, desemprego, deslocação profissional)</option></select></label>
+        <label>Amortizar para <select name="mode"><option value="term">Reduzir o prazo</option><option value="pay">Reduzir a prestação</option></select></label>
+        <label>A alternativa renderia (%/ano, antes de impostos) <input name="alt" type="number" min="0" max="20" step="any" inputmode="decimal" placeholder="3"></label>
+        <label>Fundo de emergência que te fica (€) <input name="left_cash" type="number" min="0" step="any" inputmode="numeric" placeholder="opcional"></label>
+        <label>Despesas do agregado (€/mês) <input name="expenses" type="number" min="0" step="any" inputmode="numeric" placeholder="opcional"></label>
+        <span class="im-buttons"><button type="submit" class="btn">Comparar</button></span>
+      </form>
+      <div id="gm-out"></div>
+    </div>
   </section>
 
   <section id="invest" class="card">
@@ -437,6 +475,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <option value="score">Score de risco (relativo)</option>
         <option value="price">Preço €/m²</option>
         <option value="yield">Rendibilidade bruta</option>
+        <option value="tr5">Retorno total real (5 anos)</option>
         <option value="ny">Rendibilidade líquida (investir)</option>
         <option value="g1y">Variação preço 12 meses</option>
         <option value="g1yr">Variação 12 meses descontada a inflação</option>
@@ -543,7 +582,11 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       <tr><td>O Cisne Negro, Antifrágil (Nassim Taleb)</td><td>Prepara-te para o cenário raro, não para o médio.</td><td>Teste de crise com a queda real dos preços em Portugal (2008–2013) e a maior subida da Euribor num ano.</td></tr>
       <tr><td>Uma Caminhada Aleatória por Wall Street (Burton Malkiel), John Bogle</td><td>Custo de oportunidade e diversificação.</td><td>TIR do imóvel face a uma alternativa (Investir); concentração do património numa casa (Antes de assinar); carteira diversificada (Liberdade financeira).</td></tr>
       <tr><td>O Homem Mais Rico da Babilónia (George Clason), A Psicologia do Dinheiro (Morgan Housel)</td><td>Paga-te primeiro; deixa margem para errar.</td><td>Antes de assinar: fundo de emergência depois da entrada e dos impostos.</td></tr>
-      <tr><td>Exuberância Irracional (Robert Shiller)</td><td>Preços muito acima das rendas e dos rendimentos, face à história, são sinal de excesso.</td><td>O score de risco do painel compara precisamente o preço com rendas e rendimentos (e o seu histórico).</td></tr>
+      <tr><td>Exuberância Irracional (Robert Shiller); Triumph of the Optimists (Dimson, Marsh, Staunton)</td><td>Preços muito acima das rendas e dos rendimentos são sinal de excesso; o que conta é o retorno total, descontada a inflação.</td><td>O score de risco compara o preço com rendas e rendimentos. Retorno total real dos últimos 5 anos por concelho (valorização real + renda líquida), no mapa e no detalhe do concelho.</td></tr>
+      <tr><td>Mastering the Market Cycle (Howard Marks); Big Debt Crises (Ray Dalio)</td><td>O mercado oscila como um pêndulo, entre a euforia e o pânico; o risco é maior quando ninguém o vê.</td><td>Perspetivas: termómetro do ciclo, com seis sinais medidos (preços, esforço, crédito, compras, crédito/PIB).</td></tr>
+      <tr><td>Warren Buffett (cartas aos acionistas)</td><td>"Tempo no mercado" vale mais do que acertar no momento.</td><td>Guia "Comprar já ou esperar": património no fim da espera em vários cenários, com o erro medido da previsão.</td></tr>
+      <tr><td>Pensar, Depressa e Devagar (Daniel Kahneman); Nudge (Richard Thaler)</td><td>Ancoragem, aversão à perda, custo afundado, excesso de confiança.</td><td>Avisos junto dos números: preço pedido acima das referências (ancoragem), vender abaixo do que pagaste (custo afundado), prever o momento (excesso de confiança).</td></tr>
+      <tr><td>A Psicologia do Dinheiro (Morgan Housel); John Bogle</td><td>Liquidez e risco contam tanto como o retorno.</td><td>Guia "Amortizar ou investir": taxa do crédito garantida vs alternativa depois de 28% de IRS, comissões e fundo de emergência.</td></tr>
     </tbody></table></div>
   </details>
 

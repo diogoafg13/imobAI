@@ -142,6 +142,8 @@ const METRICS = {
     help: 'Renda de um ano depois de 1 mês vazio, IMI do concelho, condomínio, seguro, manutenção e IRS sobre rendas (regras de 2026), a dividir pelo preço mais IMT, Imposto do Selo e escritura — para 90 m² ao preço e à renda medianos, comprado sem crédito. Mais escuro = rende mais. Contas completas no separador Investir.' },
   yield: { prop: 'yield', pal: SEQ, f: (v) => fmt.pct(v, 2), label: 'Rendibilidade bruta',
     help: 'Renda anual ÷ preço, antes de custos. Mais escuro = a renda paga mais do preço; claro = preço alto face à renda. Cinzento = INE não publica renda para o concelho.' },
+  tr5: { prop: 'tr5', pal: SEQ, f: (v) => fmt.spct(v, 1), label: 'Retorno total real, 5 anos (%/ano)',
+    help: 'O que uma casa mediana rendeu por ano nos últimos 5 anos, descontada a inflação: valorização real do preço + renda líquida de custos (antes de IRS). Mais escuro = rendeu mais. Medianas do concelho e rendas de contratos novos: é uma aproximação, e o passado não garante o futuro.' },
   g1yr: { prop: 'g1yr', pal: ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'], diverge: true, f: (v) => fmt.spct(v), label: 'Var. 12m real',
     help: 'Variação do preço num ano já descontada a inflação. Laranja = subiu mais do que o custo de vida; azul = ficou para trás (desceu em termos reais).' },
   g1y: { prop: 'g1y', pal: SEQ, f: (v) => fmt.pct(v), label: 'Var. 12m',
@@ -171,7 +173,7 @@ METRICS.sec = { prop: 'sec', pal: SEQ, f: (v) => fmt.pct(v, 0), label: 'Residên
   help: 'Parte dos alojamentos de residência secundária (férias, fim de semana) no Censos 2021. Mais escuro = mais casas que não servem quem vive no concelho.' };
 const METRIC_VAL = { score: (x) => x.score_overall, price: (x) => x.price, yield: (x) => x.gross_yield, ny: (x) => x.inv_ny, g1y: (x) => x.price_growth_1y, g1yr: (x) => x.price_growth_1y_real,
   fc: (x) => x.fc_growth_12m, fv: (x) => x.fv_gap, fp: (x) => x.foreign_premium, ef: (x) => x.aff_effort, br: (x) => x.aff_pay_vs_rent, rf: (x) => x.aff_rent_effort, ru: (x) => x.rent_user, tg: (x) => x.guests_growth_1y,
-  al: (x) => x.al_beds_per_100, vac: (x) => x.vacant_share, sec: (x) => x.secondary_share };
+  al: (x) => x.al_beds_per_100, vac: (x) => x.vacant_share, sec: (x) => x.secondary_share, tr5: (x) => x.tr5_real };
 const DIV = ['#256abf', '#86b6ef', '#e2e2df', '#f4a07c', '#c9531f'];
 const PMETRICS = {
   f_rel_nb: { prop: 'rel_nb', src: 'par', pal: DIV, diverge: true, f: (v) => fmt.spct(v, 0), label: 'Face às freguesias vizinhas',
@@ -684,6 +686,8 @@ function select(dico, scroll = true) {
       `<span class="ctx">3 anos: ${fmt.spct(m.price_growth_3y_real)} · 5 anos: ${fmt.spct(m.price_growth_5y_real)}</span>`)] : []),
     tile('rent', 'Renda (novos contratos)', m.rent == null ? '—' : fmt.eur2(m.rent) + '/m²', ctx((x) => x.rent, m.rent, fmt.eur2)),
     tile('yield', 'Rendibilidade bruta', fmt.pct(m.gross_yield, 2), ctx((x) => x.gross_yield, m.gross_yield, (v) => fmt.pct(v, 2))),
+    ...(m.tr5_real != null ? [tile('tr5', 'Retorno total real (5 anos)', `${fmt.spct(m.tr5_real, 1)}/ano`,
+      `<span class="ctx">valorização real ${fmt.spct(m.tr5_price_real, 1)} + renda líquida ${fmt.pct(m.tr5_yield_net, 1)} · inflação ${fmt.pct(m.tr5_infl, 1)}/ano (${qpt(m.tr5_from)}–${qpt(m.tr5_to)})</span>`)] : []),
     tile('p2r', 'Preço/renda (anos)', fmt.n(m.price_to_rent_years, 1), ctx((x) => x.price_to_rent_years, m.price_to_rent_years, (v) => fmt.n(v, 1))),
     tile('p2i', 'Preço/rendimento (meses)', fmt.n(m.price_to_income_months, 1), ctx((x) => x.price_to_income_months, m.price_to_income_months, (v) => fmt.n(v, 1))),
     tile('r2i', 'Renda/rendimento', fmt.pct(m.rent_to_income, 1), ctx((x) => x.rent_to_income, m.rent_to_income, (v) => fmt.pct(v, 1))),
@@ -1504,6 +1508,7 @@ function renderOutlook() {
   $('#ol-generated').textContent = `Calculado ${OL.build_date || ''}${OL.demo ? ' · dados sintéticos de demonstração' : ''}`;
   const parts = [];
   const add = (name, fn) => { try { parts.push(fn()); } catch (e) { console.error(`Falha em perspetivas/${name}:`, e); } };
+  add('termómetro', () => olThermo());
   if (OL.sales) add('vendas', () => olSales(OL.sales));
   if (OL.tracking) add('arquivo', () => olTracking(OL.tracking));
   if (OL.demand) add('procura', () => olDemand(OL.demand));
@@ -2513,7 +2518,7 @@ function gtRender() {
   if (m.rent_q1 != null) tiles.push(gdTile(`Metade dos contratos em ${m.name}`, `${fmt.eur(m.rent_q1 * area)}–${fmt.eur(m.rent_q3 * area)}`, `${fmt.eur2(m.rent_q1)}–${fmt.eur2(m.rent_q3)}/m²`));
   if (inc) tiles.push(gdTile('Peso no rendimento', fmt.pct(rent / inc, 0), rent / inc > 0.35 ? 'acima de 35%: apertado' : 'até 35%'));
   const li = [];
-  if (pos) li.push(`No concelho, esta renda fica ${pos.txt}.${pos.k === 'high' ? ' Pode justificar-se (casa renovada, mobilada, com garagem, zona muito procurada), mas é um bom argumento para negociar.' : pos.k === 'low' ? ' É barata para a zona: confirma o estado da casa e o que inclui.' : ''}`);
+  if (pos) li.push(`No concelho, esta renda fica ${pos.txt}.${pos.k === 'high' ? ' Pode justificar-se (casa renovada, mobilada, com garagem, zona muito procurada), mas é um bom argumento para negociar — e não deixes que o valor pedido sirva de âncora (Kahneman): compara com a mediana e os quartis.' : pos.k === 'low' ? ' É barata para a zona: confirma o estado da casa e o que inclui.' : ''}`);
   if (pr && pr.rent == null) li.push(`O INE não publica a renda da freguesia ${esc(pr.name)} (poucos contratos): a comparação é com o concelho.`);
   li.push(`Depois de assinar: num contrato em curso, a renda pode subir no máximo ${fmt.n((RENT_COEF.value - 1) * 100, 2)}% em ${RENT_COEF.year} (coeficiente do INE): ${fmt.eur(rent * RENT_COEF.value)}/mês, se o contrato não disser outra coisa. Lê a cláusula de atualização antes de assinar.`);
   if (m.rent_growth_1y != null) li.push(`Em ${esc(m.name)}, a renda dos contratos novos variou ${fmt.spct(m.rent_growth_1y, 0)} no último ano${m.rent_fc != null && m.rent != null ? `; a previsão para ${m.rent_fc_year} é ${fmt.spct(m.rent_fc / m.rent - 1, 0)}` : ''}.`);
@@ -2540,7 +2545,7 @@ function gvRender() {
   if (!value || !rent) { out.innerHTML = `<p class="banner">Sem ${!value ? 'preço' : 'renda'} publicado para ${esc(m.name)}: indica-o nos campos.</p>`; return; }
   const buy = gdNum(f, 'buy'), rate0 = m.imi_rate ?? 0.003, vpt = gdNum(f, 'vpt');
   const o = { value, sellCost: (gdNum(f, 'sell') ?? 5) / 100, balance: gdNum(f, 'bal') || 0, rate: gdNum(f, 'rate') ?? affRateNow(), yearsLeft: gdNum(f, 'left') || 20,
-    buyCost: buy ?? value * 0.5, hpp: f.hpp.checked, reinvest: f.reinv.checked, marginal: (gdNum(f, 'marg') ?? 35) / 100, rent, vacancy: gdNum(f, 'vac') ?? 1,
+    buyCost: buy != null ? buy * (gdNum(f, 'coef') || 1) + (gdNum(f, 'buyexp') || 0) : value * 0.5, hpp: f.hpp.checked, reinvest: f.reinv.checked, marginal: (gdNum(f, 'marg') ?? 35) / 100, rent, vacancy: gdNum(f, 'vac') ?? 1,
     imi: (vpt || value) * rate0, condo: gdNum(f, 'condo') ?? 30, ins: gdNum(f, 'ins') ?? 150, maint: (gdNum(f, 'maint') ?? 5) / 100, contractYears: gdNum(f, 'cy') || 1,
     priceGrowth: (gdNum(f, 'pg') ?? 2) / 100, rentGrowth: RENT_COEF.value - 1, altRate: (gdNum(f, 'alt') ?? 2) / 100, horizon: Math.round(gdNum(f, 'hz') || 10), startYear: new Date().getFullYear() };
   const H = holdOptions(o), N = o.horizon;
@@ -2553,8 +2558,9 @@ function gvRender() {
   const sens = `<div class="table-wrap"><table class="ol-table g-table"><thead><tr><th>Ao fim de ${N} anos, se a casa…</th>${pgs.map((g) => `<th>${fmt.spct(g, 0)}/ano</th>`).join('')}</tr></thead><tbody>${['Vender já', 'Arrendar', 'Manter vazia'].map((l, i) => `<tr><td>${l}</td>${pgs.map((g) => { const h = holdOptions({ ...o, priceGrowth: g }); const w = [h.sell.wealth, h.rent.wealth, h.keep.wealth]; const top = Math.max(...w); return `<td${w[i] === top ? ' class="g-best"' : ''}>${fmt.eur(w[i])}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>`;
   const li = [];
   li.push(`Com estes pressupostos, a opção que deixa mais património ao fim de ${N} anos é <b>${best[0].toLowerCase()}</b>. A diferença depende sobretudo da valorização da casa face ao que o dinheiro renderia — vê a tabela.`);
-  li.push(H.cgt0 > 0 ? `Mais-valias se venderes já: ~${fmt.eur(H.cgt0)} (50% do ganho à tua taxa marginal${buy == null ? '; sem o preço de compra, assumi metade do valor atual — indica-o' : ''}). O cálculo não usa os coeficientes de desvalorização da moeda, que baixam o imposto em casas compradas há muitos anos: é por excesso.`
+  li.push(H.cgt0 > 0 ? `Mais-valias se venderes já: ~${fmt.eur(H.cgt0)} (50% do ganho à tua taxa marginal${buy == null ? '; sem o preço de compra, assumi metade do valor atual — indica-o' : ''}). ${gdNum(f, 'coef') ? ` Com o coeficiente de desvalorização da moeda de ${fmt.n(gdNum(f, 'coef'), 2)} aplicado ao preço de compra.` : ' Sem o coeficiente de desvalorização da moeda é por excesso: em casas detidas há mais de 24 meses, o preço de compra é multiplicado pelo coeficiente do ano da compra (Portaria anual das Finanças; a de 2026 ainda não saiu — a mais recente é a Portaria 382/2025/1).'}`
     : o.hpp && o.reinvest ? 'Sem mais-valias na venda de hoje: era habitação própria e reinvestes noutra (confirma os prazos de reinvestimento com as Finanças).' : 'Sem mais-valias na venda de hoje (sem ganho).');
+  if (buy != null) li.push(value < buy ? `Custo afundado e aversão à perda (Kahneman e Tversky): vender abaixo dos ${fmt.eur(buy)} que pagaste custa mais a aceitar do que ganhar o mesmo valor, mas o que pagaste já não volta — a decisão depende só do valor de hoje e do que cada opção rende daqui para a frente, que é o que a tabela compara. O preço de compra só conta para os impostos.` : 'O que pagaste só conta para os impostos: a decisão compara o que cada opção rende daqui para a frente, não o que a casa custou.');
   if (o.hpp) li.push('Se a arrendares ou deixares vazia, deixa de ser habitação própria: na venda mais tarde, as contas assumem mais-valias sem isenção.');
   li.push(`Arrendar: ${fmt.eur(rent)}/mês${med && !gdNum(f, 'rent') ? ` (mediana de ${esc(med.where)} × ${fmt.n(area, 0)} m²)` : ''}, ${fmt.n(o.vacancy, 0)} mês vazio por ano, IRS de ${fmt.pct(irsRentRate(rent, o.contractYears, o.startYear), 0)} em ${o.startYear}, subida da renda de ${fmt.n((RENT_COEF.value - 1) * 100, 2)}%/ano.`);
   if (!gdNum(f, 'value')) li.push(`Valor de venda: ${pr && pr.price != null ? `mediana da freguesia ${esc(pr.name)}` : `mediana de ${esc(m.name)}`} × área (${fmt.eur(value)}). A tua casa pode valer bastante mais ou menos: indica uma avaliação, se tiveres.`);
@@ -2755,7 +2761,7 @@ function safetyHtml(m, pr, ppm) {
   const below = R.filter((x) => x.diff < 0).length;
   return `<h3>Margem de segurança</h3><p class="muted">Benjamin Graham: comprar claramente abaixo do valor deixa margem para os erros de avaliação. Pagas ${fmt.eur(ppm)}/m²:</p>
     <div class="table-wrap"><table class="ol-table g-table"><thead><tr><th>Referência</th><th>€/m²</th><th>O preço fica</th></tr></thead><tbody>${R.map((x) => `<tr><td>${esc(x.label)}</td><td>${fmt.eur(x.ref)}</td><td>${x.diff <= 0 ? `✓ ${fmt.pct(-x.diff, 0)} abaixo` : `${x.diff > 0.15 ? '⚠' : '·'} ${fmt.pct(x.diff, 0)} acima`}</td></tr>`).join('')}</tbody></table></div>
-    <p class="muted">${below === R.length ? 'Abaixo de todas as referências: há margem de segurança (confirma o estado da casa — às vezes o desconto tem razão).' : below ? 'Abaixo de algumas referências e acima de outras: margem pequena.' : 'Acima de todas as referências: estás a pagar um prémio. Pode ter razão (estado, localização, área), mas não há margem de segurança — negoceia ou confirma porquê.'} As medianas misturam casas muito diferentes e o valor de equilíbrio é um modelo: são referências, não o valor desta casa.</p>`;
+    <p class="muted">${below === R.length ? 'Abaixo de todas as referências: há margem de segurança (confirma o estado da casa — às vezes o desconto tem razão).' : below ? 'Abaixo de algumas referências e acima de outras: margem pequena.' : 'Acima de todas as referências: estás a pagar um prémio. Pode ter razão (estado, localização, área), mas não há margem de segurança — negoceia ou confirma porquê. Cuidado com a ancoragem (Kahneman): o preço pedido é o primeiro número que ouves e puxa a negociação para cima; negoceia a partir das referências, não dele.'} As medianas misturam casas muito diferentes e o valor de equilíbrio é um modelo: são referências, não o valor desta casa.</p>`;
 }
 function investBooksHtml(o, r, v, m) {
   const altR = (v.alt ?? 3) / 100, T = investorTests(o, r, altR);
@@ -2838,6 +2844,97 @@ function gaRender() {
   out.innerHTML = `<ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul>${safety}<p class="muted">Impostos de ${TAX_YEAR} (${hpp ? 'habitação própria e permanente' : 'segunda habitação ou investimento'}, sem isenções de jovem — vê o guia "Primeira casa até aos 35"); custos da casa estimados em IMI do concelho + 30 €/mês de condomínio + 1%/ano de manutenção e seguros. Não é aconselhamento financeiro.</p>`;
 }
 
+// guia: amortizar o crédito ou investir (Housel, Bogle; regras de 2026)
+const FEE_RATE = { var: 0.005, fix: 0.02, free: 0 };
+function gmRender() {
+  const f = $('#gm-form'), out = $('#gm-out');
+  const bal = gdNum(f, 'bal'), rate = gdNum(f, 'rate'), left = gdNum(f, 'left'), amount = gdNum(f, 'amount');
+  if (!bal || rate == null || !left || !amount) { out.innerHTML = '<p class="muted">Indica o crédito em dívida, a taxa, os anos que faltam e quanto queres amortizar.</p>'; return; }
+  const type = f.type.value, mode = f.mode.value, alt = (gdNum(f, 'alt') ?? 3) / 100;
+  const A = amortPlan({ balance: bal, rate, years: left, amount: Math.min(amount, bal), mode, feeRate: FEE_RATE[type] });
+  const altNet = alt * (1 - CAPITAL_TAX), beG = A.breakEvenGross;
+  const tiles = [gdTile('Juros que poupas', fmt.eur(A.net), `${fmt.eur(A.saved)} de juros − ${fmt.eur(A.fee)} de comissão${A.fee ? ' (com 4% de Imposto do Selo)' : ''}`),
+    mode === 'term' ? gdTile('Prazo', `−${fmt.n((A.months0 - A.months1) / 12, 1)} anos`, `acabas de pagar ${fmt.n(A.months0 - A.months1, 0)} meses mais cedo; prestação igual (${fmt.eur(A.pay0)})`)
+      : gdTile('Prestação', `${fmt.eur(A.pay1)}/mês`, `menos ${fmt.eur(A.pay0 - A.pay1)} por mês; o prazo fica igual`),
+    gdTile('Amortizar rende', `${fmt.pct(rate / 100, 2)}/ano`, 'garantido e sem imposto (é juro que deixas de pagar)'),
+    gdTile('Investir teria de render', `${fmt.pct(beG, 2)}/ano`, `antes do IRS de ${fmt.pct(CAPITAL_TAX, 0)}, para empatar; a alternativa que indicaste (${fmt.pct(alt, 1)}) dá ~${fmt.pct(altNet, 2)} depois de impostos`)];
+  const li = [];
+  li.push(alt > beG ? `Com estes números, investir rende mais (${fmt.pct(alt, 1)} contra ${fmt.pct(beG, 2)} necessários) — mas é um retorno esperado, com risco, e amortizar é certo. A diferença por ano é de ~${fmt.eur(amount * (altNet - rate / 100))} sobre ${fmt.eur(amount)}.`
+    : `Amortizar ganha: a alternativa teria de render mais de ${fmt.pct(beG, 2)} por ano, antes de impostos, para compensar — e com risco. Uma taxa de crédito de ${fmt.n(rate, 2)}% sem risco é difícil de bater.`);
+  li.push(mode === 'term' ? 'Reduzir o prazo poupa mais juros; reduzir a prestação poupa menos, mas baixa o esforço todos os meses e dá folga se o rendimento cair ou a Euribor subir.'
+    : `Reduzir a prestação poupa menos juros do que reduzir o prazo (com prazo, pouparias mais), mas baixa o esforço todos os meses e dá folga se o rendimento cair ou a Euribor subir.`);
+  const lc = gdNum(f, 'left_cash'), exp = gdNum(f, 'expenses');
+  if (lc != null && exp) li.push(`${lc / exp >= 6 ? '✓' : '⚠'} Depois de amortizar ficas com ${fmt.n(lc / exp, 1)} meses de despesas de reserva. Dinheiro amortizado não se recupera: guarda pelo menos 6 meses antes (Housel: margem para errar).`);
+  else li.push('Dinheiro amortizado não se recupera: antes, guarda um fundo de emergência de pelo menos 6 meses de despesas (Housel: margem para errar).');
+  li.push(`Comissão de reembolso antecipado em ${TAX_YEAR}: até 0,5% do valor amortizado em taxa variável e até 2% em taxa fixa (ou mista, no período fixo), mais 4% de Imposto do Selo sobre a comissão; isenta em caso de morte, desemprego ou deslocação profissional. A isenção temporária na taxa variável acabou em 2025; o fim da comissão na taxa variável foi aprovado na generalidade no Parlamento em setembro de 2026, mas ainda não é lei. Alguns bancos cobram menos: vê o teu contrato e avisa o banco com 7 dias úteis.`);
+  li.push('PPR: as entregas deduzem 20% no IRS (até 400 € até aos 35 anos, 350 € dos 35 aos 50, 300 € depois, dentro do limite global de deduções). Para a casa, sem penalização só para pagar prestações e passados 5 anos de cada entrega — o regime excecional que deixava amortizar acabou em 2024.');
+  out.innerHTML = `<div class="stats">${tiles.join('')}</div><ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul><p class="muted">Juros calculados mês a mês com a taxa que indicaste até ao fim do crédito (numa taxa variável, a poupança real depende da Euribor). Não é aconselhamento financeiro; confirma as condições com o banco.</p>`;
+}
+
+// guia: comprar já ou esperar (Buffett; Kahneman sobre prever o momento)
+function gwRender() {
+  const f = $('#gw-form'), out = $('#gw-out'), m = gdMuni(f), area = gdNum(f, 'area') || 80;
+  const price = gdNum(f, 'price') || (m && m.price != null ? m.price * area : null);
+  if (!price) { out.innerHTML = '<p class="muted">Indica um concelho (e a área) ou o preço da casa.</p>'; return; }
+  const savings = gdNum(f, 'savings') || 0, rent = gdNum(f, 'rent'), save = gdNum(f, 'save') || 0, years = +f.years.value || 2;
+  if (rent == null) { out.innerHTML = '<p class="muted">Indica a renda que pagas hoje (esperar quer dizer continuar a pagá-la).</p>'; return; }
+  const rate = gdNum(f, 'rate') ?? affRateNow(), young = f.young.checked, ra = m ? islands(m.dico) : false;
+  const sc = [];
+  const C = crisisScenario();
+  if (C) { const yrs = (qIdx(C.dd.troughQ) - qIdx(C.dd.peakQ)) / 4; sc.push([`Queda como ${qpt(C.dd.peakQ)}–${qpt(C.dd.troughQ)}`, (1 - C.drop) ** (1 / yrs) - 1]); }
+  sc.push(['Preços parados', 0]);
+  if (m && m.fc_price && m.price && m.fc_period && META.latest_price_period) {
+    const h = (qIdx(m.fc_period) - qIdx(META.latest_price_period)) / 4;
+    if (h > 0) {
+      if (m.fc_lo80) sc.push(['Previsão do painel, baixa (80%)', (m.fc_lo80 / m.price) ** (1 / h) - 1]);
+      sc.push(['Previsão do painel, central', (m.fc_price / m.price) ** (1 / h) - 1]);
+      if (m.fc_hi80) sc.push(['Previsão do painel, alta (80%)', (m.fc_hi80 / m.price) ** (1 / h) - 1]);
+    }
+  }
+  const base = { price, years, savings, budget: rent + save, rent, rate, loanYears: young ? BDP.years.young : 30, down: 1 - BDP.ltv.hpp,
+    use: 'hpp', young, ra, ownCost: OWN_COST, alt: 0.02 };
+  const R = sc.map(([label, g]) => ({ label, g, r: waitOrBuy({ ...base, growth: g }) }));
+  const r0 = R[0].r;
+  const rows = R.map(({ label, g, r }) => `<tr><td>${esc(label)}</td><td>${fmt.spct(g, 1)}/ano</td><td>${fmt.eur(r.priceLater)}</td><td>${fmt.eur(r.cashWait)}${r.canLater ? '' : ' <span class="muted">(não chega)</span>'}</td><td class="${r.diff > 0 ? 'g-best' : ''}">${r.diff >= 0 ? `comprar já: +${fmt.eur(r.diff)}` : `esperar: +${fmt.eur(-r.diff)}`}</td></tr>`).join('');
+  const li = [];
+  li.push(r0.canNow ? `Hoje: ${fmt.eur(price)}, precisas de ${fmt.eur(r0.cash0)} à cabeça (entrada de ${fmt.pct(base.down, 0)}, impostos${young ? ' com IMT jovem' : ''} e escritura) e a prestação seria ${fmt.eur(r0.pay0)}/mês.`
+    : `Hoje não chegas: precisas de ${fmt.eur(r0.cash0)} à cabeça e tens ${fmt.eur(savings)}. Esperar é, para já, a única opção — a tabela mostra se ao fim de ${years} ${years === 1 ? 'ano' : 'anos'} chegas lá.`);
+  li.push(`Esperando ${years} ${years === 1 ? 'ano' : 'anos'}, pagas ${fmt.eur(r0.rentPaid)} de renda e juntas ${fmt.eur(save * 12 * years)}; comprando já, esse orçamento (${fmt.eur(base.budget)}/mês) paga a prestação, o IMI e a manutenção, e uma parte da prestação é capital que fica teu.`);
+  const flip = R.find((x) => x.r.diff > 0);
+  li.push(flip ? `Comprar já compensa a partir do cenário "${flip.label}" (${fmt.spct(flip.g, 1)}/ano). ${R.every((x) => x.r.diff > 0) ? 'Compensa em todos os cenários, incluindo a queda — por causa da renda que deixas de pagar.' : 'Nos cenários abaixo disso, esperar deixa mais património.'}` : 'Esperar deixa mais património em todos os cenários: a renda é baixa face ao custo de ser dono, ou os preços estão a cair.');
+  if (m && m.fc_mae != null) li.push(`Ninguém acerta o momento (Buffett: "tempo no mercado" vale mais do que acertar no momento). A previsão a 12 meses do painel errou em média ±${fmt.pct(m.fc_mae, 0)} no teste com dados passados; e quem tem a certeza do que os preços vão fazer está a sofrer de excesso de confiança (Kahneman).`);
+  if (young) li.push('Se fizeres 36 anos durante a espera, perdes a isenção do IMT e do Imposto do Selo e o prazo de 40 anos (passa a 35).');
+  out.innerHTML = `<div class="table-wrap"><table class="ol-table g-table"><thead><tr><th>Cenário de preços</th><th>Ritmo</th><th>Preço daqui a ${years} ${years === 1 ? 'ano' : 'anos'}</th><th>Dinheiro que terás</th><th>Património no fim: quem fica à frente</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul><p class="muted">Mesma taxa de crédito (${fmt.n(rate, 2)}%) nos dois casos; a poupança rende 2%/ano; custos de dono ${fmt.pct(OWN_COST, 1)} do preço por ano; os cenários de previsão repetem o ritmo previsto até ${m && m.fc_period ? qpt(m.fc_period) : '—'} durante toda a espera. Não é aconselhamento financeiro.</p>`;
+}
+
+// Perspetivas: termómetro do ciclo (Howard Marks, Ray Dalio)
+function olThermo() {
+  const NC = (NAT && NAT.components) || {}, clamp = (x) => Math.max(-1, Math.min(1, x)), S = [];
+  if (NC.hpi_trend_dev) S.push(['Preços face à tendência de longo prazo', clamp(NC.hpi_trend_dev.z / 2), `${fmt.n(NC.hpi_trend_dev.value, 1)} desvios-padrão acima`]);
+  if (NC.hpi_yoy) S.push(['Subida dos preços num ano', clamp(NC.hpi_yoy.z / 2), `${fmt.spct(NC.hpi_yoy.value, 1)} (índice nacional)`]);
+  const A = OL && OL.afford_hist;
+  if (A && A.last && A.effort_wage_min && A.effort_wage_max && A.last.effort_wage != null) {
+    const lo = A.effort_wage_min.value, hi = A.effort_wage_max.value;
+    S.push(['Esforço de compra face à história', clamp(hi > lo ? (2 * (A.last.effort_wage - lo)) / (hi - lo) - 1 : 0), `${fmt.pct(A.last.effort_wage, 0)} do salário médio (mínimo ${fmt.pct(lo, 0)} em ${qpt(A.effort_wage_min.period)}, máximo ${fmt.pct(hi, 0)} em ${qpt(A.effort_wage_max.period)})`]);
+  }
+  if (OL && OL.credit && OL.credit.change != null) S.push(['Crédito à habitação novo', clamp(OL.credit.change / 0.2), `${fmt.spct(OL.credit.change, 0)} em 12 meses (até ${esc(OL.credit.until)})`]);
+  const nat = OL && OL.cycle && OL.cycle.national, last = nat && nat[nat.length - 1];
+  if (last) S.push(['Preços e compras (ciclo preço-volume)', clamp(0.6 * clamp(last[1] / 0.15) + 0.4 * clamp(last[2] / 0.2)), `preços ${fmt.spct(last[1], 0)} e compras ${fmt.spct(last[2], 0)} num ano (${qpt(last[0])})`]);
+  if (NC.credit_gap) S.push(['Crédito face ao PIB (BIS)', clamp(NC.credit_gap.z / 2), `${NC.credit_gap.value >= 0 ? '+' : '−'}${fmt.n(Math.abs(NC.credit_gap.value), 1)} p.p. face à tendência${NC.credit_gap.value < 0 ? ' — sem excesso de crédito, ao contrário de 2008' : ''}`]);
+  if (S.length < 3) return '';
+  const avg = S.reduce((a, x) => a + x[1], 0) / S.length;
+  const zone = avg < -0.75 ? 'Pânico' : avg < -0.25 ? 'Medo' : avg <= 0.25 ? 'Neutro' : avg <= 0.75 ? 'Otimismo' : 'Euforia';
+  const hot = S.filter((x) => x[1] > 0.5).map((x) => x[0].toLowerCase()), credOk = NC.credit_gap && NC.credit_gap.value < 0;
+  const pos = (x) => `${((x + 1) / 2) * 100}%`;
+  return `<h3>Termómetro do ciclo</h3>
+    <p class="muted">Howard Marks: o mercado oscila como um pêndulo entre o pânico e a euforia, e raramente fica no meio; o risco é maior quando ninguém o vê. Seis sinais que o painel mede, cada um colocado entre os dois extremos face à sua própria história:</p>
+    <div class="thermo"><div class="thermo-bar"><i style="left:${pos(avg)}"></i></div><div class="thermo-lab"><span>Pânico</span><span>Medo</span><span>Neutro</span><span>Otimismo</span><span>Euforia</span></div></div>
+    <p><b>Agora: ${zone}</b> (média dos sinais: ${fmt.n(avg, 2)}, de −1 a +1).${hot.length ? ` Mais perto da euforia: ${hot.join(', ')}.` : ''}${credOk && hot.length ? ' Mas o crédito face ao PIB está abaixo da tendência: os preços sobem sem um excesso de crédito como o de 2008, o que torna uma queda forçada menos provável — não impossível.' : ''}</p>
+    <ul class="ol-list">${S.map(([l, x, t]) => `<li><span>${esc(l)}<br><span class="muted">${t}</span></span><span class="thermo-mini"><i style="left:${pos(x)}"></i></span></li>`).join('')}</ul>
+    <p class="muted">Não é um modelo testado nem diz quando o ciclo vira: é um resumo do que os sinais mostram hoje. O score nacional, que junta quatro destes sinais, foi testado com dados passados de vários países — vê o separador Método.</p>`;
+}
+
 // ---------- ligações para partilhar um guia (os valores vão no endereço, depois de #guia?)
 const b64u = { enc: (s) => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''),
   dec: (s) => decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/')))) };
@@ -2880,8 +2977,8 @@ function initGuides() {
   pick(document.querySelector(`#guide [data-guide="${k0}"]`) ? k0 : 'where');
   const saved = (() => { try { return JSON.parse(localStorage.getItem(GD_KEY) || '{}') || {}; } catch { return {}; } })();
   GD_RUN.pick = pick;
-  const KIND = { gy: 'young', gl: 'loan', gs: 'landlord', gt: 'tenant', gv: 'sell', gn: 'land', gf: 'fi', ga: 'sign' };
-  [['gy', gyRender], ['gl', glRender], ['gs', gsRender], ['gt', gtRender], ['gv', gvRender], ['gn', gnRender], ['gf', gfRender], ['ga', gaRender]].forEach(([id, render]) => {
+  const KIND = { gy: 'young', gl: 'loan', gs: 'landlord', gt: 'tenant', gv: 'sell', gn: 'land', gf: 'fi', ga: 'sign', gw: 'wait', gm: 'amort' };
+  [['gy', gyRender], ['gl', glRender], ['gs', gsRender], ['gt', gtRender], ['gv', gvRender], ['gn', gnRender], ['gf', gfRender], ['ga', gaRender], ['gw', gwRender], ['gm', gmRender]].forEach(([id, render]) => {
     const f = $(`#${id}-form`);
     const save = () => { const v = {}; [...f.elements].forEach((el) => { if (el.name) v[el.name] = el.type === 'checkbox' ? el.checked : el.value; }); saved[id] = v; try { localStorage.setItem(GD_KEY, JSON.stringify(saved)); } catch { /* */ } };
     const run = () => {

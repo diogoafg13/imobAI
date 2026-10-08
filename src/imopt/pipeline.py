@@ -12,7 +12,7 @@ import duckdb
 import pandas as pd
 import yaml
 
-from . import al, changes, discover, flood, freshness, osm, geo, housing, imi, ine, macro, outlook, parishes, scoring, tracking
+from . import al, changes, discover, flood, freshness, osm, returns, geo, housing, imi, ine, macro, outlook, parishes, scoring, tracking
 
 log = logging.getLogger("imopt")
 ROOT = Path(__file__).resolve().parents[2]
@@ -300,6 +300,12 @@ def build_outputs(frames: dict[str, pd.DataFrame], macro_frames: dict[str, pd.Da
         item["series"] = {"price": price_series.get(r["dico"], []), "rent": rent_series.get(r["dico"], [])}
         if h_last:
             item["series"]["price_real"] = real_series(item["series"]["price"])
+        try:      # retorno total real dos últimos 5 anos (valorização real + renda líquida de custos)
+            tr = returns.total_return(item["series"]["price"], item["series"].get("price_real"), item["series"]["rent"])
+            if tr:
+                item.update(tr)
+        except Exception as e:  # noqa: BLE001
+            log.warning("retorno total de %s falhou: %s", r["dico"], e)
         munis.append(item)
 
     latest_period = sales.sort_values("sort_key")["period"].iloc[-1]

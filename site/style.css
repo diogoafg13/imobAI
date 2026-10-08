@@ -158,3 +158,8 @@ a.lnk{color:var(--fg);text-decoration:underline;text-decoration-color:var(--line
 .g-pick{margin:8px 0 12px}.g-pick .chip{font:inherit;font-size:.85rem;color:var(--fg)}.g-pick .chip.on{border-color:var(--accent);color:var(--accent);font-weight:600}
 .g-best{font-weight:600}.g-table td:first-child,.g-table th:first-child{text-align:left;white-space:normal}
 .im-list{margin:10px 0;padding-left:20px}.im-list li{margin:6px 0;line-height:1.45}
+/* termómetro do ciclo */
+.thermo{margin:10px 0 4px}.thermo-bar,.thermo-mini{position:relative;height:12px;border-radius:6px;background:linear-gradient(90deg,#256abf,#86b6ef,#e2e2df,#f4a07c,#c9531f)}
+.thermo-bar i,.thermo-mini i{position:absolute;top:-4px;width:4px;height:20px;margin-left:-2px;background:var(--fg);border-radius:2px}
+.thermo-lab{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-top:4px}
+.thermo-mini{display:inline-block;width:120px;height:8px;flex:none;align-self:center}.thermo-mini i{top:-3px;height:14px}

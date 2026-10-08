@@ -306,3 +306,25 @@ test('monthsTo e beforeSign', () => {
   assert.ok(b.effortStress > 800 / 3000);
   assert.ok(Math.abs(b.concentration - 40000 / 70000) < 1e-12);
 });
+
+test('amortPlan: reduzir prazo poupa mais juros do que reduzir prestação; comissão com Imposto do Selo', () => {
+  const o = { balance: 150000, rate: 3.5, years: 25, amount: 20000, feeRate: 0.005 };
+  const t = c.amortPlan({ ...o, mode: 'term' }), p = c.amortPlan({ ...o, mode: 'pay' });
+  assert.ok(Math.abs(t.fee - 20000 * 0.005 * 1.04) < 1e-9);
+  assert.ok(t.months1 < t.months0 && Math.abs(t.pay1 - t.pay0) < 1e-9);
+  assert.ok(p.pay1 < p.pay0 && p.months1 === p.months0);
+  assert.ok(t.saved > p.saved && p.saved > 0);
+  assert.ok(Math.abs(t.breakEvenGross - 0.035 / 0.72) < 1e-12);
+});
+
+test('waitOrBuy: com preços parados e renda alta, comprar já deixa mais património; com queda, esperar', () => {
+  const base = { price: 250000, years: 2, savings: 60000, budget: 1800, rent: 1000, rate: 3.2, loanYears: 30, down: 0.1,
+    use: 'hpp', young: false, ra: false, ownCost: 0.013, alt: 0.02 };
+  const flat = c.waitOrBuy({ ...base, growth: 0 });
+  assert.equal(flat.canNow, true);
+  assert.ok(flat.rentPaid === 24000 && flat.priceUp === 0);
+  const up = c.waitOrBuy({ ...base, growth: 0.1 }), down = c.waitOrBuy({ ...base, growth: -0.05 });
+  assert.ok(up.diff > flat.diff && flat.diff > down.diff);
+  assert.ok(down.diff < 0);
+  assert.equal(c.waitOrBuy({ ...base, savings: 1000, growth: 0 }).canNow, false);
+});

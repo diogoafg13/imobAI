@@ -441,6 +441,43 @@ function beforeSign(o) {
   };
 }
 
+// Amortizar o crédito: juros poupados ao amortizar `amount` (reduzindo o prazo ou a prestação) e a comissão de
+// reembolso antecipado (até 0,5% em taxa variável, 2% em taxa fixa, mais 4% de Imposto do Selo sobre a comissão).
+// o = { balance, rate (%), years (que faltam), amount, mode: 'term' | 'pay', feeRate }
+const FEE_IS = 0.04, CAPITAL_TAX = 0.28;
+function amortPlan(o) {
+  const n = Math.round(o.years * 12), r = o.rate / 1200, pay0 = annuity(o.balance, o.rate, o.years);
+  const run = (bal, pay, cap) => { let int = 0, k = 0; while (bal > 0.005 && k < cap) { const i = bal * r; int += i; bal = Math.max(0, bal - (pay - i)); k++; } return { int, k }; };
+  const base = run(o.balance, pay0, n);
+  const bal1 = Math.max(0, o.balance - o.amount), fee = o.amount * o.feeRate * (1 + FEE_IS);
+  const pay1 = o.mode === 'pay' ? annuity(bal1, o.rate, o.years) : pay0;
+  const after = run(bal1, pay1, n);
+  return { pay0, pay1, months0: base.k, months1: after.k, fee, interest0: base.int, interest1: after.int,
+    saved: base.int - after.int, net: base.int - after.int - fee,
+    // retorno bruto que uma aplicação teria de dar, depois de 28% de imposto, para igualar a taxa do crédito
+    breakEvenGross: o.rate / 100 / (1 - CAPITAL_TAX) };
+}
+// Comprar já ou esperar `years` anos, com o mesmo orçamento mensal (`budget`) para casa e poupança: compara o
+// património no fim da espera. Comprar já: casa − crédito em dívida + poupança que sobra (orçamento − prestação − custos
+// de dono). Esperar: poupança (orçamento − renda), menos os impostos e a escritura da compra mais cara de depois.
+// o = { price, growth (anual), years, savings, budget, rent, rate, loanYears, down, use, young, ra, ownCost (fração
+// do preço/ano: IMI, manutenção, seguros), alt (rendimento anual da poupança) }
+function waitOrBuy(o) {
+  const m = Math.round(o.years * 12), a = o.alt / 12, r = o.rate / 1200;
+  const fv = (pv, pmt) => { let v = pv; for (let k = 0; k < m; k++) v = v * (1 + a) + pmt; return v; };
+  const loan0 = o.price * (1 - o.down), tax0 = buyTaxes(o.price, loan0, o.use, !!o.young, !!o.ra).total;
+  const cash0 = o.price - loan0 + tax0 + 1000, pay0 = annuity(loan0, o.rate, o.loanYears), own = (o.price * o.ownCost) / 12;
+  let bal = loan0;
+  for (let k = 0; k < m; k++) bal = Math.max(0, bal * (1 + r) - pay0);
+  const V = o.price * (1 + o.growth) ** o.years;
+  const nwNow = V - bal + fv(o.savings - cash0, o.budget - pay0 - own);
+  const cashWait = fv(o.savings, o.budget - o.rent);
+  const loan1 = V * (1 - o.down), tax1 = buyTaxes(V, loan1, o.use, !!o.young, !!o.ra).total, cash1 = V - loan1 + tax1 + 1000;
+  const nwWait = cashWait - tax1 - 1000;
+  return { canNow: o.savings >= cash0, canLater: cashWait >= cash1, cash0, cash1, cashWait, pay0, pay1: annuity(loan1, o.rate, o.loanYears),
+    priceLater: V, priceUp: V - o.price, rentPaid: o.rent * m, nwNow, nwWait, diff: nwNow - nwWait };
+}
+
 // coordenadas como o Google Maps as copia ("38.83092, -9.16851"), com vírgula decimal ou pela ordem inversa;
 // null fora de Portugal (continente, Madeira e Açores)
 function parseLL(txt) {
@@ -458,5 +495,5 @@ if (typeof module !== 'undefined') {
     islands, annuity, qOfMonth, serVal, qAdd, qIdx, at12, serGrowth, TAX_EDGES, shareAbove,
     RENT_COEF, IRS_RENT, irsRentRate, irr, invest, maxPrice, rankBy,
     schedule, LOAN_PLANS, loanPlans, LEASES, landlord, holdOptions, YOUNG_GUARANTEE, youngPlan, LAND_TAX, landResidual, parseLL,
-    investorTests, histDrawdown, maxRise12, crisisTest, monthsTo, beforeSign };
+    investorTests, histDrawdown, maxRise12, crisisTest, monthsTo, beforeSign, FEE_IS, CAPITAL_TAX, amortPlan, waitOrBuy };
 }
