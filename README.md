@@ -530,6 +530,26 @@ Além do "Onde procurar casa", quatro guias curtos, com as contas em `site/calc.
   plano), se está em RAN, REN, área protegida ou Rede Natura 2000 (com a ligação ao diploma), a perigosidade de incêndio
   rural e o cadastro predial (onde existe). Num raio de ~5 m; são cartas de síntese — vale o PDM e a câmara.
 
+### Ideias de livros de finanças, em números
+
+Cada ideia vira uma conta com dados de Portugal (funções em `site/calc.js`, testadas), e o separador Método tem a
+tabela "livro → ideia → onde está no painel":
+- **Teste do investidor** (Investir, `investorTests`): ativo ou passivo no fluxo de caixa (Kiyosaki), cap rate e
+  alavancagem positiva ("dívida boa" só se o cap rate passar a taxa do crédito), cash-on-cash, cobertura da prestação
+  (DSCR ≥ 1,2–1,25), regra do 1% e regra dos 50% (Turner, Keller) — com a rendibilidade bruta mediana dos concelhos para
+  mostrar que a regra do 1% quase nunca se cumpre cá —, e custo de oportunidade face a uma alternativa (Bogle).
+- **Teste de crise** (`crisisTest`, Taleb): a maior queda dos preços desde 2008 medida na série do INE/Eurostat
+  (`histDrawdown`) e a maior subida da Euribor 12M num ano na série do BCE (`maxRise12`), mais renda −10% e 6 meses
+  vazios (pressupostos): fluxo de caixa, crédito face ao valor, perda se fosse preciso vender, e se a reserva aguenta
+  2 anos sem vender.
+- **Margem de segurança** (Graham): €/m² pago face à mediana da freguesia e do concelho, às avaliações bancárias e ao
+  valor de equilíbrio do painel (Investir e "Antes de assinar").
+- **Liberdade financeira** (guia; Kiyosaki, FIRE): capital para um rendimento passivo com casas para arrendar (por
+  concelho, e os 5 onde é preciso menos capital) ou com uma carteira (taxa de levantamento de 3,5%), e tempo até lá.
+- **Antes de assinar** (guia; Clason, Housel, Graham, Bogle): fundo de emergência depois da compra, prestação e
+  subida da Euribor de 3 p.p., quanto a casa onde vives custa face a arrendá-la, concentração do património e a
+  perda numa crise como a de 2008–2013, e margem de segurança.
+
 ### Teste do site no browser (no build)
 
 `scripts/smoke_site.py` abre o site com os dados do build no Chromium (Playwright): todos os separadores, todas as

@@ -129,6 +129,8 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       <button type="button" class="chip" data-gp="tenant">Inquilino: a renda é razoável?</button>
       <button type="button" class="chip" data-gp="sell">Vender, arrendar ou manter</button>
       <button type="button" class="chip" data-gp="land">Terreno para construir</button>
+      <button type="button" class="chip" data-gp="fi">Liberdade financeira</button>
+      <button type="button" class="chip" data-gp="sign">Antes de assinar</button>
     </div>
     <div data-guide="where">
     <p class="muted">Cinco perguntas e o painel ordena os concelhos (e, dentro deles, as freguesias) que melhor encaixam no que procuras, com os dados públicos que tem. As respostas ficam só neste browser.</p>
@@ -315,6 +317,43 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       </form>
       <div id="gn-out"></div>
     </div>
+
+    <div data-guide="fi" hidden>
+      <p class="muted">Quanto capital é preciso para viver de rendimentos (a ideia do "pai rico" de Kiyosaki e do movimento FIRE), com imóveis para arrendar ou com uma carteira diversificada, e quanto tempo demora a lá chegar. Tudo em euros de hoje.</p>
+      <form id="gf-form" class="aff-form im-form" autocomplete="off">
+        <label>Rendimento passivo que queres (€/mês) <input name="target" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 1500"></label>
+        <label>Capital que já tens (€) <input name="have" type="number" min="0" step="any" inputmode="numeric" placeholder="0"></label>
+        <label>Poupas por mês (€) <input name="save" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 500"></label>
+        <label>Concelho para os imóveis <input name="conc" list="im-conc" placeholder="opcional"></label>
+        <label>Área de cada casa (m²) <input name="area" type="number" min="15" max="400" step="any" inputmode="numeric" placeholder="80"></label>
+        <details class="im-assume"><summary>Pressupostos (editáveis)</summary>
+          <label>Retorno da carteira acima da inflação (%/ano) <input name="ret" type="number" min="0" max="15" step="any" placeholder="3"></label>
+          <label>Taxa de levantamento da carteira (%/ano) <input name="wr" type="number" min="1" max="10" step="any" placeholder="3,5"></label>
+        </details>
+        <span class="im-buttons"><button type="submit" class="btn">Calcular</button></span>
+      </form>
+      <div id="gf-out"></div>
+    </div>
+
+    <div data-guide="sign" hidden>
+      <p class="muted">A lista do que confirmar antes de assinar uma compra: quanto sobra para imprevistos, se a prestação aguenta uma subida dos juros, se pagas mais do que as referências da zona e quanto do teu património fica numa só casa ("O Homem Mais Rico da Babilónia", "A Psicologia do Dinheiro", "O Investidor Inteligente").</p>
+      <form id="ga-form" class="aff-form im-form" autocomplete="off">
+        <label>Preço da casa (€) <input name="price" type="number" min="1000" step="any" inputmode="numeric" placeholder="ex.: 250000"></label>
+        <label>Concelho <input name="conc" list="im-conc" placeholder="opcional, para as referências"></label>
+        <label>Freguesia <select name="par"><option value="">— (usar o concelho)</option></select></label>
+        <label>Área (m²) <input name="area" type="number" min="15" max="1000" step="any" inputmode="numeric" placeholder="opcional"></label>
+        <label>Poupança disponível (€) <input name="savings" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 60000"></label>
+        <label>Outros investimentos (€) <input name="other" type="number" min="0" step="any" inputmode="numeric" placeholder="0"></label>
+        <label>Rendimento líquido do agregado (€/mês) <input name="income" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 3000"></label>
+        <label>Despesas do agregado sem a casa (€/mês) <input name="expenses" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 1200"></label>
+        <label>Entrada (%) <input name="down" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="10"></label>
+        <label>Taxa do crédito (%) <input name="rate" type="number" min="0" max="15" step="any" inputmode="decimal" placeholder="taxa atual estimada"></label>
+        <label>Prazo (anos) <input name="years" type="number" min="5" max="40" step="any" inputmode="numeric" placeholder="30"></label>
+        <label class="check"><input type="checkbox" name="hpp" checked> Para viver (habitação própria e permanente)</label>
+        <span class="im-buttons"><button type="submit" class="btn">Verificar</button></span>
+      </form>
+      <div id="ga-out"></div>
+    </div>
   </section>
 
   <section id="invest" class="card">
@@ -331,6 +370,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       <label>Vender ao fim de (anos) <input name="hold" type="number" min="1" max="40" step="any" inputmode="numeric" placeholder="10"></label>
       <label>Valorização da casa (%/ano) <input name="pg" type="number" min="-20" max="30" step="any" inputmode="decimal" placeholder="0"></label>
       <label>Subida da renda (%/ano) <input name="rg" type="number" min="-20" max="30" step="any" inputmode="decimal" placeholder="2,56"></label>
+      <label>Reserva depois da compra (€) <input name="reserve" type="number" min="0" step="any" inputmode="numeric" placeholder="para o teste de crise"></label>
       <details class="im-assume"><summary>Custos e impostos (editáveis)</summary>
         <label>Meses vazio por ano <input name="vac" type="number" min="0" max="12" step="any" placeholder="1"></label>
         <label>Condomínio (€/mês) <input name="condo" type="number" min="0" step="any" placeholder="30"></label>
@@ -341,6 +381,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <label>Escritura e registos (€) <input name="closing" type="number" min="0" step="any" placeholder="1000"></label>
         <label>Custos de venda (% do preço) <input name="sell" type="number" min="0" max="20" step="any" placeholder="5"></label>
         <label>Taxa marginal de IRS (%) <input name="marg" type="number" min="0" max="60" step="any" placeholder="35"></label>
+        <label>Alternativa: o dinheiro renderia (%/ano) <input name="alt" type="number" min="0" max="20" step="any" placeholder="3"></label>
       </details>
       <span class="im-buttons"><button type="submit" class="btn">Calcular</button> <button type="button" id="inv-clear" class="btn">Repor</button></span>
     </form>
@@ -490,6 +531,21 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     </div>
     <div id="outlook-body"><p class="muted">A carregar…</p></div>
   </section>
+
+  <details id="books" class="card">
+    <summary><b>Ideias de livros de finanças, em números</b> <span class="muted">— onde estão no painel (clica para abrir)</span></summary>
+    <p class="muted">Os livros dão regras e mentalidades; aqui cada ideia vira uma conta com dados de Portugal, para a testares em vez de a seguires às cegas.</p>
+    <div class="table-wrap"><table class="ol-table g-table"><thead><tr><th>Livro</th><th>Ideia</th><th>No painel</th></tr></thead><tbody>
+      <tr><td>Pai Rico, Pai Pobre (Robert Kiyosaki)</td><td>Um ativo põe dinheiro no bolso todos os meses; um passivo tira. A dívida só é "boa" se a renda a pagar.</td><td>Investir: teste do investidor (ativo ou passivo, alavancagem, cobertura da prestação). Antes de assinar: quanto a casa onde vives te custa por mês face a arrendá-la. O livro é muito criticado por incentivar dívida alta: aqui a dívida é testada contra uma crise.</td></tr>
+      <tr><td>Pai Rico; FIRE ("Your Money or Your Life")</td><td>Liberdade financeira: rendimentos passivos que pagam as despesas.</td><td>Guia "Liberdade financeira": capital e tempo, com imóveis por concelho ou com uma carteira diversificada.</td></tr>
+      <tr><td>The Book on Rental Property Investing (Brandon Turner), The Millionaire Real Estate Investor (Gary Keller)</td><td>Regras rápidas: regra do 1%, regra dos 50%, cap rate, cash-on-cash, cobertura da prestação.</td><td>Investir: teste do investidor, com o que estas regras americanas valem em Portugal.</td></tr>
+      <tr><td>O Investidor Inteligente (Benjamin Graham)</td><td>Margem de segurança: comprar abaixo do valor. O "Senhor Mercado" oscila entre euforia e pânico.</td><td>Margem de segurança face à mediana, à avaliação bancária e ao valor de equilíbrio (Investir, Antes de assinar). O score de risco e o ciclo preço-volume medem o humor do mercado.</td></tr>
+      <tr><td>O Cisne Negro, Antifrágil (Nassim Taleb)</td><td>Prepara-te para o cenário raro, não para o médio.</td><td>Teste de crise com a queda real dos preços em Portugal (2008–2013) e a maior subida da Euribor num ano.</td></tr>
+      <tr><td>Uma Caminhada Aleatória por Wall Street (Burton Malkiel), John Bogle</td><td>Custo de oportunidade e diversificação.</td><td>TIR do imóvel face a uma alternativa (Investir); concentração do património numa casa (Antes de assinar); carteira diversificada (Liberdade financeira).</td></tr>
+      <tr><td>O Homem Mais Rico da Babilónia (George Clason), A Psicologia do Dinheiro (Morgan Housel)</td><td>Paga-te primeiro; deixa margem para errar.</td><td>Antes de assinar: fundo de emergência depois da entrada e dos impostos.</td></tr>
+      <tr><td>Exuberância Irracional (Robert Shiller)</td><td>Preços muito acima das rendas e dos rendimentos, face à história, são sinal de excesso.</td><td>O score de risco do painel compara precisamente o preço com rendas e rendimentos (e o seu histórico).</td></tr>
+    </tbody></table></div>
+  </details>
 
   <details id="howto" class="card">
     <summary><b>Como ler este painel</b> <span class="muted">— glossário e limites (clica para abrir)</span></summary>

@@ -125,9 +125,13 @@ def steps(pg, s: Smoke, ctx, base: str) -> None:
     s.check_text("arrendar")
     pg.click("#topnav a[data-tab=investir]")
     pg.fill("#inv-form [name=conc]", names[porto])
+    pg.fill("#inv-form [name=area]", "80")
+    pg.fill("#inv-form [name=price]", "250000")
+    pg.fill("#inv-form [name=reserve]", "15000")
     pg.click("#inv-form button[type=submit]")
     pg.wait_for_timeout(500)
     s.need("#inv-out .stats", "investir")
+    s.need("#inv-out table.g-table", "investir: teste do investidor")
     s.check_text("investir")
     pg.click("#topnav a[data-tab=imovel]")
     pg.fill("#im-form [name=conc]", names[porto])
@@ -168,7 +172,9 @@ def steps(pg, s: Smoke, ctx, base: str) -> None:
               ("landlord", "gs", {"conc": names[porto], "area": "80"}),
               ("tenant", "gt", {"conc": names[lisboa], "area": "70", "rent": "1300", "income": "3000"}),
               ("sell", "gv", {"conc": names[porto], "area": "90", "buy": "160000", "bal": "50000"}),
-              ("land", "gn", {"conc": names[porto], "area": "800", "iu": "0.6", "asking": "150000", "ll": "41.1579, -8.6291"})]
+              ("land", "gn", {"conc": names[porto], "area": "800", "iu": "0.6", "asking": "150000", "ll": "41.1579, -8.6291"}),
+              ("fi", "gf", {"target": "1500", "have": "50000", "save": "800", "conc": names[porto]}),
+              ("sign", "ga", {"price": "280000", "conc": names[lisboa], "area": "90", "savings": "50000", "income": "3200", "expenses": "1300"})]
     for kind, fid, fill in guides:
         pg.click(f"[data-gp={kind}]")
         for k, v in fill.items():

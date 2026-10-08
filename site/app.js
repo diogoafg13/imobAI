@@ -2049,7 +2049,7 @@ function invRead() {
   const f = $('#inv-form'), num = (k) => { const x = parseFloat(String(f[k].value).replace(/\s/g, '').replace(',', '.')); return Number.isFinite(x) ? x : null; };
   const name = f.conc.value.trim().toLowerCase(), m = MUNIS.find((x) => x.name.toLowerCase() === name);
   const v = { conc: f.conc.value.trim(), dico: m ? m.dico : null };
-  ['area', 'price', 'rent', 'down', 'rate', 'years', 'hold', 'pg', 'rg', 'vac', 'condo', 'ins', 'maint', 'vpt', 'cy', 'closing', 'sell', 'marg'].forEach((k) => { v[k] = num(k); });
+  ['area', 'price', 'rent', 'down', 'rate', 'years', 'hold', 'pg', 'rg', 'vac', 'condo', 'ins', 'maint', 'vpt', 'cy', 'closing', 'sell', 'marg', 'reserve', 'alt'].forEach((k) => { v[k] = num(k); });
   return v;
 }
 function invRender() {
@@ -2091,6 +2091,7 @@ function invRender() {
   li.push('Fora das contas: obras e mobília, seguros de vida do crédito, comissões bancárias, AIMI (património acima de 600 mil € de VPT), inquilinos que não pagam, mudanças de lei. Não é aconselhamento financeiro nem fiscal.');
   out.innerHTML = `${warn.length ? `<p class="banner">⚠ ${warn.join('; ')}.</p>` : ''}<div class="stats">${tiles.join('')}</div>
     <p class="muted" style="margin:14px 0 4px"><b>Sensibilidade</b>: TIR conforme a valorização da casa e a taxa do crédito</p>${sens}${yrs}
+    ${investBooksHtml(o, r, v, m)}
     <ul class="read">${li.map((t) => `<li>${t}</li>`).join('')}</ul>`;
 }
 function initInvest() {
@@ -2729,6 +2730,114 @@ function gnRender() {
   if (ll) gnPointSection(ll[0], ll[1], pr).catch((x) => console.error(x));
 }
 
+// ---------- ideias dos livros, em números (partilhado por Investir e pelos guias)
+// cenário de crise com dados reais: maior queda dos preços desde 2008 (INE/Eurostat) e maior subida da Euribor 12M num ano
+function crisisScenario() {
+  const S = (NAT && NAT.series) || {};
+  const dd = histDrawdown(S.hpi, '2007', '2014'), ddr = histDrawdown(S.hpi_real, '2007', '2014'), er = maxRise12(S.euribor_12m);
+  if (!dd || !er) return null;
+  return { drop: -dd.drop, dropReal: ddr ? -ddr.drop : null, dd, er, rentDrop: 0.10, vacancy: 6, rateUp: er.rise };
+}
+const crisisTxt = (C) => `preços −${fmt.n(C.drop * 100, 1)}% (${qpt(C.dd.peakQ)} → ${qpt(C.dd.troughQ)}, a maior queda desde 2008 na série do INE/Eurostat${C.dropReal ? `; −${fmt.n(C.dropReal * 100, 1)}% descontada a inflação` : ''}), Euribor +${fmt.n(C.rateUp, 1)} p.p. num ano (a maior subida da Euribor a 12 meses na série do BCE, desde ${String(NAT.series.euribor_12m[0][0]).slice(0, 4)}: ${esc(C.er.from)} → ${esc(C.er.to)}) e, como pressupostos, renda −10% e 6 meses vazia no 1.º ano`;
+// margem de segurança (Graham): €/m² pago face às referências da zona
+function safetyRows(m, pr, ppm) {
+  const refs = [];
+  if (pr && pr.price != null) refs.push([`mediana de venda na freguesia ${pr.name}`, pr.price]);
+  if (m.price != null) refs.push([`mediana de venda em ${m.name}`, m.price]);
+  if (m.val_apt != null) refs.push(['avaliação bancária mediana de apartamentos', m.val_apt]);
+  if (m.val_house != null) refs.push(['avaliação bancária mediana de moradias', m.val_house]);
+  if (m.fv_price != null) refs.push(['valor de equilíbrio do painel (concelhos parecidos)', m.fv_price]);
+  return refs.map(([label, ref]) => ({ label, ref, diff: ppm / ref - 1 }));
+}
+function safetyHtml(m, pr, ppm) {
+  const R = safetyRows(m, pr, ppm);
+  if (!R.length) return '';
+  const below = R.filter((x) => x.diff < 0).length;
+  return `<h3>Margem de segurança</h3><p class="muted">Benjamin Graham: comprar claramente abaixo do valor deixa margem para os erros de avaliação. Pagas ${fmt.eur(ppm)}/m²:</p>
+    <div class="table-wrap"><table class="ol-table g-table"><thead><tr><th>Referência</th><th>€/m²</th><th>O preço fica</th></tr></thead><tbody>${R.map((x) => `<tr><td>${esc(x.label)}</td><td>${fmt.eur(x.ref)}</td><td>${x.diff <= 0 ? `✓ ${fmt.pct(-x.diff, 0)} abaixo` : `${x.diff > 0.15 ? '⚠' : '·'} ${fmt.pct(x.diff, 0)} acima`}</td></tr>`).join('')}</tbody></table></div>
+    <p class="muted">${below === R.length ? 'Abaixo de todas as referências: há margem de segurança (confirma o estado da casa — às vezes o desconto tem razão).' : below ? 'Abaixo de algumas referências e acima de outras: margem pequena.' : 'Acima de todas as referências: estás a pagar um prémio. Pode ter razão (estado, localização, área), mas não há margem de segurança — negoceia ou confirma porquê.'} As medianas misturam casas muito diferentes e o valor de equilíbrio é um modelo: são referências, não o valor desta casa.</p>`;
+}
+function investBooksHtml(o, r, v, m) {
+  const altR = (v.alt ?? 3) / 100, T = investorTests(o, r, altR);
+  const yields = MUNIS.map((x) => x.gross_yield).filter((x) => x != null).sort((a, b) => a - b), ymed = yields.length ? yields[Math.floor(yields.length / 2)] : null;
+  const mk = (n, val, ref, okv, note = '') => `<tr><td>${n}</td><td>${val}</td><td>${okv == null ? '—' : okv ? '✓' : '✗'}</td><td class="muted">${ref}${note ? ` ${note}` : ''}</td></tr>`;
+  const rows = [
+    mk('Ativo ou passivo (Kiyosaki)', `${T.cfMonth >= 0 ? '+' : '−'}${fmt.eur(Math.abs(T.cfMonth))}/mês`, T.asset ? 'ativo: a renda paga tudo e sobra dinheiro todos os meses' : 'passivo no fluxo de caixa: tens de pôr dinheiro todos os meses (pode compensar na venda, mas depende da valorização)', T.asset),
+    mk('Cap rate', fmt.pct(T.capRate, 1), `renda menos custos (antes de IRS e crédito) sobre o preço; ${T.posLeverage == null ? 'sem crédito' : T.posLeverage ? `acima da taxa do crédito (${fmt.n(o.rate, 2)}%): a dívida aumenta o retorno ("dívida boa")${T.capRate * 100 - o.rate < 0.5 ? ', mas por pouco — se a taxa subir, deixa de compensar' : ''}` : `abaixo da taxa do crédito (${fmt.n(o.rate, 2)}%): a dívida reduz o retorno`}`, T.posLeverage),
+    mk('Cash-on-cash', T.coc == null ? '—' : fmt.spct(T.coc, 1), 'fluxo de caixa do 1.º ano sobre o dinheiro à cabeça', T.coc == null ? null : T.coc > 0),
+    mk('Cobertura da prestação (DSCR)', T.dscr == null ? 'sem crédito' : fmt.n(T.dscr, 2), 'renda líquida de custos sobre as prestações; os bancos querem pelo menos 1,2–1,25', T.dscr == null ? null : T.dscr >= 1.2),
+    mk('Regra do 1%', `${fmt.n(T.onePct * 100, 2)}%/mês`, `renda mensal ≥ 1% do preço (regra americana).${ymed != null ? ` Em Portugal, a rendibilidade bruta mediana dos concelhos é ${fmt.pct(ymed, 1)} por ano (${fmt.n(ymed * 100 / 12, 2)}%/mês): quase nenhum cumpre.` : ''}`, T.onePct >= 0.01),
+    mk('Regra dos 50%', fmt.pct(T.opexRatio, 0), 'custos (IMI, condomínio, seguro, manutenção) e meses vazios ≤ metade da renda', T.opexRatio <= 0.5),
+    mk('Custo de oportunidade (Bogle)', r.irr == null ? '—' : `TIR ${fmt.spct(r.irr, 1)} vs ${fmt.pct(altR, 1)}`, 'a alternativa que escolheste (depósitos, certificados de aforro, fundo de índices) — com menos trabalho e mais liquidez; a TIR inclui a valorização que pressupuseste', T.beatsAlt),
+  ];
+  let crisis = '';
+  const C = crisisScenario();
+  if (C) {
+    const X = crisisTest(o, C, v.reserve || 0);
+    const hold = X.cfMonth >= 0 ? 'o fluxo de caixa continuava positivo: aguentavas sem vender' : v.reserve ? (X.survives ? `a reserva de ${fmt.eur(v.reserve)} cobre o défice ${fmt.n(X.monthsCovered, 0)} meses: aguentavas mais de 2 anos sem vender` : `a reserva de ${fmt.eur(v.reserve)} só cobre o défice ${fmt.n(X.monthsCovered, 0)} meses: corrias o risco de ter de vender no pior momento`) : 'indica a reserva que te fica depois da compra para saber quantos meses aguentavas';
+    crisis = `<h3>Teste de crise</h3><p>Com uma crise como as que Portugal já teve — ${crisisTxt(C)} — o fluxo de caixa passava a <b>${X.cfMonth >= 0 ? '+' : '−'}${fmt.eur(Math.abs(X.cfMonth))}/mês</b>${r.loan > 0 ? ` (prestação de ${fmt.eur(X.payStress)})` : ''}: ${hold}. Dois anos depois, a casa valeria ~${fmt.eur(X.value)}${X.balance > 0 ? ` com ${fmt.eur(X.balance)} de crédito em dívida (${fmt.pct(X.ltv, 0)} do valor${X.ltv > 1 ? ': devias mais do que a casa vale' : ''})` : ''}; vender aí deixava ${fmt.eur(X.sellNow)}: ${X.lossIfSold < 0 ? `perdias ${fmt.eur(-X.lossIfSold)} face ao` : `ficavas com ${fmt.eur(X.lossIfSold)} acima do`} que puseste à cabeça. Nassim Taleb: prepara-te para o cenário raro, não para o médio.</p>`;
+  }
+  const safety = v.price && v.area ? safetyHtml(m, null, v.price / v.area) : '<p class="muted">Indica o preço pedido e a área para ver a margem de segurança face às referências da zona.</p>';
+  return `<h3>Teste do investidor</h3><p class="muted">Regras de livros de investimento (Kiyosaki, Turner, Keller, Bogle), com os números deste investimento no 1.º ano.</p>
+    <div class="table-wrap"><table class="ol-table g-table"><thead><tr><th>Teste</th><th>Valor</th><th></th><th>O que quer dizer</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>${crisis}${safety}`;
+}
+
+// guia: liberdade financeira (Kiyosaki, FIRE)
+function gfRender() {
+  const f = $('#gf-form'), out = $('#gf-out'), target = gdNum(f, 'target');
+  if (!target) { out.innerHTML = '<p class="muted">Indica o rendimento passivo mensal que queres.</p>'; return; }
+  const have = gdNum(f, 'have') || 0, save = gdNum(f, 'save') || 0, ret = (gdNum(f, 'ret') ?? 3) / 100, wr = (gdNum(f, 'wr') ?? 3.5) / 100, area = gdNum(f, 'area') || 80;
+  const annual = target * 12, capPort = annual / wr;
+  const yrs = (goal) => { const mth = monthsTo(goal, have, save, ret); return mth == null ? 'mais de 100 anos' : mth === 0 ? 'já lá estás' : `${fmt.n(mth / 12, 1)} anos`; };
+  // imóveis: renda líquida de custos e IRS, sem crédito (casa mediana do concelho × área)
+  const per = (m) => { const o = invParams(m, { area, down: 100 }); if (!o) return null; const r = invest(o), y = r.rows[0]; const net = y.gross - y.imi - y.condo - y.maint - y.ins - y.irs; return net > 0 ? { net, cost: r.cash0, y: net / r.cash0 } : null; };
+  const m = gdMuni(f), li = [];
+  const tiles = [gdTile('Carteira diversificada', fmt.eur(capPort), `${fmt.eur(annual)}/ano a ${fmt.pct(wr, 1)} de levantamento · ${yrs(capPort)} a poupar ${fmt.eur(save)}/mês a ${fmt.pct(ret, 1)} acima da inflação`)];
+  if (m) {
+    const P = per(m);
+    if (P) {
+      const n = Math.ceil(annual / P.net), cap = n * P.cost;
+      tiles.push(gdTile(`Casas para arrendar em ${m.name}`, `${n} × ${fmt.eur(P.cost)}`, `${fmt.eur(cap)} no total · cada uma rende ${fmt.eur(P.net / 12)}/mês líquidos (${fmt.pct(P.y, 1)}) · ${yrs(cap)}`));
+      li.push(`Cada casa: ${fmt.n(area, 0)} m² à mediana de ${esc(m.name)} (${fmt.eur(m.price)}/m² e renda de ${fmt.eur2(m.rent)}/m²), comprada sem crédito, com IMT, Imposto do Selo, escritura, 1 mês vazio por ano, IMI, condomínio, seguro, manutenção e IRS sobre as rendas.`);
+    } else li.push(`Sem preço ou renda publicados para ${esc(m.name)}.`);
+  }
+  const best = MUNIS.filter((x) => !gSmall(x)).map((x) => ({ x, P: per(x) })).filter((z) => z.P).sort((a, b) => b.P.y - a.P.y).slice(0, 5);
+  if (best.length) li.push(`Onde é preciso menos capital (casas para arrendar, mercados com pelo menos ${G_SMALL} contratos de arrendamento por ano): ${best.map(({ x, P }) => `<a class="lnk" href="#c-${x.dico}">${esc(x.name)}</a> ${fmt.eur(Math.ceil(annual / P.net) * P.cost)} (${fmt.pct(P.y, 1)})`).join('; ')}.`);
+  li.push(`Carteira diversificada: a "regra dos 4%" vem de estudos americanos para 30 anos de reforma; uso ${fmt.pct(wr, 1)} por prudência (horizontes mais longos e Europa). Em Portugal, os rendimentos de capitais e as mais-valias pagam 28% de IRS (ou englobados): o levantamento é bruto.`);
+  li.push('Imóveis e carteira não são equivalentes: as casas dão trabalho (inquilinos, obras, vazios), concentram o risco numa zona e vendem-se devagar; a carteira oscila muito de ano para ano mas vende-se num dia. Muitos misturam as duas.');
+  out.innerHTML = `<div class="stats">${tiles.join('')}</div><ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul><p class="muted">Tudo em euros de hoje: as rendas e a carteira acompanham a inflação no longo prazo (pressuposto). Não é aconselhamento financeiro.</p>`;
+}
+
+// guia: antes de assinar (Clason, Housel, Graham, Kiyosaki)
+function gaRender() {
+  const f = $('#ga-form'), out = $('#ga-out'), price = gdNum(f, 'price');
+  if (!price) { out.innerHTML = '<p class="muted">Indica o preço da casa.</p>'; return; }
+  const m = gdMuni(f), pr = f.par.value && PARBY[f.par.value] ? PARBY[f.par.value] : null, area = gdNum(f, 'area'), hpp = f.hpp.checked;
+  const down = (gdNum(f, 'down') ?? (hpp ? 10 : 20)) / 100, rate = gdNum(f, 'rate') ?? affRateNow(), years = gdNum(f, 'years') || 30, income = gdNum(f, 'income');
+  const loan = price * (1 - down), tax = buyTaxes(price, loan, hpp ? 'hpp' : 'sec', false, m ? islands(m.dico) : false);
+  const pay = annuity(loan, rate, years), homeCosts = (price * ((m && m.imi_rate) ?? 0.003)) / 12 + 30 + (price * 0.01) / 12;
+  const B = beforeSign({ savings: gdNum(f, 'savings') || 0, cashOut: price - loan + tax.total + 1000, other: gdNum(f, 'other') || 0, expenses: gdNum(f, 'expenses') || 0,
+    pay, homeCosts, income, loan, rate, years, value: price });
+  const ic = (good, warn) => (good ? '✓' : warn ? '⚠' : '✗');
+  const li = [];
+  li.push(B.left < 0 ? `✗ <b>Falta dinheiro</b>: a entrada (${fmt.eur(price - loan)}), o IMT e o Imposto do Selo (${fmt.eur(tax.total)}) e a escritura (~1000 €) somam ${fmt.eur(price - loan + tax.total + 1000)}, mais ${fmt.eur(-B.left)} do que a poupança.`
+    : `${ic(B.emergencyMonths >= 6, B.emergencyMonths >= 3)} <b>Fundo de emergência</b>: depois da compra sobram ${fmt.eur(B.left)}, ${B.emergencyMonths == null ? '—' : `${fmt.n(B.emergencyMonths, 1)} meses`} de despesas, prestação e custos da casa (${fmt.eur(B.monthly)}/mês). A regra habitual é pelo menos 6 meses — "paga-te primeiro" (Clason) e "deixa margem para errar" (Housel).`);
+  if (income) {
+    li.push(`${ic(B.effort <= 0.35, B.effort <= 0.45)} <b>Prestação</b>: ${fmt.eur(pay)}/mês, ${fmt.pct(B.effort, 0)} do rendimento (${fmt.eur(loan)} a ${fmt.n(rate, 2)}% em ${years} anos). Até 35% é confortável; o Banco de Portugal não aprova acima de ${fmt.pct(BDP.dsti, 0)} com a taxa +${fmt.n(BDP.shock, 1)} p.p.`);
+    li.push(`${ic(B.effortStress <= 0.45, B.effortStress <= 0.55)} <b>Se a Euribor subir 3 p.p.</b> (subiu ~4 p.p. em 2022): prestação de ${fmt.eur(B.payStress)}, ${fmt.pct(B.effortStress, 0)} do rendimento.`);
+  }
+  if (hpp) {
+    const rentEq = m && area && m.rent != null ? m.rent * area : null;
+    li.push(`ℹ <b>Ativo ou passivo</b> (Kiyosaki): a casa onde vives tira-te ${fmt.eur(B.ownCost)}/mês (prestação, IMI, condomínio, manutenção e seguros) — no fluxo de caixa é um passivo.${rentEq ? ` Mas substitui uma renda: arrendar uma igual em ${esc(m.name)} custaria ~${fmt.eur(rentEq)}/mês. ${B.ownCost <= rentEq ? 'Sai mais barato do que arrendar' : `Custa mais ${fmt.eur(B.ownCost - rentEq)}/mês do que arrendar`}, e parte da prestação é capital que fica teu.` : ' Com o concelho e a área, comparo com a renda de uma casa igual.'}`);
+  }
+  if (B.concentration != null) {
+    const C = crisisScenario();
+    li.push(`${ic(B.concentration <= 0.6, hpp)} <b>Concentração</b>: ${fmt.pct(B.concentration, 0)} do teu património líquido fica nesta casa, e estás exposto a ${fmt.n(B.exposure, 1)}× o teu património (a casa toda conta, não só a entrada).${C ? ` Uma queda como a de ${qpt(C.dd.peakQ)}–${qpt(C.dd.troughQ)} (−${fmt.n(C.drop * 100, 0)}%) levaria ${C.drop * B.exposure >= 1 ? 'todo o teu património líquido — e ficavas a dever mais do que tens' : `${fmt.pct(C.drop * B.exposure, 0)} do teu património líquido`}.` : ''} ${hpp ? 'Na primeira casa é normal; para investir, é muito risco num só sítio (Bogle: diversifica).' : 'Para um investimento, é muito risco num só sítio (Bogle: diversifica).'}`);
+  }
+  const safety = m && area ? safetyHtml(m, pr, price / area) : '<p class="muted">Indica o concelho e a área para ver a margem de segurança face às referências da zona.</p>';
+  out.innerHTML = `<ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul>${safety}<p class="muted">Impostos de ${TAX_YEAR} (${hpp ? 'habitação própria e permanente' : 'segunda habitação ou investimento'}, sem isenções de jovem — vê o guia "Primeira casa até aos 35"); custos da casa estimados em IMI do concelho + 30 €/mês de condomínio + 1%/ano de manutenção e seguros. Não é aconselhamento financeiro.</p>`;
+}
+
 // ---------- ligações para partilhar um guia (os valores vão no endereço, depois de #guia?)
 const b64u = { enc: (s) => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''),
   dec: (s) => decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/')))) };
@@ -2771,8 +2880,8 @@ function initGuides() {
   pick(document.querySelector(`#guide [data-guide="${k0}"]`) ? k0 : 'where');
   const saved = (() => { try { return JSON.parse(localStorage.getItem(GD_KEY) || '{}') || {}; } catch { return {}; } })();
   GD_RUN.pick = pick;
-  const KIND = { gy: 'young', gl: 'loan', gs: 'landlord', gt: 'tenant', gv: 'sell', gn: 'land' };
-  [['gy', gyRender], ['gl', glRender], ['gs', gsRender], ['gt', gtRender], ['gv', gvRender], ['gn', gnRender]].forEach(([id, render]) => {
+  const KIND = { gy: 'young', gl: 'loan', gs: 'landlord', gt: 'tenant', gv: 'sell', gn: 'land', gf: 'fi', ga: 'sign' };
+  [['gy', gyRender], ['gl', glRender], ['gs', gsRender], ['gt', gtRender], ['gv', gvRender], ['gn', gnRender], ['gf', gfRender], ['ga', gaRender]].forEach(([id, render]) => {
     const f = $(`#${id}-form`);
     const save = () => { const v = {}; [...f.elements].forEach((el) => { if (el.name) v[el.name] = el.type === 'checkbox' ? el.checked : el.value; }); saved[id] = v; try { localStorage.setItem(GD_KEY, JSON.stringify(saved)); } catch { /* */ } };
     const run = () => {
@@ -2816,7 +2925,7 @@ const TABS = {
   investir: ['invest'],
   imovel: ['imovel'],
   perspetivas: ['outlook'],
-  metodo: ['howto', 'backtest'],
+  metodo: ['books', 'howto', 'backtest'],
 };
 let TAB = 'mercado';
 const tabOf = (id) => Object.keys(TABS).find((k) => TABS[k].includes(id));

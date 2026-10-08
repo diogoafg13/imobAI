@@ -258,3 +258,51 @@ test('parseLL: formatos do Google Maps, vírgula decimal, ordem trocada e fora d
   assert.equal(c.parseLL('48.85, 2.35'), null);                             // Paris
   assert.equal(c.parseLL('x'), null);
 });
+
+const INV_O = { price: 200000, rent: 900, down: 0.2, rate: 3.5, years: 30, hold: 10, priceGrowth: 0.02, rentGrowth: 0.02, vacancy: 1,
+  condo: 30, ins: 150, maint: 0.05, imiRate: 0.003, vpt: null, contractYears: 1, closing: 1000, sellCost: 0.05, marginal: 0.35, ra: false, startYear: 2026 };
+
+test('investorTests: cap rate, DSCR, regra do 1% e dos 50%, ativo ou passivo', () => {
+  const r = c.invest(INV_O), t = c.investorTests(INV_O, r, 0.03);
+  const y1 = r.rows[0];
+  assert.ok(Math.abs(t.capRate - (y1.gross - y1.imi - y1.condo - y1.maint - y1.ins) / 200000) < 1e-12);
+  assert.ok(Math.abs(t.onePct - 0.0045) < 1e-12);                  // 900/200000: longe da regra do 1%
+  assert.ok(t.opexRatio > 0 && t.opexRatio < 0.5);
+  assert.ok(Math.abs(t.dscr - t.noi / y1.debt) < 1e-12);
+  assert.equal(t.asset, y1.cf > 0);
+  const cash = c.investorTests({ ...INV_O, down: 1 }, c.invest({ ...INV_O, down: 1 }));
+  assert.equal(cash.dscr, null); assert.equal(cash.posLeverage, null); assert.equal(cash.asset, true);
+});
+
+test('histDrawdown e maxRise12: pico, fundo e maior subida em 12 meses', () => {
+  const s = [['2008Q1', 100], ['2008Q2', 110], ['2010Q1', 105], ['2013Q2', 88], ['2015Q1', 95]];
+  const d = c.histDrawdown(s, '2007', '2014');
+  assert.equal(d.peakQ, '2008Q2'); assert.equal(d.troughQ, '2013Q2'); assert.ok(Math.abs(d.drop - (88 / 110 - 1)) < 1e-12);
+  assert.equal(c.histDrawdown([['2010Q1', 1], ['2011Q1', 2]], '2010', '2011'), null);
+  const e = c.maxRise12([['2021-12', -0.5], ['2022-06', 1], ['2022-12', 3.3], ['2023-12', 3.6]]);
+  assert.equal(e.to, '2022-12'); assert.ok(Math.abs(e.rise - 3.8) < 1e-12);
+});
+
+test('crisisTest: crise piora o fluxo de caixa; a reserva decide se aguenta', () => {
+  const s = { drop: 0.16, rentDrop: 0.1, vacancy: 6, rateUp: 3.8 };
+  const r = c.crisisTest(INV_O, s, 0);
+  assert.ok(r.cfMonth < c.invest(INV_O).rows[0].cf / 12);
+  assert.ok(Math.abs(r.value - 168000) < 1e-9);
+  assert.equal(r.survives, r.cfMonth >= 0);
+  const rich = c.crisisTest(INV_O, s, 1e6);
+  assert.equal(rich.survives, true);
+  const cash = c.crisisTest({ ...INV_O, down: 1 }, s, 0);
+  assert.equal(cash.balance, 0);
+});
+
+test('monthsTo e beforeSign', () => {
+  assert.equal(c.monthsTo(1000, 1000, 0, 0.05), 0);
+  assert.equal(c.monthsTo(1200, 0, 100, 0), 12);
+  assert.ok(c.monthsTo(100000, 0, 500, 0.05) < 200);
+  assert.equal(c.monthsTo(1e9, 0, 1, 0), null);
+  const b = c.beforeSign({ savings: 60000, cashOut: 40000, other: 10000, expenses: 1200, pay: 800, homeCosts: 100, income: 3000,
+    loan: 200000, rate: 3.5, years: 30, value: 240000 });
+  assert.equal(b.left, 20000); assert.ok(Math.abs(b.emergencyMonths - 20000 / 2100) < 1e-12);
+  assert.ok(b.effortStress > 800 / 3000);
+  assert.ok(Math.abs(b.concentration - 40000 / 70000) < 1e-12);
+});

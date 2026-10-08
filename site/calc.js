@@ -362,6 +362,85 @@ function landResidual(o) {
   return out;
 }
 
+// ---------- ideias de livros de finanças e investimento, em números
+// Teste do investidor (1.º ano de invest()): Kiyosaki — um ativo põe dinheiro no bolso todos os meses; Turner/Keller —
+// cap rate (renda líquida de custos, antes de IRS e crédito, sobre o preço), cash-on-cash (fluxo de caixa sobre o
+// dinheiro à cabeça), DSCR (renda líquida sobre as prestações; os bancos querem ≥ 1,2–1,25), regra do 1% (renda
+// mensal ≥ 1% do preço) e regra dos 50% (custos e meses vazios ≤ metade da renda). Alavancagem positiva: cap rate
+// acima da taxa do crédito (a dívida aumenta o retorno). r = invest(o).
+function investorTests(o, r, altRate = null) {
+  const y1 = r.rows[0], potential = o.rent * 12;
+  const noi = y1.gross - y1.imi - y1.condo - y1.maint - y1.ins;
+  const opex = y1.imi + y1.condo + y1.maint + y1.ins + (potential - y1.gross);
+  return {
+    cfMonth: y1.cf / 12, asset: y1.cf > 0, noi,
+    capRate: noi / o.price,
+    coc: r.cash0 > 0 ? y1.cf / r.cash0 : null,
+    dscr: y1.debt > 0 ? noi / y1.debt : null,
+    onePct: o.rent / o.price,
+    opexRatio: potential > 0 ? opex / potential : null,
+    posLeverage: r.loan > 0 ? noi / o.price > o.rate / 100 : null,
+    beatsAlt: r.irr != null && altRate != null ? r.irr > altRate : null,
+  };
+}
+// maior queda de uma série trimestral [[período, valor]] entre `from` e `to` (inclusive): pico e fundo depois dele
+function histDrawdown(series, from, to) {
+  const s = (series || []).filter(([p, v]) => v != null && p.slice(0, 4) >= from && p.slice(0, 4) <= to);
+  let best = null, peak = null;
+  for (const [p, v] of s) {
+    if (!peak || v > peak[1]) peak = [p, v];
+    const d = v / peak[1] - 1;
+    if (!best || d < best.drop) best = { drop: d, peakQ: peak[0], peak: peak[1], troughQ: p, trough: v };
+  }
+  return best && best.drop < 0 ? best : null;
+}
+// maior subida de uma série mensal [[AAAA-MM, valor]] em 12 meses
+function maxRise12(series) {
+  const s = (series || []).filter(([, v]) => v != null), idx = new Map(s.map(([p, v]) => [p, v]));
+  let best = null;
+  for (const [p, v] of s) {
+    const y = +p.slice(0, 4), prev = idx.get(`${y - 1}${p.slice(4)}`);
+    if (prev != null && (!best || v - prev > best.rise)) best = { rise: v - prev, from: `${y - 1}${p.slice(4)}`, to: p, start: prev, end: v };
+  }
+  return best;
+}
+// Teste de crise (Taleb, Graham): o mesmo investimento com a taxa +rateUp, a renda −rentDrop e `vacancy` meses vazios
+// no 1.º ano, e a casa a valer −drop dois anos depois. Aguenta se o fluxo de caixa for positivo ou se a reserva cobrir
+// o défice pelo menos `hold` meses sem ter de vender no pior momento.
+function crisisTest(o, s, reserve = 0, hold = 24) {
+  const base = invest(o);
+  const st = invest({ ...o, rate: o.rate + s.rateUp, rent: o.rent * (1 - s.rentDrop), vacancy: Math.min(12, s.vacancy) });
+  const cfMonth = st.rows[0].cf / 12;
+  const bal = st.rows[Math.min(1, st.rows.length - 1)].balance, value = o.price * (1 - s.drop);
+  const sellNow = value * (1 - o.sellCost) - bal;
+  const months = cfMonth < 0 ? (reserve || 0) / -cfMonth : Infinity;
+  return { cfMonth, payStress: st.pay, value, balance: bal, equity: value - bal, ltv: value > 0 ? bal / value : null,
+    sellNow, lossIfSold: sellNow - base.cash0, monthsCovered: months, survives: cfMonth >= 0 || months >= hold };
+}
+// Liberdade financeira: meses até juntar `goal` com `start` já poupado, `monthly` por mês e retorno anual `rate`
+function monthsTo(goal, start, monthly, rate) {
+  if (start >= goal) return 0;
+  let v = start;
+  for (let m = 1; m <= 1200; m++) { v = v * (1 + rate / 12) + monthly; if (v >= goal) return m; }
+  return null;
+}
+// Antes de assinar (Clason, Housel): margem para errar depois da compra. o = { savings, cashOut (entrada + impostos +
+// escritura), other (outras poupanças e investimentos), expenses (despesas do agregado/mês, sem a casa), pay
+// (prestação), homeCosts (IMI, condomínio, seguros, manutenção/mês), income, loan, rate, years, value }
+function beforeSign(o) {
+  const left = (o.savings || 0) - (o.cashOut || 0), monthly = (o.expenses || 0) + (o.pay || 0) + (o.homeCosts || 0);
+  const payStress = o.loan > 0 ? annuity(o.loan, o.rate + 3, o.years) : 0;
+  const equity = (o.value || 0) - (o.loan || 0), liquid = Math.max(0, left) + (o.other || 0);
+  return {
+    left, monthly, emergencyMonths: monthly > 0 ? left / monthly : null,
+    effort: o.income ? (o.pay || 0) / o.income : null,
+    effortStress: o.income ? payStress / o.income : null, payStress,
+    concentration: equity + liquid > 0 ? equity / (equity + liquid) : null,
+    exposure: equity + liquid > 0 ? (o.value || 0) / (equity + liquid) : null,
+    ownCost: (o.pay || 0) + (o.homeCosts || 0),
+  };
+}
+
 // coordenadas como o Google Maps as copia ("38.83092, -9.16851"), com vírgula decimal ou pela ordem inversa;
 // null fora de Portugal (continente, Madeira e Açores)
 function parseLL(txt) {
@@ -378,5 +457,6 @@ if (typeof module !== 'undefined') {
   module.exports = { TAX_YEAR, taxTablesStale, BDP, LIMIT, IMT26, YOUNG_FULL, YOUNG_PART, IS_BUY, IS_LOAN, imtOf, isBuyOf, buyTaxes,
     islands, annuity, qOfMonth, serVal, qAdd, qIdx, at12, serGrowth, TAX_EDGES, shareAbove,
     RENT_COEF, IRS_RENT, irsRentRate, irr, invest, maxPrice, rankBy,
-    schedule, LOAN_PLANS, loanPlans, LEASES, landlord, holdOptions, YOUNG_GUARANTEE, youngPlan, LAND_TAX, landResidual, parseLL };
+    schedule, LOAN_PLANS, loanPlans, LEASES, landlord, holdOptions, YOUNG_GUARANTEE, youngPlan, LAND_TAX, landResidual, parseLL,
+    investorTests, histDrawdown, maxRise12, crisisTest, monthsTo, beforeSign };
 }
