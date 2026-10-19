@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-07",
+ "updated": "2026-10-19",
  "cfg": "{\"dgt\": {\"base\": \"https://ogcapi.dgterritorio.gov.pt\", \"grep\": [\"^crus\", \"cadastro\", \"srup_\"], \"point\": [-9.1685, 38.8309], \"sample\": [\"crus\", \"cadastro\", \"srup_ran\", \"srup_ren_areal\", \"srup_areas_protegidas\", \"srup_zec\", \"srup_zpe\", \"srup_perigosidade_inc_rural\"]}}",
  "apis": {
   "dgt": {
@@ -101,39 +101,14 @@
     "cadastro": {
      "meta_status": 200,
      "queryables_status": 200,
-     "items_status": 200,
-     "properties": [
-      "administrativeunit",
-      "areavalue",
-      "beginlifespanversion",
-      "endlifespanversion",
-      "id",
-      "inspireid",
-      "label",
-      "nationalcadastralreference",
-      "validfrom",
-      "validto"
-     ],
-     "example": {
-      "nationalcadastralreference": "AAA000000001",
-      "inspireid": "PT.DGT.CP.AAA000000001",
-      "label": "AAA 000 000 001",
-      "areavalue": 3125.0,
-      "validfrom": null,
-      "validto": null,
-      "beginlifespanversion": "2023-11-21T00:00:00+00:00",
-      "endlifespanversion": null,
-      "administrativeunit": "110808",
-      "id": 1230424334
-     },
-     "geometry": "MultiPolygon",
+     "items_status": 502,
      "point_status": 200,
      "point_hits": 0,
      "point_example": null
     },
     "srup_ran": {
-     "meta_status": 200,
-     "queryables_status": 200,
+     "meta_status": 502,
+     "queryables_status": 502,
      "items_status": 200,
      "properties": [
       "designacao",
@@ -363,5 +338,5 @@
   }
  },
  "ok": true,
- "summary": "dgt: 90 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, cadastro, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural"
+ "summary": "dgt: 90 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural"
 }
