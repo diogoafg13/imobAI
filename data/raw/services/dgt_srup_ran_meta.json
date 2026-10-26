@@ -1,0 +1,141 @@
+{
+    "id":"srup_ran",
+    "links":[
+        {
+            "type":"text/csv",
+            "rel":"canonical",
+            "title":"data",
+            "href":"https://snig.dgterritorio.gov.pt/rndg/srv/por/catalog.search#/metadata/528a3b46-555a-4472-85d3-d06c18c34be5",
+            "hreflang":"en-US"
+        },
+        {
+            "type":"application/json",
+            "rel":"root",
+            "title":"The landing page of this server as JSON",
+            "href":"https://ogcapi.dgterritorio.gov.pt?f=json"
+        },
+        {
+            "type":"text/html",
+            "rel":"root",
+            "title":"The landing page of this server as HTML",
+            "href":"https://ogcapi.dgterritorio.gov.pt?f=html"
+        },
+        {
+            "type":"application/json",
+            "rel":"self",
+            "title":"This document as JSON",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/srup_ran?f=json"
+        },
+        {
+            "type":"application/ld+json",
+            "rel":"alternate",
+            "title":"This document as RDF (JSON-LD)",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/srup_ran?f=jsonld"
+        },
+        {
+            "type":"text/html",
+            "rel":"alternate",
+            "title":"This document as HTML",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/srup_ran?f=html"
+        },
+        {
+            "type":"application/schema+json",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/schema",
+            "title":"Schema of collection in JSON",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/srup_ran/schema?f=json"
+        },
+        {
+            "type":"text/html",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/schema",
+            "title":"Schema of collection in HTML",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/srup_ran/schema?f=html"
+        },
+        {
+            "type":"application/schema+json",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/queryables",
+            "title":"Queryables for this collection as JSON",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/srup_ran/queryables?f=json"
+        },
+        {
+            "type":"text/html",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/queryables",
+            "title":"Queryables for this collection as HTML",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/srup_ran/queryables?f=html"
+        },
+        {
+            "type":"application/geo+json",
+            "rel":"items",
+            "title":"Items as GeoJSON",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/srup_ran/items?f=json"
+        },
+        {
+            "type":"application/ld+json",
+            "rel":"items",
+            "title":"Items as RDF (GeoJSON-LD)",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/srup_ran/items?f=jsonld"
+        },
+        {
+            "type":"text/html",
+            "rel":"items",
+            "title":"Items as HTML",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/srup_ran/items?f=html"
+        },
+        {
+            "type":"text/csv; charset=utf-8",
+            "rel":"items",
+            "title":"Items as CSV",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/srup_ran/items?f=csv"
+        },
+        {
+            "type":"application/json",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector",
+            "title":"Tiles as JSON",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/srup_ran/tiles?f=json"
+        },
+        {
+            "type":"text/html",
+            "rel":"http://www.opengis.net/def/rel/ogc/1.0/tilesets-vector",
+            "title":"Tiles as HTML",
+            "href":"https://ogcapi.dgterritorio.gov.pt/collections/srup_ran/tiles?f=html"
+        }
+    ],
+    "title":"SRUP - Reserva Agr\u00edcola Nacional",
+    "description":"Servid\u00e3o e Restri\u00e7\u00e3o de Utilidade P\u00fablica (SRUP) - Reserva Agr\u00edcola Nacional (RAN), em vigor em Portugal Continental.",
+    "keywords":[
+        "SRUP",
+        "RAN",
+        "Reserva Agr\u00edcola Nacional",
+        "DGT",
+        "Cartografia Oficial"
+    ],
+    "extent":{
+        "spatial":{
+            "bbox":[
+                [
+                    -9.785164,
+                    36.962833,
+                    -6.0,
+                    42.104653
+                ]
+            ],
+            "crs":"http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+        },
+        "temporal":{
+            "interval":[
+                [
+                    null,
+                    null
+                ]
+            ]
+        }
+    },
+    "itemType":"feature",
+    "crs":[
+        "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+        "http://www.opengis.net/def/crs/EPSG/0/4326",
+        "http://www.opengis.net/def/crs/EPSG/0/3857",
+        "http://www.opengis.net/def/crs/EPSG/0/4258",
+        "http://www.opengis.net/def/crs/EPSG/0/3763"
+    ],
+    "storageCrs":"http://www.opengis.net/def/crs/OGC/1.3/CRS84"
+}

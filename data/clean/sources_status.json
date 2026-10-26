@@ -1,21 +1,21 @@
 {
- "date": "20261019",
+ "date": "20261026",
  "ine": {
   "sales_price_annual": "sem código (config)",
   "building_permits": "sem código (config)",
   "completed_dwellings": "sem código (config)",
-  "sales_price_12m": "ok (24206 linhas, 2026Q1) [dim_3=H1 'Total']",
-  "sales_price_new": "ok (24206 linhas, 2026Q1) [dim_3=H11 'Novos']",
-  "sales_price_existing": "ok (24206 linhas, 2026Q1) [dim_3=H12 'Existentes']",
-  "sales_price_domestic": "ok (24206 linhas, 2026Q1) [dim_3=1 'Território nacional']",
-  "sales_price_foreign": "ok (24206 linhas, 2026Q1) [dim_3=2 'Estrangeiro']",
-  "sales_price_households": "ok (24206 linhas, 2026Q1) [dim_3=S1400000 'Famílias']",
-  "sales_price_companies": "ok (24206 linhas, 2026Q1) [dim_3=S3000000 'Restantes setores institucionais']",
-  "sales_price_apartments": "ok (17706 linhas, 2026Q1)",
-  "sales_price_t01": "ok (17706 linhas, 2026Q1) [dim_3=1 'T0 ou T1']",
-  "sales_price_t2": "ok (17706 linhas, 2026Q1) [dim_3=2 'T2']",
-  "sales_price_t3": "ok (17706 linhas, 2026Q1) [dim_3=3 'T3']",
-  "sales_price_t4": "ok (17706 linhas, 2026Q1) [dim_3=4 'T4 ou mais']",
+  "sales_price_12m": "ok (25137 linhas, 2026Q2) [dim_3=H1 'Total']",
+  "sales_price_new": "ok (25137 linhas, 2026Q2) [dim_3=H11 'Novos']",
+  "sales_price_existing": "ok (25137 linhas, 2026Q2) [dim_3=H12 'Existentes']",
+  "sales_price_domestic": "ok (25137 linhas, 2026Q2) [dim_3=1 'Território nacional']",
+  "sales_price_foreign": "ok (25137 linhas, 2026Q2) [dim_3=2 'Estrangeiro']",
+  "sales_price_households": "ok (25137 linhas, 2026Q2) [dim_3=S1400000 'Famílias']",
+  "sales_price_companies": "ok (25137 linhas, 2026Q2) [dim_3=S3000000 'Restantes setores institucionais']",
+  "sales_price_apartments": "ok (18387 linhas, 2026Q2)",
+  "sales_price_t01": "ok (18387 linhas, 2026Q2) [dim_3=1 'T0 ou T1']",
+  "sales_price_t2": "ok (18387 linhas, 2026Q2) [dim_3=2 'T2']",
+  "sales_price_t3": "ok (18387 linhas, 2026Q2) [dim_3=3 'T3']",
+  "sales_price_t4": "ok (18387 linhas, 2026Q2) [dim_3=4 'T4 ou mais']",
   "rent_new_contracts": "ok (2082 linhas, 2025) [dim_3=2 '2.º quartil']",
   "rent_q1": "ok (2082 linhas, 2025) [dim_3=1 '1.º quartil']",
   "rent_q3": "ok (2082 linhas, 2025) [dim_3=3 '3.º quartil']",
@@ -29,6 +29,9 @@
   "valuation_count_houses": "ok (65236 linhas, 2026-08) [dim_3=2 'Moradias']",
   "valuation_apartments": "ok (65236 linhas, 2026-08) [dim_3=1 'Apartamentos']",
   "valuation_houses": "ok (65236 linhas, 2026-08) [dim_3=2 'Moradias']",
+  "dwellings_licensed": "ok (9204 linhas, 2026-08) [dim_3=T 'Total']",
+  "dwellings_completed": "ok (1170 linhas, 2026Q2)",
+  "dwellings_stock": "ok (4128 linhas, 2022)",
   "census_total": "ok (3439 linhas, 2021) [dim_3=T 'Total', dim_4=T 'Total', dim_5=T 'Total']",
   "census_bld_total": "ok (3439 linhas, 2021) [dim_3=T 'Total', dim_4=T 'Total']",
   "census_bld_pre1919": "ok (3439 linhas, 2021) [dim_3=01 'Antes de 1919', dim_4=T 'Total']",
@@ -64,10 +67,7 @@
   "ageing_index": "ok (1735 linhas, 2025)",
   "migration_balance": "ok (1735 linhas, 2025)",
   "tourism_nights": "ok (5160 linhas, 2025) [dim_3=T 'Total']",
-  "housing_credit_pc": "ok (1041 linhas, 2024)",
-  "dwellings_licensed": "ok (9204 linhas, 2026-08) [dim_3=T 'Total']",
-  "dwellings_completed": "ok (1170 linhas, 2026Q2)",
-  "dwellings_stock": "ok (4128 linhas, 2022)"
+  "housing_credit_pc": "ok (1041 linhas, 2024)"
  },
  "macro": {
   "euribor_3m": "ok (393 pontos, 2026-09)",
@@ -80,7 +80,7 @@
   "mortgage_rate_pt_fix_i": "ok (227 pontos, 2026-08)",
   "mortgage_rate_pt_fix_o": "ok (227 pontos, 2026-08)",
   "mortgage_rate_pt_fix_p": "ok (220 pontos, 2026-08)",
-  "mortgage_share_variable_pt": "ok (284 pontos, 2026-08)",
+  "mortgage_share_variable_pt": "CACHE (HTTPSConnectionPool(host='data-api.ecb.europa.eu', port=443): Read timed out. (read timeout=60))",
   "eurostat_hpi": "ok (74 pontos, 2026Q2)",
   "eurostat_hicp": "ok (123 pontos, 2026Q3)",
   "eurostat_hpi_eu": "ok (2086 pontos, 2026Q2)",
@@ -91,10 +91,10 @@
   "imi_rates": "ok (cache: taxas de 2025; 2026 ainda incompleto)"
  },
  "turismo": {
-  "al_rnal": "ok (cache de 2026-10-19: 111909 registos)"
+  "al_rnal": "ok (111936 registos, https://dadosabertos.turismodeportugal.pt/api/download/v1/items/4e62eb1977564991bd01e61d7aa8266f/csv?layers=6)"
  },
  "osm": {
-  "osm_points": "ok (school: 9378, health: 4353, station: 831; 4 quadrículas novas; 1 falhas (limite de tempo))"
+  "osm_points": "ok (school: 9378, health: 4353, station: 831; 1 quadrículas novas; 2 falhas ((36, -9, 37, -8): 502 Server Error: Bad Gateway for url: https://overpass-api.de/api/interpreter))"
  },
  "apa": {
   "flood_zones": "ok (cache de 2026-10-06: 63 polígonos, pretorno=T0100)"
@@ -102,8 +102,8 @@
  "stale": [],
  "discover": {
   "ine_probe": "nada novo (17 já sondados)",
-  "ine_catalog": "ok (cache: 13165 indicadores)",
-  "ogc": "ok (cache: dgt: 90 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural)",
+  "ine_catalog": "ok (13214 indicadores; opc=2: 13214)",
+  "ogc": "dgt: 90 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, cadastro, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural",
   "services": "apa_inundacoes: 8 camadas"
  }
 }

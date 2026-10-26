@@ -1,5 +1,5 @@
 {
-"updated": "2026-10-19",
+"updated": "2026-10-26",
 "complete": true,
 "scanned": [],
 "items": [
@@ -1248,7 +1248,7 @@
 "title": "Consumo humano de vinho (hl)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "7A2025_3",
+"last": "7A2026_3",
 "source": "INE, Balanços de aprovisionamento de produtos vegetais"
 },
 {
@@ -1256,7 +1256,7 @@
 "title": "Consumo humano de vinho per capita (l/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "7A2025_3",
+"last": "7A2026_3",
 "source": "INE, Balanços de aprovisionamento de produtos vegetais"
 },
 {
@@ -1264,7 +1264,7 @@
 "title": "Grau de autoaprovisionamento do vinho (%)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "7A2025_3",
+"last": "7A2026_3",
 "source": "INE, Balanços de aprovisionamento de produtos vegetais"
 },
 {
@@ -2152,7 +2152,7 @@
 "title": "Veículos pesados de mercadorias utilizados (N.º)",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de mercadorias"
 },
 {
@@ -2168,7 +2168,7 @@
 "title": "Distância percorrida (km) pelos veículos pesados de mercadorias",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de mercadorias"
 },
 {
@@ -2176,7 +2176,7 @@
 "title": "Peso da mercadoria transportada (t) pelos veículos pesados de mercadorias",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de mercadorias"
 },
 {
@@ -2192,7 +2192,7 @@
 "title": "Tonelada-quilómetro (tkm) dos Veículos pesados de mercadorias",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de mercadorias"
 },
 {
@@ -2200,7 +2200,7 @@
 "title": "Tonelada-quilómetro (tkm) dos Veículos pesados de mercadorias",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de mercadorias"
 },
 {
@@ -5480,7 +5480,7 @@
 "title": "Passageiros embarcados (N.º) nos aeroportos",
 "geo": "Aeroporto",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos aeroportos e aeródromos"
 },
 {
@@ -5488,7 +5488,7 @@
 "title": "Passageiros desembarcados (N.º) nos Aeroportos",
 "geo": "Aeroporto",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos aeroportos e aeródromos"
 },
 {
@@ -5496,7 +5496,7 @@
 "title": "Passageiros em trânsito direto (N.º) nos aeroportos",
 "geo": "Aeroporto",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos aeroportos e aeródromos"
 },
 {
@@ -5504,7 +5504,7 @@
 "title": "Aeronaves descoladas (N.º) nos aeroportos",
 "geo": "Aeroporto",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos aeroportos e aeródromos"
 },
 {
@@ -5512,7 +5512,7 @@
 "title": "Aeronaves aterradas (N.º) nos aeroportos",
 "geo": "Aeroporto",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos aeroportos e aeródromos"
 },
 {
@@ -5520,7 +5520,7 @@
 "title": "Correio embarcado (t) nos aeroportos",
 "geo": "Aeroporto",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos aeroportos e aeródromos"
 },
 {
@@ -5528,7 +5528,7 @@
 "title": "Correio desembarcado (t) nos aeroportos",
 "geo": "Aeroporto",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos aeroportos e aeródromos"
 },
 {
@@ -5536,7 +5536,7 @@
 "title": "Carga embarcada (t) nos aeroportos",
 "geo": "Aeroporto",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos aeroportos e aeródromos"
 },
 {
@@ -5544,7 +5544,7 @@
 "title": "Carga desembarcada (t) nos aeroportos",
 "geo": "Aeroporto",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos aeroportos e aeródromos"
 },
 {
@@ -8744,7 +8744,7 @@
 "title": "Edifícios licenciados (N.º)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -8752,7 +8752,7 @@
 "title": "Fogos licenciados (N.º) em construções novas para habitação familiar",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -8864,7 +8864,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -8872,7 +8872,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -8880,7 +8880,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -8888,7 +8888,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -9304,7 +9304,7 @@
 "title": "Árvores de fruto e oliveiras vendidas (N.º) pelos viveiros",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -9312,7 +9312,7 @@
 "title": "Árvores de fruto e oliveiras vendidas (N.º) pelos viveiros",
 "geo": "Região agrária",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -9320,7 +9320,7 @@
 "title": "Viveiros (N.º)",
 "geo": "NUTS III",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -9328,7 +9328,7 @@
 "title": "Viveiros (N.º)",
 "geo": "Região agrária",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -9336,7 +9336,7 @@
 "title": "Preço médio das árvores de fruto e oliveiras vendidas diretamente a agricultores (€) pelos viveiros",
 "geo": "NUTS III",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -9344,7 +9344,7 @@
 "title": "Preço médio das árvores de fruto e oliveiras vendidas diretamente a agricultores (€) pelos viveiros",
 "geo": "Região agrária",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -9352,7 +9352,7 @@
 "title": "Árvores de fruto e oliveiras vendidas diretamente a agricultores (N.º) pelos viveiros",
 "geo": "NUTS III",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -9360,7 +9360,7 @@
 "title": "Árvores de fruto e oliveiras vendidas diretamente a agricultores (N.º) pelos viveiros",
 "geo": "Região agrária",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -9432,7 +9432,7 @@
 "title": "Movimento de passageiros em vias navegáveis interiores (N.º)",
 "geo": "Carreira fluvial",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito ao transporte fluvial de passageiros e veículos"
 },
 {
@@ -9440,7 +9440,7 @@
 "title": "Movimento de veículos em vias navegáveis interiores (N.º)",
 "geo": "Carreira fluvial",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito ao transporte fluvial de passageiros e veículos"
 },
 {
@@ -13421,7 +13421,7 @@
 },
 {
 "varcd": "0001985",
-"title": "Disparidade no ganho médio mensal (Entre Setores de atividade - %) da população empregada por conta de outrem",
+"title": "Disparidade no ganho médio mensal (Entre setores de atividade em CAE Rev.3 - %) da população empregada por conta de outrem",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -13493,7 +13493,7 @@
 },
 {
 "varcd": "0001994",
-"title": "Disparidade no ganho médio mensal (Entre Setores de atividade - %) da população empregada por conta de outrem",
+"title": "Disparidade no ganho médio mensal (Entre setores de atividade em CAE Rev.3 - %) da população empregada por conta de outrem",
 "geo": "NUTS II",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -14456,7 +14456,7 @@
 "title": "Veículos ligeiros de passageiros novos vendidos (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "Associação do Comércio Automóvel de Portugal"
 },
 {
@@ -18592,7 +18592,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202607",
+"last": "S18A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -18600,7 +18600,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202607",
+"last": "S18A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -18608,7 +18608,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202607",
+"last": "S18A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -18616,7 +18616,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202607",
+"last": "S18A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -26272,7 +26272,7 @@
 "title": "Publicações periódicas (N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Estatísticas da cultura - séries históricas"
 },
 {
@@ -26280,7 +26280,7 @@
 "title": "Edições da edição impressa de publicações periódicas (N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Estatísticas da cultura - séries históricas"
 },
 {
@@ -26296,7 +26296,7 @@
 "title": "Exemplares vendidos da edição impressa de publicações periódicas (N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Estatísticas da cultura - séries históricas"
 },
 {
@@ -26304,7 +26304,7 @@
 "title": "Tiragem total da edição impressa de publicações periódicas (N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Estatísticas da cultura - séries históricas"
 },
 {
@@ -28776,7 +28776,7 @@
 "title": "Jornais (N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Estatísticas da cultura - séries históricas"
 },
 {
@@ -28784,7 +28784,7 @@
 "title": "Revistas (N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Estatísticas da cultura - séries históricas"
 },
 {
@@ -28976,7 +28976,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -28984,7 +28984,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202607",
+"last": "S18A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -29000,7 +29000,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -29008,7 +29008,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202607",
+"last": "S18A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -37432,7 +37432,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -37440,7 +37440,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -37448,7 +37448,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202607",
+"last": "S18A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -37456,7 +37456,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202607",
+"last": "S18A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -39917,7 +39917,7 @@
 },
 {
 "varcd": "0006096",
-"title": "Disparidade no ganho médio mensal (Entre Setores de atividade - %) da população empregada por conta de outrem",
+"title": "Disparidade no ganho médio mensal (Entre setores de atividade em CAE Rev.3 - %) da população empregada por conta de outrem",
 "geo": "NUTS III",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -41104,7 +41104,7 @@
 "title": "Tonelada-quilómetro (tkm) dos Veículos pesados de mercadorias",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de mercadorias"
 },
 {
@@ -41112,7 +41112,7 @@
 "title": "Tonelada-quilómetro em transporte nacional (tkm) nos veículos pesados de mercadorias",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de mercadorias"
 },
 {
@@ -41120,7 +41120,7 @@
 "title": "Tonelada-quilómetro em transporte nacional (tkm) nos veículos pesados de mercadorias",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de mercadorias"
 },
 {
@@ -41688,7 +41688,7 @@
 "title": "Taxa de juro implícita (Série 2012 - %) nos contratos de crédito à habitação",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Indicador de taxas de juro implícitas no crédito à habitação"
 },
 {
@@ -41696,7 +41696,7 @@
 "title": "Taxa de juro implícita (Série 2012 - %) nos contratos de crédito à habitação",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Indicador de taxas de juro implícitas no crédito à habitação"
 },
 {
@@ -41704,7 +41704,7 @@
 "title": "Capital médio em dívida (Série 2012 - €) nos contratos de crédito à habitação",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Indicador de taxas de juro implícitas no crédito à habitação"
 },
 {
@@ -41712,7 +41712,7 @@
 "title": "Prestação média vencida (Série 2012 - €) nos contratos de crédito à habitação",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Indicador de taxas de juro implícitas no crédito à habitação"
 },
 {
@@ -41720,7 +41720,7 @@
 "title": "Juros totais (Série 2012 - €) nos contratos de crédito à habitação",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Indicador de taxas de juro implícitas no crédito à habitação"
 },
 {
@@ -41728,7 +41728,7 @@
 "title": "Capital amortizado (Série 2012 - €) nos contratos de crédito à habitação",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Indicador de taxas de juro implícitas no crédito à habitação"
 },
 {
@@ -50352,7 +50352,7 @@
 "title": "Óbitos de menos de 1 ano (N.º)",
 "geo": "Continente/R.A.",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Óbitos"
 },
 {
@@ -52264,7 +52264,7 @@
 "title": "Serviços do transporte rodoviário de passageiros (N.º)",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de passageiros"
 },
 {
@@ -52280,7 +52280,7 @@
 "title": "Lugares-quilómetro oferecidos (N.º) pelas empresas de transporte rodoviário de passageiros",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de passageiros"
 },
 {
@@ -52296,7 +52296,7 @@
 "title": "Passageiros transportados (N.º) pelas empresas de transporte rodoviário de passageiros",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de passageiros"
 },
 {
@@ -52312,7 +52312,7 @@
 "title": "Passageiros-quilómetro transportados (N.º) pelas empresas de transporte rodoviário de passageiros",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de passageiros"
 },
 {
@@ -52320,7 +52320,7 @@
 "title": "Coeficiente de utilização de transportes (%) das empresas de transporte rodoviário de passageiros",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de passageiros"
 },
 {
@@ -52328,7 +52328,7 @@
 "title": "Consumo de combustível (l) das empresas de transporte rodoviário de passageiros",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de passageiros"
 },
 {
@@ -52336,7 +52336,7 @@
 "title": "Consumo de gás natural (m³) das empresas de transporte rodoviário de passageiros",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de passageiros"
 },
 {
@@ -52344,7 +52344,7 @@
 "title": "Consumo de electricidade (kW) das empresas de transporte rodoviário de passageiros",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de passageiros"
 },
 {
@@ -53760,7 +53760,7 @@
 "title": "Taxa de cobertura das importações pelas exportações (%)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -53768,7 +53768,7 @@
 "title": "Taxa de variação homóloga (%) das exportações de bens",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -53776,7 +53776,7 @@
 "title": "Taxa de variação homóloga (%) das importações de bens",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -54528,7 +54528,7 @@
 "title": "Edifícios licenciados (N.º)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -54536,7 +54536,7 @@
 "title": "Fogos licenciados (N.º) em construções novas para habitação familiar",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -55192,7 +55192,7 @@
 "title": "Importações (kg) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -55200,7 +55200,7 @@
 "title": "Exportações (kg) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -55208,7 +55208,7 @@
 "title": "Importações (kg) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202607",
+"last": "S18A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -55216,7 +55216,7 @@
 "title": "Exportações (kg) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202607",
+"last": "S18A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -58408,7 +58408,7 @@
 "title": "Importações (€) de bens",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -58416,7 +58416,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -58976,7 +58976,7 @@
 "title": "Viveiros (N.º)",
 "geo": "NUTS III",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -58984,7 +58984,7 @@
 "title": "Preço médio das árvores de fruto e oliveiras vendidas diretamente a agricultores (€) pelos viveiros",
 "geo": "NUTS III",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -58992,7 +58992,7 @@
 "title": "Árvores de fruto e oliveiras vendidas diretamente a agricultores (N.º) pelos viveiros",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -59223,7 +59223,7 @@
 "varcd": "0008665",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
+"periodicity": "Sexenal",
 "last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
@@ -59304,7 +59304,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -59352,7 +59352,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -59360,7 +59360,7 @@
 "title": "População residente com 15 e mais anos de idade que se desloca a pé pelo menos um dia numa semana normal (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -59368,7 +59368,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -59376,7 +59376,7 @@
 "title": "População residente com 15 e mais anos de idade que se desloca de bicicleta pelo menos um dia numa semana normal (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -59520,7 +59520,7 @@
 "title": "População residente com 15 e mais anos de idade que consumiu bebidas alcoólicas pelo menos uma vez por semana nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -59528,7 +59528,7 @@
 "title": "População residente com 15 e mais anos de idade que consumiu bebidas alcoólicas pelo menos uma vez por semana nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -59536,7 +59536,7 @@
 "title": "População residente com 15 e mais anos de idade que consumiu bebidas alcoólicas nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -59560,7 +59560,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -59568,7 +59568,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -60512,7 +60512,7 @@
 "title": "População residente com 15 e mais anos de idade com exposição diária a fumo passivo (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -60520,7 +60520,7 @@
 "title": "População residente com 15 e mais anos de idade que deixou de fumar (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -60528,7 +60528,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -60840,7 +60840,7 @@
 "title": "Taxa de juro implícita (Série 2012 - %) nos contratos de crédito à habitação",
 "geo": "NUTS I",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Indicador de taxas de juro implícitas no crédito à habitação"
 },
 {
@@ -60848,7 +60848,7 @@
 "title": "Capital médio em dívida (Série 2012 - €) nos contratos de crédito à habitação",
 "geo": "NUTS I",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Indicador de taxas de juro implícitas no crédito à habitação"
 },
 {
@@ -60856,7 +60856,7 @@
 "title": "Prestação média vencida (Série 2012 - €) nos contratos de crédito à habitação",
 "geo": "NUTS I",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Indicador de taxas de juro implícitas no crédito à habitação"
 },
 {
@@ -60864,7 +60864,7 @@
 "title": "Juros totais (Série 2012 - €) nos contratos de crédito à habitação",
 "geo": "NUTS I",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Indicador de taxas de juro implícitas no crédito à habitação"
 },
 {
@@ -60872,7 +60872,7 @@
 "title": "Capital amortizado (Série 2012 - €) nos contratos de crédito à habitação",
 "geo": "NUTS I",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Indicador de taxas de juro implícitas no crédito à habitação"
 },
 {
@@ -61056,7 +61056,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61064,7 +61064,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61072,7 +61072,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61080,7 +61080,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61088,7 +61088,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61152,7 +61152,7 @@
 "title": "População residente com 18 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61160,7 +61160,7 @@
 "title": "População residente com 18 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61168,7 +61168,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61176,7 +61176,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61184,7 +61184,7 @@
 "title": "População residente com 15 e mais anos de idade que se desloca a pé pelo menos um dia numa semana normal (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61192,7 +61192,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61200,7 +61200,7 @@
 "title": "População residente com 15 e mais anos de idade que se desloca de bicicleta pelo menos um dia numa semana normal (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61208,7 +61208,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61216,7 +61216,7 @@
 "title": "População residente com 15 e mais anos de idade que pratica exercício físico pelo menos um dia numa semana normal (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61224,7 +61224,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61232,7 +61232,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61240,7 +61240,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61248,7 +61248,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61256,15 +61256,15 @@
 "title": "População residente com 15 e mais anos de idade que consumiu bebidas alcoólicas nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
 "varcd": "0008920",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
-"last": "S7A2019",
+"periodicity": "Sexenal",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61296,7 +61296,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61312,7 +61312,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61328,7 +61328,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61336,7 +61336,7 @@
 "title": "População residente com 15 e mais anos de idade que consumiu bebidas alcoólicas nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61344,7 +61344,7 @@
 "title": "População residente com 15 e mais anos de idade que consumiu bebidas alcoólicas nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61359,7 +61359,7 @@
 "varcd": "0008932",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
+"periodicity": "Sexenal",
 "last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
@@ -61367,7 +61367,7 @@
 "varcd": "0008933",
 "title": "População residente com 15 e mais anos de idade que presta cuidados informais (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
+"periodicity": "Sexenal",
 "last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
@@ -61792,7 +61792,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61800,7 +61800,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61808,7 +61808,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61816,7 +61816,7 @@
 "title": "População residente com 15 e mais anos de idade que se desloca a pé pelo menos um dia numa semana normal (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61824,7 +61824,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61832,7 +61832,7 @@
 "title": "População residente com 15 e mais anos de idade que se desloca de bicicleta pelo menos um dia numa semana normal (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61840,7 +61840,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -61848,7 +61848,7 @@
 "title": "População residente com 15 e mais anos de idade que pratica exercício físico pelo menos um dia numa semana normal (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -62072,7 +62072,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -62088,39 +62088,39 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
 "varcd": "0009024",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
-"last": "S7A2019",
+"periodicity": "Sexenal",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
 "varcd": "0009025",
 "title": "População residente com 15 e mais anos de idade que presta cuidados informais (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
-"last": "S7A2019",
+"periodicity": "Sexenal",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
 "varcd": "0009026",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
-"last": "S7A2019",
+"periodicity": "Sexenal",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
 "varcd": "0009027",
 "title": "População residente com 15 e mais anos de idade que presta cuidados informais (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
-"last": "S7A2019",
+"periodicity": "Sexenal",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -62293,7 +62293,7 @@
 },
 {
 "varcd": "0009050",
-"title": "Disparidade no ganho médio mensal (Entre Setores de atividade - %) da população empregada por conta de outrem",
+"title": "Disparidade no ganho médio mensal (Entre setores de atividade em CAE Rev.3 - %) da população empregada por conta de outrem",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -62392,7 +62392,7 @@
 "title": "Peso da mercadoria transportada (t) pelos veículos pesados de mercadorias",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de mercadorias"
 },
 {
@@ -63448,7 +63448,7 @@
 "title": "Emissão de CO2 por unidade de valor acrescentado (Kg CO2/ €)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2023",
+"last": "S7A2024",
 "source": "INE, Conta satélite do ambiente"
 },
 {
@@ -64312,7 +64312,7 @@
 "title": "Proporção da população residente com 15 e mais anos de idade que consumiu 6 ou mais bebidas alcoólicas numa única ocasião nos 12 meses anteriores à entrevista (%)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -65984,7 +65984,7 @@
 "title": "Índices mensais de valor unitário das importações (Taxa de variação homóloga, valor - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -65992,7 +65992,7 @@
 "title": "Índices mensais de valor unitário das exportações (Taxa de variação homóloga, valor - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66000,7 +66000,7 @@
 "title": "Índices mensais de valor unitário das importações (Taxa de variação homóloga, volume - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66008,7 +66008,7 @@
 "title": "Índices mensais de valor unitário das exportações (Taxa de variação homóloga, volume - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66016,7 +66016,7 @@
 "title": "Índices mensais de valor unitário das importações (Taxa de variação homóloga, preço - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66024,7 +66024,7 @@
 "title": "Índices mensais de valor unitário das exportações (Taxa de variação homóloga, preço - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66480,7 +66480,7 @@
 "title": "Proporção da população residente com 15 e mais anos de idade que fuma (%)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -66808,7 +66808,7 @@
 "title": "Índices anuais de valor unitário das importações (Taxa de variação homóloga, valor - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66816,7 +66816,7 @@
 "title": "Índices anuais de valor unitário das exportações (Taxa de variação homóloga, valor - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66824,7 +66824,7 @@
 "title": "Índices anuais de valor unitário das importações (Taxa de variação homóloga, preço - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66832,7 +66832,7 @@
 "title": "Índices anuais de valor unitário das exportações (Taxa de variação homóloga, preço - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66840,7 +66840,7 @@
 "title": "Índices anuais de valor unitário das importações (Taxa de variação homóloga, volume - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66848,7 +66848,7 @@
 "title": "Índices anuais de valor unitário das exportações (Taxa de variação homóloga, volume - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -68365,7 +68365,7 @@
 },
 {
 "varcd": "0009932",
-"title": "Proporção de empresas com 10 e mais pessoas ao serviço que utilizaram comércio eletrónico para efetuar vendas através de encomendas/reservas (%)",
+"title": "Proporção de empresas com 10 ou mais pessoas ao serviço que efetuaram vendas através de comércio eletrónico (%)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2025",
@@ -69408,7 +69408,7 @@
 "title": "Fogos licenciados em construções novas para habitação familiar nos últimos 3 meses (N.º)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -69576,7 +69576,7 @@
 "title": "Aeronaves aterradas (N.º) nos aeroportos",
 "geo": "Sub-região",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos aeroportos e aeródromos"
 },
 {
@@ -69584,7 +69584,7 @@
 "title": "Passageiros desembarcados (N.º) nos Aeroportos",
 "geo": "Sub-região",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos aeroportos e aeródromos"
 },
 {
@@ -69592,7 +69592,7 @@
 "title": "Passageiros embarcados (N.º) nos aeroportos",
 "geo": "Sub-região",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos aeroportos e aeródromos"
 },
 {
@@ -69616,7 +69616,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69711,16 +69711,16 @@
 "varcd": "0010119",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
-"last": "S7A2019",
+"periodicity": "Sexenal",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
 "varcd": "0010120",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
-"last": "S7A2019",
+"periodicity": "Sexenal",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69768,7 +69768,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69776,7 +69776,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69784,7 +69784,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69792,7 +69792,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69815,16 +69815,16 @@
 "varcd": "0010137",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
-"last": "S7A2019",
+"periodicity": "Sexenal",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
 "varcd": "0010138",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
-"last": "S7A2019",
+"periodicity": "Sexenal",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69848,7 +69848,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69856,7 +69856,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69864,7 +69864,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69872,7 +69872,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69895,16 +69895,16 @@
 "varcd": "0010147",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
-"last": "S7A2019",
+"periodicity": "Sexenal",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
 "varcd": "0010148",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
-"last": "S7A2019",
+"periodicity": "Sexenal",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69912,7 +69912,7 @@
 "title": "População residente com 55 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69920,7 +69920,7 @@
 "title": "População residente com 55 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69960,7 +69960,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69968,7 +69968,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69976,7 +69976,7 @@
 "title": "População residente com 55 e mais anos de idade que referiu pelo menos uma dificuldade nos cuidados pessoais (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -69984,7 +69984,7 @@
 "title": "População residente com 55 e mais anos de idade que referiu pelo menos uma dificuldade nas atividades domésticas (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -73280,7 +73280,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -73288,7 +73288,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -74176,7 +74176,7 @@
 "title": "Dormidas (N.º) nos estabelecimentos de alojamento turístico",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -74184,7 +74184,7 @@
 "title": "Hóspedes (N.º) nos estabelecimentos de alojamento turístico",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -75375,8 +75375,8 @@
 "varcd": "0010912",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
-"last": "S7A2019",
+"periodicity": "Sexenal",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75408,7 +75408,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75416,7 +75416,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75535,8 +75535,8 @@
 "varcd": "0010932",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
-"last": "S7A2019",
+"periodicity": "Sexenal",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75552,7 +75552,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75560,7 +75560,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75584,7 +75584,7 @@
 "title": "População residente com 15 e mais anos de idade que consumiu bebidas alcoólicas pelo menos uma vez por semana nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75592,14 +75592,14 @@
 "title": "População residente com 15 e mais anos de idade que consumiu bebidas alcoólicas pelo menos uma vez por semana nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
 "varcd": "0010940",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
+"periodicity": "Sexenal",
 "last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
@@ -75607,7 +75607,7 @@
 "varcd": "0010941",
 "title": "População residente com 15 e mais anos de idade que presta cuidados informais (N.º)",
 "geo": "Portugal",
-"periodicity": "Quinquenal",
+"periodicity": "Sexenal",
 "last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
@@ -75640,7 +75640,7 @@
 "title": "População residente com 15 ou mais anos que recebeu apoio domiciliário por profissionais de saúde ou de ação social nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75688,7 +75688,7 @@
 "title": "População residente com 15 e mais anos de idade que consumiu bebidas alcoólicas pelo menos uma vez por semana nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75696,7 +75696,7 @@
 "title": "População residente com 55 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75704,7 +75704,7 @@
 "title": "População residente com 55 e mais anos de idade que referiu pelo menos uma dificuldade nos cuidados pessoais (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75712,7 +75712,7 @@
 "title": "População residente com 55 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75720,7 +75720,7 @@
 "title": "População residente com 55 e mais anos de idade que referiu pelo menos uma dificuldade nas atividades domésticas (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75744,7 +75744,7 @@
 "title": "Média de porções de fruta consumidas habitualmente por dia pela população residente com 15 e mais anos que consome fruta diariamente (excluindo sumos) (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75752,7 +75752,7 @@
 "title": "Média de porções de legumes e saladas consumidas habitualmente por dia pela população residente com 15 e mais anos que consome legumes e saladas diariamente (excluindo sopas, batatas e sumos) (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75760,7 +75760,7 @@
 "title": "Média de anos de consumo de tabaco da população residente com 15 e mais anos que fuma diariamente (Ano)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75768,7 +75768,7 @@
 "title": "Média de anos de consumo de tabaco da população residente com 15 e mais anos que fumou diariamente (Ano)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75776,7 +75776,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75784,7 +75784,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75840,7 +75840,7 @@
 "title": "População residente com 15 ou mais anos que recebeu apoio domiciliário por profissionais de saúde ou de ação social nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75848,7 +75848,7 @@
 "title": "População residente com 15 e mais anos de idade que consumiu bebidas alcoólicas pelo menos uma vez por semana nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75872,7 +75872,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75880,7 +75880,7 @@
 "title": "População residente com 15 e mais anos de idade que se desloca a pé pelo menos um dia numa semana normal (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75888,7 +75888,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75896,7 +75896,7 @@
 "title": "População residente com 15 e mais anos de idade que se desloca de bicicleta pelo menos um dia numa semana normal (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75904,7 +75904,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75912,7 +75912,7 @@
 "title": "População residente com 15 e mais anos de idade que pratica exercício físico pelo menos um dia numa semana normal (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75920,7 +75920,7 @@
 "title": "População residente com 15 e mais anos de idade que consumiu bebidas alcoólicas pelo menos uma vez por semana nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -75928,7 +75928,7 @@
 "title": "População residente com 15 e mais anos de idade que consumiu bebidas alcoólicas pelo menos uma vez por semana nos 12 meses anteriores à entrevista (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76016,7 +76016,7 @@
 "title": "População residente com 55 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76024,7 +76024,7 @@
 "title": "População residente com 55 e mais anos de idade que referiu pelo menos uma dificuldade nos cuidados pessoais (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76032,7 +76032,7 @@
 "title": "População residente com 55 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76040,7 +76040,7 @@
 "title": "População residente com 55 e mais anos de idade que referiu pelo menos uma dificuldade nas atividades domésticas (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76080,7 +76080,7 @@
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76088,7 +76088,7 @@
 "title": "Média de anos de consumo de tabaco da população residente com 15 e mais anos que fuma diariamente (Ano)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76120,7 +76120,7 @@
 "title": "Média de porções de fruta consumidas habitualmente por dia pela população residente com 15 e mais anos que consome fruta diariamente (excluindo sumos) (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76128,7 +76128,7 @@
 "title": "Média de porções de fruta consumidas habitualmente por dia pela população residente com 15 e mais anos que consome fruta diariamente (excluindo sumos) (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76136,7 +76136,7 @@
 "title": "Média de porções de legumes e saladas consumidas habitualmente por dia pela população residente com 15 e mais anos que consome legumes e saladas diariamente (excluindo sopas, batatas e sumos) (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76144,7 +76144,7 @@
 "title": "Média de porções de legumes e saladas consumidas habitualmente por dia pela população residente com 15 e mais anos que consome legumes e saladas diariamente (excluindo sopas, batatas e sumos) (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76152,7 +76152,7 @@
 "title": "Média de anos de consumo de tabaco da população residente com 15 e mais anos que fuma diariamente (Ano)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76160,7 +76160,7 @@
 "title": "Média de anos de consumo de tabaco da população residente com 15 e mais anos que fumou diariamente (Ano)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76168,7 +76168,7 @@
 "title": "Média de anos de consumo de tabaco da população residente com 15 e mais anos que fumou diariamente (Ano)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76568,7 +76568,7 @@
 "title": "Média de anos de consumo de tabaco da população residente com 15 e mais anos que fuma diariamente (Ano)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -76576,7 +76576,7 @@
 "title": "Média de anos de consumo de tabaco da população residente com 15 e mais anos que fumou diariamente (Ano)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
-"last": "S7A2019",
+"last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
 },
 {
@@ -79536,7 +79536,7 @@
 "title": "Distância percorrida pelos veículos pesados de mercadorias estrangeiros (km)",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -79544,7 +79544,7 @@
 "title": "Peso da mercadoria transportada pelos veículos pesados de mercadorias estrangeiros (t)",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -79552,7 +79552,7 @@
 "title": "Tonelada-quilómetro dos Veículos pesados de mercadorias estrangeiros (tkm)",
 "geo": "Continente",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -79560,7 +79560,7 @@
 "title": "Distância percorrida pelos veículos pesados de mercadorias estrangeiros (km)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -79568,7 +79568,7 @@
 "title": "Peso da mercadoria transportada pelos veículos pesados de mercadorias estrangeiros (t)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -79576,7 +79576,7 @@
 "title": "Tonelada-quilómetro dos Veículos pesados de mercadorias estrangeiros (tkm)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -79584,7 +79584,7 @@
 "title": "Distância percorrida pelos veículos pesados de mercadorias estrangeiros (km)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -79592,7 +79592,7 @@
 "title": "Peso da mercadoria transportada pelos veículos pesados de mercadorias estrangeiros (t)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -79600,7 +79600,7 @@
 "title": "Tonelada-quilómetro dos Veículos pesados de mercadorias estrangeiros (tkm)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -81656,7 +81656,7 @@
 "title": "Índice de produção na construção e obras públicas - bruto (Taxa de variação homóloga trimestral - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81664,7 +81664,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga trimestral - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81672,7 +81672,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário (Taxa de variação homóloga trimestral - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81680,7 +81680,7 @@
 "title": "Índice de remunerações na construção e obras públicas - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81688,7 +81688,7 @@
 "title": "Índice de emprego na construção e obras públicas - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81696,7 +81696,7 @@
 "title": "Índice de horas trabalhadas na construção e obras públicas - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81704,7 +81704,7 @@
 "title": "Índice de horas trabalhadas na construção e obras públicas - ajustado de efeitos de calendário (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81720,7 +81720,7 @@
 "title": "Índice de produção na construção e obras públicas - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81728,7 +81728,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81736,7 +81736,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81744,7 +81744,7 @@
 "title": "Índice de remunerações na construção e obras públicas - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81752,7 +81752,7 @@
 "title": "Índice de emprego na construção e obras públicas - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81760,7 +81760,7 @@
 "title": "Índice de horas trabalhadas na construção e obras públicas - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81768,7 +81768,7 @@
 "title": "Índice de horas trabalhadas na construção e obras públicas - ajustado de efeitos de calendário (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81776,7 +81776,7 @@
 "title": "Índice de custo de construção de habitação nova (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índice de custo de construção de habitação nova (Base 2021)"
 },
 {
@@ -81784,7 +81784,7 @@
 "title": "Índice de custo de construção de habitação nova (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índice de custo de construção de habitação nova (Base 2021)"
 },
 {
@@ -81792,7 +81792,7 @@
 "title": "Índice de custo de construção de habitação nova (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índice de custo de construção de habitação nova (Base 2021)"
 },
 {
@@ -81800,7 +81800,7 @@
 "title": "Índice de custo de construção de habitação nova (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índice de custo de construção de habitação nova (Base 2021)"
 },
 {
@@ -81944,7 +81944,7 @@
 "title": "Índice de produção na construção e obras públicas - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81952,7 +81952,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -81960,7 +81960,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82024,7 +82024,7 @@
 "title": "Índice de produção na construção e obras públicas - bruto (Taxa de variação em cadeia trimestral - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82032,7 +82032,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82040,7 +82040,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82048,7 +82048,7 @@
 "title": "Índice de produção na construção e obras públicas - bruto (Taxa de variação homóloga trimestral - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82056,7 +82056,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga trimestral - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82064,7 +82064,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário (Taxa de variação homóloga trimestral - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82416,7 +82416,7 @@
 "title": "Índice de produção na construção e obras públicas - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82424,7 +82424,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82432,7 +82432,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82440,7 +82440,7 @@
 "title": "Índice de remunerações na construção e obras públicas - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82448,7 +82448,7 @@
 "title": "Índice de emprego na construção e obras públicas - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82456,7 +82456,7 @@
 "title": "Índice de horas trabalhadas na construção e obras públicas - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82464,7 +82464,7 @@
 "title": "Índice de horas trabalhadas na construção e obras públicas - ajustado de efeitos de calendário (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82472,7 +82472,7 @@
 "title": "Índice de produção na construção e obras públicas - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82480,7 +82480,7 @@
 "title": "Índice de produção na construção e obras públicas - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82488,7 +82488,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82496,7 +82496,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82504,7 +82504,7 @@
 "title": "Índice de produção na construção e obras públicas - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82512,7 +82512,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82520,7 +82520,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82528,7 +82528,7 @@
 "title": "Índice de produção na construção e obras públicas - bruto (Taxa de variação em cadeia trimestral - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82536,7 +82536,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação em cadeia trimestral - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82544,7 +82544,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário (Taxa de variação em cadeia trimestral - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82552,7 +82552,7 @@
 "title": "Índice de remunerações na construção e obras públicas - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82560,7 +82560,7 @@
 "title": "Índice de emprego na construção e obras públicas - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82568,7 +82568,7 @@
 "title": "Índice de horas trabalhadas na construção e obras públicas - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82576,7 +82576,7 @@
 "title": "Índice de horas trabalhadas na construção e obras públicas - ajustado de efeitos de calendário (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82584,7 +82584,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação em cadeia trimestral - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82592,7 +82592,7 @@
 "title": "Índice de produção na construção e obras públicas - ajustado de efeitos de calendário (Taxa de variação em cadeia trimestral - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82888,7 +82888,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82896,7 +82896,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82904,7 +82904,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82912,7 +82912,7 @@
 "title": "Índice de remunerações na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82920,7 +82920,7 @@
 "title": "Índice de emprego na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82928,7 +82928,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82936,7 +82936,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82944,7 +82944,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82952,7 +82952,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82960,7 +82960,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82968,7 +82968,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82976,7 +82976,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82984,7 +82984,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82992,7 +82992,7 @@
 "title": "Índice de remunerações na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83000,7 +83000,7 @@
 "title": "Índice de emprego na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83008,7 +83008,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83016,7 +83016,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83024,7 +83024,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83032,7 +83032,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83040,7 +83040,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83048,7 +83048,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83056,7 +83056,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83064,7 +83064,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83072,7 +83072,7 @@
 "title": "Índice de remunerações na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83080,7 +83080,7 @@
 "title": "Índice de emprego na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83088,7 +83088,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83096,7 +83096,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83104,7 +83104,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83112,7 +83112,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83120,7 +83120,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83128,7 +83128,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83136,7 +83136,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83144,7 +83144,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83152,7 +83152,7 @@
 "title": "Índice de remunerações na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83160,7 +83160,7 @@
 "title": "Índice de emprego na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83168,7 +83168,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83176,7 +83176,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83184,7 +83184,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83192,7 +83192,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83200,7 +83200,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83208,7 +83208,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83216,7 +83216,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83224,7 +83224,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83232,7 +83232,7 @@
 "title": "Índice de remunerações na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83240,7 +83240,7 @@
 "title": "Índice de emprego na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83248,7 +83248,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83256,7 +83256,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83264,7 +83264,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83272,7 +83272,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83280,7 +83280,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83288,7 +83288,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83296,7 +83296,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83304,7 +83304,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83312,7 +83312,7 @@
 "title": "Índice de remunerações na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83320,7 +83320,7 @@
 "title": "Índice de emprego na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83328,7 +83328,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83336,7 +83336,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83344,7 +83344,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83352,7 +83352,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83360,7 +83360,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83368,7 +83368,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83376,7 +83376,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83384,7 +83384,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83392,7 +83392,7 @@
 "title": "Índice de remunerações na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83400,7 +83400,7 @@
 "title": "Índice de emprego na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83408,7 +83408,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83416,7 +83416,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83424,7 +83424,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83432,7 +83432,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83440,7 +83440,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83448,7 +83448,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83456,7 +83456,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83464,7 +83464,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83472,7 +83472,7 @@
 "title": "Índice de remunerações na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83480,7 +83480,7 @@
 "title": "Índice de emprego na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83488,7 +83488,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83496,7 +83496,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83504,7 +83504,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83512,7 +83512,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83520,7 +83520,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83528,7 +83528,7 @@
 "title": "Índices de preços na produção industrial - Total - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83536,7 +83536,7 @@
 "title": "Índices de preços na produção industrial no mercado interno - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83544,7 +83544,7 @@
 "title": "Índices de preços na produção industrial no mercado externo - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83552,7 +83552,7 @@
 "title": "Índices de preços na produção industrial - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83560,7 +83560,7 @@
 "title": "Índices de preços na produção industrial - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83568,7 +83568,7 @@
 "title": "Índices de preços na produção industrial - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83576,7 +83576,7 @@
 "title": "Índices de preços na produção industrial - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83584,7 +83584,7 @@
 "title": "Índices de preços na produção industrial no mercado interno - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83592,7 +83592,7 @@
 "title": "Índices de preços na produção industrial no mercado interno - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83600,7 +83600,7 @@
 "title": "Índices de preços na produção industrial no mercado interno - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83608,7 +83608,7 @@
 "title": "Índices de preços na produção industrial no mercado externo - bruto (Taxa de variação mensal - Base 2021 %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83616,7 +83616,7 @@
 "title": "Índices de preços na produção industrial no mercado externo - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83624,7 +83624,7 @@
 "title": "Índices de preços na produção industrial no mercado externo - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83632,7 +83632,7 @@
 "title": "Índices de preços na produção industrial - Total - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83640,7 +83640,7 @@
 "title": "Índices de preços na produção industrial - Total - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -83648,7 +83648,7 @@
 "title": "Índices de preços na produção industrial - Total - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços na produção de produtos industriais (Base 2021)"
 },
 {
@@ -84008,7 +84008,7 @@
 "title": "Publicações periódicas (Metodologia 2022 - N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -84024,7 +84024,7 @@
 "title": "Visitantes da página eletrónica (Metodologia 2022 - N.º) das publicações periódicas",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -84032,7 +84032,7 @@
 "title": "Circulação total de publicações periódicas (Metodologia 2022 - N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -84040,7 +84040,7 @@
 "title": "Publicações periódicas da edição impressa (Metodologia 2022 - N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -84048,7 +84048,7 @@
 "title": "Acesso aos conteúdos da edição eletrónica (Metodologia 2022 - N.º) das publicações periódicas",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -84056,7 +84056,7 @@
 "title": "Publicações periódicas (Metodologia 2022 - N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -84064,7 +84064,7 @@
 "title": "Publicações periódicas (Metodologia 2022 - N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -84072,7 +84072,7 @@
 "title": "Publicações periódicas da edição impressa (Metodologia 2022 - N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -84080,7 +84080,7 @@
 "title": "Publicações periódicas eletrónicas (Metodologia 2022 - N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -84088,7 +84088,7 @@
 "title": "Publicações periódicas da edição impressa (Metodologia 2022 - N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -84096,7 +84096,7 @@
 "title": "Publicações periódicas eletrónicas (Metodologia 2022 - N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -84312,7 +84312,7 @@
 "title": "Importações (€) de bens",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -84320,7 +84320,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -84328,7 +84328,7 @@
 "title": "Dormidas (N.º) nos estabelecimentos de alojamento turístico",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -84336,7 +84336,7 @@
 "title": "Hóspedes (N.º) nos estabelecimentos de alojamento turístico",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -84376,7 +84376,7 @@
 "title": "Nados-vivos (N.º)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Nados-vivos"
 },
 {
@@ -84384,7 +84384,7 @@
 "title": "Casamentos celebrados (N.º)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Casamentos"
 },
 {
@@ -84392,7 +84392,7 @@
 "title": "Edifícios licenciados (N.º)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -84400,7 +84400,7 @@
 "title": "Fogos licenciados (N.º) em construções novas para habitação familiar",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -84408,7 +84408,7 @@
 "title": "Fogos licenciados em construções novas para habitação familiar nos últimos 3 meses (N.º)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -84416,7 +84416,7 @@
 "title": "Óbitos (N.º)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Óbitos"
 },
 {
@@ -84424,7 +84424,7 @@
 "title": "Óbitos (N.º)",
 "geo": "NUTS III",
 "periodicity": "Semanal",
-"last": "1A202636_2",
+"last": "1A202640_2",
 "source": "INE, Óbitos"
 },
 {
@@ -84448,7 +84448,7 @@
 "title": "Compras através de Terminais de Pagamento Automático (€)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "SIBS, Estatísticas das operações da Rede Multibanco"
 },
 {
@@ -84456,7 +84456,7 @@
 "title": "Levantamentos nacionais em Caixas Automáticos Multibanco (€)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "SIBS, Estatísticas das operações da Rede Multibanco"
 },
 {
@@ -85456,7 +85456,7 @@
 "title": "Valor mediano das vendas de alojamentos familiares nos últimos 12 meses (Metodologia 2022 - €/ m²)",
 "geo": "Cidade",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
 },
 {
@@ -85464,7 +85464,7 @@
 "title": "Valor mediano das vendas de alojamentos familiares nos últimos 12 meses (Metodologia 2022 - €/ m²)",
 "geo": "Cidade",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
 },
 {
@@ -85472,7 +85472,7 @@
 "title": "Valor mediano das vendas de alojamentos familiares nos últimos 12 meses (Metodologia 2022 - €/ m²)",
 "geo": "Cidade",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
 },
 {
@@ -85496,7 +85496,7 @@
 "title": "Valor mediano das vendas de alojamentos familiares nos últimos 12 meses (Metodologia 2022 - €/ m²)",
 "geo": "Freguesia",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
 },
 {
@@ -85504,7 +85504,7 @@
 "title": "Valor mediano das vendas de alojamentos familiares em apartamentos nos últimos 12 meses (Metodologia 2022 - €/ m²)",
 "geo": "Freguesia",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
 },
 {
@@ -85512,7 +85512,7 @@
 "title": "Valor mediano das vendas de alojamentos familiares nos últimos 12 meses (Metodologia 2022 - €/ m²)",
 "geo": "Freguesia",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
 },
 {
@@ -85536,7 +85536,7 @@
 "title": "Valor mediano das vendas de alojamentos familiares (Metodologia 2022 - €/ m²)",
 "geo": "Município",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
 },
 {
@@ -85544,7 +85544,7 @@
 "title": "Valor mediano das vendas de alojamentos familiares (Metodologia 2022 - €/ m²)",
 "geo": "Município",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
 },
 {
@@ -85552,7 +85552,7 @@
 "title": "Valor mediano das vendas de alojamentos familiares nos últimos 12 meses (Metodologia 2022 - €/ m²)",
 "geo": "Freguesia",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
 },
 {
@@ -85592,7 +85592,7 @@
 "title": "Valor mediano das vendas de alojamentos familiares nos últimos 12 meses (Metodologia 2022 - €/ m²)",
 "geo": "Freguesia",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
 },
 {
@@ -88757,7 +88757,7 @@
 },
 {
 "varcd": "0012658",
-"title": "Disparidade no ganho médio mensal (Entre Setores de atividade - %) da população empregada por conta de outrem",
+"title": "Disparidade no ganho médio mensal (Entre setores de atividade em CAE Rev.3 - %) da população empregada por conta de outrem",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -89728,7 +89728,7 @@
 "title": "Índice de volume de negócios nos serviços - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89736,7 +89736,7 @@
 "title": "Índice de volume de negócios nos serviços - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89744,7 +89744,7 @@
 "title": "Índice de remunerações nos serviços - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89752,7 +89752,7 @@
 "title": "Índice de emprego nos serviços - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89760,7 +89760,7 @@
 "title": "Índice de horas trabalhadas nos serviços - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89768,7 +89768,7 @@
 "title": "Índice de horas trabalhadas nos serviços - ajustado de efeitos de calendário (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89848,7 +89848,7 @@
 "title": "Índice de volume de negócios nos serviços - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89856,7 +89856,7 @@
 "title": "Índice de volume de negócios nos serviços - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89864,7 +89864,7 @@
 "title": "Índice de volume de negócios nos serviços - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89872,7 +89872,7 @@
 "title": "Índice de emprego nos serviços - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89880,7 +89880,7 @@
 "title": "Índice de emprego nos serviços - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89888,7 +89888,7 @@
 "title": "Índice de emprego nos serviços - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89896,7 +89896,7 @@
 "title": "Índice de remunerações nos serviços - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89904,7 +89904,7 @@
 "title": "Índice de remunerações nos serviços - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89912,7 +89912,7 @@
 "title": "Índice de remunerações nos serviços - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89920,7 +89920,7 @@
 "title": "Índice de horas trabalhadas nos serviços - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89928,7 +89928,7 @@
 "title": "Índice de horas trabalhadas nos serviços - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89936,7 +89936,7 @@
 "title": "Índice de horas trabalhadas nos serviços - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89944,7 +89944,7 @@
 "title": "Índice de horas trabalhadas nos serviços - ajustado de efeitos de calendário (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89952,7 +89952,7 @@
 "title": "Índice de horas trabalhadas nos serviços - ajustado de efeitos de calendário (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89960,7 +89960,7 @@
 "title": "Índice de horas trabalhadas nos serviços - ajustado de efeitos de calendário (Taxa de variação média anual - Base 2021- %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89968,7 +89968,7 @@
 "title": "Índice de volume de negócios nos serviços - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89976,7 +89976,7 @@
 "title": "Índice de volume de negócios nos serviços - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -89984,7 +89984,7 @@
 "title": "Índice de volume de negócios nos serviços - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -90256,7 +90256,7 @@
 "title": "Levantamentos em Caixas Automáticos Multibanco (N.º)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "SIBS, Estatísticas das operações da Rede Multibanco"
 },
 {
@@ -90264,7 +90264,7 @@
 "title": "Levantamentos em Caixas Automáticos Multibanco (€)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "SIBS, Estatísticas das operações da Rede Multibanco"
 },
 {
@@ -90272,7 +90272,7 @@
 "title": "Compras através de Terminais de Pagamento Automático (N.º)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "SIBS, Estatísticas das operações da Rede Multibanco"
 },
 {
@@ -90280,7 +90280,7 @@
 "title": "Compras através de Terminais de Pagamento Automático (€)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "SIBS, Estatísticas das operações da Rede Multibanco"
 },
 {
@@ -92104,7 +92104,7 @@
 "title": "Árvores de fruto e oliveiras vendidas (N.º) pelos viveiros",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -92112,7 +92112,7 @@
 "title": "Viveiros (N.º)",
 "geo": "NUTS III",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -92120,7 +92120,7 @@
 "title": "Preço médio das árvores de fruto e oliveiras vendidas diretamente a agricultores (€) pelos viveiros",
 "geo": "NUTS III",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -92128,7 +92128,7 @@
 "title": "Árvores de fruto e oliveiras vendidas diretamente a agricultores (N.º) pelos viveiros",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2025",
+"last": "S7A2026",
 "source": "INE, Inquérito à venda de árvores de fruto e oliveiras"
 },
 {
@@ -93256,7 +93256,7 @@
 "title": "Vilas (N.º)",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2023",
+"last": "S7A2025",
 "source": "INE, Sistema integrado de nomenclaturas estatísticas"
 },
 {
@@ -94338,6 +94338,22 @@
 "periodicity": "Anual",
 "last": "S7A2025",
 "source": "INE, Estimativas anuais da população residente"
+},
+{
+"varcd": "0013358",
+"title": "Taxa bruta de natalidade (‰)",
+"geo": "NUTS III",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Indicadores demográficos"
+},
+{
+"varcd": "0013359",
+"title": "Taxa bruta de mortalidade (‰)",
+"geo": "NUTS III",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Indicadores demográficos"
 },
 {
 "varcd": "0013360",
@@ -95424,7 +95440,7 @@
 "title": "Tiragem total da edição impressa (Metodologia 2022 - N.º) das publicações periódicas",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -95440,7 +95456,7 @@
 "title": "Publicações periódicas (Metodologia 2022 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -95448,7 +95464,7 @@
 "title": "Publicações periódicas (Metodologia 2022 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -95456,7 +95472,7 @@
 "title": "Edições impressas (Metodologia 2022 - N.º) das publicações periódicas",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -95464,7 +95480,7 @@
 "title": "Circulação total de publicações periódicas (Metodologia 2022 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -95472,7 +95488,7 @@
 "title": "Circulação total de publicações periódicas da edição impressa (Metodologia 2022 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -95480,7 +95496,7 @@
 "title": "Circulação total de publicações periódicas eletrónicas (Metodologia 2022 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -95488,7 +95504,7 @@
 "title": "Proporção de circulação gratuita (Metodologia 2022 - %) de publicações periódicas",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -95496,7 +95512,7 @@
 "title": "Circulação total paga de publicações periódicas (Metodologia 2022 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito às publicações periódicas"
 },
 {
@@ -97776,7 +97792,7 @@
 "title": "Peso da mercadoria em transporte nacional (t) nos veículos pesados de mercadorias",
 "geo": "NUTS 2",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de mercadorias"
 },
 {
@@ -97792,7 +97808,7 @@
 "title": "Perímetro (km) das unidades territoriais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Direção-Geral do Território"
 },
 {
@@ -97800,7 +97816,7 @@
 "title": "Comprimento máximo Norte/ Sul (km) das unidades territoriais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Direção-Geral do Território"
 },
 {
@@ -97808,7 +97824,7 @@
 "title": "Comprimento máximo Este/ Oeste (km) das unidades territoriais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Direção-Geral do Território"
 },
 {
@@ -97816,7 +97832,7 @@
 "title": "Altitude máxima (m) das unidades territoriais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Direção-Geral do Território"
 },
 {
@@ -97824,7 +97840,7 @@
 "title": "Altitude mínima (m) das unidades territoriais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Direção-Geral do Território"
 },
 {
@@ -97832,7 +97848,7 @@
 "title": "Amplitude altimétrica (m) das unidades territoriais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Direção-Geral do Território"
 },
 {
@@ -97848,7 +97864,7 @@
 "title": "Serviços do transporte rodoviário de passageiros (N.º)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de passageiros"
 },
 {
@@ -97856,7 +97872,7 @@
 "title": "Lugares-quilómetro oferecidos (N.º) pelas empresas de transporte rodoviário de passageiros",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de passageiros"
 },
 {
@@ -97864,7 +97880,7 @@
 "title": "Passageiros transportados (N.º) pelas empresas de transporte rodoviário de passageiros",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de passageiros"
 },
 {
@@ -97872,7 +97888,7 @@
 "title": "Passageiros-quilómetro transportados (N.º) pelas empresas de transporte rodoviário de passageiros",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao transporte rodoviário de passageiros"
 },
 {
@@ -98384,136 +98400,136 @@
 "title": "Proporção de receitas da administração regional e local no PIB (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013881",
 "title": "Proporção de receitas da administração regional e local no total de receitas das administrações públicas (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013882",
 "title": "Proporção de receitas de impostos da administração regional e local no PIB (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013883",
 "title": "Proporção de receitas de impostos da administração regional e local no total de receitas das administrações públicas (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013884",
 "title": "Proporção de receitas de impostos da administração regional e local no total de receitas de impostos das administrações públicas (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013885",
 "title": "Proporção de receitas de impostos no total de receitas da administração regional e local (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013886",
 "title": "Proporção das despesas da administração regional e local no PIB (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013887",
 "title": "Proporção de despesas da administração regional e local no total de despesas das administrações públicas (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013888",
 "title": "Proporção de despesas de investimento da administração regional e local no PIB (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013889",
 "title": "Proporção de despesas de investimento da administração regional e local no total de despesas das administrações públicas (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013890",
 "title": "Proporção de despesas de investimento da administração regional e local no total de despesas de investimento das administrações públicas (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013891",
 "title": "Proporção de despesas de investimento no total de despesas da administração regional e local (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013892",
 "title": "Relação entre receitas e despesas da administração regional e local (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013893",
 "title": "Relação entre receitas e despesas correntes da administração regional e local (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013894",
 "title": "Capacidade/ necessidade líquida de financiamento da administração regional e local no PIB (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013895",
 "title": "Receita da administração regional e local (Base 2021 - €)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013896",
 "title": "Despesa da administração regional e local (Base 2021 - €)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2025",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0013897",
@@ -100712,7 +100728,7 @@
 "title": "Índice de emprego total - bruto (Taxa de variação homóloga - Base 2021 - %) das empresas",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Síntese mensal de conjuntura"
 },
 {
@@ -100720,7 +100736,7 @@
 "title": "Índice de produção industrial dos principais países clientes de Portugal - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Total",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Síntese mensal de conjuntura"
 },
 {
@@ -100728,7 +100744,7 @@
 "title": "Indicador de formação bruta de capital fixo - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Síntese mensal de conjuntura"
 },
 {
@@ -100736,7 +100752,7 @@
 "title": "Indicador de formação bruta de capital fixo em construção - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Síntese mensal de conjuntura"
 },
 {
@@ -100744,7 +100760,7 @@
 "title": "Indicador de formação bruta de capital fixo em outras máquinas e equipamentos - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Síntese mensal de conjuntura"
 },
 {
@@ -100752,7 +100768,7 @@
 "title": "Indicador de formação bruta de capital fixo em equipamento de transporte - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Síntese mensal de conjuntura"
 },
 {
@@ -100760,7 +100776,7 @@
 "title": "Indicador de consumo privado - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Síntese mensal de conjuntura"
 },
 {
@@ -100768,7 +100784,7 @@
 "title": "Indicador de consumo privado em bens duradouros - ajustado de efeitos de calendário e de sazonalidade (Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Síntese mensal de conjuntura"
 },
 {
@@ -100776,7 +100792,7 @@
 "title": "Indicador de consumo privado em bens não duradouros e serviços - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Síntese mensal de conjuntura"
 },
 {
@@ -100952,7 +100968,7 @@
 "title": "Apreciação sobre a evolução da carteira de encomendas na indústria transformadora dos principais países clientes de Portugal (SRE - Valores corrigidos de sazonalidade)",
 "geo": "Total",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Síntese económica de conjuntura"
 },
 {
@@ -100960,7 +100976,7 @@
 "title": "Vendas de alojamentos familiares nos últimos 3 meses (Metodologia 2022 - N.º)",
 "geo": "Município",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
 },
 {
@@ -100968,7 +100984,7 @@
 "title": "Indicador de atividade económica (Série 1996 - Taxa de variação homóloga - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Síntese económica de conjuntura"
 },
 {
@@ -101056,7 +101072,7 @@
 "title": "Vendas de alojamentos familiares nos últimos 12 meses (Metodologia 2022 - N.º)",
 "geo": "Freguesia",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
 },
 {
@@ -101272,7 +101288,7 @@
 "title": "Índice de volume de negócios nos serviços - bruto deflacionado (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -101280,7 +101296,7 @@
 "title": "Índice de volume de negócios nos serviços deflacionado - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -101288,7 +101304,7 @@
 "title": "Índice de volume de negócios nos serviços - bruto deflacionado (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -101296,7 +101312,7 @@
 "title": "Índice de volume de negócios nos serviços - bruto deflacionado (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -101304,7 +101320,7 @@
 "title": "Índice de volume de negócios nos serviços - bruto deflacionado (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -101312,7 +101328,7 @@
 "title": "Índice de volume de negócios nos serviços deflacionado - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -101320,7 +101336,7 @@
 "title": "Índice de volume de negócios nos serviços deflacionado - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -101328,7 +101344,7 @@
 "title": "Índice de volume de negócios nos serviços deflacionado - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -101696,7 +101712,7 @@
 "title": "Preço do petróleo Brent (€/ barril)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "DGEG, Direção-Geral de Energia e Geologia; Banco de Portugal"
 },
 {
@@ -101704,7 +101720,7 @@
 "title": "Preço do petróleo Brent (Taxa de variação homóloga - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "DGEG, Direção-Geral de Energia e Geologia; Banco de Portugal"
 },
 {
@@ -101712,7 +101728,7 @@
 "title": "Vendas de combustíveis no mercado interno (t)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "DGEG, Direção-Geral de Energia e Geologia"
 },
 {
@@ -101720,7 +101736,7 @@
 "title": "Vendas de combustíveis no mercado interno (Taxa de variação homóloga - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "DGEG, Direção-Geral de Energia e Geologia"
 },
 {
@@ -101728,7 +101744,7 @@
 "title": "Consumo de eletricidade corrigido de dias úteis e temperatura (GWh)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "REN - Redes Energéticas Nacionais"
 },
 {
@@ -101736,7 +101752,7 @@
 "title": "Consumo de eletricidade corrigido de dias úteis e temperatura (Taxa de variação homóloga - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "REN - Redes Energéticas Nacionais"
 },
 {
@@ -101912,7 +101928,7 @@
 "title": "Desempregados inscritos em centros de emprego do IEFP (movimento ao longo do mês - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "Instituto do Emprego e Formação Profissional"
 },
 {
@@ -101920,7 +101936,7 @@
 "title": "Ofertas de emprego em centros de emprego do IEFP (movimento ao longo do mês - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "Instituto do Emprego e Formação Profissional"
 },
 {
@@ -102688,7 +102704,7 @@
 "title": "Distância percorrida pelos veículos pesados de mercadorias estrangeiros (km)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -102696,7 +102712,7 @@
 "title": "Peso da mercadoria transportada pelos veículos pesados de mercadorias estrangeiros (t)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -102704,7 +102720,7 @@
 "title": "Tonelada-quilómetro dos Veículos pesados de mercadorias estrangeiros (tkm)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -102712,7 +102728,7 @@
 "title": "Distância percorrida pelos veículos pesados de mercadorias estrangeiros (km)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -102720,7 +102736,7 @@
 "title": "Peso da mercadoria transportada pelos veículos pesados de mercadorias estrangeiros (t)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -102728,7 +102744,7 @@
 "title": "Tonelada-quilómetro dos Veículos pesados de mercadorias estrangeiros (tkm)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Serviço de Estatística da União Europeia"
 },
 {
@@ -102816,8 +102832,8 @@
 "title": "Despesa da administração regional e local (Base 2021 - €)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2023",
-"source": "INE, Contas nacionais anuais - por Setor institucional"
+"last": "S7A2024",
+"source": "INE, Contas nacionais anuais - por sector institucional"
 },
 {
 "varcd": "0014584",
@@ -102952,7 +102968,7 @@
 "title": "Matrículas de veículos comerciais ligeiros novos (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "Associação do Comércio Automóvel de Portugal"
 },
 {
@@ -102960,7 +102976,7 @@
 "title": "Matrículas de veículos pesados de mercadorias novos (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "Associação do Comércio Automóvel de Portugal"
 },
 {
@@ -102968,7 +102984,7 @@
 "title": "Matrículas de veículos pesados de passageiros novos (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "Associação do Comércio Automóvel de Portugal"
 },
 {
@@ -102976,7 +102992,7 @@
 "title": "Matrículas de veículos ligeiros de passageiros importados usados (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "Associação do Comércio Automóvel de Portugal"
 },
 {
@@ -102984,7 +103000,7 @@
 "title": "Matrículas de veículos ligeiros de passageiros importados usados (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "Associação do Comércio Automóvel de Portugal"
 },
 {
@@ -103216,7 +103232,7 @@
 "title": "Índice de preços no consumidor (IPC, Base - 2025)",
 "geo": "PT/Continente",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103224,7 +103240,7 @@
 "title": "Índice de preços no consumidor (IPC, Base - 2025)",
 "geo": "PT/Continente",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103264,7 +103280,7 @@
 "title": "Índice de preços no consumidor (Taxa de variação mensal - Base 2025 - %)",
 "geo": "PT/Continente",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103272,7 +103288,7 @@
 "title": "Índice de preços no consumidor (Taxa de variação mensal - Base 2025 - %)",
 "geo": "PT/Continente",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103280,7 +103296,7 @@
 "title": "Índice de preços no consumidor (Taxa de variação homóloga - Base 2025 - %)",
 "geo": "PT/Continente",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103288,7 +103304,7 @@
 "title": "Índice de preços no consumidor (Taxa de variação homóloga - Base 2025 - %)",
 "geo": "PT/Continente",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103296,7 +103312,7 @@
 "title": "Índice de preços no consumidor (Taxa de variação média dos últimos 12 meses - Base 2025 - %)",
 "geo": "PT/Continente",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103304,7 +103320,7 @@
 "title": "Índice de preços no consumidor (Taxa de variação média dos últimos 12 meses - Base 2025 - %)",
 "geo": "PT/Continente",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103312,7 +103328,7 @@
 "title": "Índice harmonizado de preços no consumidor (IHPC, Base - 2025)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103320,7 +103336,7 @@
 "title": "Índice harmonizado de preços no consumidor (IHPC, Base - 2025)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103328,7 +103344,7 @@
 "title": "Índice harmonizado de preços no consumidor (Taxa de variação mensal - Base 2025 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103336,7 +103352,7 @@
 "title": "Índice harmonizado de preços no consumidor (Taxa de variação mensal - Base 2025 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103344,7 +103360,7 @@
 "title": "Índice harmonizado de preços no consumidor (Taxa de variação homóloga - Base 2025 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103352,7 +103368,7 @@
 "title": "Índice harmonizado de preços no consumidor (Taxa de variação homóloga - Base 2025 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103360,7 +103376,7 @@
 "title": "Índice harmonizado de preços no consumidor (Taxa de variação média dos últimos 12 meses - Base 2025 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103368,7 +103384,7 @@
 "title": "Índice harmonizado de preços no consumidor (Taxa de variação média dos últimos 12 meses - Base 2025 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103376,7 +103392,7 @@
 "title": "Índice de preços no consumidor (IPC, Base - 2025)",
 "geo": "NUTS",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103384,7 +103400,7 @@
 "title": "Índice de preços no consumidor (IPC, Base - 2025)",
 "geo": "NUTS",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103392,7 +103408,7 @@
 "title": "Índice de preços no consumidor (Taxa de variação mensal - Base 2025 - %)",
 "geo": "NUTS",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103400,7 +103416,7 @@
 "title": "Índice de preços no consumidor (Taxa de variação mensal - Base 2025 - %)",
 "geo": "NUTS",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103408,7 +103424,7 @@
 "title": "Índice de preços no consumidor (Taxa de variação homóloga - Base 2025 - %)",
 "geo": "NUTS",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103416,7 +103432,7 @@
 "title": "Índice de preços no consumidor (Taxa de variação homóloga - Base 2025 - %)",
 "geo": "NUTS",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103424,7 +103440,7 @@
 "title": "Índice de preços no consumidor (Taxa de variação média dos últimos 12 meses - Base 2025 - %)",
 "geo": "NUTS",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103432,7 +103448,7 @@
 "title": "Índice de preços no consumidor (Taxa de variação média dos últimos 12 meses - Base 2025 - %)",
 "geo": "NUTS",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de preços no consumidor"
 },
 {
@@ -103480,7 +103496,7 @@
 "title": "Indicador de vendas de cimento no mercado interno (Taxa de variação homóloga - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Síntese mensal de conjuntura"
 },
 {
@@ -103488,7 +103504,7 @@
 "title": "Indicador de vendas de varão para betão no mercado interno (Taxa de variação homóloga - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Síntese mensal de conjuntura"
 },
 {
@@ -103520,7 +103536,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -103528,7 +103544,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -103596,6 +103612,14 @@
 "source": "Mobi.E, Entidade gestora da rede de mobilidade elétrica"
 },
 {
+"varcd": "0014688",
+"title": "Pontos de carregamento (N.º)",
+"geo": "Município",
+"periodicity": "Mensal",
+"last": "S3A202512",
+"source": "Mobi.E, Entidade gestora da rede de mobilidade elétrica"
+},
+{
 "varcd": "0014689",
 "title": "Pontos de carregamento (N.º)",
 "geo": "NUTS III",
@@ -103604,9 +103628,25 @@
 "source": "Mobi.E, Entidade gestora da rede de mobilidade elétrica"
 },
 {
+"varcd": "0014690",
+"title": "Pontos de carregamento (N.º)",
+"geo": "Município",
+"periodicity": "Mensal",
+"last": "S3A202512",
+"source": "Mobi.E, Entidade gestora da rede de mobilidade elétrica"
+},
+{
 "varcd": "0014691",
 "title": "Tomadas (N.º) nos pontos de carregamento",
 "geo": "NUTS III",
+"periodicity": "Mensal",
+"last": "S3A202512",
+"source": "Mobi.E, Entidade gestora da rede de mobilidade elétrica"
+},
+{
+"varcd": "0014692",
+"title": "Tomadas (N.º) nos pontos de carregamento",
+"geo": "Município",
 "periodicity": "Mensal",
 "last": "S3A202512",
 "source": "Mobi.E, Entidade gestora da rede de mobilidade elétrica"
@@ -103728,7 +103768,7 @@
 "title": "Compras através de Terminais de Pagamento Automático (N.º)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "SIBS, Estatísticas das instituições de crédito e sociedades financeiras"
 },
 {
@@ -103736,7 +103776,7 @@
 "title": "Compras através de Terminais de Pagamento Automático (€)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "SIBS, Estatísticas das instituições de crédito e sociedades financeiras"
 },
 {
@@ -104122,6 +104162,54 @@
 "periodicity": "Anual",
 "last": "S7A2025",
 "source": "Declaração Mensal de Remunerações da Segurança Social e Relação Contributiva da Caixa Geral de Aposentações"
+},
+{
+"varcd": "0014759",
+"title": "Valor mediano das vendas de alojamentos familiares nos últimos 12 meses (Metodologia 2022 - €/ m²)",
+"geo": "Freguesia",
+"periodicity": "Trimestral",
+"last": "S5A20262",
+"source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
+},
+{
+"varcd": "0014760",
+"title": "Valor mediano das vendas de alojamentos familiares em apartamentos nos últimos 12 meses (Metodologia 2022 - €/ m²)",
+"geo": "Freguesia",
+"periodicity": "Trimestral",
+"last": "S5A20262",
+"source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
+},
+{
+"varcd": "0014761",
+"title": "Valor mediano das vendas de alojamentos familiares nos últimos 12 meses (Metodologia 2022 - €/ m²)",
+"geo": "Freguesia",
+"periodicity": "Trimestral",
+"last": "S5A20262",
+"source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
+},
+{
+"varcd": "0014762",
+"title": "Valor mediano das vendas de alojamentos familiares nos últimos 12 meses (Metodologia 2022 - €/ m²)",
+"geo": "Freguesia",
+"periodicity": "Trimestral",
+"last": "S5A20262",
+"source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
+},
+{
+"varcd": "0014763",
+"title": "Valor mediano das vendas de alojamentos familiares nos últimos 12 meses (Metodologia 2022 - €/ m²)",
+"geo": "Freguesia",
+"periodicity": "Trimestral",
+"last": "S5A20262",
+"source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
+},
+{
+"varcd": "0014764",
+"title": "Vendas de alojamentos familiares nos últimos 12 meses (Metodologia 2022 - N.º)",
+"geo": "Freguesia",
+"periodicity": "Trimestral",
+"last": "S5A20262",
+"source": "INE, Estatísticas de preços da habitação ao nível local (Metodologia 2022)"
 },
 {
 "varcd": "0014765",
@@ -105318,6 +105406,310 @@
 {
 "varcd": "0014915",
 "title": "População residente com 15 e mais anos que recebeu apoio ou assistência informal nos 12 meses anteriores à entrevista (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014919",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "NUTS II",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014920",
+"title": "Índice de bem-estar mental (%) da população residente com 15 e mais anos de idade",
+"geo": "NUTS II",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014921",
+"title": "Índice de bem-estar mental (%) da população residente com 15 e mais anos de idade",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014922",
+"title": "Índice de bem-estar mental (%) da população residente com 15 e mais anos de idade",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014923",
+"title": "Índice de bem-estar mental (%) da população residente com 15 e mais anos de idade",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014924",
+"title": "Índice de bem-estar mental (%) da população residente com 15 e mais anos de idade",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014925",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014926",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014927",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014928",
+"title": "População residente com 55 e mais anos de idade que referiu pelo menos uma dificuldade nos cuidados pessoais (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014929",
+"title": "População residente com 55 e mais anos de idade que referiu pelo menos uma dificuldade nas atividades domésticas (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014930",
+"title": "População residente com 15 e mais anos que recebeu apoio ou assistência informal nos 12 meses anteriores à entrevista (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014931",
+"title": "População residente com 15 e mais anos que recebeu apoio ou assistência informal nos 12 meses anteriores à entrevista (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014932",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014933",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014934",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "NUTS II",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014935",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "NUTS II",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014936",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "NUTS II",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014937",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014938",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014939",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014940",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014941",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014942",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014943",
+"title": "Proporção da população residente com 15 e mais anos de idade que fuma (%)",
+"geo": "NUTS II",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014944",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014945",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014946",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014947",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014948",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014949",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014950",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014951",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014952",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014953",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014954",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014955",
+"title": "População residente com 15 e mais anos de idade (N.º)",
+"geo": "Portugal",
+"periodicity": "Sexenal",
+"last": "S7A2025",
+"source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014956",
+"title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "Portugal",
 "periodicity": "Sexenal",
 "last": "S7A2025",
