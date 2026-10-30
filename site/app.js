@@ -2096,8 +2096,22 @@ function invRender() {
   li.push('Fora das contas: obras e mobília, seguros de vida do crédito, comissões bancárias, AIMI (património acima de 600 mil € de VPT), inquilinos que não pagam, mudanças de lei. Não é aconselhamento financeiro nem fiscal.');
   out.innerHTML = `${warn.length ? `<p class="banner">⚠ ${warn.join('; ')}.</p>` : ''}<div class="stats">${tiles.join('')}</div>
     <p class="muted" style="margin:14px 0 4px"><b>Sensibilidade</b>: TIR conforme a valorização da casa e a taxa do crédito</p>${sens}${yrs}
+    <p class="im-buttons"><button type="button" class="btn" id="inv-payback">⏱ Quando recupero o dinheiro investido?</button></p>
     ${investBooksHtml(o, r, v, m)}
     <ul class="read">${li.map((t) => `<li>${t}</li>`).join('')}</ul>`;
+}
+// do Investir para a calculadora de recuperação, com os mesmos números
+function invToPayback() {
+  const v = invRead(), m = v.dico ? BY[v.dico] : null, o = m ? invParams(m, v) : null, R = GD_RUN.payback;
+  if (!o || !R) return;
+  const g = R.f, put = (k, x) => { if (g.elements[k] && x != null && Number.isFinite(x)) g.elements[k].value = +x.toFixed(2); };
+  ['invested', 'loanbal', 'imi', 'works', 'value', 'alt', 'horizon'].forEach((k) => { g.elements[k].value = ''; });
+  put('price', o.price); put('down', o.down * 100); put('rent', o.rent); put('rate', o.rate); put('years', o.years);
+  put('vac', o.vacancy); put('condo', o.condo); put('ins', o.ins); put('maint', o.maint * 100); put('rg', o.rentGrowth * 100);
+  put('pg', o.priceGrowth * 100); put('cy', o.contractYears); put('marg', o.marginal * 100); put('sell', o.sellCost * 100);
+  if (o.vpt) put('imi', o.vpt * o.imiRate); else put('imi', o.price * o.imiRate);
+  if (v.alt != null) put('alt', v.alt);
+  showTab('guia', 'guide'); R.pick(); R.run();
 }
 function initInvest() {
   const f = $('#inv-form');
@@ -2105,7 +2119,10 @@ function initInvest() {
   f.addEventListener('submit', (e) => { e.preventDefault(); invRender(); });
   f.addEventListener('change', (e) => { if (f.conc.value.trim()) invRender(); });
   $('#inv-clear').addEventListener('click', () => { f.reset(); try { localStorage.removeItem(INV_KEY); } catch { /* */ } $('#inv-out').innerHTML = ''; });
-  $('#inv-out').addEventListener('click', (e) => { const a = e.target.closest('a[data-d]'); if (a) { e.preventDefault(); select(a.dataset.d); } });
+  $('#inv-out').addEventListener('click', (e) => {
+    const a = e.target.closest('a[data-d]'); if (a) { e.preventDefault(); select(a.dataset.d); return; }
+    if (e.target.closest('#inv-payback')) invToPayback();
+  });
   if (f.conc.value.trim()) invRender();
 }
 function initImovel() {
@@ -2935,6 +2952,51 @@ function olThermo() {
     <p class="muted">Não é um modelo testado nem diz quando o ciclo vira: é um resumo do que os sinais mostram hoje. O score nacional, que junta quatro destes sinais, foi testado com dados passados de vários países — vê o separador Método.</p>`;
 }
 
+// guia: recuperar o investimento (payback) — renda vs dinheiro investido, ano a ano
+const yrsTxt = (x) => (x == null ? null : x < 1 ? `${fmt.n(x * 12, 0)} meses` : `${fmt.n(x, 1)} anos`);
+function grRender() {
+  const f = $('#gr-form'), out = $('#gr-out');
+  const price = gdNum(f, 'price'), rent = gdNum(f, 'rent'), invIn = gdNum(f, 'invested');
+  if (!rent || (!price && !invIn)) { out.innerHTML = '<p class="muted">Indica a renda e o preço da casa (ou o dinheiro que já investiste).</p>'; return; }
+  const down = (gdNum(f, 'down') ?? 20) / 100, works = gdNum(f, 'works') || 0;
+  const loan = gdNum(f, 'loanbal') ?? (price ? price * (1 - down) : 0);
+  const tax = price ? buyTaxes(price, loan, 'sec', false, false) : null;
+  const invested = invIn ?? (price - loan + tax.total + 1000 + works);
+  const rate = gdNum(f, 'rate') ?? affRateNow(), years = gdNum(f, 'years') || 30, horizon = Math.round(gdNum(f, 'horizon') || 25);
+  const valueIn = gdNum(f, 'value') || price || null, value = valueIn || 0, num = (k, d) => gdNum(f, k) ?? d, sale = valueIn != null;
+  const o = { invested, rent, vacancy: num('vac', 1), condo: num('condo', 30), ins: num('ins', 150), imi: num('imi', (valueIn || invested + loan) * 0.003), maint: num('maint', 5) / 100,
+    rentGrowth: num('rg', (RENT_COEF.value - 1) * 100) / 100, priceGrowth: num('pg', 2) / 100, contractYears: num('cy', 1), startYear: new Date().getFullYear(),
+    loan, rate, years, value, sellCost: num('sell', 5) / 100, costBasis: price ? price + (tax ? tax.total : 0) + 1000 + works : null,
+    marginal: num('marg', 35) / 100, alt: num('alt', 3) / 100, horizon };
+  const P = paybackPlan(o), y1 = P.rows[0];
+  const at = (x) => (x == null ? null : `${yrsTxt(x)} (${o.startYear + Math.ceil(x) - 1})`);
+  const tiles = [
+    gdTile('Dinheiro investido', fmt.eur(invested), invIn != null ? 'o que indicaste' : `entrada ${fmt.eur(price - loan)} + IMT e Imposto do Selo ${fmt.eur(tax.total)} + escritura ~1000 €${works ? ` + obras ${fmt.eur(works)}` : ''}`),
+    gdTile('Recuperas só com as rendas em', at(P.paybackCash) ?? `não, em ${horizon} anos`, `fluxo de caixa no 1.º ano: ${y1.cf >= 0 ? '+' : '−'}${fmt.eur(Math.abs(y1.cf / 12))}/mês${loan > 0 ? ` (depois da prestação de ${fmt.eur(P.pay)})` : ''}`),
+    ...(loan > 0 ? [gdTile('Contando o capital que amortizas', at(P.paybackEquity) ?? `não, em ${horizon} anos`, 'a parte da prestação que paga o crédito fica tua: é dinheiro guardado na casa')] : []),
+    ...(sale ? [gdTile('Se vendesses', at(P.paybackSale) ?? `não, em ${horizon} anos`, `a partir daí, vender devolvia mais do que puseste (valorização de ${fmt.spct(o.priceGrowth, 1)}/ano, custos de venda, crédito${o.costBasis != null ? ' e mais-valias' : ''})`)] : []),
+    gdTile('Payback simples', P.simple == null ? '—' : yrsTxt(P.simple), 'dinheiro investido ÷ renda líquida do 1.º ano (sem crédito, sem subidas): a regra rápida'),
+    ...(sale ? [gdTile(`Em ${horizon} anos`, P.irr == null ? '—' : `TIR ${fmt.spct(P.irr, 1)}`, `vendendo no fim: ${fmt.eur(P.endWealth)} recebidos ao todo, contra ${fmt.eur(P.endAlt)} se os ${fmt.eur(invested)} rendessem ${fmt.pct(o.alt, 1)}/ano`)]
+      : [gdTile(`Em ${horizon} anos`, `${fmt.eur(P.rows[P.rows.length - 1].cumCash + invested)}`, `recebidos das rendas, contra ${fmt.eur(P.endAlt)} se os ${fmt.eur(invested)} rendessem ${fmt.pct(o.alt, 1)}/ano; indica o valor da casa para contar a venda`)]),
+  ];
+  const L = (k) => P.rows.map((x) => [String(x.year), Math.round(x[k])]);
+  const tbl = `<details><summary class="muted">Ano a ano</summary><div class="table-wrap"><table class="ol-table"><thead><tr><th>Ano</th><th>Renda/mês</th><th>Rendas</th><th>Custos</th><th>IRS</th>${loan > 0 ? '<th>Juros</th><th>Capital amortizado</th>' : ''}<th>Fluxo</th><th>Acumulado − investido</th>${loan > 0 ? '<th>Crédito em dívida</th>' : ''}${sale ? '<th>Se vendesses</th>' : ''}</tr></thead><tbody>${P.rows.map((x) => `<tr><td>${x.year}</td><td>${fmt.eur(x.rentM)}</td><td>${fmt.eur(x.gross)}</td><td>${fmt.eur(x.costs)}</td><td>${fmt.eur(x.irs)} (${fmt.pct(x.irsRate, 0)})</td>${loan > 0 ? `<td>${fmt.eur(x.interest)}</td><td>${fmt.eur(x.principal)}</td>` : ''}<td>${x.cf >= 0 ? '+' : '−'}${fmt.eur(Math.abs(x.cf))}</td><td>${x.cumCash >= 0 ? '+' : '−'}${fmt.eur(Math.abs(x.cumCash))}</td>${loan > 0 ? `<td>${fmt.eur(x.balance)}</td>` : ''}${sale ? `<td>${x.ifSold >= 0 ? '+' : '−'}${fmt.eur(Math.abs(x.ifSold))}</td>` : ''}</tr>`).join('')}</tbody></table></div></details>`;
+  const li = [];
+  if (P.paybackCash == null) li.push(y1.cf < 0 ? `Só com as rendas não recuperas o dinheiro em ${horizon} anos: no início, a renda não chega para a prestação e os custos (${fmt.eur(Math.abs(y1.cf / 12))}/mês a pôr do teu bolso). O investimento só compensa pela valorização e pelo capital que amortizas.` : `Só com as rendas não recuperas o dinheiro em ${horizon} anos: o fluxo de caixa é pequeno face ao que investiste.`);
+  else li.push(`As rendas, depois de custos, IRS${loan > 0 ? ' e prestação' : ''}, devolvem os ${fmt.eur(invested)} que investiste em ${yrsTxt(P.paybackCash)}.${loan > 0 && P.paybackEquity != null && P.paybackEquity < P.paybackCash ? ` Contando também o capital do crédito que vais amortizando, em ${yrsTxt(P.paybackEquity)}.` : ''}`);
+  if (loan > 0) li.push(`O crédito de ${fmt.eur(loan)} a ${fmt.n(rate, 2)}% em ${years} anos custa ${fmt.eur(P.pay)}/mês; no 1.º ano, ${fmt.eur(y1.interest)} são juros (custo) e ${fmt.eur(y1.principal)} capital (fica teu). Quando o crédito acabar, em ${o.startYear + Math.round(years)}, a renda fica quase toda para ti.`);
+  li.push('O payback não conta o valor do dinheiro no tempo: 10 000 € daqui a 15 anos valem menos do que hoje. A TIR conta: é o rendimento anual do dinheiro que puseste, com a venda no fim.');
+  li.push(`IRS sobre as rendas: ${fmt.pct(irsRentRate(rent, o.contractYears, o.startYear), 0)} em ${o.startYear} (10% para rendas até 2300 €/mês até 2029; depois 25%, ou menos com contratos longos). Custos: IMI ${fmt.eur(o.imi)}/ano, condomínio, seguro, manutenção de ${fmt.pct(o.maint, 0)} da renda e ${fmt.n(o.vacancy, 0)} mês vazio por ano.`);
+  out.innerHTML = `<div class="stats">${tiles.join('')}</div><div class="chart-cap"><span>Dinheiro recuperado ao longo do tempo (€, acima de 0 = já recuperaste o que investiste)</span></div><div id="gr-chart" class="chart"></div>${tbl}<ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul><p class="muted">Não é aconselhamento financeiro nem fiscal. Fora das contas: inquilinos que não pagam, obras grandes, mudanças de lei e comissões bancárias.</p>`;
+  try {
+    lineChart('gr-chart', 'Recuperação do investimento', [
+      { name: 'Só com as rendas', data: L('cumCash'), fmt: fmt.eur },
+      ...(loan > 0 ? [{ name: '+ capital amortizado', data: L('cumEquity'), fmt: fmt.eur, dashed: true }] : []),
+      ...(sale ? [{ name: 'Se vendesses nesse ano', data: L('ifSold'), fmt: fmt.eur }] : []),
+    ], { notitle: true, refs: [{ y: 0, label: 'investimento recuperado' }] });
+  } catch (e) { console.error('gráfico da recuperação:', e); }
+}
+
 // ---------- ligações para partilhar um guia (os valores vão no endereço, depois de #guia?)
 const b64u = { enc: (s) => btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''),
   dec: (s) => decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/')))) };
@@ -2977,8 +3039,8 @@ function initGuides() {
   pick(document.querySelector(`#guide [data-guide="${k0}"]`) ? k0 : 'where');
   const saved = (() => { try { return JSON.parse(localStorage.getItem(GD_KEY) || '{}') || {}; } catch { return {}; } })();
   GD_RUN.pick = pick;
-  const KIND = { gy: 'young', gl: 'loan', gs: 'landlord', gt: 'tenant', gv: 'sell', gn: 'land', gf: 'fi', ga: 'sign', gw: 'wait', gm: 'amort' };
-  [['gy', gyRender], ['gl', glRender], ['gs', gsRender], ['gt', gtRender], ['gv', gvRender], ['gn', gnRender], ['gf', gfRender], ['ga', gaRender], ['gw', gwRender], ['gm', gmRender]].forEach(([id, render]) => {
+  const KIND = { gy: 'young', gl: 'loan', gs: 'landlord', gt: 'tenant', gv: 'sell', gn: 'land', gf: 'fi', ga: 'sign', gw: 'wait', gm: 'amort', gr: 'payback' };
+  [['gy', gyRender], ['gl', glRender], ['gs', gsRender], ['gt', gtRender], ['gv', gvRender], ['gn', gnRender], ['gf', gfRender], ['ga', gaRender], ['gw', gwRender], ['gm', gmRender], ['gr', grRender]].forEach(([id, render]) => {
     const f = $(`#${id}-form`);
     const save = () => { const v = {}; [...f.elements].forEach((el) => { if (el.name) v[el.name] = el.type === 'checkbox' ? el.checked : el.value; }); saved[id] = v; try { localStorage.setItem(GD_KEY, JSON.stringify(saved)); } catch { /* */ } };
     const run = () => {

@@ -568,6 +568,17 @@ tabela "livro → ideia → onde está no painel":
   esforço de compra face à história, crédito novo, ciclo preço-volume e crédito/PIB — entre o pânico e a euforia.
   Não é um modelo testado; o score nacional é que foi testado no backtest.
 
+### Recuperar o investimento (guia "Recuperar o investimento")
+
+Calculadora de recuperação (payback) de um investimento para arrendar, `paybackPlan()` em `site/calc.js`: ano a ano,
+o dinheiro investido à cabeça (entrada, IMT e Imposto do Selo, escritura, obras — ou o valor que indicares) face ao que
+a renda devolve depois de custos, IRS sobre as rendas (regras de 2026) e prestação do crédito. Três medidas: em que ano
+recuperas só com as rendas; contando também o capital do crédito que vais amortizando; e se vendesses nesse ano (valor
+com a valorização indicada − custos de venda − crédito em dívida − mais-valias). Mais o payback simples (investido ÷
+renda líquida do 1.º ano), a TIR com a venda no fim, a comparação com o mesmo dinheiro numa alternativa, um gráfico e a
+tabela ano a ano. No separador Investir, o botão "Quando recupero o dinheiro investido?" abre a calculadora com os
+mesmos números.
+
 ### Teste do site no browser (no build)
 
 `scripts/smoke_site.py` abre o site com os dados do build no Chromium (Playwright): todos os separadores, todas as

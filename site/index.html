@@ -123,6 +123,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     <div class="row"><h2>Guias <button type="button" class="info" data-k="guide" aria-label="Sobre os guias">ⓘ</button></h2></div>
     <div class="chips g-pick" role="tablist" aria-label="Escolher o guia">
       <button type="button" class="chip" data-gp="where">Onde procurar casa</button>
+      <button type="button" class="chip" data-gp="payback">Recuperar o investimento</button>
       <button type="button" class="chip" data-gp="young">Primeira casa até aos 35</button>
       <button type="button" class="chip" data-gp="loan">Taxa fixa, mista ou variável</button>
       <button type="button" class="chip" data-gp="landlord">Senhorio: contrato e IRS</button>
@@ -186,6 +187,37 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
       </div>
     </form>
     <div id="guide-out"></div>
+    </div>
+
+    <div data-guide="payback" hidden>
+      <p class="muted">Quando é que a renda te devolve o dinheiro que puseste? Ano a ano: o que investiste à cabeça, o que a renda paga depois de custos, IRS e prestação, e em que ano recuperas — só com as rendas, contando o capital do crédito que vais amortizando, e se vendesses. Os valores ficam só neste browser.</p>
+      <form id="gr-form" class="aff-form im-form" autocomplete="off">
+        <label>Preço da casa (€) <input name="price" type="number" min="1000" step="any" inputmode="numeric" placeholder="ex.: 200000"></label>
+        <label>Entrada (%) <input name="down" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="20"></label>
+        <label>Obras e mobília (€) <input name="works" type="number" min="0" step="any" inputmode="numeric" placeholder="0"></label>
+        <label>Renda (€/mês) <input name="rent" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 900"></label>
+        <label>Taxa do crédito (%) <input name="rate" type="number" min="0" max="15" step="any" inputmode="decimal" placeholder="taxa atual estimada"></label>
+        <label>Prazo do crédito (anos) <input name="years" type="number" min="1" max="40" step="any" inputmode="numeric" placeholder="30"></label>
+        <label>Ou: dinheiro que já investiste (€) <input name="invested" type="number" min="0" step="any" inputmode="numeric" placeholder="entrada + impostos + obras"></label>
+        <label>Ou: crédito em dívida (€) <input name="loanbal" type="number" min="0" step="any" inputmode="numeric" placeholder="preço × (1 − entrada)"></label>
+        <label>Valor da casa hoje (€) <input name="value" type="number" min="0" step="any" inputmode="numeric" placeholder="o preço, para contar a venda"></label>
+        <details class="im-assume"><summary>Custos e pressupostos (editáveis)</summary>
+          <label>Meses vazio por ano <input name="vac" type="number" min="0" max="12" step="any" placeholder="1"></label>
+          <label>Condomínio (€/mês) <input name="condo" type="number" min="0" step="any" placeholder="30"></label>
+          <label>Seguro (€/ano) <input name="ins" type="number" min="0" step="any" placeholder="150"></label>
+          <label>IMI (€/ano) <input name="imi" type="number" min="0" step="any" placeholder="0,3% do preço"></label>
+          <label>Manutenção (% da renda) <input name="maint" type="number" min="0" max="50" step="any" placeholder="5"></label>
+          <label>Subida da renda (%/ano) <input name="rg" type="number" min="-20" max="30" step="any" placeholder="2,56"></label>
+          <label>Valorização da casa (%/ano) <input name="pg" type="number" min="-20" max="30" step="any" placeholder="2"></label>
+          <label>Duração do contrato (anos) <input name="cy" type="number" min="1" max="30" step="any" placeholder="1"></label>
+          <label>Taxa marginal de IRS (%) <input name="marg" type="number" min="0" max="60" step="any" placeholder="35"></label>
+          <label>Custos de venda (%) <input name="sell" type="number" min="0" max="20" step="any" placeholder="5"></label>
+          <label>Alternativa: o dinheiro renderia (%/ano) <input name="alt" type="number" min="0" max="20" step="any" placeholder="3"></label>
+          <label>Anos a mostrar <input name="horizon" type="number" min="5" max="40" step="1" placeholder="25"></label>
+        </details>
+        <span class="im-buttons"><button type="submit" class="btn">Calcular</button></span>
+      </form>
+      <div id="gr-out"></div>
     </div>
 
     <div data-guide="young" hidden>

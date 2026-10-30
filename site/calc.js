@@ -478,6 +478,47 @@ function waitOrBuy(o) {
     priceLater: V, priceUp: V - o.price, rentPaid: o.rent * m, nwNow, nwWait, diff: nwNow - nwWait };
 }
 
+// Recuperação do investimento (payback): ano a ano, o que a renda devolve face ao dinheiro investido.
+// o = { invested (€ à cabeça: entrada + impostos + escritura + obras), rent (€/mês no 1.º ano), vacancy (meses/ano),
+//   condo (€/mês), ins (€/ano), imi (€/ano), maint (fração da renda), rentGrowth, priceGrowth, contractYears, startYear,
+//   loan (€, 0 sem crédito), rate (%), years (prazo), value (valor da casa hoje), sellCost (fração), costBasis (preço +
+//   impostos + obras, para as mais-valias; null = sem mais-valias), marginal (taxa marginal de IRS), alt (rendimento
+//   anual da alternativa), horizon (anos) }
+// Três medidas: só com as rendas (fluxo de caixa acumulado ≥ dinheiro investido), contando também o capital do crédito
+// já amortizado (dinheiro que fica na casa), e contando a venda nesse ano (valor − custos − crédito − mais-valias).
+function paybackPlan(o) {
+  const r = (o.rate || 0) / 1200, n = Math.round((o.years || 0) * 12), pay = o.loan > 0 ? annuity(o.loan, o.rate, o.years) : 0;
+  let bal = o.loan || 0, cum = -o.invested, princ = 0;
+  const rows = [];
+  for (let t = 1; t <= o.horizon; t++) {
+    const year = o.startYear + t - 1, rentM = o.rent * (1 + o.rentGrowth) ** (t - 1), gross = rentM * (12 - o.vacancy);
+    const maint = o.maint * gross, costs = o.imi + o.condo * 12 + o.ins + maint;
+    const irsRate = irsRentRate(rentM, o.contractYears, year), irs = Math.max(0, gross - o.imi - o.condo * 12 - maint) * irsRate;
+    let interest = 0, principal = 0, debt = 0;
+    for (let k = 0; k < 12 && bal > 0.005 && (t - 1) * 12 + k < n; k++) {
+      const i = bal * r; interest += i; principal += pay - i; debt += pay; bal = Math.max(0, bal - (pay - i));
+    }
+    const cf = gross - costs - irs - debt;
+    cum += cf; princ += principal;
+    const value = o.value * (1 + o.priceGrowth) ** t;
+    const cgt = o.costBasis != null ? Math.max(0, value * (1 - o.sellCost) - o.costBasis) * 0.5 * (o.marginal || 0) : 0;
+    const saleNet = value * (1 - o.sellCost) - bal - cgt;
+    rows.push({ t, year, rentM, gross, costs, irs, irsRate, interest, principal, debt, cf, cumCash: cum, cumEquity: cum + princ,
+      balance: bal, value, cgt, saleNet, ifSold: cum + saleNet, alt: o.invested * (1 + (o.alt || 0)) ** t });
+  }
+  const when = (key) => {
+    let prev = -o.invested;
+    for (const x of rows) { const v = x[key]; if (v >= 0) return x.t - 1 + (prev < 0 && v > prev ? -prev / (v - prev) : 0); prev = v; }
+    return null;
+  };
+  const y1 = rows[0], noi1 = y1 ? y1.gross - y1.costs - y1.irs : 0;
+  const last = rows[rows.length - 1];
+  return { rows, pay, paybackCash: when('cumCash'), paybackEquity: when('cumEquity'), paybackSale: when('ifSold'),
+    simple: noi1 > 0 ? o.invested / noi1 : null, noi1,
+    irr: last ? irr([-o.invested, ...rows.map((x, i) => x.cf + (i === rows.length - 1 ? x.saleNet : 0))]) : null,
+    endWealth: last ? last.cumCash + o.invested + last.saleNet : null, endAlt: last ? last.alt : null };
+}
+
 // coordenadas como o Google Maps as copia ("38.83092, -9.16851"), com vírgula decimal ou pela ordem inversa;
 // null fora de Portugal (continente, Madeira e Açores)
 function parseLL(txt) {
@@ -495,5 +536,5 @@ if (typeof module !== 'undefined') {
     islands, annuity, qOfMonth, serVal, qAdd, qIdx, at12, serGrowth, TAX_EDGES, shareAbove,
     RENT_COEF, IRS_RENT, irsRentRate, irr, invest, maxPrice, rankBy,
     schedule, LOAN_PLANS, loanPlans, LEASES, landlord, holdOptions, YOUNG_GUARANTEE, youngPlan, LAND_TAX, landResidual, parseLL,
-    investorTests, histDrawdown, maxRise12, crisisTest, monthsTo, beforeSign, FEE_IS, CAPITAL_TAX, amortPlan, waitOrBuy };
+    investorTests, histDrawdown, maxRise12, crisisTest, monthsTo, beforeSign, FEE_IS, CAPITAL_TAX, amortPlan, waitOrBuy, paybackPlan };
 }

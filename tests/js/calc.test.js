@@ -328,3 +328,22 @@ test('waitOrBuy: com preços parados e renda alta, comprar já deixa mais patrim
   assert.ok(down.diff < 0);
   assert.equal(c.waitOrBuy({ ...base, savings: 1000, growth: 0 }).canNow, false);
 });
+
+test('paybackPlan: sem crédito nem subidas, recupera em investido ÷ rendimento líquido; capital e venda antecipam', () => {
+  const base = { invested: 100000, rent: 600, vacancy: 0, condo: 0, ins: 0, imi: 0, maint: 0, rentGrowth: 0, priceGrowth: 0,
+    contractYears: 1, startYear: 2026, loan: 0, rate: 0, years: 0, value: 95000, sellCost: 0.05, costBasis: null, marginal: 0, alt: 0, horizon: 30 };
+  const p = c.paybackPlan(base);
+  // 600 × 12 = 7200/ano, IRS 10% até 2029 e 25% depois (rendas ≤ 2300 €/mês até 2029)
+  // 4 anos a 6480 €/ano (IRS 10%) = 25 920 €; o resto (74 080 €) a 5400 €/ano (IRS 25%) = 13,7 anos → 17,7 anos
+  assert.ok(Math.abs(p.paybackCash - (4 + 74080 / 5400)) < 1e-9);
+  assert.ok(Math.abs(p.simple - 100000 / (7200 * 0.9)) < 1e-9);
+  assert.ok(p.paybackSale < p.paybackCash);                   // contando a venda, recupera antes
+  assert.equal(p.paybackEquity, p.paybackCash);               // sem crédito, não há capital amortizado
+  // com crédito: a prestação come a renda; contar o capital amortizado antecipa a recuperação
+  const loan = c.paybackPlan({ ...base, invested: 30000, loan: 80000, rate: 3.5, years: 30, value: 110000 });
+  assert.ok(loan.paybackEquity == null || loan.paybackCash == null || loan.paybackEquity <= loan.paybackCash);
+  assert.ok(loan.rows[0].principal > 0 && loan.rows[0].interest > 0);
+  // nunca recupera se a renda não paga os custos
+  assert.equal(c.paybackPlan({ ...base, rent: 50, condo: 100 }).paybackCash, null);
+  assert.ok(Number.isFinite(p.irr));
+});

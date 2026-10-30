@@ -132,6 +132,10 @@ def steps(pg, s: Smoke, ctx, base: str) -> None:
     pg.wait_for_timeout(500)
     s.need("#inv-out .stats", "investir")
     s.need("#inv-out table.g-table", "investir: teste do investidor")
+    pg.click("#inv-payback")
+    pg.wait_for_timeout(800)
+    s.need("#gr-out .stats", "investir → recuperar o investimento")
+    s.check_text("recuperar o investimento (do Investir)")
     s.check_text("investir")
     pg.click("#topnav a[data-tab=imovel]")
     pg.fill("#im-form [name=conc]", names[porto])
@@ -176,7 +180,8 @@ def steps(pg, s: Smoke, ctx, base: str) -> None:
               ("fi", "gf", {"target": "1500", "have": "50000", "save": "800", "conc": names[porto]}),
               ("sign", "ga", {"price": "280000", "conc": names[lisboa], "area": "90", "savings": "50000", "income": "3200", "expenses": "1300"}),
               ("wait", "gw", {"conc": names[porto], "area": "80", "savings": "40000", "rent": "900", "save": "400"}),
-              ("amort", "gm", {"bal": "150000", "rate": "3.5", "left": "25", "amount": "20000", "left_cash": "15000", "expenses": "1500"})]
+              ("amort", "gm", {"bal": "150000", "rate": "3.5", "left": "25", "amount": "20000", "left_cash": "15000", "expenses": "1500"}),
+              ("payback", "gr", {"price": "200000", "down": "20", "works": "10000", "rent": "950"})]
     for kind, fid, fill in guides:
         pg.click(f"[data-gp={kind}]")
         for k, v in fill.items():
