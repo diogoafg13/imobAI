@@ -1,5 +1,5 @@
 {
- "date": "20261026",
+ "date": "20261030",
  "ine": {
   "sales_price_annual": "sem código (config)",
   "building_permits": "sem código (config)",
@@ -23,12 +23,12 @@
   "lic_dwellings": "ok (171554 linhas, 2025) [dim_3=T 'Total']",
   "rent_contracts": "ok (3828 linhas, 2025)",
   "hpi": "ok (70 linhas, 2026Q2) [dim_3=H1 'Total']",
-  "bank_valuation": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']",
-  "valuation_count": "ok (65236 linhas, 2026-08) [dim_3=T 'Total']",
-  "valuation_count_apartments": "ok (65236 linhas, 2026-08) [dim_3=1 'Apartamentos']",
-  "valuation_count_houses": "ok (65236 linhas, 2026-08) [dim_3=2 'Moradias']",
-  "valuation_apartments": "ok (65236 linhas, 2026-08) [dim_3=1 'Apartamentos']",
-  "valuation_houses": "ok (65236 linhas, 2026-08) [dim_3=2 'Moradias']",
+  "bank_valuation": "ok (65583 linhas, 2026-09) [dim_3=T 'Total']",
+  "valuation_count": "ok (65583 linhas, 2026-09) [dim_3=T 'Total']",
+  "valuation_count_apartments": "ok (65583 linhas, 2026-09) [dim_3=1 'Apartamentos']",
+  "valuation_count_houses": "ok (65583 linhas, 2026-09) [dim_3=2 'Moradias']",
+  "valuation_apartments": "ok (65583 linhas, 2026-09) [dim_3=1 'Apartamentos']",
+  "valuation_houses": "ok (65583 linhas, 2026-09) [dim_3=2 'Moradias']",
   "dwellings_licensed": "ok (9204 linhas, 2026-08) [dim_3=T 'Total']",
   "dwellings_completed": "ok (1170 linhas, 2026Q2)",
   "dwellings_stock": "ok (4128 linhas, 2022)",
@@ -80,7 +80,7 @@
   "mortgage_rate_pt_fix_i": "ok (227 pontos, 2026-08)",
   "mortgage_rate_pt_fix_o": "ok (227 pontos, 2026-08)",
   "mortgage_rate_pt_fix_p": "ok (220 pontos, 2026-08)",
-  "mortgage_share_variable_pt": "CACHE (HTTPSConnectionPool(host='data-api.ecb.europa.eu', port=443): Read timed out. (read timeout=60))",
+  "mortgage_share_variable_pt": "ok (284 pontos, 2026-08)",
   "eurostat_hpi": "ok (74 pontos, 2026Q2)",
   "eurostat_hicp": "ok (123 pontos, 2026Q3)",
   "eurostat_hpi_eu": "ok (2086 pontos, 2026Q2)",
@@ -91,10 +91,10 @@
   "imi_rates": "ok (cache: taxas de 2025; 2026 ainda incompleto)"
  },
  "turismo": {
-  "al_rnal": "ok (111936 registos, https://dadosabertos.turismodeportugal.pt/api/download/v1/items/4e62eb1977564991bd01e61d7aa8266f/csv?layers=6)"
+  "al_rnal": "ok (cache de 2026-10-26: 111936 registos)"
  },
  "osm": {
-  "osm_points": "ok (school: 9378, health: 4353, station: 831; 1 quadrículas novas; 2 falhas ((36, -9, 37, -8): 502 Server Error: Bad Gateway for url: https://overpass-api.de/api/interpreter))"
+  "osm_points": "ok (school: 9378, health: 4354, station: 831; 4 quadrículas novas; 2 falhas ((37, -9, 38, -8): 504 Server Error: Gateway Time-out for url: https://maps.mail.ru/osm/tools/overpass/api/in))"
  },
  "apa": {
   "flood_zones": "ok (cache de 2026-10-06: 63 polígonos, pretorno=T0100)"
@@ -102,8 +102,8 @@
  "stale": [],
  "discover": {
   "ine_probe": "nada novo (17 já sondados)",
-  "ine_catalog": "ok (13214 indicadores; opc=2: 13214)",
-  "ogc": "dgt: 90 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, cadastro, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural",
+  "ine_catalog": "ok (cache: 13214 indicadores)",
+  "ogc": "ok (cache: dgt: 90 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, cadastro, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural)",
   "services": "apa_inundacoes: 8 camadas"
  }
 }
