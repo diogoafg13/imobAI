@@ -579,6 +579,13 @@ renda líquida do 1.º ano), a TIR com a venda no fim, a comparação com o mesm
 tabela ano a ano. No separador Investir, o botão "Quando recupero o dinheiro investido?" abre a calculadora com os
 mesmos números.
 
+A valorização faz parte da rentabilidade: a calculadora mostra **de onde vem o lucro** (rendas líquidas depois de
+custos, IRS e juros + valorização + valor de hoje − crédito − dinheiro investido + custos de venda e mais-valias; as
+parcelas somam exatamente o lucro), **quanto a valorização acrescenta à TIR** (TIR com e sem valorização), **quanto já
+valorizou** quem já tem a casa (preço de compra, ano da compra e valor de hoje, comparados com a subida dos preços no
+concelho nos últimos 5 anos), a **TIR desde a compra** (com as rendas já recebidas) e uma tabela de **cenários de
+valorização** (−2% a +4% ao ano e o ritmo dos últimos 5 anos no concelho).
+
 ### Teste do site no browser (no build)
 
 `scripts/smoke_site.py` abre o site com os dados do build no Chromium (Playwright): todos os separadores, todas as

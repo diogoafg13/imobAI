@@ -2111,6 +2111,7 @@ function invToPayback() {
   put('pg', o.priceGrowth * 100); put('cy', o.contractYears); put('marg', o.marginal * 100); put('sell', o.sellCost * 100);
   if (o.vpt) put('imi', o.vpt * o.imiRate); else put('imi', o.price * o.imiRate);
   if (v.alt != null) put('alt', v.alt);
+  g.elements.conc.value = m.name; ['buyyear', 'received'].forEach((k) => { g.elements[k].value = ''; });
   showTab('guia', 'guide'); R.pick(); R.run();
 }
 function initInvest() {
@@ -2952,6 +2953,45 @@ function olThermo() {
     <p class="muted">Não é um modelo testado nem diz quando o ciclo vira: é um resumo do que os sinais mostram hoje. O score nacional, que junta quatro destes sinais, foi testado com dados passados de vários países — vê o separador Método.</p>`;
 }
 
+// valorização: quanto já valorizou, quanto pesa no lucro e cenários
+function grAppreciationHtml(o, P, f, price, valueIn, horizon) {
+  const m = gdMuni(f), last = P.rows[P.rows.length - 1], now = o.startYear;
+  const hist = m && m.price_growth_5y != null ? (1 + m.price_growth_5y) ** (1 / 5) - 1 : null;
+  const out = [];
+  // 1) quanto já valorizou (se já tens a casa)
+  const by = gdNum(f, 'buyyear');
+  if (price && valueIn && valueIn !== price) {
+    const yrs = by && by < now ? now - by : null, ann = yrs ? (valueIn / price) ** (1 / yrs) - 1 : null;
+    out.push(`<p><b>Já valorizou:</b> compraste por ${fmt.eur(price)}${by ? ` em ${by}` : ''} e vale hoje ${fmt.eur(valueIn)}: ${valueIn >= price ? '+' : '−'}${fmt.eur(Math.abs(valueIn - price))} (${fmt.spct(valueIn / price - 1, 0)}${ann != null ? `, ${fmt.spct(ann, 1)} por ano` : ''}).${hist != null ? ` Em ${esc(m.name)}, a mediana dos preços subiu ${fmt.spct(hist, 1)} por ano nos últimos 5 anos${m.tr5_price_real != null ? ` (${fmt.spct(m.tr5_price_real, 1)} acima da inflação)` : ''}.` : ''} É ganho no papel até venderes.</p>`);
+  }
+  // 2) de onde vem o lucro em `horizon` anos (vendendo no fim)
+  const pp = P.parts, rows = [
+    ['Rendas líquidas (depois de custos, IRS e juros do crédito)', pp.rents],
+    [`Valorização daqui para a frente (${fmt.spct(o.priceGrowth, 1)}/ano: de ${fmt.eur(o.value)} para ${fmt.eur(last.value)})`, pp.appreciation],
+    [price && valueIn && valueIn !== price ? 'Valorização já ganha menos custos de compra (valor de hoje − crédito − dinheiro investido)' : 'Custos de compra: impostos, escritura e obras (valor de hoje − crédito − dinheiro investido)', pp.start],
+    [`Custos de venda e mais-valias no fim`, pp.sale],
+  ];
+  const mx = Math.max(...rows.map((x) => Math.abs(x[1])), 1), pos = rows.filter((x) => x[1] > 0).reduce((a, x) => a + x[1], 0);
+  const sh = (v) => (pos > 0 && v > 0 ? ` <span class="muted">(${fmt.pct(v / pos, 0)} dos ganhos)</span>` : '');
+  out.push(`<h3>De onde vem o lucro em ${horizon} anos</h3><p class="muted">Vendendo no fim de ${now + horizon - 1}. A renda e a valorização são as duas partes da rentabilidade de um imóvel; aqui vês quanto vale cada uma.</p>
+    <div class="table-wrap"><table class="ol-table g-table"><tbody>${rows.map(([l, v]) => `<tr><td>${l}</td><td>${v >= 0 ? '+' : '−'}${fmt.eur(Math.abs(v))}${sh(v)}</td><td style="width:35%"><div class="why-bar"><i style="width:${(Math.abs(v) / mx * 100).toFixed(0)}%;background:${v >= 0 ? 'var(--green)' : 'var(--amber)'}"></i></div></td></tr>`).join('')}
+    <tr class="g-best"><td>Lucro total (o que recebes − o que puseste)</td><td>${P.profit >= 0 ? '+' : '−'}${fmt.eur(Math.abs(P.profit))}</td><td></td></tr></tbody></table></div>`);
+  // 3) quanto da TIR vem da valorização
+  const flat = paybackPlan({ ...o, priceGrowth: 0 });
+  if (P.irr != null && flat.irr != null) out.push(`<p>Rentabilidade anual (TIR) em ${horizon} anos: <b>${fmt.spct(P.irr, 1)}</b>. Sem valorização (casa a valer o mesmo), seria ${fmt.spct(flat.irr, 1)}: a valorização de ${fmt.spct(o.priceGrowth, 1)}/ano acrescenta ${fmt.n((P.irr - flat.irr) * 100, 1)} p.p. ${pp.appreciation > pp.rents ? 'Neste investimento, a valorização pesa mais do que a renda: o resultado depende sobretudo de os preços subirem — se pararem, o negócio é outro.' : 'Neste investimento, a renda pesa mais do que a valorização: o resultado depende menos de os preços subirem.'}</p>`);
+  else if (flat.irr == null && P.irr != null) out.push(`<p>Rentabilidade anual (TIR) em ${horizon} anos: <b>${fmt.spct(P.irr, 1)}</b>. Sem valorização, o investimento não chegava a recuperar o dinheiro investido: depende inteiramente de os preços subirem.</p>`);
+  // 4) cenários de valorização
+  const sc = [[-0.02, 'Preços a descer 2%/ano'], [0, 'Preços parados'], [0.02, 'Como a inflação (2%/ano)'], [0.04, 'Subida de 4%/ano']];
+  if (hist != null) sc.push([hist, `Como nos últimos 5 anos em ${m.name}`]);
+  if (!sc.some((x) => Math.abs(x[0] - o.priceGrowth) < 1e-9)) sc.push([o.priceGrowth, 'O teu pressuposto']);
+  sc.sort((a, b) => a[0] - b[0]);
+  const trs = sc.map(([g, l]) => { const Q = paybackPlan({ ...o, priceGrowth: g }), L = Q.rows[Q.rows.length - 1];
+    return `<tr${Math.abs(g - o.priceGrowth) < 1e-9 ? ' class="g-best"' : ''}><td>${esc(l)}</td><td>${fmt.spct(g, 1)}/ano</td><td>${fmt.eur(L.value)}</td><td>${Q.profit >= 0 ? '+' : '−'}${fmt.eur(Math.abs(Q.profit))}</td><td>${Q.irr == null ? '—' : fmt.spct(Q.irr, 1)}</td><td>${Q.paybackSale == null ? 'não' : `${now + Math.ceil(Q.paybackSale) - 1}`}</td></tr>`; }).join('');
+  out.push(`<h3>Cenários de valorização</h3><div class="table-wrap"><table class="ol-table g-table"><thead><tr><th>Cenário</th><th>Valorização</th><th>Valor em ${now + horizon - 1}</th><th>Lucro total</th><th>TIR</th><th>Recuperas, se vendesses, em</th></tr></thead><tbody>${trs}</tbody></table></div>
+    <p class="muted">${hist != null ? `Os últimos 5 anos foram excecionais em quase todo o país: repetir esse ritmo durante ${horizon} anos é improvável. ` : ''}Ninguém sabe a valorização futura: vê como o lucro muda entre cenários, em vez de escolher um.</p>`);
+  return out.join('');
+}
+
 // guia: recuperar o investimento (payback) — renda vs dinheiro investido, ano a ano
 const yrsTxt = (x) => (x == null ? null : x < 1 ? `${fmt.n(x * 12, 0)} meses` : `${fmt.n(x, 1)} anos`);
 function grRender() {
@@ -2967,16 +3007,20 @@ function grRender() {
   const o = { invested, rent, vacancy: num('vac', 1), condo: num('condo', 30), ins: num('ins', 150), imi: num('imi', (valueIn || invested + loan) * 0.003), maint: num('maint', 5) / 100,
     rentGrowth: num('rg', (RENT_COEF.value - 1) * 100) / 100, priceGrowth: num('pg', 2) / 100, contractYears: num('cy', 1), startYear: new Date().getFullYear(),
     loan, rate, years, value, sellCost: num('sell', 5) / 100, costBasis: price ? price + (tax ? tax.total : 0) + 1000 + works : null,
-    marginal: num('marg', 35) / 100, alt: num('alt', 3) / 100, horizon };
+    marginal: num('marg', 35) / 100, alt: num('alt', 3) / 100, horizon, received: gdNum(f, 'received') || 0 };
   const P = paybackPlan(o), y1 = P.rows[0];
-  const at = (x) => (x == null ? null : `${yrsTxt(x)} (${o.startYear + Math.ceil(x) - 1})`);
+  const at = (x) => (x == null ? null : x === 0 ? 'já recuperaste' : `${yrsTxt(x)} (${o.startYear + Math.ceil(x) - 1})`);
+  // TIR desde a compra: o investimento no ano da compra e as rendas já recebidas repartidas pelos anos até hoje
+  const by = gdNum(f, 'buyyear'), n0 = by && by < o.startYear ? o.startYear - by : 0;
+  const irrSince = n0 && sale ? irr([-invested, ...Array.from({ length: n0 }, () => (o.received || 0) / n0), ...P.rows.map((x, i) => x.cf + (i === P.rows.length - 1 ? x.saleNet : 0))]) : null;
   const tiles = [
-    gdTile('Dinheiro investido', fmt.eur(invested), invIn != null ? 'o que indicaste' : `entrada ${fmt.eur(price - loan)} + IMT e Imposto do Selo ${fmt.eur(tax.total)} + escritura ~1000 €${works ? ` + obras ${fmt.eur(works)}` : ''}`),
+    gdTile('Dinheiro investido', fmt.eur(invested), `${invIn != null ? 'o que indicaste' : `entrada ${fmt.eur(price - loan)} + IMT e Imposto do Selo ${fmt.eur(tax.total)} + escritura ~1000 €${works ? ` + obras ${fmt.eur(works)}` : ''}`}${o.received ? ` · já recebeste ${fmt.eur(o.received)} de rendas líquidas` : ''}`),
     gdTile('Recuperas só com as rendas em', at(P.paybackCash) ?? `não, em ${horizon} anos`, `fluxo de caixa no 1.º ano: ${y1.cf >= 0 ? '+' : '−'}${fmt.eur(Math.abs(y1.cf / 12))}/mês${loan > 0 ? ` (depois da prestação de ${fmt.eur(P.pay)})` : ''}`),
     ...(loan > 0 ? [gdTile('Contando o capital que amortizas', at(P.paybackEquity) ?? `não, em ${horizon} anos`, 'a parte da prestação que paga o crédito fica tua: é dinheiro guardado na casa')] : []),
     ...(sale ? [gdTile('Se vendesses', at(P.paybackSale) ?? `não, em ${horizon} anos`, `a partir daí, vender devolvia mais do que puseste (valorização de ${fmt.spct(o.priceGrowth, 1)}/ano, custos de venda, crédito${o.costBasis != null ? ' e mais-valias' : ''})`)] : []),
     gdTile('Payback simples', P.simple == null ? '—' : yrsTxt(P.simple), 'dinheiro investido ÷ renda líquida do 1.º ano (sem crédito, sem subidas): a regra rápida'),
-    ...(sale ? [gdTile(`Em ${horizon} anos`, P.irr == null ? '—' : `TIR ${fmt.spct(P.irr, 1)}`, `vendendo no fim: ${fmt.eur(P.endWealth)} recebidos ao todo, contra ${fmt.eur(P.endAlt)} se os ${fmt.eur(invested)} rendessem ${fmt.pct(o.alt, 1)}/ano`)]
+    ...(irrSince != null ? [gdTile(`TIR desde a compra (${by})`, fmt.spct(irrSince, 1), `rendimento anual do dinheiro investido em ${by}, com as rendas já recebidas e a venda em ${o.startYear + horizon - 1}`)] : []),
+    ...(sale ? [gdTile(`Em ${horizon} anos`, irrSince != null ? fmt.eur(P.endWealth) : P.irr == null ? (o.received ? 'já recuperado' : '—') : `TIR ${fmt.spct(P.irr, 1)}`, `vendendo no fim: ${fmt.eur(P.endWealth)} recebidos ao todo, contra ${fmt.eur(P.endAlt)} se os ${fmt.eur(invested)} rendessem ${fmt.pct(o.alt, 1)}/ano`)]
       : [gdTile(`Em ${horizon} anos`, `${fmt.eur(P.rows[P.rows.length - 1].cumCash + invested)}`, `recebidos das rendas, contra ${fmt.eur(P.endAlt)} se os ${fmt.eur(invested)} rendessem ${fmt.pct(o.alt, 1)}/ano; indica o valor da casa para contar a venda`)]),
   ];
   const L = (k) => P.rows.map((x) => [String(x.year), Math.round(x[k])]);
@@ -2987,7 +3031,8 @@ function grRender() {
   if (loan > 0) li.push(`O crédito de ${fmt.eur(loan)} a ${fmt.n(rate, 2)}% em ${years} anos custa ${fmt.eur(P.pay)}/mês; no 1.º ano, ${fmt.eur(y1.interest)} são juros (custo) e ${fmt.eur(y1.principal)} capital (fica teu). Quando o crédito acabar, em ${o.startYear + Math.round(years)}, a renda fica quase toda para ti.`);
   li.push('O payback não conta o valor do dinheiro no tempo: 10 000 € daqui a 15 anos valem menos do que hoje. A TIR conta: é o rendimento anual do dinheiro que puseste, com a venda no fim.');
   li.push(`IRS sobre as rendas: ${fmt.pct(irsRentRate(rent, o.contractYears, o.startYear), 0)} em ${o.startYear} (10% para rendas até 2300 €/mês até 2029; depois 25%, ou menos com contratos longos). Custos: IMI ${fmt.eur(o.imi)}/ano, condomínio, seguro, manutenção de ${fmt.pct(o.maint, 0)} da renda e ${fmt.n(o.vacancy, 0)} mês vazio por ano.`);
-  out.innerHTML = `<div class="stats">${tiles.join('')}</div><div class="chart-cap"><span>Dinheiro recuperado ao longo do tempo (€, acima de 0 = já recuperaste o que investiste)</span></div><div id="gr-chart" class="chart"></div>${tbl}<ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul><p class="muted">Não é aconselhamento financeiro nem fiscal. Fora das contas: inquilinos que não pagam, obras grandes, mudanças de lei e comissões bancárias.</p>`;
+  const valHtml = sale ? grAppreciationHtml(o, P, f, price, valueIn, horizon) : '<p class="muted">Indica o preço de compra ou o valor da casa para veres a valorização e de onde vem o lucro.</p>';
+  out.innerHTML = `<div class="stats">${tiles.join('')}</div>${valHtml}<div class="chart-cap"><span>Dinheiro recuperado ao longo do tempo (€, acima de 0 = já recuperaste o que investiste)</span></div><div id="gr-chart" class="chart"></div>${tbl}<ul class="im-list">${li.map((x) => `<li>${x}</li>`).join('')}</ul><p class="muted">Não é aconselhamento financeiro nem fiscal. Fora das contas: inquilinos que não pagam, obras grandes, mudanças de lei e comissões bancárias.</p>`;
   try {
     lineChart('gr-chart', 'Recuperação do investimento', [
       { name: 'Só com as rendas', data: L('cumCash'), fmt: fmt.eur },

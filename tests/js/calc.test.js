@@ -347,3 +347,19 @@ test('paybackPlan: sem crédito nem subidas, recupera em investido ÷ rendimento
   assert.equal(c.paybackPlan({ ...base, rent: 50, condo: 100 }).paybackCash, null);
   assert.ok(Number.isFinite(p.irr));
 });
+
+test('paybackPlan: rendas + valorização + diferença inicial + venda = lucro; a valorização sobe a TIR', () => {
+  const o = { invested: 50000, rent: 900, vacancy: 1, condo: 30, ins: 150, imi: 600, maint: 0.05, rentGrowth: 0.02, priceGrowth: 0.03,
+    contractYears: 1, startYear: 2026, loan: 160000, rate: 3.5, years: 30, value: 200000, sellCost: 0.05, costBasis: 211000, marginal: 0.35, alt: 0.03, horizon: 20 };
+  const p = c.paybackPlan(o);
+  const lucro = p.rows[p.rows.length - 1].ifSold;            // acumulado − investido + venda líquida no fim
+  assert.ok(Math.abs(p.profit - lucro) < 1e-6);
+  assert.ok(Math.abs(p.parts.appreciation - 200000 * (1.03 ** 20 - 1)) < 1e-6);
+  assert.ok(Math.abs(p.parts.start - (200000 - 160000 - 50000)) < 1e-9);
+  const flat = c.paybackPlan({ ...o, priceGrowth: 0 });
+  assert.ok(p.irr > flat.irr && flat.parts.appreciation === 0);
+  // rendas já recebidas antecipam a recuperação
+  const rec = c.paybackPlan({ ...o, received: 20000 });
+  assert.ok(Math.abs(rec.profit - p.profit - 20000) < 1e-6);
+  assert.ok(rec.paybackEquity == null || p.paybackEquity == null || rec.paybackEquity <= p.paybackEquity);
+});

@@ -181,7 +181,8 @@ def steps(pg, s: Smoke, ctx, base: str) -> None:
               ("sign", "ga", {"price": "280000", "conc": names[lisboa], "area": "90", "savings": "50000", "income": "3200", "expenses": "1300"}),
               ("wait", "gw", {"conc": names[porto], "area": "80", "savings": "40000", "rent": "900", "save": "400"}),
               ("amort", "gm", {"bal": "150000", "rate": "3.5", "left": "25", "amount": "20000", "left_cash": "15000", "expenses": "1500"}),
-              ("payback", "gr", {"price": "200000", "down": "20", "works": "10000", "rent": "950"})]
+              ("payback", "gr", {"conc": names[porto], "price": "200000", "down": "20", "works": "10000", "rent": "950"}),
+              ("payback", "gr", {"price": "150000", "value": "240000", "buyyear": "2016", "invested": "40000", "loanbal": "90000", "received": "45000"})]
     for kind, fid, fill in guides:
         pg.click(f"[data-gp={kind}]")
         for k, v in fill.items():

@@ -190,9 +190,10 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     </div>
 
     <div data-guide="payback" hidden>
-      <p class="muted">Quando é que a renda te devolve o dinheiro que puseste? Ano a ano: o que investiste à cabeça, o que a renda paga depois de custos, IRS e prestação, e em que ano recuperas — só com as rendas, contando o capital do crédito que vais amortizando, e se vendesses. Os valores ficam só neste browser.</p>
+      <p class="muted">Quando é que o investimento te devolve o dinheiro que puseste, e de onde vem o lucro? Ano a ano: o que investiste à cabeça, o que a renda paga depois de custos, IRS e prestação, quanto a casa valoriza, e em que ano recuperas — só com as rendas, contando o capital do crédito que vais amortizando, e se vendesses. Se já tens a casa, indica o valor de hoje e o ano da compra para veres quanto já valorizou. Os valores ficam só neste browser.</p>
       <form id="gr-form" class="aff-form im-form" autocomplete="off">
-        <label>Preço da casa (€) <input name="price" type="number" min="1000" step="any" inputmode="numeric" placeholder="ex.: 200000"></label>
+        <label>Concelho <input name="conc" list="im-conc" placeholder="opcional: valorização da zona"></label>
+        <label>Preço de compra (€) <input name="price" type="number" min="1000" step="any" inputmode="numeric" placeholder="ex.: 200000"></label>
         <label>Entrada (%) <input name="down" type="number" min="0" max="100" step="any" inputmode="decimal" placeholder="20"></label>
         <label>Obras e mobília (€) <input name="works" type="number" min="0" step="any" inputmode="numeric" placeholder="0"></label>
         <label>Renda (€/mês) <input name="rent" type="number" min="0" step="any" inputmode="numeric" placeholder="ex.: 900"></label>
@@ -200,7 +201,9 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <label>Prazo do crédito (anos) <input name="years" type="number" min="1" max="40" step="any" inputmode="numeric" placeholder="30"></label>
         <label>Ou: dinheiro que já investiste (€) <input name="invested" type="number" min="0" step="any" inputmode="numeric" placeholder="entrada + impostos + obras"></label>
         <label>Ou: crédito em dívida (€) <input name="loanbal" type="number" min="0" step="any" inputmode="numeric" placeholder="preço × (1 − entrada)"></label>
-        <label>Valor da casa hoje (€) <input name="value" type="number" min="0" step="any" inputmode="numeric" placeholder="o preço, para contar a venda"></label>
+        <label>Valor da casa hoje (€) <input name="value" type="number" min="0" step="any" inputmode="numeric" placeholder="o preço de compra"></label>
+        <label>Ano da compra <input name="buyyear" type="number" min="1950" max="2100" step="1" inputmode="numeric" placeholder="se já tens a casa"></label>
+        <label>Rendas líquidas já recebidas (€) <input name="received" type="number" min="0" step="any" inputmode="numeric" placeholder="se já arrendas"></label>
         <details class="im-assume"><summary>Custos e pressupostos (editáveis)</summary>
           <label>Meses vazio por ano <input name="vac" type="number" min="0" max="12" step="any" placeholder="1"></label>
           <label>Condomínio (€/mês) <input name="condo" type="number" min="0" step="any" placeholder="30"></label>

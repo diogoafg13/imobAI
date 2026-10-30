@@ -488,7 +488,7 @@ function waitOrBuy(o) {
 // já amortizado (dinheiro que fica na casa), e contando a venda nesse ano (valor − custos − crédito − mais-valias).
 function paybackPlan(o) {
   const r = (o.rate || 0) / 1200, n = Math.round((o.years || 0) * 12), pay = o.loan > 0 ? annuity(o.loan, o.rate, o.years) : 0;
-  let bal = o.loan || 0, cum = -o.invested, princ = 0;
+  let bal = o.loan || 0, cum = -o.invested + (o.received || 0), princ = 0;
   const rows = [];
   for (let t = 1; t <= o.horizon; t++) {
     const year = o.startYear + t - 1, rentM = o.rent * (1 + o.rentGrowth) ** (t - 1), gross = rentM * (12 - o.vacancy);
@@ -507,16 +507,24 @@ function paybackPlan(o) {
       balance: bal, value, cgt, saleNet, ifSold: cum + saleNet, alt: o.invested * (1 + (o.alt || 0)) ** t });
   }
   const when = (key) => {
-    let prev = -o.invested;
+    let prev = -o.invested + (o.received || 0);
     for (const x of rows) { const v = x[key]; if (v >= 0) return x.t - 1 + (prev < 0 && v > prev ? -prev / (v - prev) : 0); prev = v; }
     return null;
   };
   const y1 = rows[0], noi1 = y1 ? y1.gross - y1.costs - y1.irs : 0;
   const last = rows[rows.length - 1];
+  // de onde vem o resultado no fim do horizonte (vendendo): as parcelas somam exatamente o lucro
+  const parts = last ? {
+    rents: rows.reduce((a, x) => a + x.gross - x.costs - x.irs - x.interest, 0) + (o.received || 0),   // rendas depois de custos, IRS e juros
+    appreciation: last.value - o.value,                                    // valorização daqui para a frente
+    start: (o.value - (o.loan || 0)) - o.invested,                         // valor de hoje − crédito − dinheiro investido
+    sale: -(last.value * o.sellCost) - last.cgt,                           // custos de venda e mais-valias
+  } : null;
+  const profit = parts ? parts.rents + parts.appreciation + parts.start + parts.sale : null;
   return { rows, pay, paybackCash: when('cumCash'), paybackEquity: when('cumEquity'), paybackSale: when('ifSold'),
     simple: noi1 > 0 ? o.invested / noi1 : null, noi1,
-    irr: last ? irr([-o.invested, ...rows.map((x, i) => x.cf + (i === rows.length - 1 ? x.saleNet : 0))]) : null,
-    endWealth: last ? last.cumCash + o.invested + last.saleNet : null, endAlt: last ? last.alt : null };
+    irr: last ? irr([-o.invested + (o.received || 0), ...rows.map((x, i) => x.cf + (i === rows.length - 1 ? x.saleNet : 0))]) : null,
+    endWealth: last ? last.cumCash + o.invested + last.saleNet : null, endAlt: last ? last.alt : null, parts, profit };
 }
 
 // coordenadas como o Google Maps as copia ("38.83092, -9.16851"), com vírgula decimal ou pela ordem inversa;
