@@ -586,6 +586,14 @@ valorizou** quem já tem a casa (preço de compra, ano da compra e valor de hoje
 concelho nos últimos 5 anos), a **TIR desde a compra** (com as rendas já recebidas) e uma tabela de **cenários de
 valorização** (−2% a +4% ao ano e o ritmo dos últimos 5 anos no concelho).
 
+O capital pago ao crédito conta ou não como recuperado, **à escolha de quem usa**: "sim" (é teu, fica na casa — a
+medida principal passa a ser rendas + capital amortizado) ou "não" (só o dinheiro que volta ao bolso); a outra medida
+aparece sempre ao lado. A **amortização extra** (€/mês abatidos ao crédito além da prestação, a reduzir o prazo ou a
+prestação, com a comissão de reembolso antecipado — até 0,5% em taxa variável, 2% em fixa — mais 4% de Imposto do
+Selo) sai do fluxo de caixa e entra no capital amortizado: a calculadora mostra quando o crédito fica pago, os juros
+poupados, a recuperação e a TIR com e sem ela, e a alternativa passa a receber o mesmo dinheiro (para comparar o mesmo
+esforço).
+
 ### Teste do site no browser (no build)
 
 `scripts/smoke_site.py` abre o site com os dados do build no Chromium (Playwright): todos os separadores, todas as

@@ -190,7 +190,7 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
     </div>
 
     <div data-guide="payback" hidden>
-      <p class="muted">Quando é que o investimento te devolve o dinheiro que puseste, e de onde vem o lucro? Ano a ano: o que investiste à cabeça, o que a renda paga depois de custos, IRS e prestação, quanto a casa valoriza, e em que ano recuperas — só com as rendas, contando o capital do crédito que vais amortizando, e se vendesses. Se já tens a casa, indica o valor de hoje e o ano da compra para veres quanto já valorizou. Os valores ficam só neste browser.</p>
+      <p class="muted">Quando é que o investimento te devolve o dinheiro que puseste, e de onde vem o lucro? Ano a ano: o que investiste à cabeça, o que a renda paga depois de custos, IRS e prestação, quanto a casa valoriza, e em que ano recuperas — só com as rendas, contando o capital do crédito que vais amortizando (incluindo o que abates por tua conta todos os meses), e se vendesses. Tu escolhes se o capital pago ao crédito conta como recuperado. Se já tens a casa, indica o valor de hoje e o ano da compra para veres quanto já valorizou. Os valores ficam só neste browser.</p>
       <form id="gr-form" class="aff-form im-form" autocomplete="off">
         <label>Concelho <input name="conc" list="im-conc" placeholder="opcional: valorização da zona"></label>
         <label>Preço de compra (€) <input name="price" type="number" min="1000" step="any" inputmode="numeric" placeholder="ex.: 200000"></label>
@@ -204,6 +204,8 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
         <label>Valor da casa hoje (€) <input name="value" type="number" min="0" step="any" inputmode="numeric" placeholder="o preço de compra"></label>
         <label>Ano da compra <input name="buyyear" type="number" min="1950" max="2100" step="1" inputmode="numeric" placeholder="se já tens a casa"></label>
         <label>Rendas líquidas já recebidas (€) <input name="received" type="number" min="0" step="any" inputmode="numeric" placeholder="se já arrendas"></label>
+        <label>Amortização extra ao crédito (€/mês) <input name="extra" type="number" min="0" step="any" inputmode="numeric" placeholder="0"></label>
+        <label>O capital pago ao crédito conta como recuperado? <select name="eq"><option value="yes">Sim: é meu, fica na casa</option><option value="no">Não: só o dinheiro que volta ao bolso</option></select></label>
         <details class="im-assume"><summary>Custos e pressupostos (editáveis)</summary>
           <label>Meses vazio por ano <input name="vac" type="number" min="0" max="12" step="any" placeholder="1"></label>
           <label>Condomínio (€/mês) <input name="condo" type="number" min="0" step="any" placeholder="30"></label>
@@ -217,6 +219,8 @@ document.write('<link rel="stylesheet" href="style.css?v=' + window.__v + '">');
           <label>Custos de venda (%) <input name="sell" type="number" min="0" max="20" step="any" placeholder="5"></label>
           <label>Alternativa: o dinheiro renderia (%/ano) <input name="alt" type="number" min="0" max="20" step="any" placeholder="3"></label>
           <label>Anos a mostrar <input name="horizon" type="number" min="5" max="40" step="1" placeholder="25"></label>
+          <label>Amortização extra para <select name="xmode"><option value="term">Reduzir o prazo</option><option value="pay">Reduzir a prestação</option></select></label>
+          <label>Comissão por amortizar (%) <input name="fee" type="number" min="0" max="5" step="any" placeholder="0,5 (taxa fixa: até 2)"></label>
         </details>
         <span class="im-buttons"><button type="submit" class="btn">Calcular</button></span>
       </form>

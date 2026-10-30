@@ -483,28 +483,41 @@ function waitOrBuy(o) {
 //   condo (€/mês), ins (€/ano), imi (€/ano), maint (fração da renda), rentGrowth, priceGrowth, contractYears, startYear,
 //   loan (€, 0 sem crédito), rate (%), years (prazo), value (valor da casa hoje), sellCost (fração), costBasis (preço +
 //   impostos + obras, para as mais-valias; null = sem mais-valias), marginal (taxa marginal de IRS), alt (rendimento
-//   anual da alternativa), horizon (anos) }
+//   anual da alternativa), horizon (anos), extra (€/mês abatidos ao crédito além da prestação), extraMode ('term' reduz
+//   o prazo, 'pay' reduz a prestação), feeRate (comissão de reembolso antecipado, fração; mais Imposto do Selo) }
 // Três medidas: só com as rendas (fluxo de caixa acumulado ≥ dinheiro investido), contando também o capital do crédito
 // já amortizado (dinheiro que fica na casa), e contando a venda nesse ano (valor − custos − crédito − mais-valias).
+// A amortização extra sai do bolso (baixa o fluxo de caixa) e entra no capital amortizado (baixa o crédito em dívida).
 function paybackPlan(o) {
-  const r = (o.rate || 0) / 1200, n = Math.round((o.years || 0) * 12), pay = o.loan > 0 ? annuity(o.loan, o.rate, o.years) : 0;
-  let bal = o.loan || 0, cum = -o.invested + (o.received || 0), princ = 0;
-  const rows = [];
+  const r = (o.rate || 0) / 1200, n = Math.round((o.years || 0) * 12), extra = o.loan > 0 ? o.extra || 0 : 0;
+  let pay = o.loan > 0 ? annuity(o.loan, o.rate, o.years) : 0, bal = o.loan || 0, cum = -o.invested + (o.received || 0), princ = 0;
+  let altV = o.invested, paidOff = null;
+  const pay0 = pay, rows = [];
   for (let t = 1; t <= o.horizon; t++) {
     const year = o.startYear + t - 1, rentM = o.rent * (1 + o.rentGrowth) ** (t - 1), gross = rentM * (12 - o.vacancy);
     const maint = o.maint * gross, costs = o.imi + o.condo * 12 + o.ins + maint;
     const irsRate = irsRentRate(rentM, o.contractYears, year), irs = Math.max(0, gross - o.imi - o.condo * 12 - maint) * irsRate;
-    let interest = 0, principal = 0, debt = 0;
-    for (let k = 0; k < 12 && bal > 0.005 && (t - 1) * 12 + k < n; k++) {
-      const i = bal * r; interest += i; principal += pay - i; debt += pay; bal = Math.max(0, bal - (pay - i));
+    let interest = 0, principal = 0, debt = 0, xp = 0, fee = 0;
+    for (let k = 0; k < 12 && bal > 0.005; k++) {
+      const m = (t - 1) * 12 + k;
+      if (m >= n) { principal += bal; debt += bal; bal = 0; if (paidOff == null) paidOff = m / 12; break; }   // resto de arredondamento
+      const i = bal * r, p = Math.min(pay - i, bal);
+      interest += i; principal += p; debt += i + p; bal -= p;
+      if (extra > 0 && bal > 0.005) {
+        const e = Math.min(extra, bal);
+        xp += e; fee += e * (o.feeRate || 0) * (1 + FEE_IS); bal -= e;
+        if (o.extraMode === 'pay' && n - m - 1 > 0) pay = annuity(bal, o.rate, (n - m - 1) / 12);
+      }
+      if (bal <= 0.005 && paidOff == null) { bal = 0; paidOff = (m + 1) / 12; }
     }
-    const cf = gross - costs - irs - debt;
-    cum += cf; princ += principal;
+    const cf = gross - costs - irs - debt - xp - fee;
+    cum += cf; princ += principal + xp;
+    altV = altV * (1 + (o.alt || 0)) + (xp + fee) * (1 + (o.alt || 0)) ** 0.5;   // a alternativa também recebe a amortização extra
     const value = o.value * (1 + o.priceGrowth) ** t;
     const cgt = o.costBasis != null ? Math.max(0, value * (1 - o.sellCost) - o.costBasis) * 0.5 * (o.marginal || 0) : 0;
     const saleNet = value * (1 - o.sellCost) - bal - cgt;
-    rows.push({ t, year, rentM, gross, costs, irs, irsRate, interest, principal, debt, cf, cumCash: cum, cumEquity: cum + princ,
-      balance: bal, value, cgt, saleNet, ifSold: cum + saleNet, alt: o.invested * (1 + (o.alt || 0)) ** t });
+    rows.push({ t, year, rentM, gross, costs, irs, irsRate, interest, principal, extra: xp, fee, debt, cf, cumCash: cum, cumEquity: cum + princ,
+      balance: bal, pay, value, cgt, saleNet, ifSold: cum + saleNet, alt: altV });
   }
   const when = (key) => {
     let prev = -o.invested + (o.received || 0);
@@ -515,16 +528,20 @@ function paybackPlan(o) {
   const last = rows[rows.length - 1];
   // de onde vem o resultado no fim do horizonte (vendendo): as parcelas somam exatamente o lucro
   const parts = last ? {
-    rents: rows.reduce((a, x) => a + x.gross - x.costs - x.irs - x.interest, 0) + (o.received || 0),   // rendas depois de custos, IRS e juros
+    rents: rows.reduce((a, x) => a + x.gross - x.costs - x.irs - x.interest - x.fee, 0) + (o.received || 0),   // rendas depois de custos, IRS, juros e comissões
     appreciation: last.value - o.value,                                    // valorização daqui para a frente
     start: (o.value - (o.loan || 0)) - o.invested,                         // valor de hoje − crédito − dinheiro investido
     sale: -(last.value * o.sellCost) - last.cgt,                           // custos de venda e mais-valias
   } : null;
   const profit = parts ? parts.rents + parts.appreciation + parts.start + parts.sale : null;
-  return { rows, pay, paybackCash: when('cumCash'), paybackEquity: when('cumEquity'), paybackSale: when('ifSold'),
+  const sum = (k) => rows.reduce((a, x) => a + x[k], 0);
+  return { rows, pay: pay0, paidOff, extraTotal: sum('extra'), feeTotal: sum('fee'), interestTotal: sum('interest'),
+    paybackCash: when('cumCash'), paybackEquity: when('cumEquity'), paybackSale: when('ifSold'),
     simple: noi1 > 0 ? o.invested / noi1 : null, noi1,
     irr: last ? irr([-o.invested + (o.received || 0), ...rows.map((x, i) => x.cf + (i === rows.length - 1 ? x.saleNet : 0))]) : null,
-    endWealth: last ? last.cumCash + o.invested + last.saleNet : null, endAlt: last ? last.alt : null, parts, profit };
+    // o que o imóvel devolve ao todo (rendas líquidas + venda), antes da amortização extra — compara com a alternativa,
+    // que recebe o dinheiro investido e a amortização extra
+    endWealth: last ? last.cumCash + o.invested + last.saleNet + sum('extra') + sum('fee') : null, endAlt: last ? last.alt : null, parts, profit };
 }
 
 // coordenadas como o Google Maps as copia ("38.83092, -9.16851"), com vírgula decimal ou pela ordem inversa;

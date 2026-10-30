@@ -182,11 +182,20 @@ def steps(pg, s: Smoke, ctx, base: str) -> None:
               ("wait", "gw", {"conc": names[porto], "area": "80", "savings": "40000", "rent": "900", "save": "400"}),
               ("amort", "gm", {"bal": "150000", "rate": "3.5", "left": "25", "amount": "20000", "left_cash": "15000", "expenses": "1500"}),
               ("payback", "gr", {"conc": names[porto], "price": "200000", "down": "20", "works": "10000", "rent": "950"}),
-              ("payback", "gr", {"price": "150000", "value": "240000", "buyyear": "2016", "invested": "40000", "loanbal": "90000", "received": "45000"})]
+              ("payback", "gr", {"extra": "200"}),
+              ("payback", "gr", {"price": "150000", "value": "240000", "buyyear": "2016", "invested": "40000", "loanbal": "90000", "received": "45000", "eq": "no"}),
+              ("payback", "gr", {"extra": "300", "xmode": "pay", "fee": "2"})]
     for kind, fid, fill in guides:
         pg.click(f"[data-gp={kind}]")
         for k, v in fill.items():
-            pg.fill(f"#{fid}-form [name={k}]", v)
+            sel = f"#{fid}-form [name={k}]"
+            tag, shown = pg.eval_on_selector(sel, "e => [e.tagName, e.checkVisibility()]")
+            if not shown:                                   # campos dentro de "Custos e pressupostos" (fechado)
+                pg.eval_on_selector(sel, "(e, v) => { e.value = v; }", v)
+            elif tag == "SELECT":
+                pg.select_option(sel, v)
+            else:
+                pg.fill(sel, v)
             if k == "conc":
                 pg.dispatch_event(f"#{fid}-form [name=conc]", "change")
                 pg.wait_for_timeout(500)

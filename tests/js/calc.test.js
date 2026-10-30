@@ -363,3 +363,23 @@ test('paybackPlan: rendas + valorização + diferença inicial + venda = lucro; 
   assert.ok(Math.abs(rec.profit - p.profit - 20000) < 1e-6);
   assert.ok(rec.paybackEquity == null || p.paybackEquity == null || rec.paybackEquity <= p.paybackEquity);
 });
+
+test('paybackPlan: a amortização extra sai do bolso, entra no capital e encurta o crédito', () => {
+  const o = { invested: 50000, rent: 900, vacancy: 1, condo: 30, ins: 150, imi: 600, maint: 0.05, rentGrowth: 0.02, priceGrowth: 0.03,
+    contractYears: 1, startYear: 2026, loan: 160000, rate: 3.5, years: 30, value: 200000, sellCost: 0.05, costBasis: 211000, marginal: 0.35, alt: 0.03, horizon: 30 };
+  const p = c.paybackPlan(o), x = c.paybackPlan({ ...o, extra: 200, feeRate: 0.005 });
+  assert.ok(Math.abs(p.paidOff - 30) < 1e-9 && x.paidOff < 22);                  // 200 €/mês tiram mais de 8 anos ao crédito
+  assert.ok(x.interestTotal < p.interestTotal - 30000);
+  assert.ok(Math.abs(x.rows[0].extra - 2400) < 1e-9 && Math.abs(x.rows[0].fee - 2400 * 0.005 * 1.04) < 1e-9);
+  assert.ok(Math.abs(x.rows[0].cf - (p.rows[0].cf - 2400 - x.rows[0].fee)) < 1e-6);   // sai do bolso
+  assert.ok(Math.abs(x.rows[0].cumEquity - x.rows[0].cumCash - x.rows[0].principal - 2400) < 1e-6);   // e fica na casa
+  assert.ok(Math.abs(x.profit - x.rows[x.rows.length - 1].ifSold) < 0.01);          // as parcelas continuam a somar o lucro
+  assert.ok(x.profit > p.profit);                                                  // poupa juros
+  assert.ok(x.rows[29].alt > p.rows[29].alt);                                      // a alternativa recebe o mesmo dinheiro
+  // reduzir a prestação: o prazo fica, a prestação desce e poupa menos juros do que reduzir o prazo
+  const y = c.paybackPlan({ ...o, extra: 200, extraMode: 'pay' });
+  assert.ok(y.rows[5].pay < y.pay && y.paidOff > x.paidOff + 5);                 // a prestação desce; acaba mais tarde
+  assert.ok(y.interestTotal > c.paybackPlan({ ...o, extra: 200 }).interestTotal);
+  // sem crédito, a amortização extra não conta
+  assert.equal(c.paybackPlan({ ...o, loan: 0, extra: 200 }).extraTotal, 0);
+});
