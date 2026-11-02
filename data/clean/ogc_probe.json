@@ -1,11 +1,11 @@
 {
- "updated": "2026-10-26",
+ "updated": "2026-11-02",
  "cfg": "{\"dgt\": {\"base\": \"https://ogcapi.dgterritorio.gov.pt\", \"grep\": [\"^crus\", \"cadastro\", \"srup_\"], \"point\": [-9.1685, 38.8309], \"sample\": [\"crus\", \"cadastro\", \"srup_ran\", \"srup_ren_areal\", \"srup_areas_protegidas\", \"srup_zec\", \"srup_zpe\", \"srup_perigosidade_inc_rural\"]}}",
  "apis": {
   "dgt": {
    "landing_status": 200,
    "cors": "https://example.github.io",
-   "n_collections": 90,
+   "n_collections": 94,
    "match_^crus": {
     "n": 1,
     "first": [
@@ -115,16 +115,16 @@
       "validto"
      ],
      "example": {
-      "nationalcadastralreference": "AAA000000001",
       "inspireid": "PT.DGT.CP.AAA000000001",
       "label": "AAA 000 000 001",
+      "nationalcadastralreference": "AAA000000001",
       "areavalue": 3125.0,
       "validfrom": null,
       "validto": null,
       "beginlifespanversion": "2023-11-21T00:00:00+00:00",
       "endlifespanversion": null,
       "administrativeunit": "110808",
-      "id": 1265762485
+      "id": 1230014852
      },
      "geometry": "MultiPolygon",
      "point_status": 200,
@@ -359,5 +359,5 @@
   }
  },
  "ok": true,
- "summary": "dgt: 90 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, cadastro, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural"
+ "summary": "dgt: 94 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, cadastro, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural"
 }

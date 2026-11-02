@@ -1,5 +1,5 @@
 {
-"updated": "2026-10-26",
+"updated": "2026-11-02",
 "complete": true,
 "scanned": [],
 "items": [
@@ -1008,7 +1008,7 @@
 "title": "Indicador de confiança (Saldo de respostas extremas) da construção",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à construção e obras públicas"
 },
 {
@@ -1016,7 +1016,7 @@
 "title": "Apreciação sobre a atividade nos últimos 3 meses (Saldo de respostas extremas) da construção",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à construção e obras públicas"
 },
 {
@@ -1024,7 +1024,7 @@
 "title": "Apreciação sobre a carteira de encomendas (Saldo de respostas extremas) da construção",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à construção e obras públicas"
 },
 {
@@ -1032,7 +1032,7 @@
 "title": "Perspetivas sobre o emprego nos próximos 3 meses (Saldo de respostas extremas) da construção",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à construção e obras públicas"
 },
 {
@@ -1040,7 +1040,7 @@
 "title": "Perspetivas sobre os preços de venda nos próximos 3 meses (Saldo de respostas extremas) na construção",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à construção e obras públicas"
 },
 {
@@ -1048,7 +1048,7 @@
 "title": "Perspetivas sobre a atividade nos próximos 3 meses (Saldo de respostas extremas) da construção",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura à construção e obras públicas"
 },
 {
@@ -1056,7 +1056,7 @@
 "title": "Capacidade produtiva (%) da construção",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura à construção e obras públicas"
 },
 {
@@ -1589,7 +1589,7 @@
 },
 {
 "varcd": "0000220",
-"title": "Estabelecimentos de outra intermediação monetária por 10 000 habitantes (N.º)",
+"title": "Estabelecimentos de outra intermediação monetária por 10 000 habitantes (Série CAE Rev. 3 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1597,7 +1597,7 @@
 },
 {
 "varcd": "0000221",
-"title": "Crédito à habitação por habitante (€)",
+"title": "Crédito à habitação por habitante (Série CAE Rev. 3 - €)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1605,7 +1605,7 @@
 },
 {
 "varcd": "0000222",
-"title": "Depósitos de clientes (€) nos estabelecimentos de outra intermediação monetária",
+"title": "Depósitos de clientes (Série CAE Rev. 3 - €) nos Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1613,7 +1613,7 @@
 },
 {
 "varcd": "0000223",
-"title": "Crédito concedido (€) por estabelecimentos de outra intermediação monetária",
+"title": "Crédito concedido (Série CAE Rev. 3 - €) por Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1621,7 +1621,7 @@
 },
 {
 "varcd": "0000224",
-"title": "Estabelecimentos de bancos e caixas económicas (N.º)",
+"title": "Estabelecimentos de bancos e caixas económicas (Série - CAE Rev.3 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1629,7 +1629,7 @@
 },
 {
 "varcd": "0000225",
-"title": "Estabelecimentos de caixas de crédito agrícola mútuo (N.º)",
+"title": "Estabelecimentos de caixas de crédito agrícola mútuo (Série CAE Rev. 3 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1637,7 +1637,7 @@
 },
 {
 "varcd": "0000226",
-"title": "Pessoal ao serviço (N.º) nos estabelecimentos de bancos e caixas económicas",
+"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos Estabelecimentos de bancos e caixas económicas",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1645,7 +1645,7 @@
 },
 {
 "varcd": "0000227",
-"title": "Pessoal ao serviço (N.º) nos estabelecimentos de caixas de crédito agrícola mútuo",
+"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos Estabelecimentos de caixas de crédito agrícola mútuo",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1653,7 +1653,7 @@
 },
 {
 "varcd": "0000228",
-"title": "Custos com o pessoal (€) nos estabelecimentos de bancos e caixas económicas",
+"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos Estabelecimentos de bancos e caixas económicas",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1661,7 +1661,7 @@
 },
 {
 "varcd": "0000229",
-"title": "Custos com o pessoal (€) nos estabelecimentos de caixas de crédito agrícola mútuo",
+"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos Estabelecimentos de caixas de crédito agrícola mútuo",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -5672,7 +5672,7 @@
 "title": "Passageiros transportados (N.º) pelas empresas exploradoras de sistema ferroviário ligeiro",
 "geo": "Sistema de metropolitano",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito ao transporte por metropolitano"
 },
 {
@@ -5680,7 +5680,7 @@
 "title": "Passageiros-quilómetro transportados (N.º) pelas empresas exploradoras de sistema ferroviário ligeiro",
 "geo": "Sistema de metropolitano",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito ao transporte por metropolitano"
 },
 {
@@ -5688,7 +5688,7 @@
 "title": "Lugares-quilómetro oferecidos (N.º) pelas empresas exploradoras de sistema ferroviário ligeiro",
 "geo": "Sistema de metropolitano",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito ao transporte por metropolitano"
 },
 {
@@ -5696,7 +5696,7 @@
 "title": "Passageiros transportados (N.º) pelas empresas exploradoras de sistema ferroviário pesado",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito ao tráfego por caminho de ferro"
 },
 {
@@ -5704,7 +5704,7 @@
 "title": "Passageiros-quilómetro transportados (N.º) pelas empresas exploradoras de sistema ferroviário pesado",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202607",
+"last": "S3A202608",
 "source": "INE, Inquérito ao tráfego por caminho de ferro"
 },
 {
@@ -5728,7 +5728,7 @@
 "title": "Obstáculo mais importante à atividade (%) do comércio",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -7368,7 +7368,7 @@
 "title": "Perspetivas sobre os preços de venda nos próximos 3 meses (Saldo de respostas extremas) do comércio",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -7376,7 +7376,7 @@
 "title": "Perspetivas sobre o emprego nos próximos 3 meses (Saldo de respostas extremas) do comércio",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -7384,7 +7384,7 @@
 "title": "Perspetivas sobre a atividade nos próximos 3 meses (Saldo de respostas extremas) do comércio",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -7416,7 +7416,7 @@
 "title": "Perspetivas sobre o volume de encomendas a fornecedores nos próximos 3 meses (Saldo de respostas extremas) do comércio",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -7424,7 +7424,7 @@
 "title": "Apreciação sobre o volume de stocks (Saldo de respostas extremas) do comércio",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -7432,7 +7432,7 @@
 "title": "Apreciação sobre o volume de vendas nos últimos 3 meses (Saldo de respostas extremas) do comércio",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -7440,7 +7440,7 @@
 "title": "Indicador de confiança (Saldo de respostas extremas) do comércio",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -7448,7 +7448,7 @@
 "title": "Perspetiva sobre aquisição de bens de equipamento nos próximos 12 meses (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7456,7 +7456,7 @@
 "title": "Oportunidade de compra de bens duradouros (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7464,7 +7464,7 @@
 "title": "Perspetiva sobre evolução do desemprego nos próximos 12 meses (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7472,7 +7472,7 @@
 "title": "Perspetivas sobre a evolução dos preços nos próximos 12 meses (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7480,7 +7480,7 @@
 "title": "Apreciação sobre a evolução dos preços nos últimos 12 meses (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7488,7 +7488,7 @@
 "title": "Perspetiva sobre a situação económica do país nos próximos 12 meses (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7496,7 +7496,7 @@
 "title": "Apreciação sobre a situação económica do país nos últimos 12 meses (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7504,7 +7504,7 @@
 "title": "Perspetiva sobre a situação financeira do agregado familiar nos próximos 12 meses (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7512,7 +7512,7 @@
 "title": "Apreciação sobre a situação financeira do agregado familiar nos últimos 12 meses (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7520,7 +7520,7 @@
 "title": "Indicador de confiança dos consumidores (Saldo de respostas extremas)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7536,7 +7536,7 @@
 "title": "Apreciação sobre a capacidade atual de poupança do agregado familiar (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7544,7 +7544,7 @@
 "title": "Perspetiva sobre oportunidade de realização de poupança nos próximos 12 meses (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7560,7 +7560,7 @@
 "title": "Perspetiva sobre compra ou construção de habitação nos próximos 12 meses (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7568,7 +7568,7 @@
 "title": "Perspetiva sobre realização de melhoramentos na habitação nos próximos 12 meses (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores"
 },
 {
@@ -7576,7 +7576,7 @@
 "title": "Perspetivas sobre o emprego nos próximos 3 meses (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7584,7 +7584,7 @@
 "title": "Perspetivas sobre os preços de venda nos próximos 3 meses (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7592,7 +7592,7 @@
 "title": "Perspetivas sobre a produção nos próximos 3 meses (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7600,7 +7600,7 @@
 "title": "Apreciação sobre os stocks de produtos acabados (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7608,7 +7608,7 @@
 "title": "Apreciação sobre a procura externa (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7616,7 +7616,7 @@
 "title": "Apreciação sobre a procura interna (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7624,7 +7624,7 @@
 "title": "Apreciação sobre a procura global (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7632,7 +7632,7 @@
 "title": "Apreciação sobre a produção nos últimos 3 meses (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7640,7 +7640,7 @@
 "title": "Indicador de confiança (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7656,7 +7656,7 @@
 "title": "Apreciação sobre os stocks de matérias-primas (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7664,7 +7664,7 @@
 "title": "Taxa de utilização da capacidade produtiva nos últimos 3 meses (%) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7680,7 +7680,7 @@
 "title": "Apreciação sobre a carteira de encomendas global nos últimos 3 meses (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7696,7 +7696,7 @@
 "title": "Apreciação sobre a capacidade produtiva instalada tendo em conta as encomendas recebidas ou a receber nos próximos 12 meses (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7712,7 +7712,7 @@
 "title": "Apreciação sobre a posição competitiva nos mercados exteriores à UE nos últimos 3 meses (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7720,7 +7720,7 @@
 "title": "Apreciação sobre a posição competitiva no mercado interno da UE nos últimos 3 meses (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7728,7 +7728,7 @@
 "title": "Apreciação sobre a posição competitiva no mercado nacional nos últimos 3 meses (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -7736,7 +7736,7 @@
 "title": "Perspetivas sobre a procura nos próximos 3 meses (Saldo de respostas extremas) dos serviços",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -7744,7 +7744,7 @@
 "title": "Perspetivas sobre os preços de prestação de serviços nos próximos 3 meses (Saldo de respostas extremas) dos serviços",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -7752,7 +7752,7 @@
 "title": "Perspetivas sobre a evolução dos preços nos próximos 3 meses (SRE - Valores corrigidos de sazonalidade) dos serviços",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -7760,7 +7760,7 @@
 "title": "Apreciação sobre a carteira de encomendas global nos últimos 3 meses (SRE - Valores corrigidos de sazonalidade) dos Serviços",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -7768,7 +7768,7 @@
 "title": "Apreciação sobre a carteira de encomendas global nos últimos 3 meses (Saldo de respostas extremas) dos serviços",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -7792,7 +7792,7 @@
 "title": "Perspetivas sobre o emprego nos próximos 3 meses (SRE - Valores corrigidos de sazonalidade) dos serviços",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -7800,7 +7800,7 @@
 "title": "Perspetivas sobre o emprego nos próximos 3 meses (Saldo de respostas extremas) dos serviços",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -7824,7 +7824,7 @@
 "title": "Apreciação sobre a atividade nos últimos 3 meses (SRE - Valores corrigidos de sazonalidade) dos serviços",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -7832,7 +7832,7 @@
 "title": "Apreciação sobre a atividade nos últimos 3 meses (Saldo de respostas extremas) dos serviços",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -7840,7 +7840,7 @@
 "title": "Indicador de confiança (SRE - Valores corrigidos de sazonalidade) dos serviços",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -7848,7 +7848,7 @@
 "title": "Indicador de confiança (Saldo de respostas extremas) dos serviços",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -7856,7 +7856,7 @@
 "title": "Obstáculos à atividade (%) de comércio",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -7864,7 +7864,7 @@
 "title": "Perspetivas sobre o volume de stocks nos próximos 3 meses (Saldo de respostas extremas) do comércio",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -7872,7 +7872,7 @@
 "title": "Apreciação sobre as encomendas a fornecedores estrangeiros (Saldo de respostas extremas) do comércio",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -7880,7 +7880,7 @@
 "title": "Apreciação sobre as encomendas recebidas (Saldo de respostas extremas) no comércio por grosso",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -7888,7 +7888,7 @@
 "title": "Apreciação sobre as encomendas a fornecedores (Saldo de respostas extremas) do comércio",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -7912,7 +7912,7 @@
 "title": "Indicador de clima económico (% - mm3m)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquéritos qualitativos de conjuntura"
 },
 {
@@ -8032,7 +8032,7 @@
 "title": "Existência de fatores limitativos (%) do comércio",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio"
 },
 {
@@ -8040,7 +8040,7 @@
 "title": "Perspetivas sobre a procura nos próximos 3 meses (SRE - Valores corrigidos de sazonalidade) dos serviços",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -8064,7 +8064,7 @@
 "title": "Existência de fatores limitativos (%) dos serviços",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -13309,7 +13309,7 @@
 },
 {
 "varcd": "0001971",
-"title": "Taxa de depósitos de emigrantes (%)",
+"title": "Taxa de depósitos de emigrantes (Série - CAE Rev. 3 - %)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -13317,7 +13317,7 @@
 },
 {
 "varcd": "0001972",
-"title": "Taxa de crédito à habitação (%)",
+"title": "Taxa de crédito à habitação (Série - CAE Rev. 3 - %)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -13325,7 +13325,7 @@
 },
 {
 "varcd": "0001973",
-"title": "Juros e custos equiparados (€) estabelecimentos de outra intermediação monetária",
+"title": "Juros e custos equiparados (Série - CAE Rev.3 - €) dos Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -13333,7 +13333,7 @@
 },
 {
 "varcd": "0001974",
-"title": "Juros e proveitos equiparados (€) dos estabelecimentos de outra intermediação monetária",
+"title": "Juros e proveitos equiparados (Série CAE Rev. 3 - €) dos Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -13341,7 +13341,7 @@
 },
 {
 "varcd": "0001975",
-"title": "Juros de depósitos de clientes (€) estabelecimentos de outra intermediação monetária",
+"title": "Juros de depósitos de clientes (Série - CAE Rev. 3 - €) em Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -14464,7 +14464,7 @@
 "title": "Veículos comerciais ligeiros e pesados novos vendidos (N.º)",
 "geo": "Portugal",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Associação do Comércio Automóvel de Portugal"
 },
 {
@@ -14725,7 +14725,7 @@
 },
 {
 "varcd": "0002170",
-"title": "Capitação diária de proteínas disponível para abastecimento (tabela de composição dos alimentos 1999) ( g/ hab.)",
+"title": "Capitação diária de proteínas disponível para abastecimento (tabela de composição dos alimentos 1999 - g/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -14733,7 +14733,7 @@
 },
 {
 "varcd": "0002171",
-"title": "Capitação diária de proteínas disponível para abastecimento (tabela de composição dos alimentos 1999) ( g/ hab.)",
+"title": "Capitação diária de proteínas disponível para abastecimento (tabela de composição dos alimentos 1999 - g/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -14741,7 +14741,7 @@
 },
 {
 "varcd": "0002172",
-"title": "Capitação diária de hidratos de carbono disponível para abastecimento (tabela de composição dos alimentos 1999) ( g/ hab.)",
+"title": "Capitação diária de hidratos de carbono disponível para abastecimento (tabela de composição dos alimentos 1999 - g/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -14749,7 +14749,7 @@
 },
 {
 "varcd": "0002173",
-"title": "Capitação diária de hidratos de carbono disponível para abastecimento (tabela de composição dos alimentos 1999) ( g/ hab.)",
+"title": "Capitação diária de hidratos de carbono disponível para abastecimento (tabela de composição dos alimentos 1999 - g/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -14757,7 +14757,7 @@
 },
 {
 "varcd": "0002174",
-"title": "Capitação diária de gorduras disponível para abastecimento (tabela de composição dos alimentos 1999) ( g/ hab.)",
+"title": "Capitação diária de gorduras disponível para abastecimento (tabela de composição dos alimentos 1999 - g/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -14765,7 +14765,7 @@
 },
 {
 "varcd": "0002175",
-"title": "Capitação diária de calorias disponível para abastecimento (tabela de composição dos alimentos 1999) ( kcal/ hab.)",
+"title": "Capitação diária de calorias disponível para abastecimento (tabela de composição dos alimentos 1999 - kcal/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -14773,7 +14773,7 @@
 },
 {
 "varcd": "0002176",
-"title": "Capitação diária de calorias disponível para abastecimento (tabela de composição dos alimentos 1999) (kcal/ hab.)",
+"title": "Capitação diária de calorias disponível para abastecimento (tabela de composição dos alimentos 1999 - kcal/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -14781,7 +14781,7 @@
 },
 {
 "varcd": "0002177",
-"title": "Capitação edível diária de bebidas alcoólicas disponível para abastecimento (tabela de composição dos alimentos 1999) ( ml/ hab.)",
+"title": "Capitação edível diária de bebidas alcoólicas disponível para abastecimento (tabela de composição dos alimentos 1999 - ml/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -14789,7 +14789,7 @@
 },
 {
 "varcd": "0002178",
-"title": "Capitação diária de álcool disponível para abastecimento (tabela de composição dos alimentos 1999) ( g/ hab.)",
+"title": "Capitação diária de álcool disponível para abastecimento (tabela de composição dos alimentos 1999 - g/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -14797,7 +14797,7 @@
 },
 {
 "varcd": "0002179",
-"title": "Capitação diária total de macronutrientes disponível para abastecimento (tabela de composição dos alimentos 1999) ( g/ hab.)",
+"title": "Capitação diária total de macronutrientes disponível para abastecimento (tabela de composição dos alimentos 1999 - g/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -14805,7 +14805,7 @@
 },
 {
 "varcd": "0002180",
-"title": "Capitação diária total de calorias disponível para abastecimento (tabela de composição dos alimentos 1999) (kcal/ hab.)",
+"title": "Capitação diária total de calorias disponível para abastecimento (tabela de composição dos alimentos 1999 - kcal/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -14813,7 +14813,7 @@
 },
 {
 "varcd": "0002181",
-"title": "Capitação edível diária de bebidas não alcoólicas disponível para abastecimento (tabela de composição dos alimentos 1999) ( ml/ hab.)",
+"title": "Capitação edível diária de bebidas não alcoólicas disponível para abastecimento (tabela de composição dos alimentos 1999 - ml/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -31269,7 +31269,7 @@
 },
 {
 "varcd": "0004719",
-"title": "Estabelecimentos de outra intermediação monetária por 10 000 habitantes (N.º)",
+"title": "Estabelecimentos de outra intermediação monetária por 10 000 habitantes (Série CAE Rev. 3 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -31277,7 +31277,7 @@
 },
 {
 "varcd": "0004720",
-"title": "Estabelecimentos de bancos e caixas económicas (N.º)",
+"title": "Estabelecimentos de bancos e caixas económicas (Série - CAE Rev.3 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -31285,7 +31285,7 @@
 },
 {
 "varcd": "0004721",
-"title": "Estabelecimentos de caixas de crédito agrícola mútuo (N.º)",
+"title": "Estabelecimentos de caixas de crédito agrícola mútuo (Série CAE Rev. 3 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2012",
@@ -47632,7 +47632,7 @@
 "title": "Viagens (N.º) feitas pelos turistas",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202603",
+"last": "S3A202606",
 "source": "INE, Inquérito às deslocações dos residentes"
 },
 {
@@ -47640,7 +47640,7 @@
 "title": "Viagens (N.º) feitas pelos turistas",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Inquérito às deslocações dos residentes"
 },
 {
@@ -47656,7 +47656,7 @@
 "title": "Viagens (N.º) feitas pelos turistas",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202603",
+"last": "S3A202606",
 "source": "INE, Inquérito às deslocações dos residentes"
 },
 {
@@ -47664,7 +47664,7 @@
 "title": "Viagens (N.º) feitas pelos turistas",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Inquérito às deslocações dos residentes"
 },
 {
@@ -47680,7 +47680,7 @@
 "title": "Viagens (N.º) feitas pelos turistas",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202603",
+"last": "S3A202606",
 "source": "INE, Inquérito às deslocações dos residentes"
 },
 {
@@ -47688,7 +47688,7 @@
 "title": "Viagens (N.º) feitas pelos turistas",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Inquérito às deslocações dos residentes"
 },
 {
@@ -47704,7 +47704,7 @@
 "title": "Viagens (N.º) feitas pelos turistas",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202603",
+"last": "S3A202606",
 "source": "INE, Inquérito às deslocações dos residentes"
 },
 {
@@ -47712,7 +47712,7 @@
 "title": "Viagens (N.º) feitas pelos turistas",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Inquérito às deslocações dos residentes"
 },
 {
@@ -48128,7 +48128,7 @@
 "title": "Viagens (N.º) feitas pelos turistas",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202603",
+"last": "S3A202606",
 "source": "INE, Inquérito às deslocações dos residentes"
 },
 {
@@ -48136,7 +48136,7 @@
 "title": "Viagens (N.º) feitas pelos turistas",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20261",
+"last": "S5A20262",
 "source": "INE, Inquérito às deslocações dos residentes"
 },
 {
@@ -53800,7 +53800,7 @@
 "title": "População empregada com idade entre 16 e 74 anos (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53808,7 +53808,7 @@
 "title": "População empregada com idade entre 16 e 74 anos (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53816,7 +53816,7 @@
 "title": "Taxa de emprego (%) da população residente com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53824,7 +53824,7 @@
 "title": "Taxa de emprego (%) da população residente com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53832,7 +53832,7 @@
 "title": "População desempregada com idade entre 16 e 74 anos (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53840,7 +53840,7 @@
 "title": "População desempregada com idade entre 16 e 74 anos (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53848,7 +53848,7 @@
 "title": "Taxa de desemprego (%) da população ativa com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53856,7 +53856,7 @@
 "title": "Taxa de desemprego (%) da população ativa com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53864,7 +53864,7 @@
 "title": "População empregada com idade entre 16 e 74 anos (Ajustada de sazonalidade - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53872,7 +53872,7 @@
 "title": "População empregada com idade entre 16 e 74 anos (Ajustada de sazonalidade - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53880,7 +53880,7 @@
 "title": "Taxa de emprego (Ajustada de sazonalidade - %) da população residente com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53888,7 +53888,7 @@
 "title": "Taxa de emprego (Ajustada de sazonalidade - %) da população residente com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53896,7 +53896,7 @@
 "title": "População desempregada com idade entre 16 e 74 anos (Ajustada de sazonalidade - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53904,7 +53904,7 @@
 "title": "População desempregada com idade entre 16 e 74 anos (Ajustada de sazonalidade - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53912,7 +53912,7 @@
 "title": "Taxa de desemprego (Ajustada de sazonalidade - %) da população ativa com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -53920,7 +53920,7 @@
 "title": "Taxa de desemprego (Ajustada de sazonalidade - %) da população ativa com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -59381,7 +59381,7 @@
 },
 {
 "varcd": "0008685",
-"title": "Estabelecimentos de bancos e caixas económicas (N.º)",
+"title": "Estabelecimentos de bancos e caixas económicas (Série - CAE Rev.3 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59389,7 +59389,7 @@
 },
 {
 "varcd": "0008686",
-"title": "Pessoal ao serviço (N.º) nos estabelecimentos de bancos e caixas económicas",
+"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos Estabelecimentos de bancos e caixas económicas",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59397,7 +59397,7 @@
 },
 {
 "varcd": "0008687",
-"title": "Custos com o pessoal (€) nos estabelecimentos de bancos e caixas económicas",
+"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos Estabelecimentos de bancos e caixas económicas",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59405,7 +59405,7 @@
 },
 {
 "varcd": "0008688",
-"title": "Estabelecimentos de caixas de crédito agrícola mútuo (N.º)",
+"title": "Estabelecimentos de caixas de crédito agrícola mútuo (Série CAE Rev. 3 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59413,7 +59413,7 @@
 },
 {
 "varcd": "0008689",
-"title": "Pessoal ao serviço (N.º) nos estabelecimentos de caixas de crédito agrícola mútuo",
+"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos Estabelecimentos de caixas de crédito agrícola mútuo",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59421,7 +59421,7 @@
 },
 {
 "varcd": "0008690",
-"title": "Custos com o pessoal (€) nos estabelecimentos de caixas de crédito agrícola mútuo",
+"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos Estabelecimentos de caixas de crédito agrícola mútuo",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59429,7 +59429,7 @@
 },
 {
 "varcd": "0008691",
-"title": "Estabelecimentos de outra intermediação monetária por 10 000 habitantes (N.º)",
+"title": "Estabelecimentos de outra intermediação monetária por 10 000 habitantes (Série CAE Rev. 3 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59437,7 +59437,7 @@
 },
 {
 "varcd": "0008692",
-"title": "Taxa de depósitos de emigrantes (%)",
+"title": "Taxa de depósitos de emigrantes (Série - CAE Rev. 3 - %)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59445,7 +59445,7 @@
 },
 {
 "varcd": "0008693",
-"title": "Depósitos de clientes (€) nos estabelecimentos de outra intermediação monetária",
+"title": "Depósitos de clientes (Série CAE Rev. 3 - €) nos Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59453,7 +59453,7 @@
 },
 {
 "varcd": "0008694",
-"title": "Crédito concedido (€) por estabelecimentos de outra intermediação monetária",
+"title": "Crédito concedido (Série CAE Rev. 3 - €) por Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59461,7 +59461,7 @@
 },
 {
 "varcd": "0008695",
-"title": "Crédito à habitação por habitante (€)",
+"title": "Crédito à habitação por habitante (Série CAE Rev. 3 - €)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59469,7 +59469,7 @@
 },
 {
 "varcd": "0008696",
-"title": "Taxa de crédito à habitação (%)",
+"title": "Taxa de crédito à habitação (Série - CAE Rev. 3 - %)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59477,7 +59477,7 @@
 },
 {
 "varcd": "0008697",
-"title": "Juros e custos equiparados (€) estabelecimentos de outra intermediação monetária",
+"title": "Juros e custos equiparados (Série - CAE Rev.3 - €) dos Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59485,7 +59485,7 @@
 },
 {
 "varcd": "0008698",
-"title": "Juros e proveitos equiparados (€) dos estabelecimentos de outra intermediação monetária",
+"title": "Juros e proveitos equiparados (Série CAE Rev. 3 - €) dos Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59493,7 +59493,7 @@
 },
 {
 "varcd": "0008699",
-"title": "Juros de depósitos de clientes (€) estabelecimentos de outra intermediação monetária",
+"title": "Juros de depósitos de clientes (Série - CAE Rev. 3 - €) em Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -62765,7 +62765,7 @@
 },
 {
 "varcd": "0009116",
-"title": "Capitação edível diária de produtos alimentares disponível para abastecimento (tabela de composição dos alimentos 2016) ( g/ hab.)",
+"title": "Capitação edível diária de produtos alimentares disponível para abastecimento (tabela de composição dos alimentos 2016 - g/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -62805,7 +62805,7 @@
 },
 {
 "varcd": "0009121",
-"title": "Capitação diária de gorduras disponível para abastecimento (tabela de composição dos alimentos 2016) ( g/ hab.)",
+"title": "Capitação diária de gorduras disponível para abastecimento (tabela de composição dos alimentos 2016 - g/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -62837,7 +62837,7 @@
 },
 {
 "varcd": "0009125",
-"title": "Capitação diária de álcool disponível para abastecimento (tabela de composição dos alimentos 2016) ( g/ hab.)",
+"title": "Capitação diária de álcool disponível para abastecimento (tabela de composição dos alimentos 2016 - g/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -62845,7 +62845,7 @@
 },
 {
 "varcd": "0009126",
-"title": "Capitação diária total de macronutrientes disponível para abastecimento (tabela de composição dos alimentos 2016) ( g/ hab.)",
+"title": "Capitação diária total de macronutrientes disponível para abastecimento (tabela de composição dos alimentos 2016 - g/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -62853,7 +62853,7 @@
 },
 {
 "varcd": "0009127",
-"title": "Capitação diária total de calorias disponível para abastecimento (tabela de composição dos alimentos 2016) (kcal/ hab.)",
+"title": "Capitação diária total de calorias disponível para abastecimento (tabela de composição dos alimentos 2016 - kcal/ hab.)",
 "geo": "Portugal",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -67432,7 +67432,7 @@
 "title": "Dormidas (N.º) nos estabelecimentos de alojamento turístico",
 "geo": "NUTS II",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -67464,7 +67464,7 @@
 "title": "Hóspedes (N.º) nos estabelecimentos de alojamento turístico",
 "geo": "NUTS II",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -67472,7 +67472,7 @@
 "title": "Proveitos totais (€) nos estabelecimentos de alojamento turístico",
 "geo": "NUTS II",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -67480,7 +67480,7 @@
 "title": "Proveitos de aposento (€) nos estabelecimentos de alojamento turístico",
 "geo": "NUTS II",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -68064,7 +68064,7 @@
 "title": "Temperatura máxima do ar (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2023",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68072,7 +68072,7 @@
 "title": "Temperatura média do ar (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2023",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68080,7 +68080,7 @@
 "title": "Temperatura mínima do ar (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2023",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68088,7 +68088,7 @@
 "title": "Temperatura máxima do ar no mês mais quente (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68096,7 +68096,7 @@
 "title": "Temperatura média do ar no mês mais quente (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68104,7 +68104,7 @@
 "title": "Temperatura mínima do ar no mês mais quente (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68112,7 +68112,7 @@
 "title": "Temperatura máxima do ar no mês mais frio (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68120,7 +68120,7 @@
 "title": "Temperatura média do ar no mês mais frio (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68128,7 +68128,7 @@
 "title": "Temperatura mínima do ar no mês mais frio (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68136,7 +68136,7 @@
 "title": "Temperatura média do ar (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68192,7 +68192,7 @@
 "title": "Noites tropicais (Dia)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -69280,7 +69280,7 @@
 "title": "População inativa com idade entre 16 e 74 anos (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69288,7 +69288,7 @@
 "title": "População inativa com idade entre 16 e 74 anos (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69296,7 +69296,7 @@
 "title": "População ativa com idade entre 16 e 74 anos (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69304,7 +69304,7 @@
 "title": "População ativa com idade entre 16 e 74 anos (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69312,7 +69312,7 @@
 "title": "Taxa de inatividade (%) da população residente com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69320,7 +69320,7 @@
 "title": "Taxa de inatividade (%) da população residente com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69328,7 +69328,7 @@
 "title": "Taxa de atividade (%) da população residente com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69336,7 +69336,7 @@
 "title": "Taxa de atividade (%) da população residente com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69344,7 +69344,7 @@
 "title": "População inativa com idade entre 16 e 74 anos (Ajustada de sazonalidade - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69352,7 +69352,7 @@
 "title": "População inativa com idade entre 16 e 74 anos (Ajustada de sazonalidade - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69360,7 +69360,7 @@
 "title": "População ativa com idade entre 16 e 74 anos (Ajustada de sazonalidade - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69368,7 +69368,7 @@
 "title": "População ativa com idade entre 16 e 74 anos (Ajustada de sazonalidade - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69376,7 +69376,7 @@
 "title": "Taxa de inatividade (Ajustada de sazonalidade - %) da população residente com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69384,7 +69384,7 @@
 "title": "Taxa de inatividade (Ajustada de sazonalidade - %) da população residente com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69392,7 +69392,7 @@
 "title": "Taxa de atividade (Ajustada de sazonalidade - %) da população residente com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69400,7 +69400,7 @@
 "title": "Taxa de atividade (Ajustada de sazonalidade - %) da população residente com idade entre 16 e 74 anos",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69544,7 +69544,7 @@
 "title": "Subutilização do trabalho (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69552,7 +69552,7 @@
 "title": "Subutilização do trabalho (Ajustada de sazonalidade - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69560,7 +69560,7 @@
 "title": "Taxa de subutilização do trabalho (%)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -69568,7 +69568,7 @@
 "title": "Taxa de subutilização do trabalho (Ajustada de sazonalidade - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -70512,7 +70512,7 @@
 "title": "Número de Ondas de Calor",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -70520,7 +70520,7 @@
 "title": "Número de Ondas de Frio",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -70528,7 +70528,7 @@
 "title": "Temperatura mínima do ar (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -70536,7 +70536,7 @@
 "title": "Temperatura máxima do ar (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -70560,7 +70560,7 @@
 "title": "Número de Dias em Onda de Calor",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -70568,7 +70568,7 @@
 "title": "Número de Dias da Maior Onda de Calor",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -70576,7 +70576,7 @@
 "title": "Número de Dias em Onda de Frio",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -70584,7 +70584,7 @@
 "title": "Número de Dias da Maior Onda de Frio",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -71952,7 +71952,7 @@
 "title": "Dormidas (N.º) nos estabelecimentos de alojamento turístico",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -71960,7 +71960,7 @@
 "title": "Hóspedes (N.º) nos estabelecimentos de alojamento turístico",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -74872,7 +74872,7 @@
 "title": "Taxa média de salário mensal da população empregada por conta de outrem a tempo completo em empresas de construção (Série 2021 - €)",
 "geo": "Continente",
 "periodicity": "Trimestral",
-"last": "S3A202604",
+"last": "S3A202607",
 "source": "Estatísticas de Salários por Profissão na Construção"
 },
 {
@@ -74880,7 +74880,7 @@
 "title": "Taxa média de salário/hora da população empregada por conta de outrem a tempo completo em empresas de construção (Série 2021 - €)",
 "geo": "Continente",
 "periodicity": "Trimestral",
-"last": "S3A202604",
+"last": "S3A202607",
 "source": "Estatísticas de Salários por Profissão na Construção"
 },
 {
@@ -74888,7 +74888,7 @@
 "title": "Duração média semanal de trabalho normal da população empregada por conta de outrem a tempo completo nas empresas de construção (Série 2021 - h)",
 "geo": "Continente",
 "periodicity": "Trimestral",
-"last": "S3A202604",
+"last": "S3A202607",
 "source": "Estatísticas de Salários por Profissão na Construção"
 },
 {
@@ -77248,7 +77248,7 @@
 "title": "Obstáculo mais importante à produção (Série 2021 - %) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora"
 },
 {
@@ -77256,7 +77256,7 @@
 "title": "Obstáculos à atividade (Série 2021 - %) dos serviços",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
@@ -77264,12 +77264,12 @@
 "title": "Obstáculo mais importante à atividade (Série 2021 - %) dos serviços",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços"
 },
 {
 "varcd": "0011172",
-"title": "Comissões (Recebidas) (milhares €)",
+"title": "Comissões (Recebidas) dos estabelecimentos de outra intermediação monetária (Série - CAE Rev. 3 - €)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -77312,7 +77312,7 @@
 "title": "Obstáculos à atividade (Série 2021 - %) da construção",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à construção e obras públicas"
 },
 {
@@ -79528,7 +79528,7 @@
 "title": "Extensão da rede nacional rodoviária (km)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S13A20231231",
+"last": "S13A20251231",
 "source": "Instituto da Mobilidade e dos Transportes"
 },
 {
@@ -80560,7 +80560,7 @@
 "title": "Número de dias com temperatura máxima do ar superior ou igual a 30ºC (Dia)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -80576,7 +80576,7 @@
 "title": "Número de dias com temperatura máxima do ar superior ou igual a 35ºC (Dia)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -82696,7 +82696,7 @@
 "title": "Índice de produção industrial - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82704,7 +82704,7 @@
 "title": "Índice de produção industrial - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82712,7 +82712,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82720,7 +82720,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82728,7 +82728,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82736,7 +82736,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82744,7 +82744,7 @@
 "title": "Índice de produção industrial - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82752,7 +82752,7 @@
 "title": "Índice de produção industrial - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82760,7 +82760,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82768,7 +82768,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82776,7 +82776,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82784,7 +82784,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82792,7 +82792,7 @@
 "title": "Índice de produção industrial - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82800,7 +82800,7 @@
 "title": "Índice de produção industrial - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82808,7 +82808,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82816,7 +82816,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82824,7 +82824,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82832,7 +82832,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82840,7 +82840,7 @@
 "title": "Índice de produção industrial - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82848,7 +82848,7 @@
 "title": "Índice de produção industrial - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82856,7 +82856,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82864,7 +82864,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82872,7 +82872,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -82880,7 +82880,7 @@
 "title": "Índice de produção industrial - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de produção industrial (Base 2021)"
 },
 {
@@ -83656,7 +83656,7 @@
 "title": "Índice de volume de negócios no comércio - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83664,7 +83664,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83672,7 +83672,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83680,7 +83680,7 @@
 "title": "Índice de volume de negócios no comércio - bruto deflacionado (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83688,7 +83688,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário deflacionado (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83696,7 +83696,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário e de sazonalidade deflacionado (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83704,7 +83704,7 @@
 "title": "Índice de remunerações no comércio - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83712,7 +83712,7 @@
 "title": "Índice de emprego no comércio - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83720,7 +83720,7 @@
 "title": "Índice de horas trabalhadas no comércio - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83728,7 +83728,7 @@
 "title": "Índice de horas trabalhadas no comércio - ajustado de efeitos de calendário (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83736,7 +83736,7 @@
 "title": "Índice de volume de negócios no comércio - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83744,7 +83744,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83752,7 +83752,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83760,7 +83760,7 @@
 "title": "Índice de volume de negócios no comércio - bruto deflacionado (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83768,7 +83768,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário deflacionado (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83776,7 +83776,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário e de sazonalidade deflacionado (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83784,7 +83784,7 @@
 "title": "Índice de remunerações no comércio - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83792,7 +83792,7 @@
 "title": "Índice de emprego no comércio - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83800,7 +83800,7 @@
 "title": "Índice de horas trabalhadas no comércio - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83808,7 +83808,7 @@
 "title": "Índice de horas trabalhadas no comércio - ajustado de efeitos de calendário (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83816,7 +83816,7 @@
 "title": "Índice de volume de negócios no comércio - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83824,7 +83824,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83832,7 +83832,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83840,7 +83840,7 @@
 "title": "Índice de volume de negócios no comércio - bruto deflacionado (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83848,7 +83848,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário deflacionado (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83856,7 +83856,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário e de sazonalidade deflacionado (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83864,7 +83864,7 @@
 "title": "Índice de remunerações no comércio - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83872,7 +83872,7 @@
 "title": "Índice de emprego no comércio - bruto (Taxa de variação média anual - Base 2021 %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83880,7 +83880,7 @@
 "title": "Índice de horas trabalhadas no comércio - bruto (Taxa de variação média anual - Base 2021 %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83888,7 +83888,7 @@
 "title": "Índice de horas trabalhadas no comércio - ajustado de efeitos de calendário (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83896,7 +83896,7 @@
 "title": "Índice de volume de negócios no comércio - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83904,7 +83904,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83912,7 +83912,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83920,7 +83920,7 @@
 "title": "Índice de volume de negócios no comércio - bruto deflacionado (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83928,7 +83928,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário deflacionado (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83936,7 +83936,7 @@
 "title": "Índice de volume de negócios no comércio - ajustado de efeitos de calendário e de sazonalidade deflacionado (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83944,7 +83944,7 @@
 "title": "Índice de remunerações no comércio - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83952,7 +83952,7 @@
 "title": "Índice de emprego no comércio - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83960,7 +83960,7 @@
 "title": "Índice de horas trabalhadas no comércio - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83968,7 +83968,7 @@
 "title": "Índice de horas trabalhadas no comércio - ajustado de efeitos de calendário (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -84288,7 +84288,7 @@
 "title": "Investimentos em gestão de resíduos dos municípios (€)",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Estatísticas dos municípios em ambiente - série longa"
 },
 {
@@ -84344,7 +84344,7 @@
 "title": "Proveitos totais (€) nos estabelecimentos de alojamento turístico",
 "geo": "NUTS II",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -84352,7 +84352,7 @@
 "title": "Proveitos de aposento (€) nos estabelecimentos de alojamento turístico",
 "geo": "NUTS II",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -84360,7 +84360,7 @@
 "title": "Dormidas (N.º) nos estabelecimentos de alojamento turístico",
 "geo": "NUTS II",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -84368,7 +84368,7 @@
 "title": "Hóspedes (N.º) nos estabelecimentos de alojamento turístico",
 "geo": "NUTS II",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à permanência de hóspedes na hotelaria e outros alojamentos"
 },
 {
@@ -85576,7 +85576,7 @@
 "title": "Constituição de pessoas coletivas e entidades equiparadas (N.º)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "DGPJ - Direção Geral da Política da Justiça, Constituição e dissolução de pessoas coletivas e entidades equiparadas"
 },
 {
@@ -85584,7 +85584,7 @@
 "title": "Dissolução de pessoas coletivas e entidades equiparadas (N.º)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "DGPJ - Direção Geral da Política da Justiça, Constituição e dissolução de pessoas coletivas e entidades equiparadas"
 },
 {
@@ -85600,7 +85600,7 @@
 "title": "Avaliações bancárias de alojamentos familiares nos últimos 3 meses",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à avaliação bancária na habitação"
 },
 {
@@ -85608,7 +85608,7 @@
 "title": "Valor mediano de avaliação bancária (€/ m²)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à avaliação bancária na habitação"
 },
 {
@@ -85616,7 +85616,7 @@
 "title": "Valor mediano de avaliação bancária (Taxa de variação mensal - %)",
 "geo": "NUTS II",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à avaliação bancária na habitação"
 },
 {
@@ -85624,7 +85624,7 @@
 "title": "Valor mediano de avaliação bancária (Taxa de variação homóloga - %)",
 "geo": "NUTS II",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito à avaliação bancária na habitação"
 },
 {
@@ -85632,7 +85632,7 @@
 "title": "Sessões de cinema (Metodologia 2006 - N.º)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "Instituto do Cinema e Audiovisual"
 },
 {
@@ -85640,7 +85640,7 @@
 "title": "Espectadores de cinema (Metodologia 2006 - N.º)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "Instituto do Cinema e Audiovisual"
 },
 {
@@ -85648,7 +85648,7 @@
 "title": "Receitas de cinema (Metodologia 2006 - €)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "Instituto do Cinema e Audiovisual"
 },
 {
@@ -91869,7 +91869,7 @@
 },
 {
 "varcd": "0013047",
-"title": "Estabelecimentos de outra intermediação monetária por 10 000 habitantes (N.º)",
+"title": "Estabelecimentos de outra intermediação monetária por 10 000 habitantes (Série CAE Rev. 3 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91877,7 +91877,7 @@
 },
 {
 "varcd": "0013048",
-"title": "Crédito à habitação por habitante (€)",
+"title": "Crédito à habitação por habitante (Série CAE Rev. 3 - €)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91885,7 +91885,7 @@
 },
 {
 "varcd": "0013049",
-"title": "Depósitos de clientes (€) nos estabelecimentos de outra intermediação monetária",
+"title": "Depósitos de clientes (Série CAE Rev. 3 - €) nos Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91893,7 +91893,7 @@
 },
 {
 "varcd": "0013050",
-"title": "Crédito concedido (€) por estabelecimentos de outra intermediação monetária",
+"title": "Crédito concedido (Série CAE Rev. 3 - €) por Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91901,7 +91901,7 @@
 },
 {
 "varcd": "0013051",
-"title": "Taxa de depósitos de emigrantes (%)",
+"title": "Taxa de depósitos de emigrantes (Série - CAE Rev. 3 - %)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91909,7 +91909,7 @@
 },
 {
 "varcd": "0013052",
-"title": "Taxa de crédito à habitação (%)",
+"title": "Taxa de crédito à habitação (Série - CAE Rev. 3 - %)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91917,7 +91917,7 @@
 },
 {
 "varcd": "0013053",
-"title": "Juros e custos equiparados (€) estabelecimentos de outra intermediação monetária",
+"title": "Juros e custos equiparados (Série - CAE Rev.3 - €) dos Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91925,7 +91925,7 @@
 },
 {
 "varcd": "0013054",
-"title": "Juros e proveitos equiparados (€) dos estabelecimentos de outra intermediação monetária",
+"title": "Juros e proveitos equiparados (Série CAE Rev. 3 - €) dos Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91933,7 +91933,7 @@
 },
 {
 "varcd": "0013055",
-"title": "Juros de depósitos de clientes (€) estabelecimentos de outra intermediação monetária",
+"title": "Juros de depósitos de clientes (Série - CAE Rev. 3 - €) em Estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91941,7 +91941,7 @@
 },
 {
 "varcd": "0013056",
-"title": "Comissões (Recebidas) dos estabelecimentos de outra intermediação monetária (€)",
+"title": "Comissões (Recebidas) dos estabelecimentos de outra intermediação monetária (Série - CAE Rev. 3 - €)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91949,7 +91949,7 @@
 },
 {
 "varcd": "0013057",
-"title": "Estabelecimentos de bancos e caixas económicas (N.º)",
+"title": "Estabelecimentos de bancos e caixas económicas (Série - CAE Rev.3 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91957,7 +91957,7 @@
 },
 {
 "varcd": "0013058",
-"title": "Pessoal ao serviço (N.º) nos estabelecimentos de bancos e caixas económicas",
+"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos Estabelecimentos de bancos e caixas económicas",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91965,7 +91965,7 @@
 },
 {
 "varcd": "0013059",
-"title": "Custos com o pessoal (€) nos estabelecimentos de bancos e caixas económicas",
+"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos Estabelecimentos de bancos e caixas económicas",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91973,7 +91973,7 @@
 },
 {
 "varcd": "0013060",
-"title": "Estabelecimentos de caixas de crédito agrícola mútuo (N.º)",
+"title": "Estabelecimentos de caixas de crédito agrícola mútuo (Série CAE Rev. 3 - N.º)",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91981,7 +91981,7 @@
 },
 {
 "varcd": "0013061",
-"title": "Pessoal ao serviço (N.º) nos estabelecimentos de caixas de crédito agrícola mútuo",
+"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos Estabelecimentos de caixas de crédito agrícola mútuo",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91989,7 +91989,7 @@
 },
 {
 "varcd": "0013062",
-"title": "Custos com o pessoal (€) nos estabelecimentos de caixas de crédito agrícola mútuo",
+"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos Estabelecimentos de caixas de crédito agrícola mútuo",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -94928,7 +94928,7 @@
 "title": "Produto interno bruto dados encadeados em volume (B.1*g) (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Contas nacionais trimestrais"
 },
 {
@@ -95160,7 +95160,7 @@
 "title": "Quociente de mortalidade - qx (Metodologia 2007)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95168,7 +95168,7 @@
 "title": "Sobreviventes à idade exata x - lx (N.º)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95176,7 +95176,7 @@
 "title": "Óbitos entre as idades exatas x e (x+1) - dx (Metodologia 2007 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95184,7 +95184,7 @@
 "title": "Sobreviventes entre as idades exatas x e (x+1) - Lx (Metodologia 2007 - Ano completo)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95192,7 +95192,7 @@
 "title": "Anos completos após a idade x - Tx (Metodologia 2007 - Ano completo)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95200,7 +95200,7 @@
 "title": "Esperança média de vida à idade x - ex (Metodologia 2007 - Ano)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95216,7 +95216,7 @@
 "title": "Quociente de mortalidade entre as idades exatas x e (x + n) - nqx (-)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95224,7 +95224,7 @@
 "title": "Sobreviventes à idade exata x - lx (N.º)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95232,7 +95232,7 @@
 "title": "Óbitos entre as idades exatas x e (x + n) - ndx (Metodologia 2007 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95240,7 +95240,7 @@
 "title": "Sobreviventes entre as idades exatas x e (x+n) - nLx (Metodologia 2007 - Ano completo)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95248,7 +95248,7 @@
 "title": "Anos completos após a idade x - Tx (Metodologia 2007 - Ano completo)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95256,7 +95256,7 @@
 "title": "Esperança média de vida à idade x - ex (Metodologia 2007 - Ano)",
 "geo": "NUTS II",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95264,7 +95264,7 @@
 "title": "Esperança de vida à nascença (Metodologia 2007 - Anos)",
 "geo": "NUTS 3",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95272,7 +95272,7 @@
 "title": "Esperança de vida aos 65 anos (Metodologia 2007 - Anos)",
 "geo": "NUTS 3",
 "periodicity": "Anual",
-"last": "S16A20222024",
+"last": "S16A20232025",
 "source": "INE, Tábuas completas de mortalidade"
 },
 {
@@ -95760,7 +95760,7 @@
 "title": "Despesas em atividades culturais e criativas (€) das câmaras municipais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95768,7 +95768,7 @@
 "title": "Despesas em património cultural (€) das câmaras municipais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95776,7 +95776,7 @@
 "title": "Despesas em bibliotecas e arquivos (€) das câmaras municipais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95784,7 +95784,7 @@
 "title": "Despesas em livros e publicações periódicas (€) das câmaras municipais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95792,7 +95792,7 @@
 "title": "Despesas em artes visuais (€) das câmaras municipais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95800,7 +95800,7 @@
 "title": "Despesas em artes do espetáculo (€) das câmaras municipais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95808,7 +95808,7 @@
 "title": "Despesas em audiovisual e multimédia (€) das câmaras municipais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95816,7 +95816,7 @@
 "title": "Despesas em arquitetura (€) das câmaras municipais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95824,7 +95824,7 @@
 "title": "Despesas em atividades interdisciplinares (€) das câmaras municipais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95832,7 +95832,7 @@
 "title": "Despesas em publicidade (€) das câmaras municipais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95840,7 +95840,7 @@
 "title": "Despesas em artesanato (€) das câmaras municipais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95848,7 +95848,7 @@
 "title": "Despesas em atividades e equipamentos desportivos (€) das câmaras municipais",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95856,7 +95856,7 @@
 "title": "Despesas em atividades culturais e criativas das câmaras municipais por habitante (€)",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95864,7 +95864,7 @@
 "title": "Despesas em atividades e equipamentos desportivos das câmaras municipais por habitante (€)",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -95872,7 +95872,7 @@
 "title": "Despesas das câmaras municipais em cultura e desporto no total de despesas (%)",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "INE, Inquérito ao financiamento das atividades culturais, criativas e desportivas pelas câmaras municipais"
 },
 {
@@ -100304,7 +100304,7 @@
 "title": "Desvio em relação à normal (1981 - 2010) da temperatura mínima do ar (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -100312,7 +100312,7 @@
 "title": "Desvio em relação à normal (1981 - 2010) da temperatura média do ar (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -100320,7 +100320,7 @@
 "title": "Desvio em relação à normal (1981 - 2010) da temperatura máxima do ar (°C)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -100360,7 +100360,7 @@
 "title": "Desvio em relação à normal (1981 - 2010) do número de noites tropicais (Dia)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -100368,7 +100368,7 @@
 "title": "Desvio em relação à normal (1981 - 2010) do número de dias com temperatura máxima do ar superior ou igual a 30ºC (Dia)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -100800,7 +100800,7 @@
 "title": "Indicador de sentimento económico (Valores corrigidos de sazonalidade -) na Área Euro",
 "geo": "Área Euro",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "Comissão Europeia"
 },
 {
@@ -100808,7 +100808,7 @@
 "title": "Indicador de confiança dos consumidores (SRE - Valores corrigidos de sazonalidade) na União Europeia",
 "geo": "União Europeia",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "Comissão Europeia"
 },
 {
@@ -100816,7 +100816,7 @@
 "title": "Indicador de confiança dos consumidores (SRE - Valores corrigidos de sazonalidade) na Área Euro",
 "geo": "Área Euro",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "Comissão Europeia"
 },
 {
@@ -100824,7 +100824,7 @@
 "title": "Indicador de confiança (SRE - Valores corrigidos de sazonalidade) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora, 2025"
 },
 {
@@ -100832,7 +100832,7 @@
 "title": "Indicador de confiança (SRE - Valores corrigidos de sazonalidade) do comércio",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio, 2025"
 },
 {
@@ -100840,7 +100840,7 @@
 "title": "Indicador de clima económico (%)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquéritos qualitativos de conjuntura"
 },
 {
@@ -100848,7 +100848,7 @@
 "title": "Perspetivas sobre a evolução dos preços nos próximos 12 meses (SRE - Valores corrigidos de sazonalidade) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores, 2025"
 },
 {
@@ -100856,7 +100856,7 @@
 "title": "Perspetivas sobre os preços de venda nos próximos 3 meses (SRE - Valores corrigidos de sazonalidade) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora, 2025"
 },
 {
@@ -100864,7 +100864,7 @@
 "title": "Perspetivas sobre os preços de venda nos próximos 3 meses (SRE - Valores corrigidos de sazonalidade) do comércio",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio, 2025"
 },
 {
@@ -100872,7 +100872,7 @@
 "title": "Apreciação sobre o volume de vendas nos últimos 3 meses em bens de investimento (Saldo de respostas extremas) do comércio por grosso",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio, 2025"
 },
 {
@@ -100880,7 +100880,7 @@
 "title": "Indicador de sentimento económico (Valores corrigidos de sazonalidade -) na União Europeia",
 "geo": "União Europeia",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "Comissão Europeia"
 },
 {
@@ -100960,7 +100960,7 @@
 "title": "Indicador qualitativo de perspetivas de criação de emprego (Saldo de respostas extremas) pelas empresas",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquéritos qualitativos de conjuntura, 2025"
 },
 {
@@ -101080,7 +101080,7 @@
 "title": "Constituição de pessoas coletivas e entidades equiparadas (N.º)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "DGPJ - Direção Geral da Política da Justiça, Constituição e dissolução de pessoas coletivas e entidades equiparadas"
 },
 {
@@ -101088,7 +101088,7 @@
 "title": "Dissolução de pessoas coletivas e entidades equiparadas (N.º)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "DGPJ - Direção Geral da Política da Justiça, Constituição e dissolução de pessoas coletivas e entidades equiparadas"
 },
 {
@@ -101128,7 +101128,7 @@
 "title": "Perspetivas sobre a produção nos próximos 3 meses (SRE - Valores corrigidos de sazonalidade) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora, 2025"
 },
 {
@@ -101136,7 +101136,7 @@
 "title": "Apreciação sobre o volume de vendas nos últimos 3 meses (SRE - Valores corrigidos de sazonalidade) do comércio",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio, 2025"
 },
 {
@@ -101144,7 +101144,7 @@
 "title": "Perspetivas sobre a atividade nos próximos 3 meses (SRE - Valores corrigidos de sazonalidade) do comércio",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio, 2025"
 },
 {
@@ -102472,7 +102472,7 @@
 "title": "Incerteza da situação financeira do agregado familiar (Saldo de respostas extremas) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores, 2025"
 },
 {
@@ -102480,7 +102480,7 @@
 "title": "Oportunidade de compra de bens duradouros (SRE - Valores corrigidos de sazonalidade) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores, 2025"
 },
 {
@@ -102488,7 +102488,7 @@
 "title": "Apreciação sobre a situação económica do país nos últimos 12 meses (SRE - Valores corrigidos de sazonalidade) dos consumidores",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos consumidores, 2025"
 },
 {
@@ -102496,7 +102496,7 @@
 "title": "Subemprego da população empregada a tempo parcial (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -102504,7 +102504,7 @@
 "title": "População inativa à procura de emprego mas não disponível (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -102512,7 +102512,7 @@
 "title": "População inativa disponível mas que não procura emprego (N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -102520,7 +102520,7 @@
 "title": "Subemprego da população empregada a tempo parcial (Ajustada de sazonalidade - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -102528,7 +102528,7 @@
 "title": "População inativa à procura de emprego mas não disponível (Ajustada de sazonalidade - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -102536,7 +102536,7 @@
 "title": "População inativa disponível mas que não procura emprego (Ajustada de sazonalidade - N.º)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas Mensais de Emprego e Desemprego com base no Inquérito ao Emprego"
 },
 {
@@ -102752,7 +102752,7 @@
 "title": "Incerteza sobre a evolução futura da atividade (Saldo de respostas extremas) da construção",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à construção e obras públicas, 2025"
 },
 {
@@ -102760,7 +102760,7 @@
 "title": "Obstáculos à atividade (Série 2021 - SRE - Valores corrigidos de sazonalidade) da construção",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à construção e obras públicas, 2025"
 },
 {
@@ -102848,7 +102848,7 @@
 "title": "Perspetivas sobre o volume de encomendas a fornecedores nos próximos 3 meses (SRE - Valores corrigidos de sazonalidade) do comércio",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio, 2025"
 },
 {
@@ -102856,7 +102856,7 @@
 "title": "Incerteza sobre a evolução futura da atividade (Saldo de respostas extremas) do comércio",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio, 2025"
 },
 {
@@ -102864,7 +102864,7 @@
 "title": "Apreciação sobre as encomendas a fornecedores estrangeiros (SRE - Valores corrigidos de sazonalidade) do comércio",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio, 2025"
 },
 {
@@ -102872,7 +102872,7 @@
 "title": "Apreciação sobre as encomendas recebidas (SRE - Valores corrigidos de sazonalidade) no comércio por grosso",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio, 2025"
 },
 {
@@ -102880,7 +102880,7 @@
 "title": "Apreciação sobre as encomendas a fornecedores (SRE - Valores corrigidos de sazonalidade) do comércio",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio, 2025"
 },
 {
@@ -102888,7 +102888,7 @@
 "title": "Encomendas a fornecedores estrangeiros (%) do comércio",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura ao comércio, 2025"
 },
 {
@@ -102896,7 +102896,7 @@
 "title": "Apreciação sobre a produção nos últimos 3 meses (SRE - Valores corrigidos de sazonalidade) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora, 2025"
 },
 {
@@ -102904,7 +102904,7 @@
 "title": "Incerteza sobre a evolução futura da atividade (Saldo de respostas extremas) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora, 2025"
 },
 {
@@ -102912,7 +102912,7 @@
 "title": "Taxa de utilização da capacidade produtiva nos últimos 3 meses (SRE - Valores corrigidos de sazonalidade) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora, 2025"
 },
 {
@@ -102920,7 +102920,7 @@
 "title": "Obstáculos à produção (Série 2021 - %) da indústria transformadora",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura à indústria transformadora, 2025"
 },
 {
@@ -102928,7 +102928,7 @@
 "title": "Incerteza sobre a evolução futura da atividade (Saldo de respostas extremas) dos serviços",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços, 2025"
 },
 {
@@ -102936,7 +102936,7 @@
 "title": "Taxa de utilização da capacidade produtiva nos últimos 3 meses (%) dos serviços",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito qualitativo de conjuntura aos serviços, 2025"
 },
 {
@@ -105412,6 +105412,30 @@
 "source": "INE, Inquérito nacional de saúde"
 },
 {
+"varcd": "0014916",
+"title": "Gastos, rendimentos e investimentos (€) dos municípios",
+"geo": "Município",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "Inquérito aos Municípios - Fins Ambientais"
+},
+{
+"varcd": "0014917",
+"title": "Gastos em ambiente dos municípios por 1000 habitantes (€/ hab.)",
+"geo": "Município",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "Inquérito aos Municípios - Fins Ambientais"
+},
+{
+"varcd": "0014918",
+"title": "Rendimentos em ambiente dos municípios por 1000 habitantes (€/ hab.)",
+"geo": "Município",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "Inquérito aos Municípios - Fins Ambientais"
+},
+{
 "varcd": "0014919",
 "title": "População residente com 15 e mais anos de idade (N.º)",
 "geo": "NUTS II",
@@ -105714,6 +105738,206 @@
 "periodicity": "Sexenal",
 "last": "S7A2025",
 "source": "INE, Inquérito nacional de saúde"
+},
+{
+"varcd": "0014957",
+"title": "Empresas (N.º)",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014958",
+"title": "Pessoal ao serviço (N.º) das Empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014959",
+"title": "Gastos com o pessoal (€) das empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014960",
+"title": "Remunerações (€) das Empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014961",
+"title": "Outros gastos com o pessoal (€) das empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014962",
+"title": "Prestações de serviços (€) das Empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014963",
+"title": "Volume de negócios (€) das empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014964",
+"title": "Produção (€) das Empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014965",
+"title": "Valor acrescentado bruto (€) das empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014966",
+"title": "Excedente bruto de exploração (€) das empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014967",
+"title": "Ativo (€) das empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014968",
+"title": "Capital próprio (€) das empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014969",
+"title": "Passivo (€) das empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014970",
+"title": "Pessoal ao serviço remunerado (N.º) nas empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014971",
+"title": "Pessoal ao serviço remunerado (N.º) nas empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014972",
+"title": "Empresas (N.º)",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014973",
+"title": "Pessoal ao serviço (N.º) das Empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014974",
+"title": "Gastos com o pessoal (€) das empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014975",
+"title": "Remunerações (€) das Empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014976",
+"title": "Prestações de serviços (€) das Empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014977",
+"title": "Volume de negócios (€) das empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014978",
+"title": "Produção (€) das Empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014979",
+"title": "Valor acrescentado bruto (€) das empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014980",
+"title": "Outros gastos com o pessoal (€) das empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
+},
+{
+"varcd": "0014981",
+"title": "Excedente bruto de exploração (€) das empresas",
+"geo": "Portugal",
+"periodicity": "Anual",
+"last": "S7A2025",
+"source": "INE, Sistema de contas integradas das empresas"
 }
 ]
 }

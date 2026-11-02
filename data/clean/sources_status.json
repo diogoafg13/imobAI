@@ -1,5 +1,5 @@
 {
- "date": "20261030",
+ "date": "20261102",
  "ine": {
   "sales_price_annual": "sem código (config)",
   "building_permits": "sem código (config)",
@@ -16,7 +16,6 @@
   "sales_price_t2": "ok (18387 linhas, 2026Q2) [dim_3=2 'T2']",
   "sales_price_t3": "ok (18387 linhas, 2026Q2) [dim_3=3 'T3']",
   "sales_price_t4": "ok (18387 linhas, 2026Q2) [dim_3=4 'T4 ou mais']",
-  "rent_new_contracts": "ok (2082 linhas, 2025) [dim_3=2 '2.º quartil']",
   "rent_q1": "ok (2082 linhas, 2025) [dim_3=1 '1.º quartil']",
   "rent_q3": "ok (2082 linhas, 2025) [dim_3=3 '3.º quartil']",
   "rent_parish": "ok (3828 linhas, 2025)",
@@ -31,7 +30,6 @@
   "valuation_houses": "ok (65583 linhas, 2026-09) [dim_3=2 'Moradias']",
   "dwellings_licensed": "ok (9204 linhas, 2026-08) [dim_3=T 'Total']",
   "dwellings_completed": "ok (1170 linhas, 2026Q2)",
-  "dwellings_stock": "ok (4128 linhas, 2022)",
   "census_total": "ok (3439 linhas, 2021) [dim_3=T 'Total', dim_4=T 'Total', dim_5=T 'Total']",
   "census_bld_total": "ok (3439 linhas, 2021) [dim_3=T 'Total', dim_4=T 'Total']",
   "census_bld_pre1919": "ok (3439 linhas, 2021) [dim_3=01 'Antes de 1919', dim_4=T 'Total']",
@@ -67,20 +65,22 @@
   "ageing_index": "ok (1735 linhas, 2025)",
   "migration_balance": "ok (1735 linhas, 2025)",
   "tourism_nights": "ok (5160 linhas, 2025) [dim_3=T 'Total']",
-  "housing_credit_pc": "ok (1041 linhas, 2024)"
+  "housing_credit_pc": "ok (1041 linhas, 2024)",
+  "rent_new_contracts": "ok (2082 linhas, 2025) [dim_3=2 '2.º quartil']",
+  "dwellings_stock": "ok (4128 linhas, 2022)"
  },
  "macro": {
-  "euribor_3m": "ok (393 pontos, 2026-09)",
-  "euribor_6m": "ok (393 pontos, 2026-09)",
-  "euribor_12m": "ok (393 pontos, 2026-09)",
-  "mortgage_rate_pt": "ok (320 pontos, 2026-08)",
-  "mortgage_volume_pt": "ok (284 pontos, 2026-08)",
-  "mortgage_volume_pure_pt": "ok (109 pontos, 2026-08)",
-  "mortgage_rate_pt_fix_f": "ok (320 pontos, 2026-08)",
-  "mortgage_rate_pt_fix_i": "ok (227 pontos, 2026-08)",
-  "mortgage_rate_pt_fix_o": "ok (227 pontos, 2026-08)",
-  "mortgage_rate_pt_fix_p": "ok (220 pontos, 2026-08)",
-  "mortgage_share_variable_pt": "ok (284 pontos, 2026-08)",
+  "euribor_3m": "ok (394 pontos, 2026-10)",
+  "euribor_6m": "ok (394 pontos, 2026-10)",
+  "euribor_12m": "ok (394 pontos, 2026-10)",
+  "mortgage_rate_pt": "ok (321 pontos, 2026-09)",
+  "mortgage_volume_pt": "ok (285 pontos, 2026-09)",
+  "mortgage_volume_pure_pt": "ok (110 pontos, 2026-09)",
+  "mortgage_rate_pt_fix_f": "ok (321 pontos, 2026-09)",
+  "mortgage_rate_pt_fix_i": "ok (228 pontos, 2026-09)",
+  "mortgage_rate_pt_fix_o": "ok (228 pontos, 2026-09)",
+  "mortgage_rate_pt_fix_p": "ok (221 pontos, 2026-09)",
+  "mortgage_share_variable_pt": "ok (285 pontos, 2026-09)",
   "eurostat_hpi": "ok (74 pontos, 2026Q2)",
   "eurostat_hicp": "ok (123 pontos, 2026Q3)",
   "eurostat_hpi_eu": "ok (2086 pontos, 2026Q2)",
@@ -91,10 +91,10 @@
   "imi_rates": "ok (cache: taxas de 2025; 2026 ainda incompleto)"
  },
  "turismo": {
-  "al_rnal": "ok (cache de 2026-10-26: 111936 registos)"
+  "al_rnal": "ok (112000 registos, https://dadosabertos.turismodeportugal.pt/api/download/v1/items/4e62eb1977564991bd01e61d7aa8266f/csv?layers=6)"
  },
  "osm": {
-  "osm_points": "ok (school: 9377, health: 4357, station: 831; 3 quadrículas novas; 2 falhas ((38, -8, 39, -7): HTTPSConnectionPool(host='overpass.private.coffee', port=443): Read timed out. (read timeo))"
+  "osm_points": "ok (school: 9377, health: 4358, station: 831; 2 quadrículas novas; 1 falhas (limite de tempo))"
  },
  "apa": {
   "flood_zones": "ok (cache de 2026-10-06: 63 polígonos, pretorno=T0100)"
@@ -102,8 +102,8 @@
  "stale": [],
  "discover": {
   "ine_probe": "nada novo (17 já sondados)",
-  "ine_catalog": "ok (cache: 13214 indicadores)",
-  "ogc": "ok (cache: dgt: 90 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, cadastro, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural)",
+  "ine_catalog": "ok (13242 indicadores; opc=2: 13242)",
+  "ogc": "dgt: 94 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, cadastro, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural",
   "services": "apa_inundacoes: 8 camadas"
  }
 }
