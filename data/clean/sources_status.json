@@ -77,7 +77,7 @@
   "mortgage_volume_pt": "ok (285 pontos, 2026-09)",
   "mortgage_volume_pure_pt": "ok (110 pontos, 2026-09)",
   "mortgage_rate_pt_fix_f": "ok (321 pontos, 2026-09)",
-  "mortgage_rate_pt_fix_i": "ok (228 pontos, 2026-09)",
+  "mortgage_rate_pt_fix_i": "CACHE (504 Server Error: Gateway Time-out for url: https://data-api.ecb.europa.eu/service/data/MIR/M.PT.B.A2C.I.R.A.2250.EUR.N?format=csvdata)",
   "mortgage_rate_pt_fix_o": "ok (228 pontos, 2026-09)",
   "mortgage_rate_pt_fix_p": "ok (221 pontos, 2026-09)",
   "mortgage_share_variable_pt": "ok (285 pontos, 2026-09)",
@@ -91,19 +91,19 @@
   "imi_rates": "ok (cache: taxas de 2025; 2026 ainda incompleto)"
  },
  "turismo": {
-  "al_rnal": "ok (112035 registos, https://dadosabertos.turismodeportugal.pt/api/download/v1/items/4e62eb1977564991bd01e61d7aa8266f/csv?layers=6)"
+  "al_rnal": "ok (cache de 2026-11-09: 112035 registos)"
  },
  "osm": {
-  "osm_points": "ok (school: 9377, health: 4358, station: 831; 2 quadrículas novas; 1 falhas (limite de tempo))"
+  "osm_points": "ok (school: 9373, health: 4354, station: 831; 2 quadrículas novas; 1 falhas (limite de tempo))"
  },
  "apa": {
-  "flood_zones": "ok (63 polígonos, pretorno=T0100; disponíveis: ['T0100', 'T0020', 'T1000'])"
+  "flood_zones": "ok (cache de 2026-11-09: 63 polígonos, pretorno=T0100)"
  },
  "stale": [],
  "discover": {
   "ine_probe": "nada novo (17 já sondados)",
-  "ine_catalog": "ok (13242 indicadores; opc=2: 13242)",
-  "ogc": "dgt: 94 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, cadastro, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural",
+  "ine_catalog": "ok (cache: 13242 indicadores)",
+  "ogc": "ok (cache: dgt: 94 coleções, ^crus: 1, cadastro: 1, srup_: 19; exemplos com dados: crus, cadastro, srup_ran, srup_ren_areal, srup_areas_protegidas, srup_zec, srup_zpe, srup_perigosidade_inc_rural)",
   "services": "apa_inundacoes: 8 camadas"
  }
 }
