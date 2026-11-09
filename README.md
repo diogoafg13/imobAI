@@ -599,8 +599,8 @@ esforço).
 `scripts/smoke_site.py` abre o site com os dados do build no Chromium (Playwright): todos os separadores, todas as
 métricas do mapa, as calculadoras e os seis guias, e uma ligação partilhada. Falha com um erro de JavaScript, "NaN",
 "undefined" ou "Infinity" no texto, ou um guia sem resultado; nesse caso a versão nova não é publicada (o site
-anterior fica no ar; os dados já foram guardados no branch `data`). Bibliotecas de CDN que não carreguem ou falta de
-WebGL dão aviso. Localmente: `pip install playwright && python -m playwright install chromium && python scripts/smoke_site.py site`.
+anterior fica no ar; os dados já foram guardados no branch `data`). Bibliotecas de CDN que não carreguem, falhas da API da DGT
+(que o Chromium mostra como bloqueio de CORS quando o servidor está em baixo) ou falta de WebGL dão aviso. Localmente: `pip install playwright && python -m playwright install chromium && python scripts/smoke_site.py site`.
 
 ### Dados extra gratuitos (taxas por tipo, escolas/saúde/estações, descoberta de fontes)
 

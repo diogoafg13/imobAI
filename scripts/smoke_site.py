@@ -7,8 +7,9 @@ anterior continua no ar) — os dados já ficaram guardados no branch `data`.
     python scripts/smoke_site.py site            # usa o Chromium do Playwright
     SMOKE_CHROMIUM=/caminho/chromium python scripts/smoke_site.py site
 
-Bibliotecas vindas de CDN (gráficos, mapa) que não carreguem e a falta de WebGL no runner dão aviso, não erro: não são
-defeitos do site.
+Bibliotecas vindas de CDN (gráficos, mapa) que não carreguem, pedidos a serviços externos (API da DGT) que falhem —
+incluindo o "bloqueio de CORS" que o Chromium mostra quando o servidor está em baixo — e a falta de WebGL no runner dão
+aviso, não erro: não são defeitos do site.
 """
 from __future__ import annotations
 
@@ -45,7 +46,16 @@ class Smoke:
             return
         external = re.search(r"echarts is not defined|maplibregl is not defined", t) and self.cdn_failed
         webgl = "WebGL" in t or "webgl" in t
-        (self.warnings if external or webgl else self.errors).append(f"consola: {t[:300]}")
+        (self.warnings if external or webgl or self._external_fetch(t) else self.errors).append(f"consola: {t[:300]}")
+
+    @staticmethod
+    def _external_fetch(t: str) -> bool:
+        """Pedido a um serviço externo (ex.: API da DGT) que falhou. Quando o servidor está em baixo, a resposta de erro
+        vem sem o cabeçalho Access-Control-Allow-Origin e o Chromium mostra-o como bloqueio de CORS: não é defeito do site
+        (o site trata a falha e mostra-a ao utilizador)."""
+        m = re.search(r"Access to [\w ]+ at '(https?://[^']+)'.*CORS policy", t) or re.search(r"net::ERR_\w+.*?(https?://\S+)|(https?://\S+).*net::ERR_\w+", t)
+        url = m and next(g for g in m.groups() if g)
+        return bool(url) and not url.startswith("http://127.0.0.1")
 
     def check_text(self, where: str):
         txt = self.pg.evaluate("document.querySelector('main') ? document.querySelector('main').innerText : document.body.innerText")
