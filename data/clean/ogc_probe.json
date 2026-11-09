@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-02",
+ "updated": "2026-11-09",
  "cfg": "{\"dgt\": {\"base\": \"https://ogcapi.dgterritorio.gov.pt\", \"grep\": [\"^crus\", \"cadastro\", \"srup_\"], \"point\": [-9.1685, 38.8309], \"sample\": [\"crus\", \"cadastro\", \"srup_ran\", \"srup_ren_areal\", \"srup_areas_protegidas\", \"srup_zec\", \"srup_zpe\", \"srup_perigosidade_inc_rural\"]}}",
  "apis": {
   "dgt": {
@@ -56,13 +56,11 @@
       "fid",
       "fonte",
       "municipio",
-      "objectid",
       "registo_ou_deposito",
       "situacao_pdm"
      ],
      "example": {
       "fid": 1,
-      "objectid": 1.0,
       "dtcc": "1714",
       "municipio": "VILA REAL",
       "designacao_no_plano": "Área Predominantemente Habitacional - Área de Interesse Patrimonial",
@@ -70,9 +68,9 @@
       "categoria_2021": "Espaço Habitacional",
       "escala_origem": "1/10000",
       "fonte": "CM - Vectorial",
-      "area_ha": 3.631159759140341,
+      "area_ha": 3.63116,
       "autor": "DGT",
-      "data_pub_origem": "2011/03/22 00:00:00.000",
+      "data_pub_origem": "2011-03-22T00:00:00",
       "registo_ou_deposito": "01.17.14/123/2011/PDM/03",
       "situacao_pdm": "Vigente",
       "codigo": 3
@@ -81,8 +79,7 @@
      "point_status": 200,
      "point_hits": 1,
      "point_example": {
-      "fid": 164851,
-      "objectid": 164851.0,
+      "fid": 164316,
       "dtcc": "1107",
       "municipio": "LOURES",
       "designacao_no_plano": "Solo Urbano-Espaços Residenciais-Consolidadas Habitacionais de nível I",
@@ -90,9 +87,9 @@
       "categoria_2021": "Espaço Habitacional",
       "escala_origem": "1/25000",
       "fonte": "CM - Vectorial e Raster",
-      "area_ha": 62.19765232363334,
+      "area_ha": 62.19765,
       "autor": "DGT",
-      "data_pub_origem": "2023/09/11 00:00:00.000",
+      "data_pub_origem": "2023-09-11T00:00:00",
       "registo_ou_deposito": "03.11.07/PDM/02/2023/108",
       "situacao_pdm": "Vigente",
       "codigo": 3

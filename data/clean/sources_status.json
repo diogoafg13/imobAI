@@ -1,5 +1,5 @@
 {
- "date": "20261102",
+ "date": "20261109",
  "ine": {
   "sales_price_annual": "sem código (config)",
   "building_permits": "sem código (config)",
@@ -16,6 +16,7 @@
   "sales_price_t2": "ok (18387 linhas, 2026Q2) [dim_3=2 'T2']",
   "sales_price_t3": "ok (18387 linhas, 2026Q2) [dim_3=3 'T3']",
   "sales_price_t4": "ok (18387 linhas, 2026Q2) [dim_3=4 'T4 ou mais']",
+  "rent_new_contracts": "ok (2082 linhas, 2025) [dim_3=2 '2.º quartil']",
   "rent_q1": "ok (2082 linhas, 2025) [dim_3=1 '1.º quartil']",
   "rent_q3": "ok (2082 linhas, 2025) [dim_3=3 '3.º quartil']",
   "rent_parish": "ok (3828 linhas, 2025)",
@@ -28,8 +29,9 @@
   "valuation_count_houses": "ok (65583 linhas, 2026-09) [dim_3=2 'Moradias']",
   "valuation_apartments": "ok (65583 linhas, 2026-09) [dim_3=1 'Apartamentos']",
   "valuation_houses": "ok (65583 linhas, 2026-09) [dim_3=2 'Moradias']",
-  "dwellings_licensed": "ok (9204 linhas, 2026-08) [dim_3=T 'Total']",
+  "dwellings_licensed": "ok (9243 linhas, 2026-09) [dim_3=T 'Total']",
   "dwellings_completed": "ok (1170 linhas, 2026Q2)",
+  "dwellings_stock": "ok (4128 linhas, 2022)",
   "census_total": "ok (3439 linhas, 2021) [dim_3=T 'Total', dim_4=T 'Total', dim_5=T 'Total']",
   "census_bld_total": "ok (3439 linhas, 2021) [dim_3=T 'Total', dim_4=T 'Total']",
   "census_bld_pre1919": "ok (3439 linhas, 2021) [dim_3=01 'Antes de 1919', dim_4=T 'Total']",
@@ -43,16 +45,16 @@
   "irs_median": "ok (24073 linhas, 2024)",
   "tourism_beds": "ok (1041 linhas, 2025) [dim_3=T 'Total']",
   "tourism_beds_al": "ok (1041 linhas, 2025) [dim_3=02 'Alojamento local']",
-  "dwellings_licensed_t01": "ok (9204 linhas, 2026-08) [dim_3=1 'T0 ou T1']",
-  "dwellings_licensed_t2": "ok (9204 linhas, 2026-08) [dim_3=2 'T2']",
-  "dwellings_licensed_t3": "ok (9204 linhas, 2026-08) [dim_3=3 'T3']",
-  "dwellings_licensed_t4": "ok (9204 linhas, 2026-08) [dim_3=4 'T4 ou mais']",
+  "dwellings_licensed_t01": "ok (9243 linhas, 2026-09) [dim_3=1 'T0 ou T1']",
+  "dwellings_licensed_t2": "ok (9243 linhas, 2026-09) [dim_3=2 'T2']",
+  "dwellings_licensed_t3": "ok (9243 linhas, 2026-09) [dim_3=3 'T3']",
+  "dwellings_licensed_t4": "ok (9243 linhas, 2026-09) [dim_3=4 'T4 ou mais']",
   "tourism_guests": "ok (19432 linhas, 2026-08) [dim_3=T 'Total']",
   "tourism_guests_al": "ok (19432 linhas, 2026-08) [dim_3=02 'Alojamento local']",
   "tourism_occupancy": "ok (1388 linhas, 2025) [dim_3=T 'Total']",
-  "construction_cost": "ok (320 linhas, 2026-08) [dim_3=T 'Total']",
-  "construction_cost_materials": "ok (320 linhas, 2026-08) [dim_3=1 'Materiais']",
-  "construction_cost_labour": "ok (320 linhas, 2026-08) [dim_3=2 'Mão-de-obra']",
+  "construction_cost": "ok (321 linhas, 2026-09) [dim_3=T 'Total']",
+  "construction_cost_materials": "ok (321 linhas, 2026-09) [dim_3=1 'Materiais']",
+  "construction_cost_labour": "ok (321 linhas, 2026-09) [dim_3=2 'Mão-de-obra']",
   "population": "ok (1735 linhas, 2025) [dim_3=T 'HM', dim_4=T 'Total']",
   "tax_households_1": "ok (2429 linhas, 2024) [dim_3=T1 'Menos de 5 000 euros']",
   "tax_households_2": "ok (2429 linhas, 2024) [dim_3=T2 'De 5 000 a menos de 10 000 euros']",
@@ -65,9 +67,7 @@
   "ageing_index": "ok (1735 linhas, 2025)",
   "migration_balance": "ok (1735 linhas, 2025)",
   "tourism_nights": "ok (5160 linhas, 2025) [dim_3=T 'Total']",
-  "housing_credit_pc": "ok (1041 linhas, 2024)",
-  "rent_new_contracts": "ok (2082 linhas, 2025) [dim_3=2 '2.º quartil']",
-  "dwellings_stock": "ok (4128 linhas, 2022)"
+  "housing_credit_pc": "ok (1041 linhas, 2024)"
  },
  "macro": {
   "euribor_3m": "ok (394 pontos, 2026-10)",
@@ -91,13 +91,13 @@
   "imi_rates": "ok (cache: taxas de 2025; 2026 ainda incompleto)"
  },
  "turismo": {
-  "al_rnal": "ok (112000 registos, https://dadosabertos.turismodeportugal.pt/api/download/v1/items/4e62eb1977564991bd01e61d7aa8266f/csv?layers=6)"
+  "al_rnal": "ok (112035 registos, https://dadosabertos.turismodeportugal.pt/api/download/v1/items/4e62eb1977564991bd01e61d7aa8266f/csv?layers=6)"
  },
  "osm": {
   "osm_points": "ok (school: 9377, health: 4358, station: 831; 2 quadrículas novas; 1 falhas (limite de tempo))"
  },
  "apa": {
-  "flood_zones": "ok (cache de 2026-10-06: 63 polígonos, pretorno=T0100)"
+  "flood_zones": "ok (63 polígonos, pretorno=T0100; disponíveis: ['T0100', 'T0020', 'T1000'])"
  },
  "stale": [],
  "discover": {

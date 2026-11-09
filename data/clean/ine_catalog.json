@@ -1,5 +1,5 @@
 {
-"updated": "2026-11-02",
+"updated": "2026-11-09",
 "complete": true,
 "scanned": [],
 "items": [
@@ -1605,7 +1605,7 @@
 },
 {
 "varcd": "0000222",
-"title": "Depósitos de clientes (Série CAE Rev. 3 - €) nos Estabelecimentos de outra intermediação monetária",
+"title": "Depósitos de clientes (Série CAE Rev. 3 - €) nos estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1613,7 +1613,7 @@
 },
 {
 "varcd": "0000223",
-"title": "Crédito concedido (Série CAE Rev. 3 - €) por Estabelecimentos de outra intermediação monetária",
+"title": "Crédito concedido (Série CAE Rev. 3 - €) por estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1637,7 +1637,7 @@
 },
 {
 "varcd": "0000226",
-"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos Estabelecimentos de bancos e caixas económicas",
+"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos estabelecimentos de bancos e caixas económicas",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1645,7 +1645,7 @@
 },
 {
 "varcd": "0000227",
-"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos Estabelecimentos de caixas de crédito agrícola mútuo",
+"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos estabelecimentos de caixas de crédito agrícola mútuo",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1653,7 +1653,7 @@
 },
 {
 "varcd": "0000228",
-"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos Estabelecimentos de bancos e caixas económicas",
+"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos estabelecimentos de bancos e caixas económicas",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -1661,7 +1661,7 @@
 },
 {
 "varcd": "0000229",
-"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos Estabelecimentos de caixas de crédito agrícola mútuo",
+"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos estabelecimentos de caixas de crédito agrícola mútuo",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -8744,7 +8744,7 @@
 "title": "Edifícios licenciados (N.º)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -8752,7 +8752,7 @@
 "title": "Fogos licenciados (N.º) em construções novas para habitação familiar",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -8864,7 +8864,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -8872,7 +8872,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -8880,7 +8880,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -8888,7 +8888,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -13325,7 +13325,7 @@
 },
 {
 "varcd": "0001973",
-"title": "Juros e custos equiparados (Série - CAE Rev.3 - €) dos Estabelecimentos de outra intermediação monetária",
+"title": "Juros e custos equiparados (Série - CAE Rev.3 - €) dos estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -13333,7 +13333,7 @@
 },
 {
 "varcd": "0001974",
-"title": "Juros e proveitos equiparados (Série CAE Rev. 3 - €) dos Estabelecimentos de outra intermediação monetária",
+"title": "Juros e proveitos equiparados (Série CAE Rev. 3 - €) dos estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2013",
@@ -18592,7 +18592,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202608",
+"last": "S18A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -18600,7 +18600,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202608",
+"last": "S18A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -18608,7 +18608,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202608",
+"last": "S18A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -18616,7 +18616,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202608",
+"last": "S18A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -28976,7 +28976,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -28984,7 +28984,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202608",
+"last": "S18A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -29000,7 +29000,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -29008,7 +29008,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202608",
+"last": "S18A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -37432,7 +37432,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -37440,7 +37440,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -37448,7 +37448,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202608",
+"last": "S18A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -37456,7 +37456,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202608",
+"last": "S18A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -53760,7 +53760,7 @@
 "title": "Taxa de cobertura das importações pelas exportações (%)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -53768,7 +53768,7 @@
 "title": "Taxa de variação homóloga (%) das exportações de bens",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -53776,7 +53776,7 @@
 "title": "Taxa de variação homóloga (%) das importações de bens",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -54528,7 +54528,7 @@
 "title": "Edifícios licenciados (N.º)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -54536,7 +54536,7 @@
 "title": "Fogos licenciados (N.º) em construções novas para habitação familiar",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -55192,7 +55192,7 @@
 "title": "Importações (kg) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -55200,7 +55200,7 @@
 "title": "Exportações (kg) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -55208,7 +55208,7 @@
 "title": "Importações (kg) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202608",
+"last": "S18A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -55216,7 +55216,7 @@
 "title": "Exportações (kg) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal acumulado",
-"last": "S18A202608",
+"last": "S18A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -58408,7 +58408,7 @@
 "title": "Importações (€) de bens",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -58416,7 +58416,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -59389,7 +59389,7 @@
 },
 {
 "varcd": "0008686",
-"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos Estabelecimentos de bancos e caixas económicas",
+"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos estabelecimentos de bancos e caixas económicas",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59397,7 +59397,7 @@
 },
 {
 "varcd": "0008687",
-"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos Estabelecimentos de bancos e caixas económicas",
+"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos estabelecimentos de bancos e caixas económicas",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59413,7 +59413,7 @@
 },
 {
 "varcd": "0008689",
-"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos Estabelecimentos de caixas de crédito agrícola mútuo",
+"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos estabelecimentos de caixas de crédito agrícola mútuo",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59421,7 +59421,7 @@
 },
 {
 "varcd": "0008690",
-"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos Estabelecimentos de caixas de crédito agrícola mútuo",
+"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos estabelecimentos de caixas de crédito agrícola mútuo",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59445,7 +59445,7 @@
 },
 {
 "varcd": "0008693",
-"title": "Depósitos de clientes (Série CAE Rev. 3 - €) nos Estabelecimentos de outra intermediação monetária",
+"title": "Depósitos de clientes (Série CAE Rev. 3 - €) nos estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59453,7 +59453,7 @@
 },
 {
 "varcd": "0008694",
-"title": "Crédito concedido (Série CAE Rev. 3 - €) por Estabelecimentos de outra intermediação monetária",
+"title": "Crédito concedido (Série CAE Rev. 3 - €) por estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59477,7 +59477,7 @@
 },
 {
 "varcd": "0008697",
-"title": "Juros e custos equiparados (Série - CAE Rev.3 - €) dos Estabelecimentos de outra intermediação monetária",
+"title": "Juros e custos equiparados (Série - CAE Rev.3 - €) dos estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -59485,7 +59485,7 @@
 },
 {
 "varcd": "0008698",
-"title": "Juros e proveitos equiparados (Série CAE Rev. 3 - €) dos Estabelecimentos de outra intermediação monetária",
+"title": "Juros e proveitos equiparados (Série CAE Rev. 3 - €) dos estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2022",
@@ -60696,7 +60696,7 @@
 "title": "Taxa bruta de natalidade (‰)",
 "geo": "NUTS III",
 "periodicity": "Anual",
-"last": "S7A2020",
+"last": "S7A2023",
 "source": "INE, Indicadores demográficos"
 },
 {
@@ -60704,7 +60704,7 @@
 "title": "Taxa bruta de mortalidade (‰)",
 "geo": "NUTS III",
 "periodicity": "Anual",
-"last": "S7A2020",
+"last": "S7A2023",
 "source": "INE, Indicadores demográficos"
 },
 {
@@ -65984,7 +65984,7 @@
 "title": "Índices mensais de valor unitário das importações (Taxa de variação homóloga, valor - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -65992,7 +65992,7 @@
 "title": "Índices mensais de valor unitário das exportações (Taxa de variação homóloga, valor - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66000,7 +66000,7 @@
 "title": "Índices mensais de valor unitário das importações (Taxa de variação homóloga, volume - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66008,7 +66008,7 @@
 "title": "Índices mensais de valor unitário das exportações (Taxa de variação homóloga, volume - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66016,7 +66016,7 @@
 "title": "Índices mensais de valor unitário das importações (Taxa de variação homóloga, preço - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -66024,7 +66024,7 @@
 "title": "Índices mensais de valor unitário das exportações (Taxa de variação homóloga, preço - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -68152,7 +68152,7 @@
 "title": "Precipitação total (mm)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68168,7 +68168,7 @@
 "title": "Dias com chuva (>= 1mm) (Dia)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68184,7 +68184,7 @@
 "title": "Dias secos (Número de Dia (s))",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68200,7 +68200,7 @@
 "title": "Precipitação total (mm)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2023",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68208,7 +68208,7 @@
 "title": "Precipitação máxima diária (mm)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68224,7 +68224,7 @@
 "title": "Precipitação no mês com maior precipitação (mm)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68232,7 +68232,7 @@
 "title": "Precipitação no mês com menor precipitação (mm)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68240,7 +68240,7 @@
 "title": "Dias chuvosos (>= 10mm) (Dia)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -68256,7 +68256,7 @@
 "title": "Dias extremamente chuvosos (>= 30mm) (Dia)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -69408,7 +69408,7 @@
 "title": "Fogos licenciados em construções novas para habitação familiar nos últimos 3 meses (N.º)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -73424,7 +73424,7 @@
 "title": "Duração semanal efetiva de trabalho (Serie 2021 - h) da população empregada por conta de outrem",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73456,7 +73456,7 @@
 "title": "Duração semanal efetiva de trabalho (Série 2021 - h) da população empregada",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73464,7 +73464,7 @@
 "title": "Duração semanal efetiva de trabalho (Série 2021 - h) da população empregada",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73472,7 +73472,7 @@
 "title": "Jovens com idade entre 16 e 34 anos não empregados que não estão em educação ou formação (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73480,7 +73480,7 @@
 "title": "Jovens com idade entre 16 e 34 anos não empregados que não estão em educação ou formação (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73488,7 +73488,7 @@
 "title": "Jovens com idade entre 16 e 34 anos não empregados que não estão em educação ou formação (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73504,7 +73504,7 @@
 "title": "Taxa de jovens com idade entre 16 e 34 anos não empregados que não estão em educação ou formação (Série 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73512,7 +73512,7 @@
 "title": "Taxa de jovens com idade entre 16 e 34 anos não empregados que não estão em educação ou formação (Série 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73520,7 +73520,7 @@
 "title": "Taxa de jovens com idade entre 16 e 34 anos não empregados que não estão em educação ou formação (Série 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73544,7 +73544,7 @@
 "title": "População desempregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73560,7 +73560,7 @@
 "title": "População desempregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73568,7 +73568,7 @@
 "title": "População desempregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73576,7 +73576,7 @@
 "title": "População desempregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73584,7 +73584,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73656,7 +73656,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73664,7 +73664,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73672,7 +73672,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73680,7 +73680,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73688,7 +73688,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73696,7 +73696,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73704,7 +73704,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73712,7 +73712,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73720,7 +73720,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73728,7 +73728,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73736,7 +73736,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73744,7 +73744,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73800,7 +73800,7 @@
 "title": "População empregada por conta de outrem (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73824,7 +73824,7 @@
 "title": "População inativa à procura de emprego mas não disponível (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73840,7 +73840,7 @@
 "title": "População inativa disponível mas que não procura emprego (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73888,7 +73888,7 @@
 "title": "Rendimento médio mensal líquido (Série 2021 - €) da população empregada por conta de outrem",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73896,7 +73896,7 @@
 "title": "Rendimento médio mensal líquido (Série 2021 - €) da população empregada por conta de outrem",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73904,7 +73904,7 @@
 "title": "Subemprego da população empregada a tempo parcial (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73912,7 +73912,7 @@
 "title": "Subutilização do trabalho (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73920,7 +73920,7 @@
 "title": "Taxa de subutilização do trabalho (Série 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -73944,7 +73944,7 @@
 "title": "Taxa de desemprego (Série 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -79456,7 +79456,7 @@
 "title": "Taxa de desemprego de longa duração (Série 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -81776,7 +81776,7 @@
 "title": "Índice de custo de construção de habitação nova (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de custo de construção de habitação nova (Base 2021)"
 },
 {
@@ -81784,7 +81784,7 @@
 "title": "Índice de custo de construção de habitação nova (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de custo de construção de habitação nova (Base 2021)"
 },
 {
@@ -81792,7 +81792,7 @@
 "title": "Índice de custo de construção de habitação nova (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de custo de construção de habitação nova (Base 2021)"
 },
 {
@@ -81800,7 +81800,7 @@
 "title": "Índice de custo de construção de habitação nova (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índice de custo de construção de habitação nova (Base 2021)"
 },
 {
@@ -82888,7 +82888,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82896,7 +82896,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82904,7 +82904,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82912,7 +82912,7 @@
 "title": "Índice de remunerações na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82920,7 +82920,7 @@
 "title": "Índice de emprego na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82928,7 +82928,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82936,7 +82936,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82944,7 +82944,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82952,7 +82952,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82960,7 +82960,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82968,7 +82968,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82976,7 +82976,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82984,7 +82984,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -82992,7 +82992,7 @@
 "title": "Índice de remunerações na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83000,7 +83000,7 @@
 "title": "Índice de emprego na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83008,7 +83008,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83016,7 +83016,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83024,7 +83024,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83032,7 +83032,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83040,7 +83040,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83048,7 +83048,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83056,7 +83056,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83064,7 +83064,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83072,7 +83072,7 @@
 "title": "Índice de remunerações na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83080,7 +83080,7 @@
 "title": "Índice de emprego na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83088,7 +83088,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83096,7 +83096,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83104,7 +83104,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83112,7 +83112,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83120,7 +83120,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83128,7 +83128,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83136,7 +83136,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83144,7 +83144,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83152,7 +83152,7 @@
 "title": "Índice de remunerações na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83160,7 +83160,7 @@
 "title": "Índice de emprego na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83168,7 +83168,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83176,7 +83176,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83184,7 +83184,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83192,7 +83192,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83200,7 +83200,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83208,7 +83208,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83216,7 +83216,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83224,7 +83224,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83232,7 +83232,7 @@
 "title": "Índice de remunerações na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83240,7 +83240,7 @@
 "title": "Índice de emprego na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83248,7 +83248,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83256,7 +83256,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83264,7 +83264,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83272,7 +83272,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83280,7 +83280,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Base - 2021)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83288,7 +83288,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83296,7 +83296,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83304,7 +83304,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83312,7 +83312,7 @@
 "title": "Índice de remunerações na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83320,7 +83320,7 @@
 "title": "Índice de emprego na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83328,7 +83328,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83336,7 +83336,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83344,7 +83344,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83352,7 +83352,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83360,7 +83360,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação média anual - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83368,7 +83368,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83376,7 +83376,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83384,7 +83384,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83392,7 +83392,7 @@
 "title": "Índice de remunerações na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83400,7 +83400,7 @@
 "title": "Índice de emprego na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83408,7 +83408,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83416,7 +83416,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83424,7 +83424,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83432,7 +83432,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83440,7 +83440,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação homóloga - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83448,7 +83448,7 @@
 "title": "Índice de volume de negócios na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83456,7 +83456,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83464,7 +83464,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83472,7 +83472,7 @@
 "title": "Índice de remunerações na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83480,7 +83480,7 @@
 "title": "Índice de emprego na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83488,7 +83488,7 @@
 "title": "Índice de horas trabalhadas na indústria - bruto (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83496,7 +83496,7 @@
 "title": "Índice de horas trabalhadas na indústria - ajustado de efeitos de calendário (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83504,7 +83504,7 @@
 "title": "Índice de volume de negócios na indústria - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83512,7 +83512,7 @@
 "title": "Índice de volume de negócios na indústria no mercado interno - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -83520,7 +83520,7 @@
 "title": "Índice de volume de negócios na indústria no mercado externo - ajustado de efeitos de calendário e de sazonalidade (Taxa de variação mensal - Base 2021 - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Índices de volume de negócios e emprego (Base 2021)"
 },
 {
@@ -84312,7 +84312,7 @@
 "title": "Importações (€) de bens",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -84320,7 +84320,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -84392,7 +84392,7 @@
 "title": "Edifícios licenciados (N.º)",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -84400,7 +84400,7 @@
 "title": "Fogos licenciados (N.º) em construções novas para habitação familiar",
 "geo": "NUTS III",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -84408,7 +84408,7 @@
 "title": "Fogos licenciados em construções novas para habitação familiar nos últimos 3 meses (N.º)",
 "geo": "Município",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Inquérito aos projetos de obras de edificação e de demolição de edifícios"
 },
 {
@@ -84464,7 +84464,7 @@
 "title": "Duração semanal efetiva de trabalho (Serie 2021 - h) da população empregada por conta de outrem",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84472,7 +84472,7 @@
 "title": "Duração semanal efetiva de trabalho (Série 2021 - h) da população empregada",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84480,7 +84480,7 @@
 "title": "Duração semanal efetiva de trabalho (Série 2021 - h) da população empregada",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84488,7 +84488,7 @@
 "title": "Duração semanal efetiva de trabalho (Série 2021 - h) da população empregada",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84496,7 +84496,7 @@
 "title": "Jovens com idade entre 16 e 34 anos não empregados que não estão em educação ou formação (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84504,7 +84504,7 @@
 "title": "Taxa de jovens com idade entre 16 e 34 anos não empregados que não estão em educação ou formação (Série 2021 - %)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84512,7 +84512,7 @@
 "title": "População ativa (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84520,7 +84520,7 @@
 "title": "População desempregada (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84528,7 +84528,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84536,7 +84536,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84544,7 +84544,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84552,7 +84552,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84560,7 +84560,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84568,7 +84568,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84576,7 +84576,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84584,7 +84584,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84592,7 +84592,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84600,7 +84600,7 @@
 "title": "População empregada por conta de outrem (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84608,7 +84608,7 @@
 "title": "População empregada por conta de outrem (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84616,7 +84616,7 @@
 "title": "População empregada por conta de outrem (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84624,7 +84624,7 @@
 "title": "População empregada por conta de outrem (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84632,7 +84632,7 @@
 "title": "População empregada por conta de outrem (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84640,7 +84640,7 @@
 "title": "População inativa (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84648,7 +84648,7 @@
 "title": "População inativa (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84656,7 +84656,7 @@
 "title": "População inativa com 16 e mais anos de idade (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84664,7 +84664,7 @@
 "title": "População residente (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84672,7 +84672,7 @@
 "title": "População residente com idade entre 16 e 89 anos (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84680,7 +84680,7 @@
 "title": "População residente com idade entre 16 e 89 anos (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84688,7 +84688,7 @@
 "title": "Rendimento médio mensal líquido (Série 2021 - €) da população empregada por conta de outrem",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84696,7 +84696,7 @@
 "title": "Rendimento médio mensal líquido (Série 2021 - €) da população empregada por conta de outrem",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84704,7 +84704,7 @@
 "title": "Taxa de atividade da população em idade ativa (Série 2021 - %)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84712,7 +84712,7 @@
 "title": "Taxa de desemprego (Série 2021 - %)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84720,7 +84720,7 @@
 "title": "Taxa de emprego (Série 2021 - %)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84728,7 +84728,7 @@
 "title": "Taxa de inatividade (Série 2021 - %)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -84736,7 +84736,7 @@
 "title": "População desempregada (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -91885,7 +91885,7 @@
 },
 {
 "varcd": "0013049",
-"title": "Depósitos de clientes (Série CAE Rev. 3 - €) nos Estabelecimentos de outra intermediação monetária",
+"title": "Depósitos de clientes (Série CAE Rev. 3 - €) nos estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91893,7 +91893,7 @@
 },
 {
 "varcd": "0013050",
-"title": "Crédito concedido (Série CAE Rev. 3 - €) por Estabelecimentos de outra intermediação monetária",
+"title": "Crédito concedido (Série CAE Rev. 3 - €) por estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91917,7 +91917,7 @@
 },
 {
 "varcd": "0013053",
-"title": "Juros e custos equiparados (Série - CAE Rev.3 - €) dos Estabelecimentos de outra intermediação monetária",
+"title": "Juros e custos equiparados (Série - CAE Rev.3 - €) dos estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91925,7 +91925,7 @@
 },
 {
 "varcd": "0013054",
-"title": "Juros e proveitos equiparados (Série CAE Rev. 3 - €) dos Estabelecimentos de outra intermediação monetária",
+"title": "Juros e proveitos equiparados (Série CAE Rev. 3 - €) dos estabelecimentos de outra intermediação monetária",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91957,7 +91957,7 @@
 },
 {
 "varcd": "0013058",
-"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos Estabelecimentos de bancos e caixas económicas",
+"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos estabelecimentos de bancos e caixas económicas",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91965,7 +91965,7 @@
 },
 {
 "varcd": "0013059",
-"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos Estabelecimentos de bancos e caixas económicas",
+"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos estabelecimentos de bancos e caixas económicas",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91981,7 +91981,7 @@
 },
 {
 "varcd": "0013061",
-"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos Estabelecimentos de caixas de crédito agrícola mútuo",
+"title": "Pessoal ao serviço (Série CAE Rev. 3 - N.º) nos estabelecimentos de caixas de crédito agrícola mútuo",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -91989,7 +91989,7 @@
 },
 {
 "varcd": "0013062",
-"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos Estabelecimentos de caixas de crédito agrícola mútuo",
+"title": "Custos com o pessoal (Série CAE Rev. 3 - €) nos estabelecimentos de caixas de crédito agrícola mútuo",
 "geo": "Município",
 "periodicity": "Anual",
 "last": "S7A2024",
@@ -94840,7 +94840,7 @@
 "title": "Beneficiárias/os do rendimento social de inserção, da segurança social por 1000 habitantes em idade ativa (‰)",
 "geo": "Município",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto de Informática"
 },
 {
@@ -100328,7 +100328,7 @@
 "title": "Desvio em relação à normal (1981 - 2010) da precipitação total (%)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -100336,7 +100336,7 @@
 "title": "Desvio em relação à normal (1981 - 2010) dos dias com chuva (>= 1mm) (Dia)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -100344,7 +100344,7 @@
 "title": "Desvio em relação à normal (1981 - 2010) dos dias chuvosos (>= 10mm) (Dia)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -100352,7 +100352,7 @@
 "title": "Desvio em relação à normal (1981 - 2010) dos dias extremamente chuvosos (>= 30mm) (Dia)",
 "geo": "Estação meteorológica",
 "periodicity": "Anual",
-"last": "S7A2024",
+"last": "S7A2025",
 "source": "Instituto Português do Mar e da Atmosfera"
 },
 {
@@ -101712,7 +101712,7 @@
 "title": "Preço do petróleo Brent (€/ barril)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "DGEG, Direção-Geral de Energia e Geologia; Banco de Portugal"
 },
 {
@@ -101720,7 +101720,7 @@
 "title": "Preço do petróleo Brent (Taxa de variação homóloga - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "DGEG, Direção-Geral de Energia e Geologia; Banco de Portugal"
 },
 {
@@ -101728,7 +101728,7 @@
 "title": "Vendas de combustíveis no mercado interno (t)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "DGEG, Direção-Geral de Energia e Geologia"
 },
 {
@@ -101736,7 +101736,7 @@
 "title": "Vendas de combustíveis no mercado interno (Taxa de variação homóloga - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "DGEG, Direção-Geral de Energia e Geologia"
 },
 {
@@ -101744,7 +101744,7 @@
 "title": "Consumo de eletricidade corrigido de dias úteis e temperatura (GWh)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "REN - Redes Energéticas Nacionais"
 },
 {
@@ -101752,7 +101752,7 @@
 "title": "Consumo de eletricidade corrigido de dias úteis e temperatura (Taxa de variação homóloga - %)",
 "geo": "Portugal",
 "periodicity": "Mensal",
-"last": "S3A202609",
+"last": "S3A202610",
 "source": "REN - Redes Energéticas Nacionais"
 },
 {
@@ -103536,7 +103536,7 @@
 "title": "Importações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -103544,7 +103544,7 @@
 "title": "Exportações (€) de bens",
 "geo": "Agrupamento/País",
 "periodicity": "Mensal",
-"last": "S3A202608",
+"last": "S3A202609",
 "source": "INE, Estatísticas do comércio internacional de bens"
 },
 {
@@ -103880,7 +103880,7 @@
 "title": "Taxa de jovens com idade entre 16 e 29 anos não empregados que não estão em educação ou formação (Série 2021 - %)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -103928,7 +103928,7 @@
 "title": "Duração semanal efetiva de trabalho (Serie 2021 - h) da população empregada por conta de outrem",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -103936,7 +103936,7 @@
 "title": "Duração semanal efetiva de trabalho (Série 2021 - h) da população empregada",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -103944,7 +103944,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -103952,7 +103952,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -103960,7 +103960,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -103968,7 +103968,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -103976,7 +103976,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -103984,7 +103984,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -103992,7 +103992,7 @@
 "title": "População empregada por conta de outrem (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -104000,7 +104000,7 @@
 "title": "Rendimento médio mensal líquido (Série 2021 - €) da população empregada por conta de outrem",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -104008,7 +104008,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "Portugal",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -104016,7 +104016,7 @@
 "title": "Duração semanal efetiva de trabalho (Serie 2021 - h) da população empregada por conta de outrem",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -104024,7 +104024,7 @@
 "title": "Duração semanal efetiva de trabalho (Série 2021 - h) da população empregada",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -104032,7 +104032,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -104040,7 +104040,7 @@
 "title": "População empregada (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -104048,7 +104048,7 @@
 "title": "População empregada por conta de outrem (Série 2021 - N.º)",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
@@ -104056,7 +104056,7 @@
 "title": "Rendimento médio mensal líquido (Série 2021 - €) da população empregada por conta de outrem",
 "geo": "NUTS II",
 "periodicity": "Trimestral",
-"last": "S5A20262",
+"last": "S5A20263",
 "source": "INE, Inquérito ao emprego (Série - 2021)"
 },
 {
