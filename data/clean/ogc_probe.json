@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-09",
+ "updated": "2026-11-16",
  "cfg": "{\"dgt\": {\"base\": \"https://ogcapi.dgterritorio.gov.pt\", \"grep\": [\"^crus\", \"cadastro\", \"srup_\"], \"point\": [-9.1685, 38.8309], \"sample\": [\"crus\", \"cadastro\", \"srup_ran\", \"srup_ren_areal\", \"srup_areas_protegidas\", \"srup_zec\", \"srup_zpe\", \"srup_perigosidade_inc_rural\"]}}",
  "apis": {
   "dgt": {
